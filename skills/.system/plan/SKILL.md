@@ -1,13 +1,13 @@
 ---
 name: plan
-description: Plan lifecycle management for Codex plans stored in $CODEX_HOME/plans (default ~/.codex/plans). Use when a user asks to create, find, read, update, delete, or manage plan documents for implementation work or overview/reference documentation.
+description: Generate a plan for how an agent should accomplish a complex coding task. Use when a user asks for a plan, and optionally when they want to save, find, read, update, or delete plan files in $CODEX_HOME/plans (default ~/.codex/plans).
 ---
 
 # Plan
 
 ## Overview
 
-Create and manage plan documents on disk. Plans stored on disk are markdown files with YAML frontmatter and free-form content. When drafting in chat, output only the plan body without frontmatter; add frontmatter only when saving to disk. Support both implementation plans and overview/reference plans. Only write to the plans folder; do not modify the repository codebase.
+Draft structured plans that clarify intent, scope, requirements, action items, testing/validation, and risks; support overview plans that capture system flows and key file references. Optionally save plans to disk as markdown files with YAML frontmatter and free-form content. When drafting in chat, output only the plan body without frontmatter; add frontmatter only when saving to disk. Only write to the plans folder; do not modify the repository codebase.
 
 ## Core rules
 
