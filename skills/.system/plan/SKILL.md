@@ -7,7 +7,11 @@ description: Generate a plan for how an agent should accomplish a complex coding
 
 ## Overview
 
-Draft structured plans that clarify intent, scope, requirements, action items, testing/validation, and risks; support overview plans that capture system flows and key file references. Optionally save plans to disk as markdown files with YAML frontmatter and free-form content. When drafting in chat, output only the plan body without frontmatter; add frontmatter only when saving to disk. Only write to the plans folder; do not modify the repository codebase.
+Draft structured plans that clarify intent, scope, requirements, action items, testing/validation, and risks.
+
+Optionally, save plans to disk as markdown files with YAML frontmatter and free-form content. When drafting in chat, output only the plan body without frontmatter; add frontmatter only when saving to disk. Only write to the plans folder; do not modify the repository codebase.
+
+This skill can also be used to draft codebase or system overviews.
 
 ## Core rules
 
