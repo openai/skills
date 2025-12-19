@@ -12,7 +12,7 @@ metadata:
 Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failure snippet, then propose a fix plan and implement after explicit approval.
 - Depends on the `plan` skill for drafting and approving the fix plan.
 
-Prereq: run `oai_gh` once to authenticate, then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
 
 ## Inputs
 
@@ -28,7 +28,7 @@ Prereq: run `oai_gh` once to authenticate, then run `gh auth status` with escala
 ## Workflow
 
 1. Verify gh authentication.
-   - Run `gh auth status` in the repo with escalated scopes (workflow/repo) after running `oai_gh`.
+   - Run `gh auth status` in the repo with escalated scopes (workflow/repo) after running `gh auth login`.
    - If sandboxed auth status fails, rerun the command with `sandbox_permissions=require_escalated` to allow network/keyring access.
    - If unauthenticated, ask the user to log in before proceeding.
 2. Resolve the PR.

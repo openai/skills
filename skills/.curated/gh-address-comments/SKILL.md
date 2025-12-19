@@ -1,6 +1,6 @@
 ---
 name: gh-address-comments
-description: Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to run oai_gh if not logged in.
+description: Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.
 metadata:
   short-description: Address comments in a GitHub PR review
 ---
@@ -9,7 +9,7 @@ metadata:
 
 Guide to find the open PR for the current branch and address its comments with gh CLI. Run all `gh` commands with elevated network access.
 
-Prereq: run `oai_gh` once to authenticate, then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
 
 ## 1) Inspect comments needing attention
 - Run scripts/fetch_comments.py which will print out all the comments and review threads on the PR
@@ -22,4 +22,4 @@ Prereq: run `oai_gh` once to authenticate, then run `gh auth status` with escala
 - Apply fixes for the selected comments
 
 Notes:
-- If gh hits auth/rate issues mid-run, prompt the user to re-run `oai_gh`, then retry.
+- If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
