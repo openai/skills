@@ -2,7 +2,7 @@
 name: figma-code-connect-components
 description: Connects Figma design components to code components using Code Connect. Use when user says "code connect", "connect this component to code", "connect Figma to code", "map this component", "link component to code", "create code connect mapping", "add code connect", "connect design to code", or wants to establish mappings between Figma designs and code implementations. Requires Figma MCP server connection.
 metadata:
-  short-description: Map Figma components to code
+  short-description: Connect Figma components to local code
 ---
 
 # Code Connect Components
@@ -23,6 +23,19 @@ This skill helps you connect Figma design components to their corresponding code
 ## Required Workflow
 
 **Follow these steps in order. Do not skip steps.**
+
+### Step 0: Set up Figma MCP (if not already configured)
+
+If any MCP call fails because Figma MCP is not connected, pause and set it up:
+
+1. Add the Figma MCP:
+   - `codex mcp add figma --url https://mcp.figma.com/mcp`
+2. Enable remote MCP client:
+   - Set `[features].rmcp_client = true` in `config.toml` **or** run `codex --enable rmcp_client`
+3. Log in with OAuth:
+   - `codex mcp login figma`
+
+After successful login, the user will have to restart codex. You should finish your answer and tell them so when they try again they can continue with Step 1.
 
 ### Step 1: Get Node ID and Extract Metadata
 

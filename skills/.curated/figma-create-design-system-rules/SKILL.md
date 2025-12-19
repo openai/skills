@@ -2,7 +2,7 @@
 name: figma-create-design-system-rules
 description: Generates custom design system rules for the user's codebase. Use when user says "create design system rules", "generate rules for my project", "set up design rules", "customize design system guidelines", or wants to establish project-specific conventions for Figma-to-code workflows. Requires Figma MCP server connection.
 metadata:
-  short-description: Create Figma design system rules
+  short-description: Update AGENTS.md with design system rules
 ---
 
 # Create Design System Rules
@@ -43,6 +43,19 @@ Use this skill when:
 ## Required Workflow
 
 **Follow these steps in order. Do not skip steps.**
+
+### Step 0: Set up Figma MCP (if not already configured)
+
+If any MCP call fails because Figma MCP is not connected, pause and set it up:
+
+1. Add the Figma MCP:
+   - `codex mcp add figma --url https://mcp.figma.com/mcp`
+2. Enable remote MCP client:
+   - Set `[features].rmcp_client = true` in `config.toml` **or** run `codex --enable rmcp_client`
+3. Log in with OAuth:
+   - `codex mcp login figma`
+
+After successful login, the user will have to restart codex. You should finish your answer and tell them so when they try again they can continue with Step 1.
 
 ### Step 1: Run the Create Design System Rules Tool
 
