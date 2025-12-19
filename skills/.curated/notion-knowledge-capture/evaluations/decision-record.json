@@ -1,0 +1,31 @@
+{
+  "name": "Create Decision Record",
+  "skills": ["knowledge-capture"],
+  "query": "Document our decision to use PostgreSQL instead of MongoDB for our new service",
+  "context": "User has just explained the decision with rationale, options considered, and trade-offs",
+  "expected_behavior": [
+    "Recognizes this as a decision record (architectural decision) from conversation context",
+    "Uses Decision structure: Context → Decision → Rationale → Options Considered (with Pros/Cons) → Consequences → Implementation",
+    "Extracts from context: decision made, options considered (PostgreSQL vs MongoDB), rationale, trade-offs",
+    "Creates document with proper structure including Date, Status (Accepted), and Deciders",
+    "Includes both positive and negative consequences (trade-offs) in Consequences section",
+    "Uses Notion:notion-search to check if decision log database exists",
+    "If database exists, asks whether to add there or create standalone page",
+    "If creating in database, fetches schema using Notion:notion-fetch and sets properties: Decision title, Date, Status, Domain (Architecture), Deciders, Impact",
+    "Uses Notion:notion-create-pages with parent: { data_source_id } for database or { page_id } for parent page",
+    "Applies proper Notion markdown formatting with sections",
+    "Suggests linking from architecture docs or project pages"
+  ],
+  "success_criteria": [
+    "Document follows Decision structure from SKILL.md content types",
+    "All key sections present: Context, Decision, Rationale, Options Considered (with Pros/Cons for each), Consequences, Implementation",
+    "Decision is clearly stated (PostgreSQL chosen over MongoDB)",
+    "Options that were considered are documented with pros/cons structure",
+    "Rationale explains why PostgreSQL was chosen based on conversation context",
+    "Consequences include both positive (benefits) and negative (trade-offs)",
+    "If in database, properties are set correctly from schema (Decision, Date, Status: Accepted, Domain: Architecture, Impact)",
+    "Document is dated and has status 'Accepted'",
+    "Uses correct tool names (Notion:notion-search, Notion:notion-fetch, Notion:notion-create-pages)"
+  ]
+}
+
