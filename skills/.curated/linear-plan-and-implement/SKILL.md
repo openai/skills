@@ -7,23 +7,22 @@ description: End-to-end flow that starts with Linear ticket triage, creates an a
 
 ## Overview
 - Use this when a user wants to pick a Linear ticket, get a code-change plan, and implement it.
-- Explicitly depends on the Linear skill in `codex/skills/linear`.
+- Explicitly depends on the `linear` skill.
 - Leverages existing skills: Linear (ticket listing/context) and create-plan (plan+approval).
 
 ## Prereqs
-- LINEAR_API_KEY set; if missing, follow the Linear onboarding block before continuing.
 - Git repo ready for edits.
 
 ## Workflow
 1) List candidate tickets
 - Ask for filters (team, status, labels, priority, `--unassigned`, `--assignee @me`, limit).
-- Use the Linear skill CLI from `~/.codex/skills/linear`; prefer JSON -> render a compact table.
+- Use the Linear skill; prefer JSON -> render a compact table.
 - Example filter: `./linear issue list --unassigned --status "Todo" --limit 20 --json`.
 
 2) User picks a ticket
 - Offer a quick briefing with `./linear issue summarize <ISSUE_KEY> --comments 3 --attachments 5` and share the summary.
 - If attachments are present, list them explicitly (title + URL) in the briefing.
-- If the description or attachments include image links (e.g., `![...](https://uploads.linear.app/...)`), fetch them (add `Authorization: <LINEAR_API_KEY>` header if the link returns 401/403) and view them with `view_image` so visual context is reflected in the briefing.
+- If the description or attachments include image links (e.g., `![...](https://uploads.linear.app/...)`), fetch them and view them with so visual context is reflected in the briefing.
 - Confirm the ticket identifier, title, and acceptance criteria before planning.
 
 3) Plan the code change
