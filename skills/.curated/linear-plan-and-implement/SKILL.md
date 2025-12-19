@@ -17,10 +17,9 @@ description: End-to-end flow that starts with Linear ticket triage, creates an a
 1) List candidate tickets
 - Ask for filters (team, status, labels, priority, `--unassigned`, `--assignee @me`, limit).
 - Use the Linear skill; prefer JSON -> render a compact table.
-- Example filter: `./linear issue list --unassigned --status "Todo" --limit 20 --json`.
 
 2) User picks a ticket
-- Offer a quick briefing with `./linear issue summarize <ISSUE_KEY> --comments 3 --attachments 5` and share the summary.
+- Offer a quick briefing with and share the summary.
 - If attachments are present, list them explicitly (title + URL) in the briefing.
 - If the description or attachments include image links (e.g., `![...](https://uploads.linear.app/...)`), fetch them and view them with so visual context is reflected in the briefing.
 - Confirm the ticket identifier, title, and acceptance criteria before planning.
