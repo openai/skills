@@ -17,7 +17,7 @@ import re
 import sys
 from pathlib import Path
 
-MAX_SKILL_NAME_LENGTH = 30
+MAX_SKILL_NAME_LENGTH = 64
 ALLOWED_RESOURCES = {"scripts", "references", "assets"}
 
 SKILL_TEMPLATE = """---
