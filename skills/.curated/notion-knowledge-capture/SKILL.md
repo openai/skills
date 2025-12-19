@@ -1,6 +1,8 @@
 ---
 name: notion-knowledge-capture
 description: Capture conversations and discussions into structured Notion pages; use when asked to save, document, or capture knowledge to Notion wiki or database.
+metadata:
+  short-description: Capture knowledge into Notion pages
 ---
 
 # Knowledge Capture

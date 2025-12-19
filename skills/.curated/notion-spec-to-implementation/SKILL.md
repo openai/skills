@@ -1,6 +1,8 @@
 ---
 name: notion-spec-to-implementation
 description: Turn specs into implementation tasks for Codex; use when implementing specifications, breaking down requirements, or creating task lists from PRDs.
+metadata:
+  short-description: Turn specs into implementation tasks
 ---
 
 # Spec to Implementation
