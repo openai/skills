@@ -82,4 +82,4 @@ Good checklist items:
 Avoid:
 - Vague steps (“handle backend”, “do auth”)
 - Too many micro-steps
-- Writing code snippets (keep the plan implementation-agnostic
+- Writing code snippets (keep the plan implementation-agnostic)
