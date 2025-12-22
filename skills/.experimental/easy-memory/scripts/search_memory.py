@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime
+from datetime import date, datetime
 
 from memory_utils import (
     ensure_ascii_english,
     log_base_dir,
+    log_path_for_date,
     list_log_files,
     parse_entry_line,
 )
@@ -19,6 +20,12 @@ _REF_LEVEL_SCORES = {
 }
 
 _TIME_FORMAT = "%Y-%m-%d:%H:%M"
+
+EMPTY_LOG_MESSAGE = (
+    "No log entries for today. Created an empty log file; "
+    "please continue with the remaining task steps."
+)
+NO_MATCH_MESSAGE = "No matching entries found for the provided keywords."
 
 
 def parse_args() -> argparse.Namespace:
@@ -58,7 +65,7 @@ def parse_timestamp(value: str) -> datetime:
 
 def main() -> int:
     args = parse_args()
-    base_dir = log_base_dir()
+    base_dir = log_base_dir(create=True)
 
     for keyword in args.keywords:
         ensure_ascii_english(keyword, "keyword")
@@ -68,10 +75,20 @@ def main() -> int:
     if max_results <= 0:
         raise SystemExit("max-results must be a positive integer.")
 
+    log_paths = list_log_files(base_dir)
+    if not log_paths:
+        log_path_for_date(date.today(), base_dir).touch()
+        print(EMPTY_LOG_MESSAGE)
+        return 0
+
     matches = []
     order = 0
-    for log_path in list_log_files(base_dir):
-        for line in log_path.read_text(encoding="utf-8").splitlines():
+    has_any_entries = False
+    for log_path in log_paths:
+        lines = log_path.read_text(encoding="utf-8").splitlines()
+        if lines:
+            has_any_entries = True
+        for line in lines:
             entry = parse_entry_line(line)
             haystack = entry["content"] if entry else line
             if any(k in haystack.lower() for k in keywords):
@@ -94,8 +111,15 @@ def main() -> int:
                 )
                 order += 1
 
+    if not has_any_entries:
+        log_path = log_path_for_date(date.today(), base_dir)
+        if not log_path.exists():
+            log_path.touch()
+        print(EMPTY_LOG_MESSAGE)
+        return 0
+
     if not matches:
-        print("No matching entries found.")
+        print(NO_MATCH_MESSAGE)
         return 0
 
     matches.sort(key=lambda item: (item["factual"], item["ref"], item["timestamp"]), reverse=True)
