@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import re
 from datetime import date, datetime
 from pathlib import Path
@@ -17,17 +16,11 @@ ENTRY_RE = re.compile(
 _REF_LEVEL_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
 
-def skill_dir() -> Path:
-    return Path(__file__).resolve().parent.parent
-
-
-def ensure_local_install(skill_path: Path) -> None:
-    codex_home = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
-    global_skills_dir = codex_home / "skills"
-    if global_skills_dir in skill_path.parents:
-        raise SystemExit(
-            "This skill must be used from a project-local directory, not CODEX_HOME."
-        )
+def log_base_dir(create: bool = False) -> Path:
+    base_dir = Path.cwd() / "easy-memory"
+    if create:
+        base_dir.mkdir(parents=True, exist_ok=True)
+    return base_dir
 
 
 def log_path_for_date(log_date: date, base_dir: Path) -> Path:
@@ -35,6 +28,8 @@ def log_path_for_date(log_date: date, base_dir: Path) -> Path:
 
 
 def list_log_files(base_dir: Path) -> list[Path]:
+    if not base_dir.exists():
+        return []
     return sorted(base_dir.glob("*.log"), reverse=True)
 
 

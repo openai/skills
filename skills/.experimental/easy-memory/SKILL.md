@@ -1,13 +1,13 @@
 ---
 name: easy-memory
-description: Project-local memory logging for history/notes stored as YYYY-MM-DD.log files in the easy-memory directory. Use when you must read today's memory, search memory by English keywords, append structured English log entries with IDs, or update/delete entries by ID. Do not install or run this skill from CODEX_HOME; keep it in the current project directory.
+description: Project-local memory logging for history/notes stored as YYYY-MM-DD.log files in ./easy-memory relative to the current working directory. Use when you must read today's memory, search memory by English keywords, append structured English log entries with IDs, or update/delete entries by ID. Logs always go to the working directory even if the skill is installed globally.
 ---
 
 # Easy Memory
 
 ## Overview
 
-Maintain project-local memory logs inside the easy-memory directory. Each day uses one log file named `YYYY-MM-DD.log`.
+Maintain project-local memory logs inside the ./easy-memory directory under the current working directory. Each day uses one log file named `YYYY-MM-DD.log`.
 
 ## Mandatory workflow (must follow)
 
@@ -47,7 +47,7 @@ Reads the full log for the current date.
 python3 scripts/search_memory.py <keyword1> <keyword2> --max-results 5
 ```
 
-Searches all `.log` files in the easy-memory directory. Keywords must be English. Default `--max-results` is 5.
+Searches all `.log` files in the ./easy-memory directory under the current working directory. Keywords must be English. Default `--max-results` is 5.
 Results are prioritized in this order:
 - Factual entries (`FACT:true`) first
 - Higher reference level first (`REF:critical` > `high` > `medium` > `low`, or higher numeric values)
@@ -85,9 +85,9 @@ Use delete when:
 - Older memory entries are no longer valuable or are misleading.
 - A memory entry conflicts with verified facts and should be removed instead of updated.
 
-## Local installation rule
+## Log location rule
 
-Do not install this skill under `~/.codex/skills` or any global Codex directory. Keep it in the current project directory so logs remain local to the project.
+Logs are always stored under `./easy-memory` relative to the directory where you run the scripts. The skill can be installed globally; logs never go to the install directory.
 
 ## Reminder to repeat each time
 

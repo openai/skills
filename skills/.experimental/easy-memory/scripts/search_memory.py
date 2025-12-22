@@ -6,10 +6,9 @@ from datetime import datetime
 
 from memory_utils import (
     ensure_ascii_english,
-    ensure_local_install,
+    log_base_dir,
     list_log_files,
     parse_entry_line,
-    skill_dir,
 )
 
 _REF_LEVEL_SCORES = {
@@ -59,8 +58,7 @@ def parse_timestamp(value: str) -> datetime:
 
 def main() -> int:
     args = parse_args()
-    base_dir = skill_dir()
-    ensure_local_install(base_dir)
+    base_dir = log_base_dir()
 
     for keyword in args.keywords:
         ensure_ascii_english(keyword, "keyword")
