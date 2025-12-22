@@ -27,6 +27,13 @@ EMPTY_LOG_MESSAGE = (
     "please continue with the remaining task steps."
 )
 NO_MATCH_MESSAGE = "No matching entries found for the provided keywords."
+IMPORTANT_REMINDER = (
+    "IMPORTANT NOTICE: The foregoing search history may be used as material reference "
+    "for this task; however, should any subsequent work disclose new information "
+    "inconsistent with, superseding, or rendering any entry outdated, you are hereby "
+    "required, prior to writing new logs or submitting this task, to correct or update "
+    "the relevant entries using the appropriate tool scripts, or to delete them."
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -126,6 +133,7 @@ def main() -> int:
 
     matches.sort(key=lambda item: (item["factual"], item["ref"], item["timestamp"]), reverse=True)
     results = [f"{item['log']}: {item['line']}" for item in matches[:max_results]]
+    results.append(IMPORTANT_REMINDER)
     print("\n".join(results))
     return 0
 
