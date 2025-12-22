@@ -13,6 +13,7 @@ from memory_utils import (
     log_base_dir,
     log_path_for_date,
     normalize_bool,
+    require_initialized,
     validate_ref_level,
 )
 
@@ -38,6 +39,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     base_dir = log_base_dir(create=True)
+    require_initialized(base_dir)
 
     content = args.content.strip()
     if not content:

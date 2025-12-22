@@ -13,6 +13,7 @@ from memory_utils import (
     log_base_dir,
     normalize_bool,
     parse_entry_line,
+    require_initialized,
     validate_ref_level,
 )
 
@@ -36,7 +37,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    base_dir = log_base_dir()
+    base_dir = log_base_dir(create=True)
+    require_initialized(base_dir)
 
     if not any([args.content, args.factual, args.ref_level]):
         raise SystemExit("Provide at least one field to update.")

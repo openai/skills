@@ -7,6 +7,7 @@ from memory_utils import (
     list_log_files,
     log_base_dir,
     parse_entry_line,
+    require_initialized,
 )
 
 
@@ -20,7 +21,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    base_dir = log_base_dir()
+    base_dir = log_base_dir(create=True)
+    require_initialized(base_dir)
 
     matches: list[tuple] = []
     for log_path in list_log_files(base_dir):

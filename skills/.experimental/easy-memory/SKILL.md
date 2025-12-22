@@ -9,6 +9,33 @@ description: Project-local memory logging for history/notes stored as YYYY-MM-DD
 
 Maintain project-local memory logs inside the ./easy-memory directory under the current working directory. Each day uses one log file named `YYYY-MM-DD.log`.
 
+## Initialization (must follow)
+
+Run initialization once per project before any other scripts when:
+- `./easy-memory` does not exist, or
+- `./easy-memory/init.log` is missing.
+
+Run:
+
+```
+python3 scripts/init_memory.py
+```
+
+Initialization behavior:
+- Create `./easy-memory` if needed.
+- Locate `AGENTS.MD` in the project root (current working directory). If missing, create it.
+- If `AGENTS.MD` exists, append a rules block to the end:
+  ```
+  ## easy-memory rules
+  - Before executing any task, you must use the `easy-memory` skill and strictly follow all rules and constraints in its `SKILL.md`.
+  - The absolute usage path for easy-memory scripts is `<resolved-absolute-path>`.
+  ```
+  The `<resolved-absolute-path>` value is derived from the script's install location at runtime.
+- Create `./easy-memory/init.log` containing the same rules block and a `Date: YYYY-MM-DD` line at the end.
+- If `init.log` already exists, initialization is skipped and `AGENTS.MD` is not modified.
+
+All other scripts require `init.log` to exist and will exit if initialization has not been run.
+
 ## Mandatory workflow (must follow)
 
 1. Before any task, run `scripts/read_today_log.py` to load the full log for today.
@@ -32,6 +59,14 @@ Rules:
 - Each entry must include a unique ID, a reference level, and a factual flag.
 
 ## Scripts
+
+### Initialize memory
+
+```
+python3 scripts/init_memory.py
+```
+
+Runs one-time initialization to create `AGENTS.MD` rules and `./easy-memory/init.log`.
 
 ### Read today's log
 

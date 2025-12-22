@@ -10,6 +10,7 @@ from memory_utils import (
     log_path_for_date,
     list_log_files,
     parse_entry_line,
+    require_initialized,
 )
 
 _REF_LEVEL_SCORES = {
@@ -66,6 +67,7 @@ def parse_timestamp(value: str) -> datetime:
 def main() -> int:
     args = parse_args()
     base_dir = log_base_dir(create=True)
+    require_initialized(base_dir)
 
     for keyword in args.keywords:
         ensure_ascii_english(keyword, "keyword")

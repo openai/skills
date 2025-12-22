@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from memory_utils import log_base_dir, log_path_for_date
+from memory_utils import log_base_dir, log_path_for_date, require_initialized
 
 EMPTY_LOG_MESSAGE = (
     "No log entries for today. Created an empty log file; "
@@ -13,6 +13,7 @@ EMPTY_LOG_MESSAGE = (
 
 def main() -> int:
     base_dir = log_base_dir(create=True)
+    require_initialized(base_dir)
 
     log_path = log_path_for_date(date.today(), base_dir)
     if not log_path.exists():
