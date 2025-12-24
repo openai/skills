@@ -4,3 +4,6 @@
 # Python bytecode files
 __pycache__/
 *.pyc
+
+# Easy-memory logs
+easy-memory/
