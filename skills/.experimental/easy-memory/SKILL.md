@@ -38,8 +38,8 @@ All other scripts require `init.log` to exist and will exit if initialization ha
 
 ## Mandatory workflow (must follow)
 
-1. Before any task, run `scripts/read_today_log.py` to load the full log for today.
-2. Before any task, run `scripts/search_memory.py` with English keywords for the task. Choose `--max-results` based on task complexity (this is the memory search depth).
+1. At the start of the current session (before the first task), run `scripts/read_today_log.py` to load the full log for today.
+2. At the start of the current session (before the first task), run `scripts/search_memory.py` with English keywords for the session/task. Choose `--max-results` based on task complexity (this is the memory search depth).
 3. Before finishing or submitting any task, append a new entry with `scripts/write_memory.py` following the log rules below.
 4. Every log entry must be written in English.
 
@@ -124,8 +124,8 @@ Use delete when:
 
 Logs are always stored under `./easy-memory` relative to the directory where you run the scripts. The skill can be installed globally; logs never go to the install directory.
 
-## Reminder to repeat each time
+## Reminder to repeat each session
 
 - Every log entry must be written in English.
-- Before any task, run `scripts/read_today_log.py` and `scripts/search_memory.py` with English keywords; adjust `--max-results` based on task complexity.
+- At the start of the current session (before the first task), run `scripts/read_today_log.py` and `scripts/search_memory.py` with English keywords; adjust `--max-results` based on task complexity.
 - Before finishing or submitting any task, write a log entry using `scripts/write_memory.py` following the rules above.
