@@ -39,18 +39,14 @@ def init_log_path(base_dir: Path) -> Path:
     return base_dir / INIT_LOG_NAME
 
 
-def skill_install_dir() -> Path:
-    return Path(__file__).resolve().parents[1]
-
-
-def init_rules_block(blocked_path: Path) -> str:
-    blocked_text = str(blocked_path)
+def init_rules_block() -> str:
     return "\n".join(
         [
             "## easy-memory rules",
-            "- Before executing any task, you must use the `easy-memory` skill "
-            "and strictly follow all rules and constraints in its `SKILL.md`.",
-            f"- The absolute usage path for easy-memory scripts is `{blocked_text}`.",
+            "- At the start of the current session (before the first task), use the "
+            "`easy-memory` skill and follow all rules and constraints in its "
+            "`SKILL.md`.",
+            "- Only re-run memory read/search when necessary for the task.",
         ]
     )
 
@@ -62,7 +58,7 @@ def ensure_initialized(base_dir: Path) -> None:
 
     base_dir.mkdir(parents=True, exist_ok=True)
 
-    rules_block = init_rules_block(skill_install_dir())
+    rules_block = init_rules_block()
     agents_path = Path.cwd() / AGENTS_FILE_NAME
     if agents_path.exists():
         existing = agents_path.read_text(encoding="utf-8")
@@ -87,11 +83,6 @@ def require_initialized(base_dir: Path) -> None:
             "Initialization required. Run `python3 scripts/init_memory.py` "
             "from the project root."
         )
-
-
-def ensure_ascii_english(text: str, label: str) -> None:
-    if any(ord(ch) >= 128 for ch in text):
-        raise SystemExit(f"{label} must be English ASCII only.")
 
 
 def ensure_single_line(text: str, label: str) -> None:

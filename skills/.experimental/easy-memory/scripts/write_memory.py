@@ -6,7 +6,6 @@ from datetime import date, datetime
 from uuid import uuid4
 
 from memory_utils import (
-    ensure_ascii_english,
     ensure_single_line,
     format_entry_line,
     format_timestamp,
@@ -22,7 +21,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Append a memory entry to today's log."
     )
-    parser.add_argument("--content", required=True, help="English log content.")
+    parser.add_argument(
+        "--content",
+        required=True,
+        help="Log content (English preferred; UTF-8 accepted).",
+    )
     parser.add_argument(
         "--factual",
         required=True,
@@ -46,7 +49,6 @@ def main() -> int:
         raise SystemExit("content must not be empty.")
 
     ensure_single_line(content, "content")
-    ensure_ascii_english(content, "content")
 
     factual = normalize_bool(args.factual)
     ref_level = validate_ref_level(args.ref_level)

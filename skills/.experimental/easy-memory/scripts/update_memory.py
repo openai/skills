@@ -5,7 +5,6 @@ import argparse
 from datetime import datetime
 
 from memory_utils import (
-    ensure_ascii_english,
     ensure_single_line,
     format_entry_line,
     format_timestamp,
@@ -23,7 +22,10 @@ def parse_args() -> argparse.Namespace:
         description="Update a memory entry by ID across all logs."
     )
     parser.add_argument("--id", required=True, help="Entry ID to update.")
-    parser.add_argument("--content", help="New English content.")
+    parser.add_argument(
+        "--content",
+        help="New content (English preferred; UTF-8 accepted).",
+    )
     parser.add_argument(
         "--factual",
         help="Whether the entry is factual: true or false.",
@@ -65,7 +67,6 @@ def main() -> int:
         if not content:
             raise SystemExit("content must not be empty.")
         ensure_single_line(content, "content")
-        ensure_ascii_english(content, "content")
 
     factual = entry["factual"]
     if args.factual is not None:

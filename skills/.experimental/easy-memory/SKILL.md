@@ -1,6 +1,6 @@
 ---
 name: easy-memory
-description: Project-local memory logging for history/notes stored as YYYY-MM-DD.log files in ./easy-memory relative to the current working directory. Use when you must read today's memory, search memory by English keywords, append structured English log entries with IDs, or update/delete entries by ID. Logs always go to the working directory even if the skill is installed globally.
+description: Project-local memory logging for history/notes stored as YYYY-MM-DD.log files in ./easy-memory relative to the current working directory. Use when you must read today's memory, search memory by keywords (English preferred), append structured log entries with IDs (English preferred; UTF-8 accepted), or update/delete entries by ID. Logs always go to the working directory even if the skill is installed globally.
 ---
 
 # Easy Memory
@@ -27,21 +27,25 @@ Initialization behavior:
 - If `AGENTS.MD` exists, append a rules block to the end:
   ```
   ## easy-memory rules
-  - Before executing any task, you must use the `easy-memory` skill and strictly follow all rules and constraints in its `SKILL.md`.
-  - The absolute usage path for easy-memory scripts is `<resolved-absolute-path>`.
+  - At the start of the current session (before the first task), use the `easy-memory` skill and follow all rules and constraints in its `SKILL.md`.
+  - Only re-run memory read/search when necessary for the task.
   ```
-  The `<resolved-absolute-path>` value is derived from the script's install location at runtime.
 - Create `./easy-memory/init.log` containing the same rules block and a `Date: YYYY-MM-DD` line at the end.
 - If `init.log` already exists, initialization is skipped and `AGENTS.MD` is not modified.
+
+If you need the absolute usage path for easy-memory scripts, use the directory
+containing this `SKILL.md` (the `scripts/` folder sits alongside it). Avoid
+persisting absolute paths in project `AGENTS.MD` because different environments
+may maintain the same project.
 
 All other scripts require `init.log` to exist and will exit if initialization has not been run.
 
 ## Mandatory workflow (must follow)
 
 1. At the start of the current session (before the first task), run `scripts/read_today_log.py` to load the full log for today.
-2. At the start of the current session (before the first task), run `scripts/search_memory.py` with English keywords for the session/task. Choose `--max-results` based on task complexity (this is the memory search depth).
+2. At the start of the current session (before the first task), run `scripts/search_memory.py` with English-preferred keywords for the session/task. Only repeat steps 1-2 when necessary for the task. Choose `--max-results` based on task complexity (this is the memory search depth).
 3. Before finishing or submitting any task, append a new entry with `scripts/write_memory.py` following the log rules below.
-4. Every log entry must be written in English.
+4. Log entries should be written in English when possible; UTF-8 is accepted.
 
 ## Log entry format
 
@@ -54,7 +58,7 @@ Each entry is a single line and must end with a timestamp:
 Rules:
 - Log file name must be `YYYY-MM-DD.log` and use the current date only.
 - If today's log file does not exist, create it; otherwise append to the end.
-- Each entry must be written in English.
+- Entries should be written in English when possible; UTF-8 is accepted.
 - The timestamp must be the final token of the line and must be accurate to minutes.
 - Each entry must include a unique ID, a reference level, and a factual flag.
 
@@ -82,7 +86,7 @@ Reads the full log for the current date.
 python3 scripts/search_memory.py <keyword1> <keyword2> --max-results 5
 ```
 
-Searches all `.log` files in the ./easy-memory directory under the current working directory. Keywords must be English. Default `--max-results` is 5.
+Searches all `.log` files in the ./easy-memory directory under the current working directory. Keywords should be English; UTF-8 is accepted. Default `--max-results` is 5.
 Results are prioritized in this order:
 - Factual entries (`FACT:true`) first
 - Higher reference level first (`REF:critical` > `high` > `medium` > `low`, or higher numeric values)
@@ -94,7 +98,7 @@ Results are prioritized in this order:
 python3 scripts/write_memory.py --content "..." --factual true --ref-level medium
 ```
 
-Appends a new entry to today's log. Content must be English and single-line. The script generates the unique ID and timestamp.
+Appends a new entry to today's log. Content should be English and single-line; UTF-8 is accepted. The script generates the unique ID and timestamp.
 
 ### Update memory
 
@@ -126,6 +130,6 @@ Logs are always stored under `./easy-memory` relative to the directory where you
 
 ## Reminder to repeat each session
 
-- Every log entry must be written in English.
-- At the start of the current session (before the first task), run `scripts/read_today_log.py` and `scripts/search_memory.py` with English keywords; adjust `--max-results` based on task complexity.
+- Log entries should be written in English when possible; UTF-8 is accepted.
+- At the start of the current session (before the first task), run `scripts/read_today_log.py` and `scripts/search_memory.py` with English-preferred keywords; adjust `--max-results` based on task complexity. Only repeat when necessary.
 - Before finishing or submitting any task, write a log entry using `scripts/write_memory.py` following the rules above.

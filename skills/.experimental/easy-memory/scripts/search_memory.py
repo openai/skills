@@ -5,7 +5,6 @@ import argparse
 from datetime import date, datetime
 
 from memory_utils import (
-    ensure_ascii_english,
     log_base_dir,
     log_path_for_date,
     list_log_files,
@@ -43,7 +42,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "keywords",
         nargs="+",
-        help="English keywords (space-separated).",
+        help="Keywords (English preferred; space-separated).",
     )
     parser.add_argument(
         "--max-results",
@@ -75,9 +74,6 @@ def main() -> int:
     args = parse_args()
     base_dir = log_base_dir(create=True)
     require_initialized(base_dir)
-
-    for keyword in args.keywords:
-        ensure_ascii_english(keyword, "keyword")
 
     keywords = [k.lower() for k in args.keywords]
     max_results = args.max_results
