@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "WARN", "FAIL", "NOT_RUN"]
+    },
+    "rationale": {"type": "string"},
+    "evidence_quotes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": {"type": "string"},
+          "quote": {"type": "string"}
+        },
+        "required": ["path", "quote"]
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "confidence": {"type": "number"}
+  },
+  "required": ["status", "rationale", "evidence_quotes", "recommendations", "confidence"]
+}

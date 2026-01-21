@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "checks": [
+    {
+      "id": "agents_md_exists",
+      "title": "AGENTS.md exists (cwd)",
+      "description": "Verify AGENTS.md exists in the current working directory.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "agents_exists",
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "plans_md_exists",
+      "title": "Referenced planning markdown exists",
+      "description": "Verify AGENTS.md references a planning markdown file (plan-named or with planning headings) and the referenced file exists.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "plans_reference_exists",
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "agents_md_under_300_lines",
+      "title": "AGENTS.md is under 300 lines",
+      "description": "AGENTS.md must be 300 lines or fewer.",
+      "priority": 1,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "agents_line_count_under_300",
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "config_toml_exists",
+      "title": "config.toml exists",
+      "description": "config.toml exists at repo root, repo .codex/config.toml, or ~/.codex/config.toml.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "config_toml_exists",
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "project_context_specified",
+      "title": "Project directory context is clear",
+      "description": "AGENTS docs include explicit project paths with short context for what each path is used for.",
+      "priority": 0,
+      "weight": null,
+      "type": "LLM",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": "project_context",
+      "deterministic_rule_id": null,
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "build_test_commands_exist",
+      "title": "Build/test commands are copy-pastable",
+      "description": "AGENTS docs or referenced skills provide concrete build/test commands with no placeholders.",
+      "priority": 0,
+      "weight": null,
+      "type": "LLM",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": "commands",
+      "deterministic_rule_id": null,
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "dev_build_test_loops_documented",
+      "title": "Dev/build/test loop is documented",
+      "description": "AGENTS docs describe ordering, when to run, and success criteria for one or more dev/build/test loops.",
+      "priority": 0,
+      "weight": null,
+      "type": "LLM",
+      "scope": "cwd",
+      "execute_required": false,
+      "evaluator_prompt_id": "loop_quality",
+      "deterministic_rule_id": null,
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "dev_build_test_loop_execution",
+      "title": "Dev/build/test loop executes",
+      "description": "Execute documented loop (setup/dev/build/test) and validate outcomes.",
+      "priority": 0,
+      "weight": null,
+      "type": "HYBRID",
+      "scope": "cwd",
+      "execute_required": true,
+      "evaluator_prompt_id": "execution_explanation",
+      "deterministic_rule_id": "execution_summary_status",
+      "deterministic_rule_params": {
+        "summary_path": "execution_summary.json"
+      },
+      "enabled_by_default": true
+    }
+  ]
+}
