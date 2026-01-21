@@ -331,9 +331,11 @@ RULES = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run deterministic codex-doctor-unit-test rules.")
+    parser = argparse.ArgumentParser(
+        description="Run deterministic codex-readiness-unit-test rules."
+    )
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-unit-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-unit-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument("--evidence", default=None, help="Path to evidence.json (optional)")

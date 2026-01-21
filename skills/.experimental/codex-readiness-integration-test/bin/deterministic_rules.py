@@ -189,7 +189,16 @@ def parse_agentic_file_update_events(log_text: str) -> list[dict]:
     return events
 
 
-def exec_plan_path_candidates(exec_plan_path: str, run_dir: Path) -> list[str]:
+def resolve_repo_root() -> Path | None:
+    repo_root_raw = run_cmd(["git", "rev-parse", "--show-toplevel"])
+    if repo_root_raw.startswith("<error>"):
+        return None
+    return Path(repo_root_raw).resolve()
+
+
+def exec_plan_path_candidates(
+    exec_plan_path: str, run_dir: Path, repo_root: Path | None
+) -> list[str]:
     candidates: set[str] = set()
     exec_plan_path = exec_plan_path.strip()
     if exec_plan_path:
@@ -198,10 +207,9 @@ def exec_plan_path_candidates(exec_plan_path: str, run_dir: Path) -> list[str]:
 
     plan_path = Path(exec_plan_path)
     if not plan_path.is_absolute():
-        repo_root_raw = run_cmd(["git", "rev-parse", "--show-toplevel"])
-        if not repo_root_raw.startswith("<error>"):
-            repo_root = Path(repo_root_raw).resolve()
+        if repo_root:
             candidates.add(str((repo_root / plan_path).resolve()))
+        candidates.add(str((run_dir / plan_path).resolve()))
         candidates.add(str((run_dir.parent / plan_path).resolve()))
 
     return sorted(candidates)
@@ -227,6 +235,42 @@ def is_doc_path(path: str) -> bool:
     return path.lower().endswith(".md")
 
 
+def is_exec_plan_candidate(path: str) -> bool:
+    if not is_doc_path(path):
+        return False
+    name = Path(path).name.lower()
+    if name == "plans.md":
+        return False
+    return "plan" in name
+
+
+def infer_exec_plan_paths(log_text: str) -> list[str]:
+    candidates: set[str] = set()
+    events = parse_agentic_file_update_events(log_text)
+    for event in events:
+        path = event.get("path")
+        if path and is_exec_plan_candidate(path):
+            candidates.add(path)
+
+    for match in re.finditer(r"([\w./-]*plan[\w./-]*\.md)", log_text, re.IGNORECASE):
+        path = match.group(1)
+        if is_exec_plan_candidate(path):
+            candidates.add(path)
+
+    return sorted(candidates)
+
+
+def select_existing_plan_file(candidates: list[str]) -> Path | None:
+    for candidate in candidates:
+        try:
+            path = Path(candidate)
+        except Exception:
+            continue
+        if path.exists():
+            return path
+    return None
+
+
 def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -> dict:
     prompt_path = run_dir / params.get("prompt_path", "prompt.json")
     if not prompt_path.exists():
@@ -235,10 +279,6 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
         prompt = load_json(prompt_path)
     except Exception:
         return result("FAIL", "prompt.json could not be parsed.")
-
-    exec_plan_path = prompt.get("exec_plan_path")
-    if not isinstance(exec_plan_path, str) or not exec_plan_path.strip():
-        return result("FAIL", "exec_plan_path is missing from prompt.json.")
 
     log_path = run_dir / params.get("agentic_log_path", "logs/agentic.log")
     if not log_path.exists():
@@ -250,8 +290,25 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
     if not events:
         return result("WARN", "No file update entries found in agentic.log.")
 
-    exec_plan_path = exec_plan_path.strip()
-    candidates = exec_plan_path_candidates(exec_plan_path, run_dir)
+    repo_root = resolve_repo_root()
+    exec_plan_path = prompt.get("exec_plan_path")
+    candidates: list[str] = []
+    if isinstance(exec_plan_path, str) and exec_plan_path.strip():
+        exec_plan_path = exec_plan_path.strip()
+        candidates.extend(exec_plan_path_candidates(exec_plan_path, run_dir, repo_root))
+    else:
+        inferred = infer_exec_plan_paths(log_text)
+        for inferred_path in inferred:
+            candidates.extend(exec_plan_path_candidates(inferred_path, run_dir, repo_root))
+
+    candidates = [path for path in candidates if path]
+    if not candidates:
+        return result(
+            "FAIL",
+            "ExecPlan path missing from prompt.json and could not be inferred from agentic.log.",
+            [{"path": str(log_path), "quote": "exec plan not detected"}],
+            ["Create the ExecPlan and ensure it is referenced in logs before code changes."],
+        )
 
     plan_line = None
     code_line = None
@@ -288,23 +345,12 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
             [{"path": str(log_path), "quote": "no code updates"}],
         )
 
-    plan_file = Path(exec_plan_path)
-    if not plan_file.is_absolute():
-        repo_root_raw = run_cmd(["git", "rev-parse", "--show-toplevel"])
-        if not repo_root_raw.startswith("<error>"):
-            repo_root = Path(repo_root_raw).resolve()
-            repo_candidate = (repo_root / plan_file).resolve()
-            if repo_candidate.exists():
-                plan_file = repo_candidate
-            else:
-                plan_file = (run_dir.parent / plan_file).resolve()
-        else:
-            plan_file = (run_dir.parent / plan_file).resolve()
-    if not plan_file.exists():
+    plan_file = select_existing_plan_file(candidates)
+    if plan_file is None or not plan_file.exists():
         return result(
             "FAIL",
             "ExecPlan file is missing on disk.",
-            [{"path": str(plan_file), "quote": "missing"}],
+            [{"path": "candidate_paths", "quote": ", ".join(candidates)}],
             ["Create the ExecPlan file before making code changes."],
         )
 
@@ -333,7 +379,13 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
         return result(
             "PASS",
             "ExecPlan update appears before code changes.",
-            [{"path": str(log_path), "quote": lines[plan_line] if plan_line < len(lines) else ""}],
+            [
+                {
+                    "path": str(log_path),
+                    "quote": lines[plan_line] if plan_line < len(lines) else "",
+                },
+                {"path": str(plan_file), "quote": "exec plan used"},
+            ],
         )
 
     return result(
@@ -424,7 +476,7 @@ RULES = {
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run deterministic checks for integration test.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(

@@ -313,7 +313,7 @@ def run_single_eval(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run automatic LLM evaluations via Codex CLI.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(

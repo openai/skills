@@ -1,21 +1,21 @@
 ---
-name: codex-doctor-integration-test
-description: Run the Codex Doctor integration test. Use when you need an end-to-end agentic loop with build/test scoring.
+name: codex-readiness-integration-test
+description: Run the Codex Readiness integration test. Use when you need an end-to-end agentic loop with build/test scoring.
 metadata:
-  short-description: Run Codex Doctor integration test
+  short-description: Run Codex Readiness integration test
 ---
 
-# LLM Codex Doctor Integration Test
+# LLM Codex Readiness Integration Test
 
 This skill runs a multi-stage integration test to validate agentic execution quality. It always runs in execute mode (no read-only mode).
 
 ## Entry Point
 
-- `python skills/codex-doctor-integration-test/bin/run_integration_test.py`
+- `python skills/codex-readiness-integration-test/bin/run_integration_test.py`
 
 ## Outputs
 
-Each run writes to `.codex-doctor-integration-test/<timestamp>/` and updates `.codex-doctor-integration-test/latest.json`.
+Each run writes to `.codex-readiness-integration-test/<timestamp>/` and updates `.codex-readiness-integration-test/latest.json`.
 
 New outputs per run:
 - `agentic_summary.json` and `logs/agentic.log` (agentic loop execution)
@@ -37,10 +37,10 @@ New outputs per run:
    - Do not run the entry point until the user chooses one option.
 1) Generate or load `prompt.json`.
    - If `--seed-task` is provided, it is used as the starting task.
-   - If not provided, generate a task with `skills/codex-doctor-integration-test/prompts/generate_prompt.md` and save the JSON.
+   - If not provided, generate a task with `skills/codex-readiness-integration-test/prompts/generate_prompt.md` and save the JSON.
    - The user must approve the prompt before execution (no auto-approve mode).
 2) Execute the agentic loop via Codex CLI (uses `AGENTS.md` and `change_prompt`).
-3) Run build/test commands from the prompt plan via `skills/codex-doctor-integration-test/bin/run_plan.py`.
+3) Run build/test commands from the prompt plan via `skills/codex-readiness-integration-test/bin/run_plan.py`.
 4) Collect evidence (`evidence.json`), deterministic checks, and run automatic LLM evals via Codex CLI.
 5) Score and write the report + summary output.
 
@@ -74,6 +74,6 @@ If these fields are omitted, defaults are used.
 
 ## Notes
 
-- The prompts in `skills/codex-doctor-integration-test/prompts/` expect strict JSON.
-- Use `skills/codex-doctor-integration-test/prompts/json_fix.md` to repair invalid JSON output.
+- The prompts in `skills/codex-readiness-integration-test/prompts/` expect strict JSON.
+- Use `skills/codex-readiness-integration-test/prompts/json_fix.md` to repair invalid JSON output.
 - This skill calls the `codex` CLI. Ensure it is installed and available on PATH, or override the command in `prompt.json`.

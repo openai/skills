@@ -436,9 +436,9 @@ def ensure_prompt_origin(prompt: dict, seed_task: str | None) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run the codex-doctor-integration-test.")
+    parser = argparse.ArgumentParser(description="Run the codex-readiness-integration-test.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument("--seed-task", default=None, help="Optional seed task")

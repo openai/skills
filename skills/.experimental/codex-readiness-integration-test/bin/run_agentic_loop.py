@@ -656,7 +656,7 @@ def run_safe_interactive(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the agentic loop via Codex CLI.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     args = parser.parse_args()

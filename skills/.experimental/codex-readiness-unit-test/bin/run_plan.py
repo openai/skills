@@ -238,7 +238,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Execute a documented dev/build/test plan.")
     parser.add_argument("--plan", required=True, help="Path to plan JSON")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-unit-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-unit-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(

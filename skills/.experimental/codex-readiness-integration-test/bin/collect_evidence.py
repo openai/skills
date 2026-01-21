@@ -7,7 +7,7 @@ from pathlib import Path
 
 SKIP_DIRS = {
     ".git",
-    ".codex-doctor-integration-test",
+    ".codex-readiness-integration-test",
     "node_modules",
     "dist",
     "build",
@@ -74,7 +74,7 @@ def resolve_run_dir(base_dir: Path, run_dir_arg: str | None) -> Path:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Collect evidence for integration test.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument("--max-snippet-chars", type=int, default=2000)

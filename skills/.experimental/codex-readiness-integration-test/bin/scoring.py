@@ -201,7 +201,7 @@ def render_html(report: dict, prompt: dict | None = None, report_path: Path | No
         "<html>",
         "<head>",
         "<meta charset='utf-8'>",
-        "<title>Codex Doctor Integration Test Report</title>",
+        "<title>Codex Readiness Integration Test Report</title>",
         "<style>",
         "body{font-family:Arial,sans-serif;margin:24px;color:#222;background:#fafafa;}",
         ".badge{display:inline-block;padding:4px 10px;border-radius:12px;color:#fff;font-size:12px;text-transform:uppercase;}",
@@ -214,7 +214,7 @@ def render_html(report: dict, prompt: dict | None = None, report_path: Path | No
         "</style>",
         "</head>",
         "<body>",
-        "<h1>Codex Doctor Integration Test Report</h1>",
+        "<h1>Codex Readiness Integration Test Report</h1>",
     ]
     if report_path:
         html.append(f"<h2>{report_path}</h2>")
@@ -306,7 +306,7 @@ def render_summary_text(
     summary_path: Path,
 ) -> str:
     lines = [
-        "# Codex Doctor Integration Test Report",
+        "# Codex Readiness Integration Test Report",
         f"## {summary_path}",
         "",
     ]
@@ -359,7 +359,7 @@ def render_summary_text(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Score integration test results.")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-integration-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-integration-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(

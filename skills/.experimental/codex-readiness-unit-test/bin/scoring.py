@@ -196,7 +196,7 @@ def render_html(report: dict) -> str:
         "<html>",
         "<head>",
         "<meta charset='utf-8'>",
-        "<title>Codex Doctor Unit Test Report</title>",
+        "<title>Codex Readiness Unit Test Report</title>",
         "<style>",
         "body{font-family:Arial,sans-serif;margin:24px;color:#222;background:#fafafa;}",
         ".badge{display:inline-block;padding:4px 10px;border-radius:12px;color:#fff;font-size:12px;text-transform:uppercase;}",
@@ -209,7 +209,7 @@ def render_html(report: dict) -> str:
         "</style>",
         "</head>",
         "<body>",
-        "<h1>Codex Doctor Unit Test Report</h1>",
+        "<h1>Codex Readiness Unit Test Report</h1>",
         f"<h2>{file_path}</h2>" if file_path else "",
         f"<p>Overall score: <strong>{score}</strong> <span class='badge {status_class(status)}'>{status}</span></p>",
         "<h2>Checks</h2>",
@@ -324,7 +324,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Compute scorecard and render report outputs.")
     parser.add_argument("--mode", choices=["read-only", "execute"], required=True, help="Run mode")
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-unit-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-unit-test", help="Base output directory"
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(
@@ -410,7 +410,7 @@ def main() -> int:
 
     report = {
         "schema_version": "1.0",
-        "tool_name": "codex-doctor-unit-test",
+        "tool_name": "codex-readiness-unit-test",
         "tool_version": "0.1.0",
         "run_context": evidence.get("run_context", {}),
         "enabled_checks": enabled_checks,

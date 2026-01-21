@@ -10,7 +10,7 @@ from typing import Any, TypedDict, cast
 
 SKIP_DIRS = {
     ".git",
-    ".codex-doctor-unit-test",
+    ".codex-readiness-unit-test",
     "node_modules",
     "dist",
     "build",
@@ -193,10 +193,10 @@ def find_repo_signals(repo_root: Path, max_results: int = 200) -> list[dict]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Collect deterministic evidence for codex-doctor-unit-test."
+        description="Collect deterministic evidence for codex-readiness-unit-test."
     )
     parser.add_argument(
-        "--out-dir", default=".codex-doctor-unit-test", help="Base output directory"
+        "--out-dir", default=".codex-readiness-unit-test", help="Base output directory"
     )
     parser.add_argument("--max-snippet-chars", type=int, default=2000, help="Max chars per snippet")
     args = parser.parse_args()
