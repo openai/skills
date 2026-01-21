@@ -302,7 +302,7 @@ def run_llm_evals_manual(run_dir: Path) -> int:
         print("LLM eval skipped: stdin is not a TTY and llm_results.json is missing.")
         return 2
 
-    prompts_dir = Path(__file__).resolve().parents[1] / "prompts"
+    prompts_dir = Path(__file__).resolve().parents[1] / "references"
     json_fix_path = prompts_dir / "json_fix.md"
     json_fix_text = json_fix_path.read_text(encoding="utf-8") if json_fix_path.exists() else ""
 
@@ -356,7 +356,7 @@ def run_step(cmd: list[str]) -> int:
 
 def print_prompt_options(prompt_path: Path) -> None:
     print("\nChoose one of the following options to create the prompt:")
-    print("1) Let Codex generate it: use prompts/generate_prompt.md and save JSON to:")
+    print("1) Let Codex generate it: use references/generate_prompt.md and save JSON to:")
     print(f"   {prompt_path}")
     print("2) Write it yourself: fill in change_prompt and build_test_plan in:")
     print(f"   {prompt_path}")
@@ -488,7 +488,7 @@ def main() -> int:
                 "A seed task was provided, but prompt.json still needs a change_prompt and build_test_plan."
             )
         else:
-            print("No seed task provided. Generate a prompt using prompts/generate_prompt.md.")
+            print("No seed task provided. Generate a prompt using references/generate_prompt.md.")
         print_prompt_options(prompt_path)
         print(f"\nEdit {prompt_path} and re-run with --approve-prompt.")
         return 2

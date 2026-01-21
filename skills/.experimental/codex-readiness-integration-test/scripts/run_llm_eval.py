@@ -317,7 +317,8 @@ def main() -> int:
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(
-        "--checks", default=str(Path(__file__).resolve().parents[1] / "checks" / "checks.json")
+        "--checks",
+        default=str(Path(__file__).resolve().parents[1] / "references" / "checks.json"),
     )
     args = parser.parse_args()
 
@@ -332,7 +333,7 @@ def main() -> int:
     llm_config: dict[str, Any] = raw_llm_config if isinstance(raw_llm_config, dict) else {}
 
     checks_data = load_json(Path(args.checks))
-    prompts_dir = Path(__file__).resolve().parents[1] / "prompts"
+    prompts_dir = Path(__file__).resolve().parents[1] / "references"
 
     results = {}
     for check in sort_checks_by_priority(checks_data.get("checks", [])):

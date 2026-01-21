@@ -363,7 +363,8 @@ def main() -> int:
     )
     parser.add_argument("--run-dir", default=None, help="Specific run directory to use")
     parser.add_argument(
-        "--checks", default=str(Path(__file__).resolve().parents[1] / "checks" / "checks.json")
+        "--checks",
+        default=str(Path(__file__).resolve().parents[1] / "references" / "checks.json"),
     )
     args = parser.parse_args()
 

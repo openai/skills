@@ -341,7 +341,12 @@ def main() -> int:
     parser.add_argument("--evidence", default=None, help="Path to evidence.json (optional)")
     parser.add_argument(
         "--checks",
-        default=str(Path(__file__).resolve().parents[1] / "checks" / "checks.json"),
+        default=str(
+            Path(__file__).resolve().parents[1]
+            / "references"
+            / "checks"
+            / "checks.json"
+        ),
         help="Path to checks.json",
     )
     parser.add_argument("--out", default=None, help="Output path (optional)")

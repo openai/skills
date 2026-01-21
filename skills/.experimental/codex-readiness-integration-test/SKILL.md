@@ -37,8 +37,8 @@ New outputs per run:
    - Do not run the entry point until the user chooses one option.
 1) Generate or load `prompt.json`.
    - If `--seed-task` is provided, it is used as the starting task.
-   - If not provided, generate a task with `skills/codex-readiness-integration-test/prompts/generate_prompt.md` and save the JSON.
-   - The user must approve the prompt before execution (no auto-approve mode).
+   - If not provided, generate a task with `skills/codex-readiness-integration-test/references/generate_prompt.md` and save the JSON.
+   - The user must approve the prompt before execution (no auto-approve mode). Make sure to output a summary of the prompt when asking the user to approve.
 2) Execute the agentic loop via Codex CLI (uses `AGENTS.md` and `change_prompt`).
 3) Run build/test commands from the prompt plan via `skills/codex-readiness-integration-test/bin/run_plan.py`.
 4) Collect evidence (`evidence.json`), deterministic checks, and run automatic LLM evals via Codex CLI.
@@ -74,6 +74,6 @@ If these fields are omitted, defaults are used.
 
 ## Notes
 
-- The prompts in `skills/codex-readiness-integration-test/prompts/` expect strict JSON.
-- Use `skills/codex-readiness-integration-test/prompts/json_fix.md` to repair invalid JSON output.
+- The prompts in `skills/codex-readiness-integration-test/references/` expect strict JSON.
+- Use `skills/codex-readiness-integration-test/references/json_fix.md` to repair invalid JSON output.
 - This skill calls the `codex` CLI. Ensure it is installed and available on PATH, or override the command in `prompt.json`.
