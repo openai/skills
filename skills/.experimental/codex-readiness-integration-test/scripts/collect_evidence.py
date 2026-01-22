@@ -45,6 +45,43 @@ def run_cmd(cmd: list[str]) -> str:
         return f"<error> {exc}"
 
 
+def run_cmd_allow_failure(cmd: list[str]) -> str:
+    try:
+        result = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, check=False
+        )
+        return result.stdout.strip()
+    except Exception as exc:
+        return f"<error> {exc}"
+
+
+def should_include_untracked(path: Path) -> bool:
+    if path.name == '.DS_Store':
+        return False
+    for part in path.parts:
+        if part.startswith('.codex'):
+            return False
+    return True
+
+
+def build_untracked_diff() -> str:
+    raw = run_cmd(['git', 'ls-files', '--others', '--exclude-standard'])
+    if raw.startswith('<error>'):
+        return ''
+    diffs = []
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        path = Path(line)
+        if not should_include_untracked(path):
+            continue
+        diff = run_cmd_allow_failure(['git', 'diff', '--no-index', '/dev/null', line])
+        if diff and not diff.startswith('<error>'):
+            diffs.append(diff)
+    return '\n'.join(diffs)
+
+
 def load_json_if_exists(path: Path) -> dict | None:
     if not path.exists():
         return None
@@ -97,6 +134,16 @@ def main() -> int:
     logs_dir = run_dir / "logs"
     logs_index = [str(path) for path in sorted(logs_dir.glob("*.log"))] if logs_dir.exists() else []
 
+    tracked_diff = run_cmd(["git", "diff"])
+    untracked_diff = build_untracked_diff()
+    if untracked_diff:
+        if tracked_diff:
+            combined_diff = f"{tracked_diff}\n{untracked_diff}"
+        else:
+            combined_diff = untracked_diff
+    else:
+        combined_diff = tracked_diff
+
     evidence = {
         "timestamp": now_iso(),
         "repo_root": str(cwd),
@@ -134,7 +181,7 @@ def main() -> int:
         },
         "logs_index": logs_index,
         "git_status": run_cmd(["git", "status", "--porcelain"]),
-        "git_diff": run_cmd(["git", "diff"]),
+        "git_diff": combined_diff,
     }
 
     output_path = run_dir / "evidence.json"
