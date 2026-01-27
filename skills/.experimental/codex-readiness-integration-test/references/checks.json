@@ -19,8 +19,8 @@
     },
     {
       "id": "exec_plan_before_code_changes",
-      "title": "P0: ExecPlan created before code changes",
-      "description": "ExecPlan file update appears before any non-doc, non-.codex file changes.",
+      "title": "P0: Planning signal before code changes",
+      "description": "A planning signal (for example: update_plan or \"Plan:\") appears in agentic.log before any non-doc, non-.codex file changes.",
       "priority": 0,
       "weight": null,
       "type": "DETERMINISTIC",

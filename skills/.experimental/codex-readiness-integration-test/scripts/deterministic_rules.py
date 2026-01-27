@@ -7,12 +7,22 @@ from pathlib import Path
 from typing import Any
 
 VALID_STATUSES = {"PASS", "WARN", "FAIL", "NOT_RUN"}
+ANSI_ESCAPE_PATTERN = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
 ERROR_MARKERS = [
     "error:",
     "failed",
     "exception",
     "traceback",
     "segmentation fault",
+]
+PLANNING_SIGNAL_PATTERNS = [
+    re.compile(r"\bupdate_plan\b", re.IGNORECASE),
+    re.compile(r"^\s*plan\s*[:\-]", re.IGNORECASE),
+    re.compile(r"^\s*plan\s+update\b", re.IGNORECASE),
+    re.compile(r"^\s*\*\*planning\b", re.IGNORECASE),
+    re.compile(r"^\s*steps?\s*[:\-]", re.IGNORECASE),
+    re.compile(r"^\s*approach\s*[:\-]", re.IGNORECASE),
+    re.compile(r"\bhere(?:'s| is)\s+(?:the\s+)?plan\b", re.IGNORECASE),
 ]
 
 
@@ -196,78 +206,51 @@ def resolve_repo_root() -> Path | None:
     return Path(repo_root_raw).resolve()
 
 
-def exec_plan_path_candidates(
-    exec_plan_path: str, run_dir: Path, repo_root: Path | None
-) -> list[str]:
-    candidates: set[str] = set()
-    exec_plan_path = exec_plan_path.strip()
-    if exec_plan_path:
-        candidates.add(exec_plan_path)
-        candidates.add(exec_plan_path.lstrip("./"))
-
-    plan_path = Path(exec_plan_path)
-    if not plan_path.is_absolute():
-        if repo_root:
-            candidates.add(str((repo_root / plan_path).resolve()))
-        candidates.add(str((run_dir / plan_path).resolve()))
-        candidates.add(str((run_dir.parent / plan_path).resolve()))
-
-    return sorted(candidates)
-
-
-def find_exec_plan_command_index(lines: list[str], candidates: list[str]) -> int | None:
-    patterns = []
-    for path in candidates:
-        if not path:
-            continue
-        escaped = re.escape(path)
-        patterns.append(re.compile(rf">>?\s*{escaped}(?:$|\\s|\"|')"))
-        patterns.append(re.compile(rf"\\btee\\b(?:\\s+-a)?\\s+{escaped}(?:$|\\s|\"|')"))
-
-    for idx, line in enumerate(lines):
-        for pattern in patterns:
-            if pattern.search(line):
-                return idx
-    return None
-
-
 def is_doc_path(path: str) -> bool:
     return path.lower().endswith(".md")
 
 
-def is_exec_plan_candidate(path: str) -> bool:
-    if not is_doc_path(path):
-        return False
-    name = Path(path).name.lower()
-    if name == "plans.md":
-        return False
-    return "plan" in name
+def strip_ansi(text: str) -> str:
+    return ANSI_ESCAPE_PATTERN.sub("", text)
 
 
-def infer_exec_plan_paths(log_text: str) -> list[str]:
-    candidates: set[str] = set()
-    events = parse_agentic_file_update_events(log_text)
+def first_code_change_event(events: list[dict[str, Any]]) -> dict[str, Any] | None:
+    code_events: list[dict[str, Any]] = []
     for event in events:
-        path = event.get("path")
-        if path and is_exec_plan_candidate(path):
-            candidates.add(path)
-
-    for match in re.finditer(r"([\w./-]*plan[\w./-]*\.md)", log_text, re.IGNORECASE):
-        path = match.group(1)
-        if is_exec_plan_candidate(path):
-            candidates.add(path)
-
-    return sorted(candidates)
-
-
-def select_existing_plan_file(candidates: list[str]) -> Path | None:
-    for candidate in candidates:
+        path = str(event.get("path", ""))
         try:
-            path = Path(candidate)
+            line_index = int(event.get("line_index"))
         except Exception:
             continue
-        if path.exists():
-            return path
+        if not path:
+            continue
+        if path.startswith(".codex/"):
+            continue
+        if is_doc_path(path):
+            continue
+        code_events.append({"path": path, "line_index": line_index})
+    if not code_events:
+        return None
+    return min(code_events, key=lambda item: item["line_index"])
+
+
+def file_update_line_indexes(events: list[dict[str, Any]]) -> set[int]:
+    indexes: set[int] = set()
+    for event in events:
+        try:
+            indexes.add(int(event.get("line_index")))
+        except Exception:
+            continue
+    return indexes
+
+
+def find_first_planning_signal_index(lines: list[str], skip_indexes: set[int]) -> int | None:
+    for idx, line in enumerate(lines):
+        if idx in skip_indexes:
+            continue
+        for pattern in PLANNING_SIGNAL_PATTERNS:
+            if pattern.search(line):
+                return idx
     return None
 
 
@@ -276,7 +259,7 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
     if not prompt_path.exists():
         return result("FAIL", "prompt.json is missing.")
     try:
-        prompt = load_json(prompt_path)
+        _prompt = load_json(prompt_path)
     except Exception:
         return result("FAIL", "prompt.json could not be parsed.")
 
@@ -290,112 +273,55 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
     if not events:
         return result("WARN", "No file update entries found in agentic.log.")
 
-    repo_root = resolve_repo_root()
-    exec_plan_path = prompt.get("exec_plan_path")
-    candidates: list[str] = []
-    if isinstance(exec_plan_path, str) and exec_plan_path.strip():
-        exec_plan_path = exec_plan_path.strip()
-        candidates.extend(exec_plan_path_candidates(exec_plan_path, run_dir, repo_root))
-    else:
-        inferred = infer_exec_plan_paths(log_text)
-        for inferred_path in inferred:
-            candidates.extend(exec_plan_path_candidates(inferred_path, run_dir, repo_root))
-
-    candidates = [path for path in candidates if path]
-    if not candidates:
-        return result(
-            "FAIL",
-            "ExecPlan path missing from prompt.json and could not be inferred from agentic.log.",
-            [{"path": str(log_path), "quote": "exec plan not detected"}],
-            ["Create the ExecPlan and ensure it is referenced in logs before code changes."],
-        )
-
-    plan_line = None
-    code_line = None
-    for event in events:
-        path = event["path"]
-        line_index = event["line_index"]
-        if any(path == cand or path.endswith(cand) for cand in candidates):
-            if plan_line is None or line_index < plan_line:
-                plan_line = line_index
-            continue
-        if path.startswith(".codex/"):
-            continue
-        if is_doc_path(path):
-            continue
-        if code_line is None:
-            code_line = line_index
-
-    command_line = find_exec_plan_command_index(lines, candidates)
-    if command_line is not None and (plan_line is None or command_line < plan_line):
-        plan_line = command_line
-
-    if plan_line is None:
-        return result(
-            "FAIL",
-            "ExecPlan file was not created before code changes.",
-            [{"path": str(log_path), "quote": "missing exec plan update"}],
-            ["Create the ExecPlan before making code changes."],
-        )
-
-    if code_line is None:
+    code_event = first_code_change_event(events)
+    if code_event is None:
         return result(
             "WARN",
             "No non-doc, non-.codex file changes found; ordering not evaluated.",
             [{"path": str(log_path), "quote": "no code updates"}],
         )
+    code_line = int(code_event["line_index"])
 
-    plan_file = select_existing_plan_file(candidates)
-    if plan_file is None or not plan_file.exists():
+    skip_indexes = file_update_line_indexes(events)
+    plan_line = find_first_planning_signal_index(lines, skip_indexes)
+    if plan_line is None:
         return result(
             "FAIL",
-            "ExecPlan file is missing on disk.",
-            [{"path": "candidate_paths", "quote": ", ".join(candidates)}],
-            ["Create the ExecPlan file before making code changes."],
-        )
-
-    try:
-        plan_text = plan_file.read_text(encoding="utf-8", errors="ignore")
-    except Exception:
-        plan_text = ""
-
-    required_headings = [
-        "# ",
-        "## Purpose / Big Picture",
-        "## Progress",
-        "## Decision Log",
-        "## Outcomes & Retrospective",
-    ]
-    missing = [heading for heading in required_headings if heading not in plan_text]
-    if missing:
-        return result(
-            "FAIL",
-            "ExecPlan file is missing required sections.",
-            [{"path": str(plan_file), "quote": ", ".join(missing)}],
-            ["Ensure the ExecPlan follows PLANS.md headings."],
+            "No planning signal detected in agentic.log before code changes.",
+            [
+                {"path": str(log_path), "quote": "planning signal not detected"},
+                {
+                    "path": str(log_path),
+                    "quote": lines[code_line] if code_line < len(lines) else "",
+                },
+            ],
+            ["Emit a short plan (for example: 'Plan:' or use update_plan) before code edits."],
         )
 
     if plan_line <= code_line:
         return result(
             "PASS",
-            "ExecPlan update appears before code changes.",
+            "Planning signal appears before code changes.",
             [
                 {
                     "path": str(log_path),
                     "quote": lines[plan_line] if plan_line < len(lines) else "",
                 },
-                {"path": str(plan_file), "quote": "exec plan used"},
+                {
+                    "path": str(log_path),
+                    "quote": lines[code_line] if code_line < len(lines) else "",
+                },
             ],
         )
 
     return result(
         "FAIL",
-        "ExecPlan update appears after code changes.",
+        "Planning signal appears after code changes.",
         [
             {"path": str(log_path), "quote": lines[code_line] if code_line < len(lines) else ""},
             {"path": str(log_path), "quote": lines[plan_line] if plan_line < len(lines) else ""},
         ],
-        ["Create the ExecPlan before making code changes."],
+        ["Emit a short plan (for example: 'Plan:' or use update_plan) before code edits."],
     )
 
 
