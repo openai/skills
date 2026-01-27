@@ -33,6 +33,15 @@ Creates or manages short video clips for the current project (product demos, mar
 8. Remove intermediate files created during invocation (for example `prompt.txt`, `remix_job.json`, temp JSONL). If the sandbox blocks `rm`, skip cleanup or truncate the files without surfacing an error.
 9. Iterate with a single targeted change per prompt.
 
+## Authentication
+- `OPENAI_API_KEY` must be set for live API calls.
+
+If the key is missing, give the user these steps:
+1. Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys
+2. Set `OPENAI_API_KEY` as an environment variable in their system.
+3. Offer to guide them through setting the environment variable for their OS/shell if needed.
+- Never ask the user to paste the full key in chat. Ask them to set it locally and confirm when ready.
+
 ## Defaults & rules
 - Default model: `sora-2` (use `sora-2-pro` for higher fidelity).
 - Default size: `1280x720`.
