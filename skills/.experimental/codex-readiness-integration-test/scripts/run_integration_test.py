@@ -511,16 +511,28 @@ def main() -> int:
     plan_path = write_plan_json(run_dir, prompt, Path.cwd())
 
     if not args.skip_agentic_loop:
-        run_step(
-            [
-                sys.executable,
-                str(Path(__file__).resolve().parent / "run_agentic_loop.py"),
-                "--out-dir",
-                str(base_dir),
-                "--run-dir",
-                str(run_dir),
-            ]
-        )
+        agentic_cmd = [
+            sys.executable,
+            str(Path(__file__).resolve().parent / "run_agentic_loop.py"),
+            "--out-dir",
+            str(base_dir),
+            "--run-dir",
+            str(run_dir),
+        ]
+        agentic_status = run_step(agentic_cmd)
+        if agentic_status != 0:
+            print(f"Agentic loop exited with code {agentic_status}.")
+            return agentic_status
+
+        agentic_summary_path = run_dir / "agentic_summary.json"
+        if agentic_summary_path.exists():
+            agentic_summary = load_json(agentic_summary_path)
+            if agentic_summary.get("requires_escalation"):
+                print(
+                    "Agentic loop indicates sandbox-blocked access. "
+                    "Re-run the integration test with escalated permissions."
+                )
+                return 3
 
     run_plan_cmd = [
         sys.executable,

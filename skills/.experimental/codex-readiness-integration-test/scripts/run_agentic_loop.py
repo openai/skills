@@ -54,6 +54,13 @@ MAX_FOLLOWUP_ROUNDS = 5
 TAIL_LINE_LIMIT = 400
 QUESTION_TERMINATE_GRACE_SECONDS = 2.0
 
+SANDBOX_BLOCK_SUBSTRINGS = [
+    "sandbox-blocked",
+    "shell tool is sandbox-blocked",
+    "sandbox_apply: operation not permitted",
+    "operation not permitted",
+]
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -106,8 +113,10 @@ def build_command(
     agentic_config = prompt.get("agentic_loop")
     config: dict[str, Any] = agentic_config if isinstance(agentic_config, dict) else {}
     cmd = config.get("cmd") or "codex"
-    raw_args = config.get("args") or [
+    # Hardcode a safe, broadly supported permission model at the runner level.
+    raw_args = [
         "exec",
+        "--full-auto",
         "-C",
         "{repo_root}",
         "{change_prompt}",
@@ -158,7 +167,13 @@ def build_resume_command(
     agentic_config = prompt.get("agentic_loop")
     config: dict[str, Any] = agentic_config if isinstance(agentic_config, dict) else {}
     cmd = config.get("cmd") or "codex"
-    raw_args = config.get("args") or []
+    raw_args = [
+        "exec",
+        "--full-auto",
+        "-C",
+        "{repo_root}",
+        "{change_prompt}",
+    ]
     args = normalize_args(raw_args)
     mapping = {
         "{agents_path}": str(agents_path),
@@ -321,6 +336,12 @@ def is_question_line(line: str) -> bool:
     lower = line.strip().lower()
     if not lower:
         return False
+    # Codex often ends with friendly follow-up headings like 'what changed:'
+    # or 'what i verified:'. Treat these as non-blocking in non-interactive runs.
+    if lower.startswith("what changed"):
+        return False
+    if lower.startswith("what ") and lower.endswith(":"):
+        return False
     if lower.endswith("?"):
         return True
     if lower.startswith(QUESTION_PREFIXES):
@@ -351,11 +372,30 @@ def extract_clarifying_question(log_text: str) -> str | None:
 def prompt_for_answer(question: str) -> str:
     print("\nCodex asked:")
     print(question)
+    if not sys.stdin.isatty():
+        auto = os.environ.get(
+            "CODEX_INTEGRATION_AUTOANSWER",
+            "Proceed with best effort using the repository context. Do not ask follow-up questions.",
+        ).strip()
+        print(f"Auto-answering (non-interactive): {auto}")
+        return auto
     while True:
         answer = input("Answer: ").strip()
         if answer:
             return answer
         print("Please provide an answer to continue.")
+
+
+def detect_sandbox_block(log_text: str) -> str | None:
+    for raw_line in log_text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        lower = line.lower()
+        for marker in SANDBOX_BLOCK_SUBSTRINGS:
+            if marker in lower:
+                return line
+    return None
 
 
 def append_tail_lines(tail_lines: list[str], line: str) -> None:
@@ -696,6 +736,8 @@ def main() -> int:
     resume_prompt: str | None = None
     append_log = False
     summary: dict | None = None
+    auto_answer_count = 0
+    last_auto_answer_text: str | None = None
 
     for attempt in range(1, MAX_FOLLOWUP_ROUNDS + 1):
         if resume_prompt:
@@ -747,6 +789,20 @@ def main() -> int:
         question = summary.get("question_detected") or extract_clarifying_question(attempt_log)
         if question:
             questions.append(question)
+            if not sys.stdin.isatty():
+                if session_id is None:
+                    summary["status"] = "FAIL"
+                    summary["error"] = "session id missing for auto-answer resume"
+                    break
+                resume_prompt = prompt_for_answer(question)
+                auto_answer_count += 1
+                last_auto_answer_text = resume_prompt
+                summary["question_detected"] = question
+                summary["auto_answer_used"] = True
+                summary["auto_answer_text"] = resume_prompt
+                summary["auto_answer_count"] = auto_answer_count
+                summary["non_interactive_question_ignored"] = False
+                continue
             if session_id is None:
                 summary["status"] = "FAIL"
                 summary["error"] = "session id missing for resume"
@@ -766,20 +822,29 @@ def main() -> int:
             "error": "agentic loop did not run",
         }
 
-    summary.update(
-        {
-            "agents_path": str(agents_path),
-            "prompt_path": str(prompt_path),
-            "repo_root": str(repo_root),
-            "attempts": attempts,
-            "clarifying_questions": questions,
-            "clarifying_question_count": len(questions),
-        }
-    )
+    log_text = log_path.read_text(encoding="utf-8", errors="ignore")
+    sandbox_block_evidence = detect_sandbox_block(log_text)
+    if sandbox_block_evidence:
+        summary["status"] = "FAIL"
+        summary["error"] = (
+            "Codex tool access appears to be sandbox-blocked. "
+            "Re-run the integration test with escalated permissions."
+        )
+        summary["sandbox_blocked"] = True
+        summary["sandbox_block_evidence"] = sandbox_block_evidence
+        summary["requires_escalation"] = True
+        print("Detected sandbox-blocked tool access; escalate permissions and re-run.")
+
+    if auto_answer_count:
+        summary["auto_answer_count"] = auto_answer_count
+        if last_auto_answer_text:
+            summary["auto_answer_text"] = last_auto_answer_text
 
     summary_path = run_dir / "agentic_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(str(summary_path))
+    if summary.get("requires_escalation"):
+        return 3
     return 0
 
 

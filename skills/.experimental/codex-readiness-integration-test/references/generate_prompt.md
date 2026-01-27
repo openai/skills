@@ -15,7 +15,7 @@ Return strict JSON with this schema:
   "scoring_focus": ["correctness", "context_usage", "builds_tests_pass", "maintainability", "risk"],
   "agentic_loop": {
 "cmd": "codex",
-"args": ["exec", "--dangerously-bypass-approvals-and-sandbox", "-C", "{repo_root}", "{change_prompt}"],
+"args": ["exec", "--full-auto", "-C", "{repo_root}", "{change_prompt}"],
 "timeout_seconds": 1800
   },
   "llm_eval": {
