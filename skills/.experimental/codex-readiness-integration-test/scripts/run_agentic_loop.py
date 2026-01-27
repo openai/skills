@@ -756,7 +756,7 @@ def main() -> int:
             cmd, timeout = build_command(prompt, agents_path, prompt_path, repo_root)
             attempt_label = f"agentic-attempt-{attempt}"
 
-        if resume_prompt:
+        if resume_prompt and sys.stdin.isatty():
             summary = run_safe_interactive(
                 cmd,
                 repo_root,
