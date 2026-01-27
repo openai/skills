@@ -56,18 +56,15 @@ def run_cmd_allow_failure(cmd: list[str]) -> str:
 
 
 def should_include_untracked(path: Path) -> bool:
-    if path.name == '.DS_Store':
+    if path.name == ".DS_Store":
         return False
-    for part in path.parts:
-        if part.startswith('.codex'):
-            return False
-    return True
+    return all(not part.startswith(".codex") for part in path.parts)
 
 
 def build_untracked_diff() -> str:
-    raw = run_cmd(['git', 'ls-files', '--others', '--exclude-standard'])
-    if raw.startswith('<error>'):
-        return ''
+    raw = run_cmd(["git", "ls-files", "--others", "--exclude-standard"])
+    if raw.startswith("<error>"):
+        return ""
     diffs = []
     for line in raw.splitlines():
         line = line.strip()
@@ -76,10 +73,10 @@ def build_untracked_diff() -> str:
         path = Path(line)
         if not should_include_untracked(path):
             continue
-        diff = run_cmd_allow_failure(['git', 'diff', '--no-index', '/dev/null', line])
-        if diff and not diff.startswith('<error>'):
+        diff = run_cmd_allow_failure(["git", "diff", "--no-index", "/dev/null", line])
+        if diff and not diff.startswith("<error>"):
             diffs.append(diff)
-    return '\n'.join(diffs)
+    return "\n".join(diffs)
 
 
 def load_json_if_exists(path: Path) -> dict | None:
