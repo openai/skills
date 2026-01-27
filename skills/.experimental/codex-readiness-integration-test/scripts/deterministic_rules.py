@@ -2,6 +2,7 @@
 import argparse
 import json
 import re
+import shlex
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -255,6 +256,21 @@ def strip_ansi(text: str) -> str:
     return ANSI_ESCAPE_PATTERN.sub("", text)
 
 
+def command_binary(cmd: str) -> str:
+    try:
+        parts = shlex.split(cmd)
+    except ValueError:
+        parts = cmd.split()
+    if not parts:
+        return ""
+    return Path(parts[0]).name.lower()
+
+
+def is_codex_invocation(cmd: str) -> bool:
+    binary = command_binary(cmd)
+    return binary in {"codex", "codex.exe"}
+
+
 def extract_command_events(log_text: str) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for idx, raw_line in enumerate(log_text.splitlines()):
@@ -269,6 +285,9 @@ def extract_command_events(log_text: str) -> list[dict[str, Any]]:
                 continue
             cmd = match.group(1).strip()
             if not cmd:
+                continue
+            if is_codex_invocation(cmd):
+                # Ignore runner-level codex invocations; they are not verification steps.
                 continue
             events.append(
                 {
@@ -287,6 +306,8 @@ def extract_command_events(log_text: str) -> list[dict[str, Any]]:
                 continue
             cmd = lc_match.group("cmd").strip()
             if not cmd:
+                continue
+            if is_codex_invocation(cmd):
                 continue
             events.append(
                 {

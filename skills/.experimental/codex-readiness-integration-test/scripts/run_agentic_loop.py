@@ -107,20 +107,42 @@ def substitute_args(args: list[str], mapping: dict[str, str]) -> list[str]:
     return resolved
 
 
+def sanitize_agentic_args(args: list[str]) -> list[str]:
+    """Remove unsafe or runner-managed flags from prompt-supplied args."""
+    sanitized: list[str] = []
+    skip_next = False
+    # Flags that should not be controlled by the prompt in this runner.
+    deny_flags_with_value = {"--sandbox", "--ask-for-approval", "-C", "--cd"}
+    deny_flags = {
+        "--dangerously-bypass-approvals-and-sandbox",
+        "--full-auto",
+        "exec",
+        "resume",
+        "{change_prompt}",
+    }
+    for arg in args:
+        if skip_next:
+            skip_next = False
+            continue
+        if arg in deny_flags_with_value:
+            skip_next = True
+            continue
+        if arg in deny_flags:
+            continue
+        sanitized.append(arg)
+    return sanitized
+
+
 def build_command(
     prompt: dict[str, Any], agents_path: Path, prompt_path: Path, repo_root: Path
 ) -> tuple[list[str], int]:
     agentic_config = prompt.get("agentic_loop")
     config: dict[str, Any] = agentic_config if isinstance(agentic_config, dict) else {}
     cmd = config.get("cmd") or "codex"
-    # Hardcode a safe, broadly supported permission model at the runner level.
-    raw_args = [
-        "exec",
-        "--full-auto",
-        "-C",
-        "{repo_root}",
-        "{change_prompt}",
-    ]
+    prompt_args = sanitize_agentic_args(normalize_args(config.get("args")))
+    # Hardcode a safe, broadly supported permission model at the runner level,
+    # while allowing other prompt-supplied flags (e.g., model selection).
+    raw_args = ["exec", "--full-auto"] + prompt_args + ["-C", "{repo_root}", "{change_prompt}"]
     args = normalize_args(raw_args)
     change_prompt = str(prompt.get("change_prompt") or "").strip()
     plan_instruction = str(prompt.get("plan_instruction") or "").strip()
@@ -167,13 +189,8 @@ def build_resume_command(
     agentic_config = prompt.get("agentic_loop")
     config: dict[str, Any] = agentic_config if isinstance(agentic_config, dict) else {}
     cmd = config.get("cmd") or "codex"
-    raw_args = [
-        "exec",
-        "--full-auto",
-        "-C",
-        "{repo_root}",
-        "{change_prompt}",
-    ]
+    prompt_args = sanitize_agentic_args(normalize_args(config.get("args")))
+    raw_args = ["exec", "--full-auto"] + prompt_args
     args = normalize_args(raw_args)
     mapping = {
         "{agents_path}": str(agents_path),

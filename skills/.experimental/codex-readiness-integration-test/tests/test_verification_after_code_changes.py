@@ -86,6 +86,23 @@ def test_prompt_plan_command_counts_as_verification(tmp_path: Path) -> None:
     assert result["status"] == "PASS"
 
 
+def test_codex_exec_lines_do_not_count_as_verification(tmp_path: Path) -> None:
+    run_dir = tmp_path / "run-fail-codex-line"
+    log_text = "\n".join(
+        [
+            "file update",
+            "M src/app.py",
+            '$ codex exec -C /repo "please run tests after this change"',
+        ]
+    )
+    write_run_dir(run_dir, log_text)
+
+    result = check(run_dir)
+
+    assert result["status"] == "FAIL"
+    assert "No build/test/lint verification command detected" in result["rationale"]
+
+
 def test_no_code_changes_warns(tmp_path: Path) -> None:
     run_dir = tmp_path / "run-warn-no-code"
     log_text = "\n".join(
