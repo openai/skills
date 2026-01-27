@@ -35,6 +35,23 @@
       "enabled_by_default": true
     },
     {
+      "id": "verification_after_code_changes",
+      "title": "P0: Verification after code changes",
+      "description": "A build, test, or lint verification command appears in agentic.log after the first non-doc, non-.codex file change.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "verification_after_code_changes",
+      "deterministic_rule_params": {
+        "prompt_path": "prompt.json",
+        "agentic_log_path": "logs/agentic.log"
+      },
+      "enabled_by_default": true
+    },
+    {
       "id": "repo_root_only_changes",
       "title": "P1: Repo-root-only changes",
       "description": "Git diff paths resolve under repo root.",

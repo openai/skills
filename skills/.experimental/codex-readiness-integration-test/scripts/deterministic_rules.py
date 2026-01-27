@@ -24,6 +24,47 @@ PLANNING_SIGNAL_PATTERNS = [
     re.compile(r"^\s*approach\s*[:\-]", re.IGNORECASE),
     re.compile(r"\bhere(?:'s| is)\s+(?:the\s+)?plan\b", re.IGNORECASE),
 ]
+COMMAND_LINE_PATTERNS = [
+    re.compile(r"^\s*\$\s+(.+)$"),
+    re.compile(r"^\s*!\s*(.+)$"),
+    re.compile(r"^\s*running(?: command)?\s*:\s+(.+)$", re.IGNORECASE),
+    re.compile(r"^\s*cmd\s*:\s+(.+)$", re.IGNORECASE),
+]
+# Match shell "-lc '<cmd>'" forms even when prefixed by a path like /bin/zsh.
+SHELL_LC_PATTERN = re.compile(r"(?:^|\s)-lc\s+(?P<quote>['\"])(?P<cmd>.+?)(?P=quote)")
+VERIFICATION_KEYWORDS = [
+    " test",
+    "pytest",
+    "npm test",
+    "pnpm test",
+    "yarn test",
+    "node --test",
+    "go test",
+    "cargo test",
+    "mvn test",
+    "gradle test",
+    "./gradlew test",
+    "lint",
+    "eslint",
+    "ruff",
+    "flake8",
+    "black --check",
+    "prettier --check",
+    "typecheck",
+    "tsc",
+    " build",
+    "compile",
+    "mvn package",
+    "gradle build",
+    "./gradlew build",
+    "go build",
+    "cargo build",
+    "make build",
+    "make test",
+    "make lint",
+    "make verify",
+    "verify",
+]
 
 
 def load_json(path: Path) -> dict:
@@ -214,6 +255,73 @@ def strip_ansi(text: str) -> str:
     return ANSI_ESCAPE_PATTERN.sub("", text)
 
 
+def extract_command_events(log_text: str) -> list[dict[str, Any]]:
+    events: list[dict[str, Any]] = []
+    for idx, raw_line in enumerate(log_text.splitlines()):
+        clean_line = strip_ansi(raw_line).strip()
+        if not clean_line:
+            continue
+
+        # First handle common "command-like" prefixes such as "$ npm test".
+        for pattern in COMMAND_LINE_PATTERNS:
+            match = pattern.match(clean_line)
+            if not match:
+                continue
+            cmd = match.group(1).strip()
+            if not cmd:
+                continue
+            events.append(
+                {
+                    "line_index": idx,
+                    "cmd": cmd,
+                    "raw_line": clean_line,
+                }
+            )
+            break
+
+        else:
+            # Fall back to extracting the inner command from shell "-lc" invocations
+            # such as: /bin/zsh -lc 'npm test' ... succeeded in 64ms
+            lc_match = SHELL_LC_PATTERN.search(clean_line)
+            if not lc_match:
+                continue
+            cmd = lc_match.group("cmd").strip()
+            if not cmd:
+                continue
+            events.append(
+                {
+                    "line_index": idx,
+                    "cmd": cmd,
+                    "raw_line": clean_line,
+                }
+            )
+    return events
+
+
+def prompt_command_candidates(prompt: dict[str, Any]) -> list[str]:
+    candidates: list[str] = []
+    plan = prompt.get("build_test_plan")
+    if not isinstance(plan, list):
+        return candidates
+    for entry in plan:
+        if isinstance(entry, dict):
+            cmd = entry.get("cmd")
+        elif isinstance(entry, str):
+            cmd = entry
+        else:
+            cmd = None
+        if isinstance(cmd, str) and cmd.strip():
+            candidates.append(cmd.strip().lower())
+    return candidates
+
+
+def is_verification_command(cmd: str, prompt_cmds: list[str]) -> bool:
+    lower = cmd.lower()
+    if any(keyword in lower for keyword in VERIFICATION_KEYWORDS):
+        return True
+    return any(prompt_cmd and prompt_cmd in lower for prompt_cmd in prompt_cmds)
+
+
 def first_code_change_event(events: list[dict[str, Any]]) -> dict[str, Any] | None:
     code_events: list[dict[str, Any]] = []
     for event in events:
@@ -325,6 +433,67 @@ def check_exec_plan_before_code_changes(run_dir: Path, params: dict[str, Any]) -
     )
 
 
+def check_verification_after_code_changes(run_dir: Path, params: dict[str, Any]) -> dict:
+    prompt_path = run_dir / params.get("prompt_path", "prompt.json")
+    if not prompt_path.exists():
+        return result("FAIL", "prompt.json is missing.")
+    try:
+        prompt = load_json(prompt_path)
+    except Exception:
+        return result("FAIL", "prompt.json could not be parsed.")
+
+    log_path = run_dir / params.get("agentic_log_path", "logs/agentic.log")
+    if not log_path.exists():
+        return result("FAIL", "agentic.log is missing.")
+
+    log_text = log_path.read_text(encoding="utf-8", errors="ignore")
+    lines = [strip_ansi(line) for line in log_text.splitlines()]
+    file_events = parse_agentic_file_update_events(log_text)
+    if not file_events:
+        return result("WARN", "No file update entries found in agentic.log.")
+
+    code_event = first_code_change_event(file_events)
+    if code_event is None:
+        return result(
+            "WARN",
+            "No non-doc, non-.codex file changes found; verification ordering not evaluated.",
+            [{"path": str(log_path), "quote": "no code updates"}],
+        )
+    code_line = int(code_event["line_index"])
+
+    command_events = extract_command_events(log_text)
+    prompt_cmds = prompt_command_candidates(prompt)
+    verification_events = [
+        event
+        for event in command_events
+        if int(event["line_index"]) > code_line
+        and is_verification_command(str(event.get("cmd", "")), prompt_cmds)
+    ]
+
+    code_quote = lines[code_line] if code_line < len(lines) else str(code_event.get("path", ""))
+    if not verification_events:
+        return result(
+            "FAIL",
+            "No build/test/lint verification command detected after code changes in agentic.log.",
+            [{"path": str(log_path), "quote": code_quote}],
+            [
+                "Run at least one build, test, or lint command after code changes within the agentic loop."
+            ],
+        )
+
+    evidence: list[dict[str, str]] = [{"path": str(log_path), "quote": code_quote}]
+    for event in verification_events[:2]:
+        idx = int(event["line_index"])
+        quote = lines[idx] if idx < len(lines) else str(event.get("raw_line", event.get("cmd", "")))
+        evidence.append({"path": str(log_path), "quote": quote})
+
+    return result(
+        "PASS",
+        "Verification command(s) appear after code changes in agentic.log.",
+        evidence,
+    )
+
+
 def check_agentic_run_success(run_dir: Path, params: dict[str, Any]) -> dict:
     summary_path = run_dir / params.get("path", "agentic_summary.json")
     if not summary_path.exists():
@@ -395,6 +564,7 @@ RULES = {
     "execution_logs_no_errors": check_execution_logs_no_errors,
     "agentic_run_success": check_agentic_run_success,
     "exec_plan_before_code_changes": check_exec_plan_before_code_changes,
+    "verification_after_code_changes": check_verification_after_code_changes,
     "repo_root_only_changes": check_repo_root_only_changes,
 }
 
