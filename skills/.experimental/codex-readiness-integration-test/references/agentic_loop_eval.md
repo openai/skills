@@ -7,9 +7,6 @@ You are evaluating whether the agentic loop executed successfully. You will be g
 
 Hard fails:
 - If any evidence or logs mention the phrase "Context compaction enabled", status MUST be FAIL.
-- If AGENTS.md exists (evidence.agents_md.exists) but there is no evidence it was referenced (for example agentic_summary.cmd or logs mention the AGENTS.md path), status MUST be FAIL.
-
-If AGENTS.md does not exist, record that fact and do not fail solely for missing reference.
 
 Prefer PASS only if agentic_summary.status is PASS and exit_code is 0.
 

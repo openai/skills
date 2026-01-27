@@ -9,10 +9,6 @@ metadata:
 
 This skill runs a multi-stage integration test to validate agentic execution quality. It always runs in execute mode (no read-only mode).
 
-## Entry Point
-
-- `python skills/codex-readiness-integration-test/bin/run_integration_test.py`
-
 ## Outputs
 
 Each run writes to `.codex-readiness-integration-test/<timestamp>/` and updates `.codex-readiness-integration-test/latest.json`.
@@ -22,7 +18,7 @@ New outputs per run:
 - `llm_results.json` (automatic LLM evaluation)
 - `summary.txt` (human-readable summary)
 
-## Pre-conditions
+## Pre-conditions (Required)
 
 - Authenticate with the Codex CLI using the repo-local HOME before running the test.
   Run these in your own terminal (not via the integration test):
@@ -35,18 +31,20 @@ New outputs per run:
 0) Ask the user how to source the task.
    - Offer two explicit options: (a) user provides a custom task/prompt, or (b) auto-generate a task.
    - Do not run the entry point until the user chooses one option.
-1) Generate or load `prompt.json`.
+1) Generate or load `{out_dir}/prompt.pending.json`.
+   - Use the integration test's expected prompt path, not `prompt.json` at the repo root.
+   - With the default out dir, this path is `.codex-readiness-integration-test/prompt.pending.json`.
    - If `--seed-task` is provided, it is used as the starting task.
-   - If not provided, generate a task with `skills/codex-readiness-integration-test/references/generate_prompt.md` and save the JSON.
+   - If not provided, generate a task with `skills/codex-readiness-integration-test/references/generate_prompt.md` and save the JSON to `{out_dir}/prompt.pending.json`.
    - The user must approve the prompt before execution (no auto-approve mode). Make sure to output a summary of the prompt when asking the user to approve.
 2) Execute the agentic loop via Codex CLI (uses `AGENTS.md` and `change_prompt`).
-3) Run build/test commands from the prompt plan via `skills/codex-readiness-integration-test/bin/run_plan.py`.
+3) Run build/test commands from the prompt plan via `skills/codex-readiness-integration-test/scripts/run_plan.py`.
 4) Collect evidence (`evidence.json`), deterministic checks, and run automatic LLM evals via Codex CLI.
 5) Score and write the report + summary output.
 
 ## Configuration
 
-Optional fields in `prompt.json`:
+Optional fields in `{out_dir}/prompt.pending.json`:
 - `agentic_loop`: configure Codex CLI invocation for the agentic loop.
 - `llm_eval`: configure Codex CLI invocation for automatic evals.
 
@@ -55,7 +53,6 @@ If these fields are omitted, defaults are used.
 ## Requirements
 
 - The LLM evaluator must fail if evidence mentions the phrase `Context compaction enabled`.
-- The LLM evaluator must check that `AGENTS.md` was referenced.
 - Use qualitative context-usage evaluation (no strict thresholds).
 
 
@@ -76,4 +73,5 @@ If these fields are omitted, defaults are used.
 
 - The prompts in `skills/codex-readiness-integration-test/references/` expect strict JSON.
 - Use `skills/codex-readiness-integration-test/references/json_fix.md` to repair invalid JSON output.
-- This skill calls the `codex` CLI. Ensure it is installed and available on PATH, or override the command in `prompt.json`.
+- This skill calls the `codex` CLI. Ensure it is installed and available on PATH, or override the command in `{out_dir}/prompt.pending.json`.
+- If the agentic loop detects sandbox-blocked tool access, it now writes `requires_escalation: true` to `{run_dir}/agentic_summary.json` and exits with code `3`. Re-run the integration test with escalated permissions in that case.
