@@ -29,7 +29,7 @@ If this fails, the fetch script below will still try to locate the MR by `source
 ## 2) Fetch unresolved discussions to `/tmp`
 Use the local script to fetch MR discussions via `glab api`. This filters out bot/system-only threads and returns unresolved discussions when `--open-comments` is set.
 ```bash
-skill_dir="${CODEX_HOME:-$HOME/.codex}/skills/gitlab-address-comments"
+skill_dir="<path-to-skill>"
 branch="$(git rev-parse --abbrev-ref HEAD)"
 safe_branch="${branch//\//_}"
 out="/tmp/${safe_branch}_mr_open_discussions.json"
