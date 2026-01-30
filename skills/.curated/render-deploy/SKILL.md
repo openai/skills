@@ -1,12 +1,6 @@
 ---
 name: render-deploy
 description: Deploy applications to Render by analyzing codebases, generating render.yaml Blueprints, and providing Dashboard deeplinks. Use when the user wants to deploy, host, publish, or set up their application on Render's cloud platform.
-license: MIT
-compatibility: Requires a Git repository on GitHub, GitLab, or Bitbucket for Blueprint/MCP flows. Blueprint can reference a prebuilt image but render.yaml must live in the repo. Render CLI recommended for Blueprint validation; MCP or CLI required for operations.
-metadata:
-  author: Render
-  version: "1.1.0"
-  category: deployment
 ---
 
 # Deploy to Render

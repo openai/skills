@@ -1,0 +1,18 @@
+interface:
+  display_name: "Render Deploy"
+  short_description: "Deploy applications to Render via Blueprints or MCP"
+
+ownership:
+  name: "Codex Team"
+  url: "https://openai.com/codex/"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "render"
+      description: "Render MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.render.com/mcp"
+    - type: "cli"
+      value: "render"
+      description: "Render CLI"
