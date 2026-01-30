@@ -1,6 +1,8 @@
 interface:
   display_name: "Render Deploy"
   short_description: "Deploy applications to Render via Blueprints or MCP"
+  icon_small: "./assets/render-small.svg"
+  icon_large: "./assets/render.png"
 
 ownership:
   name: "Codex Team"
