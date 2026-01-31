@@ -11,7 +11,7 @@ Transcribe audio using OpenAI, with optional speaker diarization when requested.
 ## Workflow
 1. Collect inputs: audio file path(s), desired response format (text/json/diarized_json), optional language hint, and any known speaker references.
 2. Verify `OPENAI_API_KEY` is set. If missing, ask the user to set it locally (do not ask them to paste the key).
-3. Run `skills/.curated/transcribe/scripts/transcribe_diarize.py` with sensible defaults (fast text transcription).
+3. Run the bundled `transcribe_diarize.py` CLI with sensible defaults (fast text transcription).
 4. Validate the output: transcription quality, speaker labels, and segment boundaries; iterate with a single targeted change if needed.
 5. Save outputs under `output/transcribe/` when working in this repo.
 
@@ -41,17 +41,26 @@ python3 -m pip install openai
 - If the key is missing, instruct the user to create one in the OpenAI platform UI and export it in their shell.
 - Never ask the user to paste the full key in chat.
 
+## Skill path (set once)
+
+```bash
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export TRANSCRIBE_CLI="$CODEX_HOME/skills/transcribe/scripts/transcribe_diarize.py"
+```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+
 ## CLI quick start
 Single file (fast text default):
 ```
-python3 skills/.curated/transcribe/scripts/transcribe_diarize.py \
+python3 "$TRANSCRIBE_CLI" \
   path/to/audio.wav \
   --out transcript.txt
 ```
 
 Diarization with known speakers (up to 4):
 ```
-python3 skills/.curated/transcribe/scripts/transcribe_diarize.py \
+python3 "$TRANSCRIBE_CLI" \
   meeting.m4a \
   --model gpt-4o-transcribe-diarize \
   --known-speaker "Alice=refs/alice.wav" \
@@ -62,7 +71,7 @@ python3 skills/.curated/transcribe/scripts/transcribe_diarize.py \
 
 Plain text output (explicit):
 ```
-python3 skills/.curated/transcribe/scripts/transcribe_diarize.py \
+python3 "$TRANSCRIBE_CLI" \
   interview.mp3 \
   --response-format text \
   --out interview.txt

@@ -1,6 +1,6 @@
 ---
 name: "jupyter-notebook"
-description: "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tutorials; prefer the bundled templates and run `skills/.curated/jupyter-notebook/scripts/new_notebook.py` to generate a clean starting notebook."
+description: "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tutorials; prefer the bundled templates and run the helper script `new_notebook.py` to generate a clean starting notebook."
 ---
 
 
@@ -24,6 +24,15 @@ Prefer the bundled templates and the helper script for consistent structure and 
 - If the request is instructional, step-by-step, or audience-specific, choose `tutorial`.
 - If editing an existing notebook, treat it as a refactor: preserve intent and improve structure.
 
+## Skill path (set once)
+
+```bash
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export JUPYTER_NOTEBOOK_CLI="$CODEX_HOME/skills/jupyter-notebook/scripts/new_notebook.py"
+```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+
 ## Workflow
 1. Lock the intent.
 Identify the notebook kind: `experiment` or `tutorial`.
@@ -33,14 +42,14 @@ Capture the objective, audience, and what "done" looks like.
 Use the helper script to avoid hand-authoring raw notebook JSON.
 
 ```bash
-uv run --python 3.12 python skills/.curated/jupyter-notebook/scripts/new_notebook.py \
+uv run --python 3.12 python "$JUPYTER_NOTEBOOK_CLI" \
   --kind experiment \
   --title "Compare prompt variants" \
   --out output/jupyter-notebook/compare-prompt-variants.ipynb
 ```
 
 ```bash
-uv run --python 3.12 python skills/.curated/jupyter-notebook/scripts/new_notebook.py \
+uv run --python 3.12 python "$JUPYTER_NOTEBOOK_CLI" \
   --kind tutorial \
   --title "Intro to embeddings" \
   --out output/jupyter-notebook/intro-to-embeddings.ipynb
@@ -70,7 +79,7 @@ Use the final pass checklist in `references/quality-checklist.md`.
 - The helper script loads a template, updates the title cell, and writes a notebook.
 
 Script path:
-- `skills/.curated/jupyter-notebook/scripts/new_notebook.py`
+- `$JUPYTER_NOTEBOOK_CLI` (installed default: `$CODEX_HOME/skills/jupyter-notebook/scripts/new_notebook.py`)
 
 ## Temp and output conventions
 - Use `tmp/jupyter-notebook/` for intermediate files; delete when done.

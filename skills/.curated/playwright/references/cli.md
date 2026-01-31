@@ -3,13 +3,17 @@
 Use the wrapper script unless the CLI is already installed globally:
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" --help
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
+"$PWCLI" --help
 ```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
 
 Optional convenience alias:
 
 ```bash
-alias pwcli="skills/.curated/playwright/scripts/playwright_cli.sh"
+alias pwcli="$PWCLI"
 ```
 
 ## Core

@@ -31,17 +31,26 @@ playwright-cli --help
 
 Once `npx` is present, proceed with the wrapper script. A global install of `playwright-cli` is optional.
 
+## Skill path (set once)
+
+```bash
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export PWCLI="$CODEX_HOME/skills/playwright/scripts/playwright_cli.sh"
+```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+
 ## Quick start
 
 Use the wrapper script:
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" open https://playwright.dev --headed
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
-"skills/.curated/playwright/scripts/playwright_cli.sh" click e15
-"skills/.curated/playwright/scripts/playwright_cli.sh" type "Playwright"
-"skills/.curated/playwright/scripts/playwright_cli.sh" press Enter
-"skills/.curated/playwright/scripts/playwright_cli.sh" screenshot
+"$PWCLI" open https://playwright.dev --headed
+"$PWCLI" snapshot
+"$PWCLI" click e15
+"$PWCLI" type "Playwright"
+"$PWCLI" press Enter
+"$PWCLI" screenshot
 ```
 
 If the user prefers a global install, this is also valid:
@@ -62,10 +71,10 @@ playwright-cli --help
 Minimal loop:
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" open https://example.com
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
-"skills/.curated/playwright/scripts/playwright_cli.sh" click e3
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
+"$PWCLI" open https://example.com
+"$PWCLI" snapshot
+"$PWCLI" click e3
+"$PWCLI" snapshot
 ```
 
 ## When to snapshot again
@@ -84,30 +93,30 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 ### Form fill and submit
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" open https://example.com/form
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
-"skills/.curated/playwright/scripts/playwright_cli.sh" fill e1 "user@example.com"
-"skills/.curated/playwright/scripts/playwright_cli.sh" fill e2 "password123"
-"skills/.curated/playwright/scripts/playwright_cli.sh" click e3
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
+"$PWCLI" open https://example.com/form
+"$PWCLI" snapshot
+"$PWCLI" fill e1 "user@example.com"
+"$PWCLI" fill e2 "password123"
+"$PWCLI" click e3
+"$PWCLI" snapshot
 ```
 
 ### Debug a UI flow with traces
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" open https://example.com --headed
-"skills/.curated/playwright/scripts/playwright_cli.sh" tracing-start
+"$PWCLI" open https://example.com --headed
+"$PWCLI" tracing-start
 # ...interactions...
-"skills/.curated/playwright/scripts/playwright_cli.sh" tracing-stop
+"$PWCLI" tracing-stop
 ```
 
 ### Multi-tab work
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" tab-new https://example.com
-"skills/.curated/playwright/scripts/playwright_cli.sh" tab-list
-"skills/.curated/playwright/scripts/playwright_cli.sh" tab-select 0
-"skills/.curated/playwright/scripts/playwright_cli.sh" snapshot
+"$PWCLI" tab-new https://example.com
+"$PWCLI" tab-list
+"$PWCLI" tab-select 0
+"$PWCLI" snapshot
 ```
 
 ## Wrapper script
@@ -115,7 +124,7 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 The wrapper script uses `npx --package @playwright/mcp playwright-cli` so the CLI can run without a global install:
 
 ```bash
-"skills/.curated/playwright/scripts/playwright_cli.sh" --help
+"$PWCLI" --help
 ```
 
 Prefer the wrapper unless the repository already standardizes on a global install.

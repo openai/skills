@@ -24,12 +24,20 @@ If the token is missing, give the user these steps:
 ## Core tasks (use bundled script)
 
 Use `scripts/sentry_api.py` for deterministic API calls. It handles pagination and retries once on transient errors.
-When running from the repo root, invoke it via `skills/.curated/sentry/scripts/sentry_api.py`.
+
+## Skill path (set once)
+
+```bash
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export SENTRY_API="$CODEX_HOME/skills/sentry/scripts/sentry_api.py"
+```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
 
 ### 1) List issues (ordered by most recent)
 
 ```bash
-python3 skills/.curated/sentry/scripts/sentry_api.py \
+python3 "$SENTRY_API" \
   list-issues \
   --org {your-org} \
   --project {your-project} \
@@ -42,7 +50,7 @@ python3 skills/.curated/sentry/scripts/sentry_api.py \
 ### 2) Resolve an issue short ID to issue ID
 
 ```bash
-python3 skills/.curated/sentry/scripts/sentry_api.py \
+python3 "$SENTRY_API" \
   list-issues \
   --org {your-org} \
   --project {your-project} \
@@ -55,7 +63,7 @@ Use the returned `id` for issue detail or events.
 ### 3) Issue detail
 
 ```bash
-python3 skills/.curated/sentry/scripts/sentry_api.py \
+python3 "$SENTRY_API" \
   issue-detail \
   1234567890
 ```
@@ -63,7 +71,7 @@ python3 skills/.curated/sentry/scripts/sentry_api.py \
 ### 4) Issue events
 
 ```bash
-python3 skills/.curated/sentry/scripts/sentry_api.py \
+python3 "$SENTRY_API" \
   issue-events \
   1234567890 \
   --limit 20
@@ -72,7 +80,7 @@ python3 skills/.curated/sentry/scripts/sentry_api.py \
 ### 5) Event detail (no stack traces by default)
 
 ```bash
-python3 skills/.curated/sentry/scripts/sentry_api.py \
+python3 "$SENTRY_API" \
   event-detail \
   --org {your-org} \
   --project {your-project} \

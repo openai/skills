@@ -10,11 +10,20 @@ Use the bundled CLI to control Atlas and inspect local browser data.
 
 ## Quick Start
 
-Run commands from the repo root:
+Set a stable path to the CLI:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py app-name
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py tabs --json
+export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+export ATLAS_CLI="$CODEX_HOME/skills/atlas/scripts/atlas_cli.py"
+```
+
+User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+
+Then run:
+
+```bash
+uv run --python 3.12 python "$ATLAS_CLI" app-name
+uv run --python 3.12 python "$ATLAS_CLI" tabs --json
 ```
 
 The CLI requires the Atlas app bundle in `/Applications` or `~/Applications`:
@@ -28,26 +37,26 @@ If AppleScript fails with a permissions error, grant Automation permission in Sy
 1. List tabs to get `window_id` and `tab_index`:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py tabs
+uv run --python 3.12 python "$ATLAS_CLI" tabs
 ```
 
 2. Focus a tab using the `window_id` and `tab_index` from the listing:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py focus-tab <window_id> <tab_index>
+uv run --python 3.12 python "$ATLAS_CLI" focus-tab <window_id> <tab_index>
 ```
 
 3. Open a new tab:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py open-tab "https://chatgpt.com/"
+uv run --python 3.12 python "$ATLAS_CLI" open-tab "https://chatgpt.com/"
 ```
 
 Optional maintenance commands:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py reload-tab <window_id> <tab_index>
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py close-tab <window_id> <tab_index>
+uv run --python 3.12 python "$ATLAS_CLI" reload-tab <window_id> <tab_index>
+uv run --python 3.12 python "$ATLAS_CLI" close-tab <window_id> <tab_index>
 ```
 
 ## Bookmarks and History
@@ -57,25 +66,25 @@ Atlas stores Chromium-style profile data under `~/Library/Application Support/co
 List bookmarks:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py bookmarks --limit 100
+uv run --python 3.12 python "$ATLAS_CLI" bookmarks --limit 100
 ```
 
 Search bookmarks:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py bookmarks --search "docs"
+uv run --python 3.12 python "$ATLAS_CLI" bookmarks --search "docs"
 ```
 
 Search history:
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py history --search "openai docs" --limit 50
+uv run --python 3.12 python "$ATLAS_CLI" history --search "openai docs" --limit 50
 ```
 
 History for today (local time):
 
 ```bash
-uv run --python 3.12 python skills/.curated/atlas/scripts/atlas_cli.py history --today --limit 200 --json
+uv run --python 3.12 python "$ATLAS_CLI" history --today --limit 200 --json
 ```
 
 The history command copies the SQLite database to a temporary location to avoid lock errors.
@@ -87,4 +96,4 @@ If history looks stale or empty, ask the user which Atlas install they are using
 
 ## References
 
-Read `skills/.curated/atlas/references/atlas-data.md` when adjusting data paths or timestamps.
+Read `references/atlas-data.md` in the skill folder (for example, `$CODEX_HOME/skills/atlas/references/atlas-data.md`) when adjusting data paths or timestamps.
