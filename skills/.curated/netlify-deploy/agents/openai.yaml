@@ -3,7 +3,3 @@ interface:
   short_description: "Deploy web projects to Netlify with the Netlify CLI"
   icon_small: "./assets/netlify-small.svg"
   icon_large: "./assets/netlify.png"
-
-ownership:
-  name: "Netlify"
-  url: "https://www.netlify.com/"

@@ -1,7 +1,3 @@
 interface:
   display_name: "Audio Transcribe"
   short_description: "Transcribe audio using OpenAI, with optional speaker diarization when requested. Prefer the bundled CLI for deterministic, repeatable runs."
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

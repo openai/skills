@@ -1,7 +1,3 @@
 interface:
   display_name: "Jupyter Notebooks"
   short_description: "Create Jupyter notebooks for experiments and tutorials"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

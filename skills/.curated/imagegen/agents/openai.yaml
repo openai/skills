@@ -3,7 +3,3 @@ interface:
   short_description: "Generate and edit images using OpenAI"
   icon_small: "./assets/imagegen-small.svg"
   icon_large: "./assets/imagegen.png"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

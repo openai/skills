@@ -3,7 +3,3 @@ interface:
   short_description: "Generate and manage Sora videos"
   icon_small: "./assets/sora-small.svg"
   icon_large: "./assets/sora.png"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

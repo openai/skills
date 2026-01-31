@@ -3,7 +3,3 @@ interface:
   short_description: "Create a claimable Vercel preview deployment"
   icon_small: "./assets/vercel-small.svg"
   icon_large: "./assets/vercel.png"
-
-ownership:
-  name: "Vercel"
-  url: "https://vercel.com/"

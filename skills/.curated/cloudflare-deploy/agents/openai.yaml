@@ -3,7 +3,3 @@ interface:
   short_description: "Deploy Workers, Pages, and platform services on Cloudflare"
   icon_small: "./assets/cloudflare-small.svg"
   icon_large: "./assets/cloudflare.png"
-
-ownership:
-  name: "Cloudflare"
-  url: "https://www.cloudflare.com/"

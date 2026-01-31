@@ -1,7 +1,3 @@
 interface:
   display_name: "Sentry (Read-only Observability)"
   short_description: "Read-only Sentry observability"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

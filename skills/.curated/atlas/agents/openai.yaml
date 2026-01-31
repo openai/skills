@@ -3,7 +3,3 @@ interface:
   short_description: "Use the bundled CLI to control Atlas and inspect local browser data."
   icon_small: "./assets/atlas-small.svg"
   icon_large: "./assets/atlas.png"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

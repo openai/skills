@@ -4,10 +4,6 @@ interface:
   icon_small: "./assets/linear-small.svg"
   icon_large: "./assets/linear.png"
 
-ownership:
-  name: "Linear"
-  url: "https://linear.app/"
-
 dependencies:
   tools:
     - type: "mcp"

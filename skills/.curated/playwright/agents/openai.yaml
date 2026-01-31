@@ -3,7 +3,3 @@ interface:
   short_description: "Automate real browsers from the terminal"
   icon_small: "./assets/playwright-small.svg"
   icon_large: "./assets/playwright.png"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

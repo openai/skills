@@ -3,7 +3,3 @@ interface:
   short_description: "Create, edit, and analyze spreadsheets"
   icon_small: "./assets/spreadsheet-small.svg"
   icon_large: "./assets/spreadsheet.png"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

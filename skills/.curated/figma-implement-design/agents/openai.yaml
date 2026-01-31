@@ -11,7 +11,3 @@ dependencies:
       description: "Figma MCP server"
       transport: "streamable_http"
       url: "https://mcp.figma.com/mcp"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

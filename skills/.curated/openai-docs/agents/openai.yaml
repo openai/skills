@@ -11,7 +11,3 @@ dependencies:
       description: "OpenAI Developer Docs MCP server"
       transport: "streamable_http"
       url: "https://developers.openai.com/mcp"
-
-ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"

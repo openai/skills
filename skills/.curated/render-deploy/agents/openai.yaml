@@ -4,10 +4,6 @@ interface:
   icon_small: "./assets/render-small.svg"
   icon_large: "./assets/render.png"
 
-ownership:
-  name: "Render"
-  url: "https://render.com/"
-
 dependencies:
   tools:
     - type: "mcp"
