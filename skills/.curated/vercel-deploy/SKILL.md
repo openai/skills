@@ -40,7 +40,7 @@ bash scripts/deploy.sh /path/to/project.tgz
 
 ## Packaging Rules
 
-- Exclude `node_modules` and `.git`
+- Exclude `node_modules`, `.git`, and `.env*`
 - If no `package.json`, keep `framework` as `null`
 - For static HTML with a single `.html` file, rename it to `index.html` before packaging
 

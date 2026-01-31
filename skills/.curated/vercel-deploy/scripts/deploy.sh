@@ -19,137 +19,143 @@ detect_framework() {
 
     local content=$(cat "$pkg_json")
 
-    # Helper to check if a package exists in dependencies or devDependencies
-    has_dep() {
+    # Helper to check if a package exists in dependencies or devDependencies.
+    # Use exact matching by default, with a separate prefix matcher for scoped
+    # package families like "@remix-run/".
+    has_dep_exact() {
         echo "$content" | grep -q "\"$1\""
+    }
+
+    has_dep_prefix() {
+        echo "$content" | grep -q "\"$1"
     }
 
     # Order matters - check more specific frameworks first
 
     # Blitz
-    if has_dep "blitz"; then echo "blitzjs"; return; fi
+    if has_dep_exact "blitz"; then echo "blitzjs"; return; fi
 
     # Next.js
-    if has_dep "next"; then echo "nextjs"; return; fi
+    if has_dep_exact "next"; then echo "nextjs"; return; fi
 
     # Gatsby
-    if has_dep "gatsby"; then echo "gatsby"; return; fi
+    if has_dep_exact "gatsby"; then echo "gatsby"; return; fi
 
     # Remix
-    if has_dep "@remix-run/"; then echo "remix"; return; fi
+    if has_dep_prefix "@remix-run/"; then echo "remix"; return; fi
 
     # React Router (v7 framework mode)
-    if has_dep "@react-router/"; then echo "react-router"; return; fi
+    if has_dep_prefix "@react-router/"; then echo "react-router"; return; fi
 
     # TanStack Start
-    if has_dep "@tanstack/start"; then echo "tanstack-start"; return; fi
+    if has_dep_exact "@tanstack/start"; then echo "tanstack-start"; return; fi
 
     # Astro
-    if has_dep "astro"; then echo "astro"; return; fi
+    if has_dep_exact "astro"; then echo "astro"; return; fi
 
     # Hydrogen (Shopify)
-    if has_dep "@shopify/hydrogen"; then echo "hydrogen"; return; fi
+    if has_dep_exact "@shopify/hydrogen"; then echo "hydrogen"; return; fi
 
     # SvelteKit
-    if has_dep "@sveltejs/kit"; then echo "sveltekit-1"; return; fi
+    if has_dep_exact "@sveltejs/kit"; then echo "sveltekit-1"; return; fi
 
     # Svelte (standalone)
-    if has_dep "svelte"; then echo "svelte"; return; fi
+    if has_dep_exact "svelte"; then echo "svelte"; return; fi
 
     # Nuxt
-    if has_dep "nuxt"; then echo "nuxtjs"; return; fi
+    if has_dep_exact "nuxt"; then echo "nuxtjs"; return; fi
 
     # Vue with Vitepress
-    if has_dep "vitepress"; then echo "vitepress"; return; fi
+    if has_dep_exact "vitepress"; then echo "vitepress"; return; fi
 
     # Vue with Vuepress
-    if has_dep "vuepress"; then echo "vuepress"; return; fi
+    if has_dep_exact "vuepress"; then echo "vuepress"; return; fi
 
     # Gridsome
-    if has_dep "gridsome"; then echo "gridsome"; return; fi
+    if has_dep_exact "gridsome"; then echo "gridsome"; return; fi
 
     # SolidStart
-    if has_dep "@solidjs/start"; then echo "solidstart-1"; return; fi
+    if has_dep_exact "@solidjs/start"; then echo "solidstart-1"; return; fi
 
     # Docusaurus
-    if has_dep "@docusaurus/core"; then echo "docusaurus-2"; return; fi
+    if has_dep_exact "@docusaurus/core"; then echo "docusaurus-2"; return; fi
 
     # RedwoodJS
-    if has_dep "@redwoodjs/"; then echo "redwoodjs"; return; fi
+    if has_dep_prefix "@redwoodjs/"; then echo "redwoodjs"; return; fi
 
     # Hexo
-    if has_dep "hexo"; then echo "hexo"; return; fi
+    if has_dep_exact "hexo"; then echo "hexo"; return; fi
 
     # Eleventy
-    if has_dep "@11ty/eleventy"; then echo "eleventy"; return; fi
+    if has_dep_exact "@11ty/eleventy"; then echo "eleventy"; return; fi
 
     # Angular / Ionic Angular
-    if has_dep "@ionic/angular"; then echo "ionic-angular"; return; fi
-    if has_dep "@angular/core"; then echo "angular"; return; fi
+    if has_dep_exact "@ionic/angular"; then echo "ionic-angular"; return; fi
+    if has_dep_exact "@angular/core"; then echo "angular"; return; fi
 
     # Ionic React
-    if has_dep "@ionic/react"; then echo "ionic-react"; return; fi
+    if has_dep_exact "@ionic/react"; then echo "ionic-react"; return; fi
 
     # Create React App
-    if has_dep "react-scripts"; then echo "create-react-app"; return; fi
+    if has_dep_exact "react-scripts"; then echo "create-react-app"; return; fi
 
     # Ember
-    if has_dep "ember-cli" || has_dep "ember-source"; then echo "ember"; return; fi
+    if has_dep_exact "ember-cli" || has_dep_exact "ember-source"; then echo "ember"; return; fi
 
     # Dojo
-    if has_dep "@dojo/framework"; then echo "dojo"; return; fi
+    if has_dep_exact "@dojo/framework"; then echo "dojo"; return; fi
 
     # Polymer
-    if has_dep "@polymer/"; then echo "polymer"; return; fi
+    if has_dep_prefix "@polymer/"; then echo "polymer"; return; fi
 
     # Preact
-    if has_dep "preact"; then echo "preact"; return; fi
+    if has_dep_exact "preact"; then echo "preact"; return; fi
 
     # Stencil
-    if has_dep "@stencil/core"; then echo "stencil"; return; fi
+    if has_dep_exact "@stencil/core"; then echo "stencil"; return; fi
 
     # UmiJS
-    if has_dep "umi"; then echo "umijs"; return; fi
+    if has_dep_exact "umi"; then echo "umijs"; return; fi
 
     # Sapper (legacy Svelte)
-    if has_dep "sapper"; then echo "sapper"; return; fi
+    if has_dep_exact "sapper"; then echo "sapper"; return; fi
 
     # Saber
-    if has_dep "saber"; then echo "saber"; return; fi
+    if has_dep_exact "saber"; then echo "saber"; return; fi
 
     # Sanity
-    if has_dep "sanity"; then echo "sanity-v3"; return; fi
-    if has_dep "@sanity/"; then echo "sanity"; return; fi
+    if has_dep_exact "sanity"; then echo "sanity-v3"; return; fi
+    if has_dep_prefix "@sanity/"; then echo "sanity"; return; fi
 
     # Storybook
-    if has_dep "@storybook/"; then echo "storybook"; return; fi
+    if has_dep_prefix "@storybook/"; then echo "storybook"; return; fi
 
     # NestJS
-    if has_dep "@nestjs/core"; then echo "nestjs"; return; fi
+    if has_dep_exact "@nestjs/core"; then echo "nestjs"; return; fi
 
     # Elysia
-    if has_dep "elysia"; then echo "elysia"; return; fi
+    if has_dep_exact "elysia"; then echo "elysia"; return; fi
 
     # Hono
-    if has_dep "hono"; then echo "hono"; return; fi
+    if has_dep_exact "hono"; then echo "hono"; return; fi
 
     # Fastify
-    if has_dep "fastify"; then echo "fastify"; return; fi
+    if has_dep_exact "fastify"; then echo "fastify"; return; fi
 
     # h3
-    if has_dep "h3"; then echo "h3"; return; fi
+    if has_dep_exact "h3"; then echo "h3"; return; fi
 
     # Nitro
-    if has_dep "nitropack"; then echo "nitro"; return; fi
+    if has_dep_exact "nitropack"; then echo "nitro"; return; fi
 
     # Express
-    if has_dep "express"; then echo "express"; return; fi
+    if has_dep_exact "express"; then echo "express"; return; fi
 
     # Vite (generic - check last among JS frameworks)
-    if has_dep "vite"; then echo "vite"; return; fi
+    if has_dep_exact "vite"; then echo "vite"; return; fi
 
     # Parcel
-    if has_dep "parcel"; then echo "parcel"; return; fi
+    if has_dep_exact "parcel"; then echo "parcel"; return; fi
 
     # No framework detected
     echo "null"
@@ -192,13 +198,18 @@ elif [ -d "$INPUT_PATH" ]; then
     # Stage files into a temporary directory to avoid mutating the source tree.
     mkdir -p "$STAGING_DIR"
     echo "Staging project files..." >&2
-    tar -C "$PROJECT_PATH" --exclude='node_modules' --exclude='.git' -cf - . | tar -C "$STAGING_DIR" -xf -
+    tar -C "$PROJECT_PATH" \
+        --exclude='node_modules' \
+        --exclude='.git' \
+        --exclude='.env' \
+        --exclude='.env.*' \
+        -cf - . | tar -C "$STAGING_DIR" -xf -
 
     # Check if this is a static HTML project (no package.json)
     if [ ! -f "$PROJECT_PATH/package.json" ]; then
         # Find HTML files in root
         HTML_FILES=$(find "$STAGING_DIR" -maxdepth 1 -name "*.html" -type f)
-        HTML_COUNT=$(echo "$HTML_FILES" | grep -c . || echo 0)
+        HTML_COUNT=$(printf '%s\n' "$HTML_FILES" | sed '/^$/d' | wc -l | tr -d '[:space:]')
 
         # If there's exactly one HTML file and it's not index.html, rename it
         if [ "$HTML_COUNT" -eq 1 ]; then
