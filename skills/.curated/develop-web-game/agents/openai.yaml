@@ -1,0 +1,7 @@
+interface:
+  display_name: "Develop Web Game"
+  short_description: "Web game dev + Playwright test loop"
+
+ownership:
+  name: "Codex Team"
+  url: "https://openai.com/codex/"

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Figma Implement Design"
+  short_description: "Turn Figma designs into production-ready code"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+ownership:
+  name: "Codex Team"
+  url: "https://openai.com/codex/"
