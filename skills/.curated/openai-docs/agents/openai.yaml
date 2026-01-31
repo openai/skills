@@ -3,6 +3,15 @@ interface:
   short_description: "Reference the official OpenAI Developer docs"
   icon_small: "./assets/openai-small.svg"
   icon_large: "./assets/openai.png"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "openaiDeveloperDocs"
+      description: "OpenAI Developer Docs MCP server"
+      transport: "streamable_http"
+      url: "https://developers.openai.com/mcp"
+
 ownership:
   name: "Codex Team"
   url: "https://openai.com/codex/"

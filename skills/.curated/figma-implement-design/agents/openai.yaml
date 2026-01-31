@@ -3,6 +3,15 @@ interface:
   short_description: "Turn Figma designs into production-ready code"
   icon_small: "./assets/figma-small.svg"
   icon_large: "./assets/figma.png"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
+
 ownership:
   name: "Codex Team"
   url: "https://openai.com/codex/"
