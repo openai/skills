@@ -5,8 +5,8 @@ interface:
   icon_large: "./assets/render.png"
 
 ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"
+  name: "Render"
+  url: "https://render.com/"
 
 dependencies:
   tools:

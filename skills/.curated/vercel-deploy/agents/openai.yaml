@@ -3,5 +3,5 @@ interface:
   short_description: "Create a claimable Vercel preview deployment"
 
 ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"
+  name: "Vercel"
+  url: "https://vercel.com/"

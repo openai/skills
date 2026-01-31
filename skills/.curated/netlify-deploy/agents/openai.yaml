@@ -3,5 +3,5 @@ interface:
   short_description: "Deploy web projects to Netlify with the Netlify CLI"
 
 ownership:
-  name: "Codex Team"
-  url: "https://openai.com/codex/"
+  name: "Netlify"
+  url: "https://www.netlify.com/"
