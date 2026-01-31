@@ -1,6 +1,8 @@
 interface:
   display_name: "Vercel Deploy"
   short_description: "Create a claimable Vercel preview deployment"
+  icon_small: "./assets/vercel-small.svg"
+  icon_large: "./assets/vercel.png"
 
 ownership:
   name: "Vercel"

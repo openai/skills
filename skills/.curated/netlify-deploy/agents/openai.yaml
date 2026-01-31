@@ -1,6 +1,8 @@
 interface:
   display_name: "Netlify Deploy"
   short_description: "Deploy web projects to Netlify with the Netlify CLI"
+  icon_small: "./assets/netlify-small.svg"
+  icon_large: "./assets/netlify.png"
 
 ownership:
   name: "Netlify"
