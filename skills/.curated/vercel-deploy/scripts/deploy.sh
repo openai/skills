@@ -4,7 +4,7 @@
 # Usage: ./deploy.sh [project-path]
 # Returns: JSON with previewUrl, claimUrl, deploymentId, projectId
 
-set -e
+set -euo pipefail
 
 DEPLOY_ENDPOINT="https://codex-deploy-skills.vercel.sh/api/deploy"
 
@@ -161,6 +161,7 @@ INPUT_PATH="${1:-.}"
 # Create temp directory for packaging
 TEMP_DIR=$(mktemp -d)
 TARBALL="$TEMP_DIR/project.tgz"
+STAGING_DIR="$TEMP_DIR/staging"
 CLEANUP_TEMP=true
 
 cleanup() {
@@ -188,10 +189,15 @@ elif [ -d "$INPUT_PATH" ]; then
     # Detect framework from package.json
     FRAMEWORK=$(detect_framework "$PROJECT_PATH/package.json")
 
+    # Stage files into a temporary directory to avoid mutating the source tree.
+    mkdir -p "$STAGING_DIR"
+    echo "Staging project files..." >&2
+    tar -C "$PROJECT_PATH" --exclude='node_modules' --exclude='.git' -cf - . | tar -C "$STAGING_DIR" -xf -
+
     # Check if this is a static HTML project (no package.json)
     if [ ! -f "$PROJECT_PATH/package.json" ]; then
         # Find HTML files in root
-        HTML_FILES=$(find "$PROJECT_PATH" -maxdepth 1 -name "*.html" -type f)
+        HTML_FILES=$(find "$STAGING_DIR" -maxdepth 1 -name "*.html" -type f)
         HTML_COUNT=$(echo "$HTML_FILES" | grep -c . || echo 0)
 
         # If there's exactly one HTML file and it's not index.html, rename it
@@ -200,14 +206,14 @@ elif [ -d "$INPUT_PATH" ]; then
             BASENAME=$(basename "$HTML_FILE")
             if [ "$BASENAME" != "index.html" ]; then
                 echo "Renaming $BASENAME to index.html..." >&2
-                mv "$HTML_FILE" "$PROJECT_PATH/index.html"
+                mv "$HTML_FILE" "$STAGING_DIR/index.html"
             fi
         fi
     fi
 
     # Create tarball of the project (excluding node_modules and .git)
     echo "Creating deployment package..." >&2
-    tar -czf "$TARBALL" -C "$PROJECT_PATH" --exclude='node_modules' --exclude='.git' .
+    tar -czf "$TARBALL" -C "$STAGING_DIR" .
 else
     echo "Error: Input must be a directory or a .tgz file" >&2
     exit 1

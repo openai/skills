@@ -1,8 +1,6 @@
 ---
 name: netlify-deploy
-description: Deploy web projects to Netlify using the Netlify CLI. Handles authentication, site linking, and both production and preview deployments for any web framework.
-metadata:
-  short-description: Deploy your project to Netlify with a single command
+description: Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use when the user asks to deploy, host, publish, or link a site/repo on Netlify, including preview and production deploys.
 ---
 
 # Netlify Deployment Skill
@@ -227,3 +225,9 @@ For secrets and configuration:
 
 - Netlify CLI Docs: https://docs.netlify.com/cli/get-started/
 - netlify.toml Reference: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+## Bundled References (Load As Needed)
+
+- [CLI commands](references/cli-commands.md)
+- [Deployment patterns](references/deployment-patterns.md)
+- [netlify.toml guide](references/netlify-toml.md)
