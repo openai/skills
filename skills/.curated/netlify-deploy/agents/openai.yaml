@@ -2,12 +2,6 @@ interface:
   display_name: "Netlify Deploy"
   short_description: "Deploy web projects to Netlify with the Netlify CLI"
 
-dependencies:
-  tools:
-    - type: "cli"
-      value: "netlify"
-      description: "Netlify CLI (invoked via npx netlify)"
-
 ownership:
   name: "Codex Team"
   url: "https://openai.com/codex/"

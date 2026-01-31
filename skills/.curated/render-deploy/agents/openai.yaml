@@ -15,6 +15,3 @@ dependencies:
       description: "Render MCP server"
       transport: "streamable_http"
       url: "https://mcp.render.com/mcp"
-    - type: "cli"
-      value: "render"
-      description: "Render CLI"

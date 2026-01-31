@@ -2,15 +2,6 @@ interface:
   display_name: "Vercel Deploy"
   short_description: "Create a claimable Vercel preview deployment"
 
-dependencies:
-  tools:
-    - type: "cli"
-      value: "curl"
-      description: "Upload the deployment tarball to the Vercel deploy endpoint"
-    - type: "cli"
-      value: "tar"
-      description: "Package the project into a .tar.gz before upload"
-
 ownership:
   name: "Codex Team"
   url: "https://openai.com/codex/"
