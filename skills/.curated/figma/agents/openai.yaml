@@ -1,5 +1,5 @@
 interface:
-  display_name: "Figma MCP"
+  display_name: "Figma"
   short_description: "Use Figma MCP for design-to-code work"
   icon_small: "./assets/figma-small.svg"
   icon_large: "./assets/figma.png"
