@@ -28,6 +28,7 @@ Top-level constraints:
 
 - Quote all string values.
 - Keep keys unquoted.
+- For `interface.default_prompt`: generate a helpful, short (typically 1 sentence) example starting prompt based on the skill. It must explicitly mention the skill as `$skill-name` (e.g., "Use $skill-name-here to draft a concise weekly status update.").
 
 - `interface.display_name`: Human-facing title shown in UI skill lists and chips.
 - `interface.short_description`: Human-facing short UI blurb (25–64 chars) for quick scanning.
