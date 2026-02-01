@@ -1,0 +1,5 @@
+interface:
+  display_name: "GitHub Address Comments"
+  short_description: Address comments in a GitHub PR review"
+  icon_small: "./assets/github-small.svg"
+  icon_large: "./assets/github.png"

@@ -1,13 +1,5 @@
 interface:
   display_name: "Yeet"
   short_description: "Stage, commit, and open PR"
-  icon_small: "./assets/github-small.svg"
-  icon_large: "./assets/github.png"
-
-dependencies:
-  tools:
-    - type: "mcp"
-      value: "github"
-      description: "GitHub MCP server"
-      transport: "streamable_http"
-      url: "https://api.githubcopilot.com/mcp/"
+  icon_small: "./assets/yeet-small.svg"
+  icon_large: "./assets/yeet.png"

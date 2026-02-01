@@ -3,11 +3,3 @@ interface:
   short_description: "Debug failing GitHub Actions CI"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
-
-dependencies:
-  tools:
-    - type: "mcp"
-      value: "github"
-      description: "GitHub MCP server"
-      transport: "streamable_http"
-      url: "https://api.githubcopilot.com/mcp/"
