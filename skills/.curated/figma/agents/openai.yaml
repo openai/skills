@@ -1,0 +1,13 @@
+interface:
+  display_name: "Figma MCP"
+  short_description: "Use Figma MCP for design-to-code work"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
