@@ -56,6 +56,8 @@ skill-name/
 │   │   ├── name: (required)
 │   │   └── description: (required)
 │   └── Markdown instructions (required)
+├── agents/ (recommended)
+│   └── openai.yaml - UI metadata for skill lists and chips
 └── Bundled Resources (optional)
     ├── scripts/          - Executable code (Python/Bash/etc.)
     ├── references/       - Documentation intended to be loaded into context as needed
@@ -68,6 +70,16 @@ Every SKILL.md consists of:
 
 - **Frontmatter** (YAML): Contains `name` and `description` fields. These are the only fields that Codex reads to determine when the skill gets used, thus it is very important to be clear and comprehensive in describing what the skill is, and when it should be used.
 - **Body** (Markdown): Instructions and guidance for using the skill. Only loaded AFTER the skill triggers (if at all).
+
+#### Agents metadata (recommended)
+
+- UI-facing metadata for skill lists and chips
+- Read references/openai_yaml.md before generating values and follow its descriptions and constraints
+- Create: human-facing `display_name`, `short_description`, and `default_prompt` by reading the skill
+- Generate deterministically by passing the values as `--interface key=value` to `scripts/generate_openai_yaml.py` or `scripts/init_skill.py`
+- On updates: validate `agents/openai.yaml` still matches SKILL.md; regenerate if stale
+- Only include other optional interface fields (icons, brand color) if explicitly provided
+- See references/openai_yaml.md for field definitions and examples
 
 #### Bundled Resources (optional)
 
@@ -288,10 +300,19 @@ The script:
 
 - Creates the skill directory at the specified path
 - Generates a SKILL.md template with proper frontmatter and TODO placeholders
+- Creates `agents/openai.yaml` using agent-generated `display_name`, `short_description`, and `default_prompt` passed via `--interface key=value`
 - Optionally creates resource directories based on `--resources`
 - Optionally adds example files when `--examples` is set
 
 After initialization, customize the SKILL.md and add resources as needed. If you used `--examples`, replace or delete placeholder files.
+
+Generate `display_name`, `short_description`, and `default_prompt` by reading the skill, then pass them as `--interface key=value` to `init_skill.py` or regenerate with:
+
+```bash
+scripts/generate_openai_yaml.py <path/to/skill-folder> --interface key=value
+```
+
+Only include other optional interface fields when the user explicitly provides them. For full field descriptions and examples, see references/openai_yaml.md.
 
 ### Step 4: Edit the Skill
 
