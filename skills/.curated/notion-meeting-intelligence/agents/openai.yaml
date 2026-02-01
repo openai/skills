@@ -1,0 +1,13 @@
+interface:
+  display_name: "Notion Meeting Intelligence"
+  short_description: "Prep meetings with Notion context and tailored agendas"
+  icon_small: "./assets/notion-small.svg"
+  icon_large: "./assets/notion.png"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "notion"
+      description: "Notion MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.notion.com/mcp"

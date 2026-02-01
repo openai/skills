@@ -1,3 +1,5 @@
 interface:
   display_name: "Sentry (Read-only Observability)"
   short_description: "Read-only Sentry observability"
+  icon_small: "./assets/sentry-small.svg"
+  icon_large: "./assets/sentry.png"
