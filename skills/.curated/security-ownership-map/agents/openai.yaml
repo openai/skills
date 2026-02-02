@@ -1,0 +1,12 @@
+interface:
+  display_name: "Security Ownership Map"
+  short_description: "Map maintainers, bus factor, and sensitive code ownership"
+
+dependencies:
+  tools:
+    - type: "cli"
+      value: "uv"
+      description: "uv Python package manager (used to install networkx)"
+    - type: "cli"
+      value: "git"
+      description: "Git CLI"

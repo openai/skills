@@ -1,0 +1,12 @@
+interface:
+  display_name: "Security Threat Model"
+  short_description: "Repo-grounded threat modeling and abuse-path analysis"
+
+dependencies:
+  tools:
+    - type: "cli"
+      value: "git"
+      description: "Git CLI"
+    - type: "cli"
+      value: "rg"
+      description: "Ripgrep for evidence discovery"
