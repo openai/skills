@@ -1,12 +1,3 @@
 interface:
   display_name: "Security Best Practices"
   short_description: "Security reviews and secure-by-default guidance"
-
-dependencies:
-  tools:
-    - type: "cli"
-      value: "git"
-      description: "Git CLI"
-    - type: "cli"
-      value: "rg"
-      description: "Ripgrep for fast code search"
