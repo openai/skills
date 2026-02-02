@@ -1,0 +1,6 @@
+interface:
+  display_name: "Neon Postgres"
+  short_description: "Neon Serverless Postgres guidance and APIs"
+  icon_small: "./assets/neon-small.svg"
+  icon_large: "./assets/neon.jpg"
+  default_prompt: "Help me set up Neon Postgres and choose the right connection method for this project."
