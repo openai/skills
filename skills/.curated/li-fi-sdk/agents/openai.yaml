@@ -1,0 +1,6 @@
+interface:
+  display_name: "LI.FI SDK"
+  short_description: "Cross-chain swaps and bridges via the LI.FI JavaScript SDK"
+  icon_small: "./assets/li-fi-small.svg"
+  icon_large: "./assets/li-fi.png"
+  default_prompt: "Help me integrate @lifi/sdk for quotes, routes, and execution in a JS/TS app."

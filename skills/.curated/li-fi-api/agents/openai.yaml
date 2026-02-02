@@ -1,0 +1,6 @@
+interface:
+  display_name: "LI.FI API"
+  short_description: "Cross-chain swaps and bridges via the LI.FI REST API"
+  icon_small: "./assets/li-fi-small.svg"
+  icon_large: "./assets/li-fi.png"
+  default_prompt: "Help me integrate the LI.FI REST API for cross-chain quotes, routes, and transaction status."
