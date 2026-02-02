@@ -3,6 +3,7 @@ interface:
   short_description: "Prep meetings with Notion context and tailored agendas"
   icon_small: "./assets/notion-small.svg"
   icon_large: "./assets/notion.png"
+  default_prompt: "Prepare this meeting with Notion context and a tailored agenda."
 
 dependencies:
   tools:

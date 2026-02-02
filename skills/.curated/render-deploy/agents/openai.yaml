@@ -3,6 +3,7 @@ interface:
   short_description: "Deploy applications to Render via Blueprints or MCP"
   icon_small: "./assets/render-small.svg"
   icon_large: "./assets/render.png"
+  default_prompt: "Deploy my application to Render."
 
 dependencies:
   tools:

@@ -3,3 +3,4 @@ interface:
   short_description: "Stage, commit, and open PR"
   icon_small: "./assets/yeet-small.svg"
   icon_large: "./assets/yeet.png"
+  default_prompt: "Stage my changes, create a commit, and open a pull request."

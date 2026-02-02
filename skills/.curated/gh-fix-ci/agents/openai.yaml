@@ -3,3 +3,4 @@ interface:
   short_description: "Debug failing GitHub Actions CI"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
+  default_prompt: "Debug and fix my failing GitHub Actions CI workflow."

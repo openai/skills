@@ -3,3 +3,4 @@ interface:
   short_description: Address comments in a GitHub PR review"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
+  default_prompt: "Address all comments in my GitHub pull request review."

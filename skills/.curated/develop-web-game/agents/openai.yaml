@@ -3,3 +3,4 @@ interface:
   short_description: "Web game dev + Playwright test loop"
   icon_small: "./assets/game-small.svg"
   icon_large: "./assets/game.png"
+  default_prompt: "Build a web game and iterate with a Playwright test loop."

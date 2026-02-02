@@ -3,6 +3,7 @@ interface:
   short_description: "Manage Linear issues in Codex"
   icon_small: "./assets/linear-small.svg"
   icon_large: "./assets/linear.png"
+  default_prompt: "Manage and update my Linear issues."
 
 dependencies:
   tools:

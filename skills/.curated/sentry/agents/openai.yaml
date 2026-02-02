@@ -3,3 +3,4 @@ interface:
   short_description: "Read-only Sentry observability"
   icon_small: "./assets/sentry-small.svg"
   icon_large: "./assets/sentry.png"
+  default_prompt: "Investigate this issue using read-only Sentry observability data."
