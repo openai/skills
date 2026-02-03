@@ -1,0 +1,4 @@
+interface:
+  display_name: "Twist CLI (tw)"
+  short_description: "Manage Twist conversations with the tw CLI"
+  default_prompt: "Help me manage Twist conversations using the tw CLI. Check my inbox, reply to threads or DMs, and search for relevant messages or threads."
