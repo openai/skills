@@ -17,6 +17,11 @@ If there is no Git remote, stop and ask the user to either:
 - Create/push a Git remote (can be minimal if only the Blueprint is needed), or
 - Use the Render Dashboard/API to deploy a prebuilt Docker image (MCP cannot create image-backed services).
 
+## Prerequisites
+
+- When sandboxing blocks the deployment network calls, rerun with `sandbox_permissions=require_escalated`.
+- The deployment might take a few minutes. Use appropriate timeout values.
+
 ## When to Use This Skill
 
 Activate this skill when users want to:
@@ -457,6 +462,18 @@ Detailed checklist and commands: [references/post-deploy-checks.md](references/p
 
 If the service fails to start or health checks time out, use the basic triage guide:
 [references/troubleshooting-basics.md](references/troubleshooting-basics.md)
+
+## Troubleshooting
+
+### Escalated Network Access
+
+If deployment fails due to network issues (timeouts, DNS errors, connection resets), rerun the deploy with escalated permissions (use `sandbox_permissions=require_escalated`). The deploy requires escalated network access when sandbox networking blocks outbound requests.
+
+Example guidance to the user:
+
+```
+The deploy needs escalated network access to deploy to Render. I can rerun the command with escalated permissions—want me to proceed?
+```
 
 Optional: If you need deeper diagnostics (metrics/DB checks/error catalog), suggest installing the
 `render-debug` skill. It is not required for the core deploy flow.
