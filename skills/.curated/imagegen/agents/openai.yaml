@@ -3,3 +3,4 @@ interface:
   short_description: "Generate and edit images using OpenAI"
   icon_small: "./assets/imagegen-small.svg"
   icon_large: "./assets/imagegen.png"
+  default_prompt: "Generate or edit images for this task and return the final prompt plus selected outputs."

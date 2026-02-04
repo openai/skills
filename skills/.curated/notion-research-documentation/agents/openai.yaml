@@ -3,6 +3,7 @@ interface:
   short_description: "Research Notion content and produce briefs/reports"
   icon_small: "./assets/notion-small.svg"
   icon_large: "./assets/notion.png"
+  default_prompt: "Research this topic in Notion and produce a sourced brief with clear recommendations."
 
 dependencies:
   tools:

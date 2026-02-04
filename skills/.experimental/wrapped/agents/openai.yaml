@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wrapped"
+  short_description: "Create a Codex activity report from local usage data"
+  default_prompt: "Generate a Codex Wrapped usage report from my local Codex logs."

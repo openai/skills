@@ -3,3 +3,4 @@ interface:
   short_description: "Debug failing GitHub Actions CI"
   icon_small: "./assets/github-small.svg"
   icon_large: "./assets/github.png"
+  default_prompt: "Inspect failing GitHub Actions checks in this repo, summarize root cause, and propose a focused fix plan."

@@ -7,6 +7,11 @@ description: Deploy applications and websites to Vercel using the bundled `scrip
 
 Deploy any project to Vercel instantly. No authentication required.
 
+## Prerequisites
+
+- When sandboxing blocks the deployment network calls, rerun with `sandbox_permissions=require_escalated`.
+- The deployment might take a few minutes. Use appropriate timeout values.
+
 ## How It Works
 
 1. Packages your project into a `.tar.gz` (excludes `node_modules` and `.git`)
@@ -21,6 +26,7 @@ bash scripts/deploy.sh [path]
 ```
 
 **Arguments:**
+
 - `path` - Directory to deploy, or a `.tgz` file (defaults to current directory)
 
 If you pass a directory, the script will create a `.tar.gz` before upload.
@@ -84,6 +90,7 @@ For static HTML projects (no `package.json`), framework is set to `null`.
 ## Static HTML Projects
 
 For projects without a `package.json`:
+
 - If there's a single `.html` file not named `index.html`, it gets renamed automatically
 - This ensures the page is served at the root URL (`/`)
 
@@ -103,13 +110,12 @@ To transfer this deployment to your Vercel account, visit the Claim URL.
 
 ## Troubleshooting
 
-### Network Egress Error
+### Escalated Network Access
 
-If deployment fails due to network restrictions, tell the user:
+If deployment fails due to network issues (timeouts, DNS errors, connection resets), rerun the deploy with escalated permissions (use `sandbox_permissions=require_escalated`). The deploy requires escalated network access when sandbox networking blocks outbound requests.
+
+Example guidance to the user:
 
 ```
-Deployment failed due to network restrictions. To fix this:
-
-1. Allow outbound access to *.vercel.com
-2. Try deploying again
+The deploy needs escalated network access to deploy to Vercel. I can rerun the command with escalated permissions—want me to proceed?
 ```

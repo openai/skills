@@ -3,3 +3,4 @@ interface:
   short_description: "Capture screenshots"
   icon_small: "./assets/screenshot-small.svg"
   icon_large: "./assets/screenshot.png"
+  default_prompt: "Capture the right screenshot for this task (target, area, and output path)."

@@ -3,3 +3,4 @@ interface:
   short_description: "Edit and review docx files"
   icon_small: "./assets/doc-small.svg"
   icon_large: "./assets/doc.png"
+  default_prompt: "Edit or review this .docx file and return the updated file plus a concise change summary."

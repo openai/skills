@@ -3,6 +3,7 @@ interface:
   short_description: "Turn Figma designs into production-ready code"
   icon_small: "./assets/figma-small.svg"
   icon_large: "./assets/figma.png"
+  default_prompt: "Implement this Figma design in this codebase, matching layout, states, and responsive behavior."
 
 dependencies:
   tools:

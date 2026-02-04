@@ -3,3 +3,4 @@ interface:
   short_description: "Automate real browsers from the terminal"
   icon_small: "./assets/playwright-small.svg"
   icon_large: "./assets/playwright.png"
+  default_prompt: "Automate this browser workflow with Playwright and produce a reliable script with run steps."

@@ -3,6 +3,7 @@ interface:
   short_description: "Turn Notion specs into implementation plans, tasks, and progress tracking"
   icon_small: "./assets/notion-small.svg"
   icon_large: "./assets/notion.png"
+  default_prompt: "Turn this Notion spec into an implementation plan with milestones, tasks, and dependencies."
 
 dependencies:
   tools:
