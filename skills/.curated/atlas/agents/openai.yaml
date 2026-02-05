@@ -1,6 +1,0 @@
-interface:
-  display_name: "Atlas"
-  short_description: "Use to manage tabs in ChatGPT Atlas and access your browser history."
-  icon_small: "./assets/atlas-small.svg"
-  icon_large: "./assets/atlas.png"
-  default_prompt: "List all of my currently open browser tabs and call out duplicates."
