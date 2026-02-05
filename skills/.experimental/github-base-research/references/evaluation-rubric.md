@@ -15,6 +15,12 @@
 - Release cadence or tagged versions.
 - Healthy contributor and issue response activity.
 
+## Search hygiene
+
+- Prefer query qualifiers (`stars`, `fork`, `archived`, `pushed`) to reduce noise.
+- Start with moderate parallelism and use safe mode when GitHub secondary limits trigger.
+- Keep candidate sets bounded (`max-candidates`) before deep scoring.
+
 ## Scoring interpretation
 
 - `0.75 - 1.00`: Strong foundation candidate.

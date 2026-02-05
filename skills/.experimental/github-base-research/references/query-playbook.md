@@ -34,14 +34,20 @@ Create 8-20 lines in a query file by combining:
 - `monorepo`
 - `cli`
 
+5. GitHub qualifiers for signal control
+- `stars:>50`
+- `archived:false`
+- `fork:false`
+- `pushed:>=2024-01-01`
+
 ## Example query file
 
 ```text
-feature flag platform starter kit typescript
-feature flag management api react nextjs
-open source feature management service go
-policy engine authorization rbac service
-audit log sdk typescript node
+feature flag platform starter kit typescript stars:>80 archived:false fork:false
+feature flag management api react nextjs stars:>50 pushed:>=2024-01-01
+open source feature management service go stars:>80 archived:false
+policy engine authorization rbac service stars:>100 archived:false
+audit log sdk typescript node stars:>50 fork:false
 ```
 
 ## Collection sequence
@@ -52,9 +58,20 @@ audit log sdk typescript node
 bash scripts/collect_github_repos.sh \
   --queries-file /tmp/queries.txt \
   --output /tmp/repo-candidates.json \
-  --per-query 40 \
-  --parallel 8 \
+  --per-query 30 \
+  --parallel 4 \
+  --min-stars 50 \
   --max-candidates 120
+```
+
+If secondary rate limits occur, rerun safely:
+
+```bash
+bash scripts/collect_github_repos.sh \
+  --queries-file /tmp/queries.txt \
+  --output /tmp/repo-candidates.json \
+  --safe-mode \
+  --max-candidates 90
 ```
 
 2. Rank and propose base repo strategy:
@@ -64,6 +81,8 @@ python3 scripts/rank_github_bases.py \
   --input /tmp/repo-candidates.json \
   --required-capabilities "auth,authorization,audit-log" \
   --preferred-language "TypeScript" \
+  --min-stars 50 \
+  --max-inactive-days 730 \
   --top 12 \
   --combo-max 3 \
   --emit-markdown /tmp/base-research-report.md

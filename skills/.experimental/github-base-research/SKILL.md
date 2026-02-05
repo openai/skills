@@ -33,16 +33,29 @@ Use the bundled script:
 bash scripts/collect_github_repos.sh \
   --queries-file /tmp/queries.txt \
   --output /tmp/repo-candidates.json \
-  --per-query 40 \
-  --parallel 8 \
+  --per-query 30 \
+  --parallel 4 \
+  --min-stars 50 \
   --max-candidates 120
 ```
 
 This script:
 - Executes GitHub search queries in parallel
+- Uses retry/backoff on GitHub API rate-limit responses
+- Falls back to serial execution if burst parallelism fails
 - Deduplicates candidate repos
 - Fetches detailed metadata for each repo in parallel
+- Filters low-signal results by star threshold and archived/fork status
 - Produces one normalized JSON array
+
+If API secondary limits are noisy, rerun with:
+
+```bash
+bash scripts/collect_github_repos.sh \
+  --queries-file /tmp/queries.txt \
+  --output /tmp/repo-candidates.json \
+  --safe-mode
+```
 
 4. Score and rank candidates.
 Use the scoring script:
@@ -52,6 +65,8 @@ python3 scripts/rank_github_bases.py \
   --input /tmp/repo-candidates.json \
   --required-capabilities "auth,rbac,billing,audit-log" \
   --preferred-language "TypeScript" \
+  --min-stars 50 \
+  --max-inactive-days 730 \
   --top 12 \
   --combo-max 3 \
   --emit-markdown /tmp/base-research-report.md
@@ -87,3 +102,4 @@ Use `references/report-template.md` to format final output.
 - Prioritize maintainability and integration fit over star count alone.
 - Treat high stars with stale maintenance as medium risk by default.
 - Prefer explicit licenses (MIT/Apache-2.0/BSD) for commercial viability unless user says otherwise.
+- Scripts are compatible with macOS default Bash 3.2 (no `readarray` dependency).

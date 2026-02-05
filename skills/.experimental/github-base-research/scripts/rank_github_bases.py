@@ -46,6 +46,7 @@ ALIAS_MAP = {
     "rest": "api",
     "graphql": "api",
 }
+KNOWN_CAPABILITIES = set(ALIAS_MAP.values())
 
 
 @dataclass
@@ -90,6 +91,28 @@ def parse_args() -> argparse.Namespace:
         default="",
         help="Optional path to write structured output JSON.",
     )
+    parser.add_argument(
+        "--min-stars",
+        type=int,
+        default=50,
+        help="Hard-gate minimum star threshold (default: 50).",
+    )
+    parser.add_argument(
+        "--max-inactive-days",
+        type=int,
+        default=730,
+        help="Hard-gate max days since push (default: 730).",
+    )
+    parser.add_argument(
+        "--require-license",
+        action="store_true",
+        help="Hard-gate repositories without SPDX license metadata.",
+    )
+    parser.add_argument(
+        "--no-hard-gate",
+        action="store_true",
+        help="Disable hard-gate filtering before scoring.",
+    )
     return parser.parse_args()
 
 
@@ -111,6 +134,13 @@ def canonicalize(token: str) -> str:
     if not t:
         return ""
     return ALIAS_MAP.get(t, t)
+
+
+def normalize_text(value: object, max_len: int = 800) -> str:
+    if not isinstance(value, str):
+        return ""
+    sanitized = value.replace("\x00", " ").strip()
+    return sanitized[:max_len]
 
 
 def tokenize_text(value: str) -> Iterable[str]:
@@ -137,15 +167,15 @@ def extract_capabilities(repo: dict) -> set[str]:
                     caps.add(canonical)
 
     text_fields = [
-        repo.get("name"),
-        repo.get("full_name"),
-        repo.get("description"),
+        normalize_text(repo.get("name")),
+        normalize_text(repo.get("full_name")),
+        normalize_text(repo.get("description"), max_len=1000),
     ]
     for field in text_fields:
-        if isinstance(field, str):
+        if field:
             for token in tokenize_text(field):
                 canonical = canonicalize(token)
-                if canonical and canonical in set(ALIAS_MAP.values()):
+                if canonical and canonical in KNOWN_CAPABILITIES:
                     caps.add(canonical)
 
     return caps
@@ -162,10 +192,9 @@ def to_repo_list(payload: object) -> list[dict]:
 
 
 def activity_score(repo: dict) -> float:
-    pushed = parse_iso(repo.get("pushed_at") or repo.get("pushedAt"))
-    if not pushed:
+    age_days = activity_age_days(repo)
+    if age_days is None:
         return 0.15
-    age_days = max((datetime.now(timezone.utc) - pushed).days, 0)
     if age_days <= 14:
         return 1.0
     if age_days <= 45:
@@ -179,6 +208,13 @@ def activity_score(repo: dict) -> float:
     if age_days <= 730:
         return 0.2
     return 0.05
+
+
+def activity_age_days(repo: dict) -> int | None:
+    pushed = parse_iso(repo.get("pushed_at") or repo.get("pushedAt"))
+    if not pushed:
+        return None
+    return max((datetime.now(timezone.utc) - pushed).days, 0)
 
 
 def popularity_score(repo: dict) -> tuple[float, float, float]:
@@ -281,6 +317,35 @@ def normalize_capability_list(value: str) -> list[str]:
     return out
 
 
+def has_license(repo: dict) -> bool:
+    license_data = repo.get("license")
+    return isinstance(license_data, dict) and bool(license_data.get("spdx_id"))
+
+
+def hard_gate(
+    repo: dict, min_stars: int, max_inactive_days: int, require_license: bool
+) -> tuple[bool, str]:
+    archived = bool(repo.get("archived") or repo.get("isArchived"))
+    disabled = bool(repo.get("disabled"))
+    if archived or disabled:
+        return False, "archived_or_disabled"
+
+    stars = int(repo.get("stargazers_count") or repo.get("stargazersCount") or 0)
+    if stars < min_stars:
+        return False, "below_min_stars"
+
+    age_days = activity_age_days(repo)
+    if age_days is None:
+        return False, "missing_activity"
+    if age_days > max_inactive_days:
+        return False, "stale_activity"
+
+    if require_license and not has_license(repo):
+        return False, "missing_license"
+
+    return True, ""
+
+
 def choose_combo(
     ranked: list[RepoScore], required_capabilities: list[str], combo_max: int
 ) -> tuple[list[RepoScore], set[str]]:
@@ -323,6 +388,10 @@ def repo_id(repo: dict) -> str:
 def to_output_payload(
     ranked: list[RepoScore],
     total_candidates: int,
+    input_candidates: int,
+    filtered_out_count: int,
+    filter_reasons: dict[str, int],
+    hard_gate_enabled: bool,
     required_capabilities: list[str],
     preferred_language: str,
     combo: list[RepoScore],
@@ -335,6 +404,10 @@ def to_output_payload(
     return {
         "summary": {
             "candidate_count": total_candidates,
+            "input_candidate_count": input_candidates,
+            "filtered_out_count": filtered_out_count,
+            "hard_gate_enabled": hard_gate_enabled,
+            "filter_reasons": filter_reasons,
             "required_capabilities": required_capabilities,
             "preferred_language": preferred_language,
             "single_base_recommended": bool(single),
@@ -392,7 +465,16 @@ def render_markdown(payload: dict) -> str:
     required = summary["required_capabilities"]
 
     lines = ["# GitHub Base Research Report", ""]
-    lines.append(f"- Candidate repositories scored: **{summary['candidate_count']}**")
+    lines.append(
+        f"- Candidate repositories scored: **{summary['candidate_count']}** "
+        f"(from {summary['input_candidate_count']} collected)."
+    )
+    if summary["hard_gate_enabled"]:
+        lines.append(f"- Hard-gate filtered out: **{summary['filtered_out_count']}**")
+        reasons = summary.get("filter_reasons") or {}
+        if reasons:
+            reason_parts = [f"{k}={v}" for k, v in sorted(reasons.items())]
+            lines.append(f"- Hard-gate reasons: **{', '.join(reason_parts)}**")
     lines.append(
         f"- Required capabilities: **{', '.join(required) if required else 'none provided'}**"
     )
@@ -474,8 +556,35 @@ def main() -> int:
     required_capabilities = normalize_capability_list(args.required_capabilities)
     preferred_language = args.preferred_language.strip()
 
+    working_repos = repos
+    filtered_out_count = 0
+    filter_reasons: dict[str, int] = {}
+    hard_gate_enabled = not args.no_hard_gate
+
+    if hard_gate_enabled:
+        gated = []
+        for repo in repos:
+            allowed, reason = hard_gate(
+                repo,
+                min_stars=max(args.min_stars, 0),
+                max_inactive_days=max(args.max_inactive_days, 1),
+                require_license=args.require_license,
+            )
+            if allowed:
+                gated.append(repo)
+            else:
+                filter_reasons[reason] = filter_reasons.get(reason, 0) + 1
+        filtered_out_count = len(repos) - len(gated)
+        working_repos = gated
+
+        if not working_repos:
+            raise SystemExit(
+                "Hard-gate filtered all repos. Lower --min-stars, increase "
+                "--max-inactive-days, or rerun with --no-hard-gate."
+            )
+
     ranked_all = sorted(
-        (score_repo(repo, required_capabilities, preferred_language) for repo in repos),
+        (score_repo(repo, required_capabilities, preferred_language) for repo in working_repos),
         key=lambda item: item.score,
         reverse=True,
     )
@@ -485,6 +594,10 @@ def main() -> int:
     output_payload = to_output_payload(
         ranked,
         len(ranked_all),
+        len(repos),
+        filtered_out_count,
+        filter_reasons,
+        hard_gate_enabled,
         required_capabilities,
         preferred_language,
         combo,
