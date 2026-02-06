@@ -1,0 +1,10 @@
+display_name: Lore
+description: Research knowledge repository with semantic search, citations, and agent-driven ingestion
+icon_url: https://github.com/getlore-ai/lore
+mcp_servers:
+  - name: lore
+    command: npx
+    args:
+      - "-y"
+      - "@getlore/cli"
+      - mcp
