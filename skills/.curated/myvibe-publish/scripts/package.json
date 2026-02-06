@@ -1,0 +1,19 @@
+{
+  "name": "myvibe-publish-scripts",
+  "version": "0.0.18",
+  "type": "module",
+  "description": "Scripts for publishing to MyVibe",
+  "main": "publish.mjs",
+  "scripts": {
+    "publish": "node publish.mjs"
+  },
+  "dependencies": {
+    "@aigne/cli": "^1.59.0",
+    "@aigne/secrets": "^0.1.6",
+    "archiver": "^7.0.1",
+    "chalk": "^5.4.1",
+    "js-yaml": "^4.1.0",
+    "open": "^10.1.0",
+    "ufo": "^1.5.4"
+  }
+}

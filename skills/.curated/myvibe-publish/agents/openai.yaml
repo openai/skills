@@ -1,0 +1,6 @@
+interface:
+  display_name: "MyVibe Publish"
+  short_description: "Deploy web projects to MyVibe with automatic project detection and deployment"
+  icon_small: "./assets/myvibe-small.svg"
+  icon_large: "./assets/myvibe.png"
+  default_prompt: "Publish this project to MyVibe and share the URL."
