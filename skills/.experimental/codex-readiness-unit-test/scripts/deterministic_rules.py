@@ -92,7 +92,8 @@ def _clean_markdown_ref(raw_ref: str) -> str:
     if cleaned.startswith("<") and cleaned.endswith(">"):
         cleaned = cleaned[1:-1].strip()
     cleaned = re.split(r"[?#]", cleaned, maxsplit=1)[0]
-    cleaned = cleaned.strip().strip("`'\"()[]{}<>.,:;")
+    cleaned = cleaned.strip().strip("`'\"()[]{}<>")
+    cleaned = re.sub(r"[.,:;]+$", "", cleaned).strip()
     return cleaned
 
 

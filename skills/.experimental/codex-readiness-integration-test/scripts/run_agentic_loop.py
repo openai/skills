@@ -133,6 +133,10 @@ def sanitize_agentic_args(args: list[str]) -> list[str]:
     return sanitized
 
 
+def wants_yolo(args: list[str]) -> bool:
+    return "--yolo" in args or "--dangerously-bypass-approvals-and-sandbox" in args
+
+
 def build_command(
     prompt: dict[str, Any], agents_path: Path, prompt_path: Path, repo_root: Path
 ) -> tuple[list[str], int]:
@@ -142,7 +146,10 @@ def build_command(
     prompt_args = sanitize_agentic_args(normalize_args(config.get("args")))
     # Hardcode a safe, broadly supported permission model at the runner level,
     # while allowing other prompt-supplied flags (e.g., model selection).
-    raw_args = ["exec", "--full-auto"] + prompt_args + ["-C", "{repo_root}", "{change_prompt}"]
+    raw_args = ["exec"]
+    if not wants_yolo(prompt_args):
+        raw_args.append("--full-auto")
+    raw_args += prompt_args + ["-C", "{repo_root}", "{change_prompt}"]
     args = normalize_args(raw_args)
     change_prompt = str(prompt.get("change_prompt") or "").strip()
     plan_instruction = str(prompt.get("plan_instruction") or "").strip()
@@ -190,7 +197,10 @@ def build_resume_command(
     config: dict[str, Any] = agentic_config if isinstance(agentic_config, dict) else {}
     cmd = config.get("cmd") or "codex"
     prompt_args = sanitize_agentic_args(normalize_args(config.get("args")))
-    raw_args = ["exec", "--full-auto"] + prompt_args
+    raw_args = ["exec"]
+    if not wants_yolo(prompt_args):
+        raw_args.append("--full-auto")
+    raw_args += prompt_args
     args = normalize_args(raw_args)
     mapping = {
         "{agents_path}": str(agents_path),
