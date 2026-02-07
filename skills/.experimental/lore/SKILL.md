@@ -35,8 +35,7 @@ After setup, Lore works autonomously.
 | `get_source` | Low | Full document retrieval by ID |
 | `list_sources` | Low | Browse what exists in a project |
 | `list_projects` | Low | Discover available knowledge domains |
-| `retain` | Low | Save discrete insights/decisions |
-| `ingest` | Medium | Push full documents into the knowledge base |
+| `ingest` | Low-Medium | Push content — documents, insights, or decisions |
 | `research` | High | Cross-reference multiple sources, synthesize findings |
 | `sync` | Variable | Refresh from configured source directories |
 
@@ -51,6 +50,4 @@ Before making recommendations or answering questions about past work:
 2. Only use `research` for multi-source synthesis (10x more expensive)
 3. Use `get_source(id, include_content: true)` for full text
 
-## When to Retain
-
-Use `retain` for short synthesized knowledge (decisions, insights, requirements) — not full documents.
+For short insights or decisions, just pass the content — title and source_type are optional and auto-generated from content.
