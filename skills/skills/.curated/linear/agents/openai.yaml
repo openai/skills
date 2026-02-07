@@ -1,0 +1,14 @@
+interface:
+  display_name: "Linear"
+  short_description: "Manage Linear issues in Codex"
+  icon_small: "./assets/linear-small.svg"
+  icon_large: "./assets/linear.png"
+  default_prompt: "Use Linear context to triage or update relevant issues for this task, with clear next actions."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "linear"
+      description: "Linear MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.linear.app/mcp"

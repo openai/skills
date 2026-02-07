@@ -1,0 +1,31 @@
+{
+  "name": "Save Conversation to Wiki",
+  "skills": ["knowledge-capture"],
+  "query": "Save this conversation about deploying our application to production to the team wiki",
+  "context": "Preceding conversation contains discussion about deployment process, including steps, gotchas, and best practices",
+  "expected_behavior": [
+    "Extracts key information from conversation context (deployment steps, gotchas, best practices)",
+    "Identifies content type as How-To Guide based on procedural nature",
+    "Structures content using How-To structure: Overview → Prerequisites → Steps (numbered) → Verification → Troubleshooting → Related",
+    "Organizes information into clear sections with proper headings",
+    "Includes specific commands, configurations, or examples from conversation",
+    "Adds context about why/when to use this process in Overview section",
+    "Notes common issues and solutions mentioned in discussion in Troubleshooting section",
+    "Uses Notion:notion-search to find team wiki location or asks user",
+    "Creates page using Notion:notion-create-pages with structured content and appropriate parent",
+    "Uses clear, descriptive title like 'How to Deploy to Production'",
+    "Applies Notion markdown formatting (headings, code blocks, bullets)",
+    "Suggests tags/categories for discoverability if wiki database"
+  ],
+  "success_criteria": [
+    "Content is structured using How-To format from SKILL.md content types",
+    "Key points from conversation are captured accurately (not generic)",
+    "Information is organized with proper Notion markdown (##, ###, bullets, code blocks)",
+    "Specific technical details (commands, configs) are preserved from conversation",
+    "Document is written for future reference with clear step-by-step instructions",
+    "Title is searchable and descriptive (e.g., 'How to Deploy to Production')",
+    "Page is placed in appropriate wiki location (general wiki or specific section)",
+    "Uses correct tool name (Notion:notion-create-pages)"
+  ]
+}
+

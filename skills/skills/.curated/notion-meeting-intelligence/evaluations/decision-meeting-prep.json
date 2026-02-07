@@ -1,0 +1,35 @@
+{
+  "name": "Decision Meeting Preparation",
+  "skills": ["meeting-intelligence"],
+  "query": "Prep for tomorrow's meeting where we need to decide on our database migration approach. Create both an internal pre-read for the team and an agenda for the meeting.",
+  "expected_behavior": [
+    "Step 1: Uses Notion:notion-search to find context about database migration (project pages, technical specs, previous discussions, options analysis)",
+    "Step 2: Fetches at least 2-3 relevant pages using Notion:notion-fetch to gather information from Notion",
+    "Step 3: Identifies the decision to be made and available options from fetched Notion content",
+    "Step 4: Enriches with Codex research - adds decision-making frameworks (e.g., cost-benefit analysis, risk assessment), technical context for migration approaches, best practices for database migrations",
+    "Step 5: Distinguishes Notion facts from Codex insights in synthesis",
+    "Step 6: Creates INTERNAL PRE-READ using Notion:notion-create-pages with title like 'INTERNAL: Database Migration Decision - Pre-Read - [Date]'",
+    "Step 6a: Internal pre-read includes: Meeting overview, background context (from Notion), current status and technical details, context & insights (from Codex research on migration best practices), decision options with detailed pros/cons, recommendation with rationale, what we need from meeting",
+    "Step 6b: Internal pre-read marked clearly as 'INTERNAL ONLY' or 'For team only'",
+    "Step 7: Creates EXTERNAL AGENDA using Notion:notion-create-pages with title like 'Meeting Agenda: Database Migration Decision - [Date]'",
+    "Step 7a: External agenda includes: Meeting details, objective (clear decision to make), agenda items with time allocations, discussion topics, decisions needed, action items section (empty), related resources with link to pre-read",
+    "Step 7b: External agenda is clean, professional, focused (no internal strategy or detailed pros/cons)",
+    "Step 8: Links both documents together (agenda mentions pre-read, pre-read mentions agenda)",
+    "Both documents link to source pages using <mention-page url='...'>"
+  ],
+  "success_criteria": [
+    "TWO documents are created (internal pre-read + external agenda), not just one",
+    "Internal pre-read is comprehensive with: Notion context + Codex insights + detailed pros/cons + recommendation",
+    "Internal pre-read is clearly marked 'INTERNAL' or 'For team only'",
+    "External agenda is professional, structured, focused on meeting flow (not internal strategy)",
+    "Codex enrichment is present and adds value (decision frameworks, migration best practices, risk patterns)",
+    "Notion facts are clearly sourced, Codex insights are distinguished",
+    "At least 2-3 Notion source pages are cited using mention-page tags",
+    "Internal pre-read follows structure from SKILL.md Step 5 (Meeting Overview → Background → Current Status → Context & Insights → Key Discussion Points → What We Need)",
+    "External agenda follows structure from SKILL.md Step 6 (Meeting Details → Objective → Agenda Items → Discussion Topics → Decisions Needed → Action Items → Related Resources)",
+    "Documents are cross-linked (pre-read mentions agenda, agenda mentions pre-read)",
+    "Meeting date is included in both titles",
+    "Uses correct tool names (Notion:notion-search, Notion:notion-fetch, Notion:notion-create-pages for BOTH documents)"
+  ]
+}
+

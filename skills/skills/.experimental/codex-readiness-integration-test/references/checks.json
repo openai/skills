@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0",
+  "checks": [
+    {
+      "id": "agentic_run_success",
+      "title": "P0: Agentic loop execution",
+      "description": "Agentic loop ran and exited with code 0.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "agentic_run_success",
+      "deterministic_rule_params": {
+        "path": "agentic_summary.json"
+      },
+      "enabled_by_default": true
+    },
+    {
+      "id": "exec_plan_before_code_changes",
+      "title": "P0: Planning signal before code changes",
+      "description": "A planning signal (for example: update_plan or \"Plan:\") appears in agentic.log before any non-doc, non-.codex file changes.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "exec_plan_before_code_changes",
+      "deterministic_rule_params": {
+        "prompt_path": "prompt.json",
+        "agentic_log_path": "logs/agentic.log"
+      },
+      "enabled_by_default": true
+    },
+    {
+      "id": "verification_after_code_changes",
+      "title": "P0: Verification after code changes",
+      "description": "A build, test, or lint verification command appears in agentic.log after the first non-doc, non-.codex file change.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "verification_after_code_changes",
+      "deterministic_rule_params": {
+        "prompt_path": "prompt.json",
+        "agentic_log_path": "logs/agentic.log"
+      },
+      "enabled_by_default": true
+    },
+    {
+      "id": "repo_root_only_changes",
+      "title": "P1: Repo-root-only changes",
+      "description": "Git diff paths resolve under repo root.",
+      "priority": 1,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "repo_root_only_changes",
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "execution_summary_status",
+      "title": "P0: Build/test execution status",
+      "description": "Execution summary is present and overall status is PASS or WARN.",
+      "priority": 0,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "execution_summary_status",
+      "deterministic_rule_params": {
+        "summary_path": "execution_summary.json"
+      },
+      "enabled_by_default": true
+    },
+    {
+      "id": "execution_logs_no_errors",
+      "title": "P2: Execution logs show no obvious errors",
+      "description": "Execution logs do not contain obvious error markers.",
+      "priority": 2,
+      "weight": null,
+      "type": "DETERMINISTIC",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": null,
+      "deterministic_rule_id": "execution_logs_no_errors",
+      "deterministic_rule_params": {
+        "logs_dir": "logs"
+      },
+      "enabled_by_default": true
+    },
+    {
+      "id": "agentic_loop_eval",
+      "title": "P0: Agentic loop success",
+      "description": "LLM evaluation of agentic loop success, AGENTS reference, and compaction avoidance.",
+      "priority": 0,
+      "weight": null,
+      "type": "LLM",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": "agentic_loop_eval",
+      "deterministic_rule_id": null,
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    },
+    {
+      "id": "change_quality_eval",
+      "title": "P0: Change quality evaluation",
+      "description": "LLM evaluation of correctness, context usage, maintainability, and risk.",
+      "priority": 0,
+      "weight": null,
+      "type": "LLM",
+      "scope": "run_dir",
+      "execute_required": true,
+      "evaluator_prompt_id": "change_quality",
+      "deterministic_rule_id": null,
+      "deterministic_rule_params": {},
+      "enabled_by_default": true
+    }
+  ]
+}

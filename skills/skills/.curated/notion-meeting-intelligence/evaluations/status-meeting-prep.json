@@ -1,0 +1,35 @@
+{
+  "name": "Status Update Meeting Preparation",
+  "skills": ["meeting-intelligence", "task-manager"],
+  "query": "Prep for Friday's project status meeting on the Mobile App Redesign project. Create both an internal pre-read and an external agenda.",
+  "expected_behavior": [
+    "Step 1: Uses Notion:notion-search to find Mobile App Redesign project page",
+    "Step 2: Fetches project page using Notion:notion-fetch to get current status and context",
+    "Step 3: Uses Notion:notion-search to find tasks database",
+    "Step 4: Queries task database using Notion:notion-query-data-sources for project tasks (WHERE Project = 'Mobile App Redesign')",
+    "Step 5: Analyzes task data: calculates completion %, identifies completed work, in-progress items, and blockers",
+    "Step 6: Enriches with Codex research - adds project management insights (velocity trends, risk patterns, common project pitfalls), suggests discussion frameworks if risks identified, provides context on timeline implications",
+    "Step 7: Creates INTERNAL PRE-READ using Notion:notion-create-pages with title 'INTERNAL: Mobile App Redesign Status - Pre-Read - [Date]'",
+    "Step 7a: Internal pre-read includes: Project overview, current status with metrics (from Notion/tasks), progress summary with specifics, context & insights (Codex research on project health patterns), honest assessment of challenges/risks, what we need from meeting",
+    "Step 7b: Internal pre-read contains detailed metrics, blockers, and strategic considerations",
+    "Step 8: Creates EXTERNAL AGENDA using Notion:notion-create-pages with title 'Meeting Agenda: Mobile App Redesign Status Update - [Date]'",
+    "Step 8a: External agenda uses Status Update structure: Meeting Details → Objective → Agenda Items (timed) → Discussion Topics → Action Items",
+    "Step 8b: External agenda is concise, professional, focuses on meeting flow (summary-level metrics only)",
+    "Step 9: Links both documents together",
+    "Both documents link to project page and task database using <mention-page> and <mention-database>"
+  ],
+  "success_criteria": [
+    "TWO documents are created (internal pre-read + external agenda)",
+    "Internal pre-read contains: Detailed metrics from task query, honest assessment of blockers/risks, Codex insights on project health patterns, strategic considerations",
+    "Internal pre-read is marked 'INTERNAL' or 'For team only'",
+    "External agenda is professional status update format with: Overall status, progress summary (high-level), upcoming work, discussion topics, action items section",
+    "External agenda does NOT contain detailed risk analysis or internal strategic discussion (that's in pre-read)",
+    "Progress metrics are accurate based on Notion:notion-query-data-sources results (e.g., X complete, Y in progress, Z blocked)",
+    "Blockers identified from task query are included in internal pre-read with full context",
+    "Codex enrichment adds value (project management insights, risk patterns, velocity analysis)",
+    "Links to project page and task database using mention tags",
+    "Documents are cross-linked for easy navigation",
+    "Uses correct tool names (Notion:notion-search, Notion:notion-fetch, Notion:notion-query-data-sources, Notion:notion-create-pages for BOTH documents)"
+  ]
+}
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Creator"
+  short_description: "Create or update a skill"
+  default_prompt: "Read my repository and create a skill to bootstrap new components for my project."
