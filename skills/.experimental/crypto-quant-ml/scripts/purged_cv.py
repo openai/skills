@@ -27,7 +27,6 @@ class PurgedKFold:
 
     def split(self, X, y=None, groups=None):
         indices = np.arange(X.shape[0])
-        # FIX: Use self.t1, not t1
         n_samples = self.t1.shape[0]
         embargo = int(n_samples * self.pct_embargo)
 
