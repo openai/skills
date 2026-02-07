@@ -1,3 +1,4 @@
-display_name: PowerPoint Editor
-short_description: Create, read, and edit PowerPoint presentations
-default_prompt: Help me create a PowerPoint presentation
+interface:
+  display_name: "PowerPoint"
+  short_description: "Create, edit, and review PowerPoint presentations"
+  default_prompt: "Create, edit, or review this PowerPoint presentation and summarize the key output or changes."

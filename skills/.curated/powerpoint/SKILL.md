@@ -1,33 +1,63 @@
 ---
 name: powerpoint
-description: Create, read, and edit PowerPoint (.pptx) presentations using python-pptx. Use when Codex needs to work with PowerPoint files for: (1) Creating new presentations, (2) Adding slides with text, bullet points, images, shapes, or tables, (3) Modifying existing presentations, (4) Extracting text or content from slides, (5) Adding charts or diagrams, (6) Working with slide layouts and placeholders, or any other PowerPoint tasks.
-metadata:
-  short-description: Create and edit PowerPoint presentations
+description: Use when the task involves reading, creating, or editing `.pptx` presentations where layout and formatting matter; prefer `python-pptx` for programmatic access and LibreOffice for visual review.
 ---
 
 # PowerPoint Skill
 
-Create, read, and update PowerPoint (.pptx) files using the `python-pptx` library.
+## When to use
+- Create new presentations with slides, text, images, tables, and charts.
+- Read or review existing PPTX content where layout matters.
+- Modify presentations while preserving formatting.
+- Extract text or content from slides for analysis.
 
-## Installation
+## Workflow
+1. Confirm the file type and goals (create, edit, analyze, extract).
+2. Use `python-pptx` for all programmatic access.
+3. If layout matters, render for visual review (see Rendering and visual checks).
+4. After each meaningful change, re-render and inspect the slides.
+5. Save outputs and clean up intermediate files.
 
-```bash
-pip install python-pptx
+## Temp and output conventions
+- Use `tmp/pptx/` for intermediate files; delete when done.
+- Write final artifacts under `output/pptx/` when working in this repo.
+- Keep filenames stable and descriptive.
+
+## Dependencies (install if missing)
+Prefer `uv` for dependency management.
+
+Python packages:
+```
+uv pip install python-pptx
+```
+If `uv` is unavailable:
+```
+python3 -m pip install python-pptx
+```
+System tools (for rendering):
+```
+# macOS (Homebrew)
+brew install libreoffice poppler
+
+# Ubuntu/Debian
+sudo apt-get install -y libreoffice poppler-utils
 ```
 
-## Quick Start
+If installation isn't possible in this environment, tell the user which dependency is missing and how to install it locally.
 
-### Create a New Presentation
+## Environment
+No required environment variables.
 
-```python
-from pptx import Presentation
-from pptx.util import Inches, Pt
-
-prs = Presentation()
+## Rendering and visual checks
+If LibreOffice and Poppler are available, render slides for visual review:
+```
+soffice --headless --convert-to pdf --outdir $OUTDIR $INPUT_PPTX
+pdftoppm -png $OUTDIR/$BASENAME.pdf $OUTDIR/$BASENAME
 ```
 
-### Standard Slide Layouts
+If rendering tools are unavailable, ask the user to review the output locally.
 
+## Slide layouts
 | Index | Layout Name | Use Case |
 |-------|-------------|----------|
 | 0 | Title Slide | Opening/section slides |
@@ -35,19 +65,21 @@ prs = Presentation()
 | 5 | Title Only | Custom content |
 | 6 | Blank | Full custom layout |
 
-## Common Operations
+## Primary tooling
 
-### Title Slide
-
+### Create presentation
 ```python
+from pptx import Presentation
+from pptx.util import Inches, Pt
+
+prs = Presentation()
 slide = prs.slides.add_slide(prs.slide_layouts[0])
-slide.shapes.title.text = "Presentation Title"
-slide.placeholders[1].text = "Subtitle text"
+slide.shapes.title.text = "Title"
+slide.placeholders[1].text = "Subtitle"
 prs.save('output.pptx')
 ```
 
-### Bullet Slide
-
+### Add bullet slide
 ```python
 slide = prs.slides.add_slide(prs.slide_layouts[1])
 slide.shapes.title.text = "Slide Title"
@@ -55,160 +87,48 @@ tf = slide.placeholders[1].text_frame
 tf.text = "First bullet"
 p = tf.add_paragraph()
 p.text = "Second bullet"
-p.level = 1  # Indent level (0-8)
+p.level = 1
 ```
 
-### Add Text Box
-
+### Add image
 ```python
-from pptx.util import Inches, Pt
-
 slide = prs.slides.add_slide(prs.slide_layouts[6])
-left = top = Inches(1)
-width = Inches(4)
-height = Inches(1)
-txBox = slide.shapes.add_textbox(left, top, width, height)
-tf = txBox.text_frame
-tf.text = "Text content"
-tf.paragraphs[0].font.size = Pt(24)
-tf.paragraphs[0].font.bold = True
+slide.shapes.add_picture("image.png", Inches(1), Inches(1), height=Inches(3))
 ```
 
-### Add Image
-
+### Add table
 ```python
-from pptx.util import Inches
-
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-left = Inches(1)
-top = Inches(2)
-# Width auto-calculated to maintain aspect ratio
-pic = slide.shapes.add_picture("image.png", left, top, height=Inches(3))
-```
-
-### Add Table
-
-```python
-from pptx.util import Inches
-
-slide = prs.slides.add_slide(prs.slide_layouts[5])
-slide.shapes.title.text = "Data Table"
-
-rows, cols = 3, 4
-left, top = Inches(1), Inches(2)
-width, height = Inches(8), Inches(2)
 table = slide.shapes.add_table(rows, cols, left, top, width, height).table
-
-# Set column widths
-for col in table.columns:
-    col.width = Inches(2)
-
-# Add data
-table.cell(0, 0).text = "Header 1"
-table.cell(1, 0).text = "Row 1 Data"
+table.cell(0, 0).text = "Header"
 ```
 
-### Add Shape
-
+### Add shape
 ```python
 from pptx.enum.shapes import MSO_SHAPE
-from pptx.util import Inches
-
-slide = prs.slides.add_slide(prs.slide_layouts[6])
-shape = slide.shapes.add_shape(
-    MSO_SHAPE.ROUNDED_RECTANGLE,
-    Inches(1), Inches(1),  # left, top
-    Inches(3), Inches(1.5)  # width, height
-)
+shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height)
 shape.text = "Shape text"
 ```
 
-Common shapes: `RECTANGLE`, `ROUNDED_RECTANGLE`, `OVAL`, `CHEVRON`, `ARROW_RIGHT`, `PENTAGON`, `HEXAGON`
+### Add chart
+See [references/charts.md](references/charts.md) for chart creation (bar, line, pie charts).
 
-### Extract Text from Presentation
-
+### Extract text
 ```python
-from pptx import Presentation
-
 prs = Presentation("input.pptx")
-text_content = []
 for slide in prs.slides:
     for shape in slide.shapes:
         if shape.has_text_frame:
             for para in shape.text_frame.paragraphs:
-                text_content.append(para.text)
-print("\n".join(text_content))
+                print(para.text)
 ```
 
-## Text Formatting
+## Quality expectations
+- Maintain consistent formatting: typography, spacing, and slide hierarchy.
+- Avoid rendering issues: clipped text, overlapping elements, or broken layouts.
+- Charts, tables, and images must be properly aligned and labeled.
+- Use ASCII hyphens only. Avoid U+2011 and other Unicode dashes.
 
-```python
-from pptx.dml.color import RgbColor
-from pptx.util import Pt
-from pptx.enum.text import PP_ALIGN
-
-# Font properties
-para = tf.paragraphs[0]
-para.font.name = "Arial"
-para.font.size = Pt(18)
-para.font.bold = True
-para.font.italic = True
-para.font.color.rgb = RgbColor(0x00, 0x00, 0xFF)  # Blue
-
-# Paragraph alignment
-para.alignment = PP_ALIGN.CENTER  # LEFT, CENTER, RIGHT, JUSTIFY
-```
-
-## Working with Existing Files
-
-```python
-# Open existing presentation
-prs = Presentation("existing.pptx")
-
-# Modify slides
-for slide in prs.slides:
-    for shape in slide.shapes:
-        if shape.has_text_frame:
-            # Modify text
-            pass
-
-# Save with new name
-prs.save("modified.pptx")
-```
-
-## Charts
-
-See [references/charts.md](references/charts.md) for chart creation (bar, line, pie charts).
-
-## Key Classes Reference
-
-| Class | Description |
-|-------|-------------|
-| `Presentation` | Top-level object, represents .pptx file |
-| `Slide` | Individual slide |
-| `Shape` | Any shape on a slide |
-| `TextFrame` | Text container in a shape |
-| `Paragraph` | Text paragraph |
-| `Run` | Text run with consistent formatting |
-| `Table` | Table shape |
-| `Picture` | Image shape |
-
-## Utility Classes
-
-```python
-from pptx.util import Inches, Pt, Cm, Emu
-
-# Measurements
-left = Inches(1)      # 1 inch
-size = Pt(24)         # 24 points (font size)
-width = Cm(5)         # 5 centimeters
-height = Emu(914400)  # EMUs (English Metric Units)
-```
-
-## Script Reference
-
-For common operations, use the bundled scripts:
-
-- `scripts/create_presentation.py` - Create presentation from data
-- `scripts/extract_text.py` - Extract all text from a presentation
-- `scripts/add_slide.py` - Add a slide to existing presentation
+## Final checks
+- Render and inspect slides before delivery when possible.
+- Confirm layout, spacing, and content are correct.
+- Remove temp files after final approval.
