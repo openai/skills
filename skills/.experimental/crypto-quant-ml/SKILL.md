@@ -36,9 +36,11 @@ Before generating code, collaborate with the user to clarify the hypothesis and 
 * **Preventing Leakage**: Treat data integrity as paramount.
 * **Purging & Embargoing**: Strongly recommend purging overlapping data points between training and test sets and applying an embargo period to prevent leakage.
 * **Time-Series Split**: Avoid random `ShuffleSplit`. Use `TimeSeriesSplit` or Combinatorial CV to respect temporal ordering.
-
-
 * **Algorithm Selection**: For tabular market data, prefer Gradient Boosting (XGBoost/LightGBM/CatBoost). Explain *why* a specific model fits the data characteristics.
+* **Regime & Universe Fidelity**:
+    * **Continuous Calendar**: Explicitly model the 365-day nature of crypto (no weekends/holidays); standard equity calendars will introduce artificial gaps.
+    * **Regime Filtering**: Exercise caution with data prior to institutional adoption (approx. 2020). Treat early data (e.g., 2013-2017) as a distinct, likely noisy regime with low correlation to current market microstructure.
+    * **Dynamic Universe Selection**: To strictly prevent survivorship bias in volatile markets (pump-and-dumps), construct the asset universe using rolling or expanding windows (e.g., monthly). Identify eligible assets based *only* on metrics (Market Cap/Volume) available at that specific historical moment, rather than backfilling today's top tokens.
 
 ### Phase 4: Backtesting (The Acid Test)
 
