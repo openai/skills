@@ -1,0 +1,4 @@
+interface:
+  display_name: "Text To Diagram"
+  short_description: "Turn text into Mermaid diagrams."
+  default_prompt: "Use $text-to-diagram to convert this text into a Mermaid diagram."

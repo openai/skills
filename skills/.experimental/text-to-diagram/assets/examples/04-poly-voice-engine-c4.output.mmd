@@ -1,0 +1,23 @@
+```mermaid
+C4Container
+  Person(user, "User", "Uploads PDFs and listens to audio")
+
+  System_Boundary(pve, "Poly-Voice-Engine") {
+    Container(web, "Web Frontend", "Web App", "Upload PDFs, show status, play audio")
+    Container(worker, "Worker Service", "Service", "Uses LLM to decode/summarize text")
+    Container(tts, "TTS Engine", "Service", "Generates audio from text")
+    ContainerDb(db, "PostgreSQL", "Database", "User data")
+    Container(s3, "S3 Bucket", "Object Storage", "PDFs, extracted text, summaries, audio")
+  }
+
+  Rel(user, web, "Uploads PDFs / plays audio", "HTTPS")
+  Rel(web, s3, "Uploads/reads files", "API/SDK")
+  Rel(web, db, "Reads/writes user data", "SQL")
+  Rel(worker, s3, "Reads PDFs / writes decoded text & summaries", "API/SDK")
+  Rel(worker, db, "Updates job/user metadata", "SQL")
+  Rel(worker, tts, "Sends text for synthesis", "API")
+  Rel(tts, s3, "Writes audio outputs", "API/SDK")
+  Rel(web, s3, "Streams audio", "API/SDK")
+```
+
+Chosen diagram: C4Container (high-level architecture: services + data stores + relationships).

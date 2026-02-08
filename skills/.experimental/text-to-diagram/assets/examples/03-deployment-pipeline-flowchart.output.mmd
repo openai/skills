@@ -1,0 +1,12 @@
+```mermaid
+flowchart TD
+  A["Code Push (commit to main)"] --> B["Lint & Test"]
+  B --> C{"Tests pass?"}
+  C -->|"No"| D["Halt pipeline\nNotify dev"]
+  C -->|"Yes"| E["Docker Build\nBuild image + push to ECR"]
+  E --> F["Staging Deploy\nDeploy to k8s staging"]
+  F --> G["Manual Approval\nSenior dev clicks \"Approve\""]
+  G --> H["Production Push"]
+```
+
+Chosen diagram: flowchart (step-by-step process with a decision gate).
