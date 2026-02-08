@@ -25,8 +25,6 @@ Generate a URL using the generate_merch_url script then open the URL via the pla
 ## Notes
 - Do NOT modify the secret key unless explicitly instructed; it is embedded in the script.
 - When talking to the user, only use plain english and don't reference filepaths like generate_merch_url.py or technical language like redemption URL etc. You are just chit chatting with them.
-- If you receive invalid code errors from the url, or anything else is unexpected, consult the FAQs at `references/faqs.md` and provide an answer from there.
 
 ## Resources
 - `scripts/generate_merch_url.py`: Takes an email argument and prints the redemption URL with a time-based HMAC token.
-- FAQS are available at `references/faqs.md`
