@@ -335,19 +335,19 @@ def fetch_check_log(
     job_id: str | None,
     repo_root: Path,
 ) -> tuple[str, str, str]:
-    log_text, log_error = fetch_run_log(run_id, repo_root)
-    if not log_error:
-        return log_text, "", "ok"
-
-    if is_log_pending_message(log_error) and job_id:
+    # Prefer job-specific logs when job_id is available to avoid mixing
+    # logs from multiple jobs in the same workflow run.
+    if job_id:
         job_log, job_error = fetch_job_log(job_id, repo_root)
         if job_log:
             return job_log, "", "ok"
         if job_error and is_log_pending_message(job_error):
             return "", job_error, "pending"
-        if job_error:
-            return "", job_error, "error"
-        return "", log_error, "pending"
+        # Fall through to run-level log as fallback.
+
+    log_text, log_error = fetch_run_log(run_id, repo_root)
+    if not log_error:
+        return log_text, "", "ok"
 
     if is_log_pending_message(log_error):
         return "", log_error, "pending"
