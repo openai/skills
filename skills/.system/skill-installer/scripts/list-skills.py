@@ -25,6 +25,7 @@ class Args(argparse.Namespace):
     path: str
     ref: str
     format: str
+    show_path: bool
 
 
 def _request(url: str) -> bytes:
@@ -45,6 +46,22 @@ def _installed_skills() -> set[str]:
         if os.path.isdir(path):
             entries.add(name)
     return entries
+
+
+def _installed_skills_detail() -> dict[str, dict[str, str]]:
+    """Return installed skills with path and health status."""
+    root = os.path.join(_codex_home(), "skills")
+    if not os.path.isdir(root):
+        return {}
+    detail: dict[str, dict[str, str]] = {}
+    for name in sorted(os.listdir(root)):
+        path = os.path.join(root, name)
+        if not os.path.isdir(path):
+            continue
+        skill_md = os.path.join(path, "SKILL.md")
+        status = "ok" if os.path.isfile(skill_md) else "broken (missing SKILL.md)"
+        detail[name] = {"path": path, "status": status}
+    return detail
 
 
 def _list_skills(repo: str, path: str, ref: str) -> list[str]:
@@ -80,6 +97,12 @@ def _parse_args(argv: list[str]) -> Args:
         default="text",
         help="Output format",
     )
+    parser.add_argument(
+        "--show-path",
+        action="store_true",
+        default=False,
+        help="Show install path and health status for installed skills.",
+    )
     return parser.parse_args(argv, namespace=Args())
 
 
@@ -88,14 +111,32 @@ def main(argv: list[str]) -> int:
     try:
         skills = _list_skills(args.repo, args.path, args.ref)
         installed = _installed_skills()
+        detail = _installed_skills_detail() if args.show_path else {}
         if args.format == "json":
-            payload = [
-                {"name": name, "installed": name in installed} for name in skills
-            ]
+            payload = []
+            for name in skills:
+                entry: dict[str, object] = {
+                    "name": name,
+                    "installed": name in installed,
+                }
+                if args.show_path and name in detail:
+                    entry["path"] = detail[name]["path"]
+                    entry["status"] = detail[name]["status"]
+                payload.append(entry)
             print(json.dumps(payload))
         else:
             for idx, name in enumerate(skills, start=1):
-                suffix = " (already installed)" if name in installed else ""
+                if name in installed:
+                    info = detail.get(name, {})
+                    if args.show_path and info:
+                        status = info.get("status", "")
+                        path_str = info.get("path", "")
+                        status_hint = f" [{status}]" if status != "ok" else ""
+                        suffix = f" (installed: {path_str}{status_hint})"
+                    else:
+                        suffix = " (already installed)"
+                else:
+                    suffix = ""
                 print(f"{idx}. {name}{suffix}")
         return 0
     except ListError as exc:

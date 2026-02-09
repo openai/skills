@@ -35,19 +35,22 @@ All of these scripts use network, so when running in the sandbox, request escala
 
 - `scripts/list-skills.py` (prints skills list with installed annotations)
 - `scripts/list-skills.py --format json`
+- `scripts/list-skills.py --show-path` (show install path and health status for installed skills)
 - Example (experimental list): `scripts/list-skills.py --path skills/.experimental`
 - `scripts/install-skill-from-github.py --repo <owner>/<repo> --path <path/to/skill> [<path/to/skill> ...]`
 - `scripts/install-skill-from-github.py --url https://github.com/<owner>/<repo>/tree/<ref>/<path>`
+- Reinstall an existing skill: `scripts/install-skill-from-github.py --repo <owner>/<repo> --path <path/to/skill> --force`
 - Example (experimental skill): `scripts/install-skill-from-github.py --repo openai/skills --path skills/.experimental/<skill-name>`
 
 ## Behavior and Options
 
 - Defaults to direct download for public GitHub repos.
 - If download fails with auth/permission errors, falls back to git sparse checkout.
-- Aborts if the destination skill directory already exists.
+- Aborts if the destination skill directory already exists, unless `--force` is supplied.
+- With `--force`, the existing skill directory is removed and replaced with the freshly downloaded version. This is useful for updating a skill or recovering from a broken install.
 - Installs into `$CODEX_HOME/skills/<skill-name>` (defaults to `~/.codex/skills`).
 - Multiple `--path` values install multiple skills in one run, each named from the path basename unless `--name` is supplied.
-- Options: `--ref <ref>` (default `main`), `--dest <path>`, `--method auto|download|git`.
+- Options: `--ref <ref>` (default `main`), `--dest <path>`, `--method auto|download|git`, `--force`.
 
 ## Notes
 
