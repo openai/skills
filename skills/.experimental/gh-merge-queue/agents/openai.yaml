@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Merge Queue"
+  short_description: "Process open PRs in order with review + auto-merge"
+  default_prompt: "Process the open PRs in order for this repo. Review each PR, enable auto-merge when it meets the quality bar, rebase the next PR after merges, and stop when no open PRs remain."
