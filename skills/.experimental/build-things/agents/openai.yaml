@@ -1,6 +1,0 @@
-interface:
-  display_name: "Build Things"
-  short_description: "You can just build things"
-  icon_small: "./assets/codex-small.svg"
-  icon_large: "./assets/codex.png"
-  default_prompt: "You can just build things"
