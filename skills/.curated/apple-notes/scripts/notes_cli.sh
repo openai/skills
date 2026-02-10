@@ -22,6 +22,7 @@ Usage:
   notes_cli.sh list-latest [--limit 20] [--folder "Notes"] [--account-index 1]
   notes_cli.sh search-title --query "zagreb" [--limit 20] [--folder "Notes"] [--account-index 1]
   notes_cli.sh search-any --query "zagreb" [--limit 20] [--folder "Notes"] [--account-index 1]
+  notes_cli.sh read --title "Exact Title" [--folder "Notes"] [--account-index 1]
   notes_cli.sh update --title "Exact Title" --body "<html>" [--folder "Notes"] [--account-index 1]
   notes_cli.sh update --title "Exact Title" --body-file /absolute/path/body.html [--folder "Notes"] [--account-index 1]
   notes_cli.sh delete --title "Exact Title" [--folder "Notes"] [--account-index 1]
@@ -357,6 +358,62 @@ end run
 APPLESCRIPT
 }
 
+cmd_read() {
+  local folder="Notes"
+  local account_index="1"
+  local title=""
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --title)
+        require_value "$1" "${2:-}"
+        title="$2"
+        shift 2
+        ;;
+      --folder)
+        require_value "$1" "${2:-}"
+        folder="$2"
+        shift 2
+        ;;
+      --account-index)
+        require_value "$1" "${2:-}"
+        account_index="$2"
+        shift 2
+        ;;
+      *)
+        die "Unknown option for read: $1"
+        ;;
+    esac
+  done
+
+  [[ -n "$title" ]] || die "read requires --title."
+  is_positive_int "$account_index" || die "--account-index must be a positive integer."
+
+  osascript - "$account_index" "$folder" "$title" <<'APPLESCRIPT'
+on run argv
+  set accountIndex to (item 1 of argv) as integer
+  set folderName to item 2 of argv
+  set exactName to item 3 of argv
+
+  tell application "Notes"
+    set matches to every note of folder folderName of account accountIndex whose name is exactName
+    if matches is {} then error "Note not found"
+
+    if (count of matches) > 1 then
+      set output to "More than one note has this title. Please choose by date:" & linefeed
+      repeat with n in matches
+        set output to output & (name of n) & " | " & ((modification date of n) as text) & linefeed
+      end repeat
+      return output
+    end if
+
+    set theNote to item 1 of matches
+    return body of theNote
+  end tell
+end run
+APPLESCRIPT
+}
+
 cmd_delete() {
   local folder="Notes"
   local account_index="1"
@@ -471,6 +528,9 @@ main() {
       ;;
     search-any)
       cmd_search_any "$@"
+      ;;
+    read)
+      cmd_read "$@"
       ;;
     update)
       cmd_update "$@"

@@ -1,6 +1,6 @@
 ---
 name: apple-notes
-description: Create, list, update, search, delete, and count Apple Notes on macOS. Use when automating Notes tasks like finding notes, updating note content, deleting by exact title, and checking note totals.
+description: Create, list, read, update, search, delete, and count Apple Notes on macOS. Use when automating Notes tasks like finding notes, reading note content, updating notes, deleting by exact title, and checking note totals.
 ---
 
 # Apple Notes
@@ -10,7 +10,7 @@ Manage Apple Notes using the local bash CLI backed by `osascript`.
 ## Operating rules
 
 1. `create` and `update` use HTML body payload (`--body` or `--body-file`).
-2. `update` and `delete` locate notes by exact title (`--title`).
+2. `read`, `update`, and `delete` locate notes by exact title (`--title`).
 3. If multiple notes share the same title, disambiguate by modification date.
 4. Default scope is `folder "Notes"` in `account 1`.
 
@@ -58,6 +58,12 @@ Search by title or body:
 
 ```bash
 bash scripts/notes_cli.sh search-any --query "zagreb" --limit 20
+```
+
+Read body by exact title:
+
+```bash
+bash scripts/notes_cli.sh read --title "Title"
 ```
 
 Update body by exact title:
@@ -193,10 +199,11 @@ bash scripts/notes_cli.sh create --body-file /tmp/notes_format_example.html
 - `create`: `Created: <name>`
 - `list-latest`: starts with `Total notes:` and `Showing latest:`
 - `search-title` and `search-any`: `No matches` or starts with `Total matches:`
+- `read`: prints note `body` as raw HTML; duplicate title returns list starting with `More than one note has this title.`
 - `update`: `Updated: <name>`; duplicate title returns list starting with `More than one note has this title.`
 - `delete`: `Deleted`; duplicate title returns list starting with `More than one note has this title.`
 - `count`: `Total notes: <number>`
-- `update` and `delete` missing title target: AppleScript error contains `Note not found`
+- `read`, `update`, and `delete` missing title target: AppleScript error contains `Note not found`
 
 ## Troubleshooting
 
