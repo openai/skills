@@ -36,15 +36,22 @@ Or via the skill itself once installed: `/learn @agentskill-sh/learn`
 | `/learn update` | Check for updates |
 | `/learn scan <path>` | Security scan a skill |
 | `/learn feedback <slug> <1-5>` | Rate a skill |
+| `/learn config autorating off` | Disable auto-rating |
 
 ## Security
 
-Every skill is scanned before install:
-- **90-100**: SAFE — install proceeds
-- **70-89**: REVIEW — shows issues, requires acknowledgment
-- **<70**: BLOCKED — refuses to install
+**Two-layer security model:**
 
-Scans detect: prompt injection, remote code execution, credential exfiltration, obfuscation, and more.
+1. **Registry-side**: All 25,865+ skills pre-scanned at publish time with pattern detection (command injection, data exfiltration, prompt injection, credential harvesting, obfuscation)
+2. **Client-side**: Score displayed before install; skills <70 blocked, 70-89 require acknowledgment
+
+| Score | Action |
+|-------|--------|
+| 90-100 | SAFE — install proceeds |
+| 70-89 | REVIEW — requires acknowledgment |
+| <70 | BLOCKED — installation refused |
+
+See security dashboard: https://agentskill.sh/security
 
 ## Links
 
