@@ -1,0 +1,6 @@
+{
+  "accounts": [
+    { "username": "anthropaboraai", "note": "Anthropic", "addedAt": "2026-02-08T00:00:00Z" },
+    { "username": "OpenAI", "note": "OpenAI", "addedAt": "2026-02-08T00:00:00Z" }
+  ]
+}
