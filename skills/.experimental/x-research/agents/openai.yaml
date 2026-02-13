@@ -1,7 +1,0 @@
-interface:
-  display_name: "X Research"
-  short_description: "Search and synthesize live X/Twitter discourse"
-  icon_small: "./assets/x-research-small.svg"
-  icon_large: "./assets/x-research.svg"
-  brand_color: "#17C964"
-  default_prompt: "Use $x-research to investigate what people on X are saying about a topic and return sourced findings."

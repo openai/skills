@@ -15,7 +15,10 @@ import { runWatchlistCommand } from "./lib/watchlist";
 
 const THIS_DIR = dirname(fileURLToPath(import.meta.url));
 const SKILL_DIR = join(THIS_DIR, "..");
-const DRAFTS_DIR = process.env.X_RESEARCH_DRAFTS_DIR || join(SKILL_DIR, "data", "drafts");
+const DRAFTS_DIR =
+  process.env.X_TWITTER_SKILLS_DRAFTS_DIR ||
+  process.env.X_RESEARCH_DRAFTS_DIR ||
+  join(SKILL_DIR, "data", "drafts");
 const BRIEF_HISTORY_DIR = join(SKILL_DIR, "data", "brief-history");
 
 const args = process.argv.slice(2);
@@ -156,7 +159,7 @@ async function cmdSearch() {
   if (save) {
     ensureDir(DRAFTS_DIR);
     const date = new Date().toISOString().split("T")[0];
-    const path = join(DRAFTS_DIR, `x-research-${slugify(query)}-${date}.md`);
+    const path = join(DRAFTS_DIR, `x-twitter-skills-${slugify(query)}-${date}.md`);
     writeFileSync(path, fmt.formatResearchMarkdown(query, tweets, { queries: [query] }));
     console.error(`\nSaved to ${path}`);
   }

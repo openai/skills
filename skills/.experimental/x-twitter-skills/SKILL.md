@@ -1,9 +1,9 @@
 ---
-name: x-research
+name: x-twitter-skills
 description: Research live discourse on X/Twitter for product, developer, market, and cultural topics. Use when you need current sentiment, expert takes, launch reactions, issue reports, or linked resources from X posts. Trigger when users ask things like "search X", "what are people saying on Twitter", "check X for", "X research", or when recent X conversation would materially improve an answer.
 ---
 
-# X Research
+# X/Twitter Skills
 
 Run fast, sourced research over X/Twitter from Codex.
 
@@ -14,7 +14,7 @@ For API/search operator details, read `references/x-api.md`.
 Run from this skill directory:
 
 ```bash
-cd ~/.codex/skills/x-research
+cd ~/.codex/skills/x-twitter-skills
 npm install
 ```
 
@@ -119,13 +119,13 @@ npm run x -- profile levelsio --count 15
 ## Files
 
 ```text
-x-research/
+x-twitter-skills/
 ├── SKILL.md
 ├── LICENSE.txt
 ├── agents/openai.yaml
 ├── assets/
-│   ├── x-research-small.svg
-│   └── x-research.svg
+│   ├── x-twitter-skills-small.svg
+│   └── x-twitter-skills.svg
 ├── package.json
 ├── scripts/
 │   ├── x-search.ts

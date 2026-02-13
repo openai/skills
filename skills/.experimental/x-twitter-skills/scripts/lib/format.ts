@@ -87,7 +87,7 @@ export function formatResearchMarkdown(
 ): string {
   const date = new Date().toISOString().split("T")[0];
 
-  let out = `# X Research: ${query}\n\n`;
+  let out = `# X/Twitter Skills Research: ${query}\n\n`;
   out += `**Date:** ${date}\n`;
   out += `**Tweets found:** ${tweets.length}\n\n`;
 
