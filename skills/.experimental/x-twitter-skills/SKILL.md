@@ -77,6 +77,7 @@ Brief options:
 - `--cache-min N` (cache TTL in minutes)
 - `--max-cost USD` (abort if worst-case reads exceed budget)
 - `--compare-last` (show deltas vs last brief on same question)
+- `--dry-run` (print planned queries and estimated cost without API calls)
 - `--save`
 - `--json`
 
@@ -90,6 +91,7 @@ npm run x -- search "from:karpathy eval" --markdown --save
 npm run x -- plan "what are devs saying about model context protocol"
 npm run x -- brief "openai agents sdk adoption risks and wins" --since 3d --save
 npm run x -- brief "openai agents sdk adoption risks and wins" --since 3d --max-cost 2.00
+npm run x -- brief "openai agents sdk adoption risks and wins" --max-queries 4 --dry-run
 npm run x -- brief "openai agents sdk adoption risks and wins" --since 3d --compare-last
 npm run x -- profile levelsio --count 15
 ```

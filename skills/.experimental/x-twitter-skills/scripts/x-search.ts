@@ -20,6 +20,13 @@ const DRAFTS_DIR =
   process.env.X_RESEARCH_DRAFTS_DIR ||
   join(SKILL_DIR, "data", "drafts");
 const BRIEF_HISTORY_DIR = join(SKILL_DIR, "data", "brief-history");
+const SORT_OPTIONS = ["likes", "impressions", "retweets", "recent"] as const;
+type SortOption = (typeof SORT_OPTIONS)[number];
+const SEARCH_PAGE_LIMIT = { min: 1, max: 5 } as const;
+const DEFAULT_SEARCH_LIMIT = 15;
+const DEFAULT_PLAN_QUERIES = 5;
+const DEFAULT_BRIEF_PAGES = 1;
+const DEFAULT_CACHE_MIN = 15;
 
 const args = process.argv.slice(2);
 const command = args[0];
@@ -59,6 +66,58 @@ function getOpt(name: string): string | undefined {
   return undefined;
 }
 
+function parseIntOption(name: string): number | undefined {
+  const raw = getOpt(name);
+  if (raw === undefined) return undefined;
+  if (!/^\d+$/.test(raw)) {
+    console.error(`Invalid --${name} value "${raw}". Expected a positive integer.`);
+    process.exit(1);
+  }
+  const parsed = parseInt(raw, 10);
+  if (parsed <= 0) {
+    console.error(`Invalid --${name} value "${raw}". Expected a positive integer.`);
+    process.exit(1);
+  }
+  return parsed;
+}
+
+function parseFloatOption(name: string, opts: { positive?: boolean } = {}): number | undefined {
+  const raw = getOpt(name);
+  if (raw === undefined) return undefined;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) {
+    console.error(`Invalid --${name} value "${raw}". Expected a number.`);
+    process.exit(1);
+  }
+
+  if (opts.positive && parsed <= 0) {
+    console.error(`Invalid --${name} value "${raw}". Expected a positive number.`);
+    process.exit(1);
+  }
+
+  return parsed;
+}
+
+function parseSinceOption(name: string): string | undefined {
+  const raw = getOpt(name);
+  if (raw === undefined) return undefined;
+  const normalized = api.parseSince(raw);
+  if (!normalized) {
+    console.error(`Invalid --${name} value "${raw}". Use a value like 30m, 2h, 7d, or ISO-8601.`);
+    process.exit(1);
+  }
+  return normalized;
+}
+
+function parseSortOption(): SortOption {
+  const sort = getOpt("sort") || "likes";
+  if (!SORT_OPTIONS.includes(sort as SortOption)) {
+    console.error(`Invalid --sort value "${sort}". Use one of: likes, impressions, retweets, recent.`);
+    process.exit(1);
+  }
+  return sort as SortOption;
+}
+
 function readSubjectArg(): string {
   return args
     .slice(1)
@@ -73,12 +132,12 @@ async function cmdSearch() {
   const fromUser = getOpt("from");
   const archive = getFlag("archive");
 
-  const sortOpt = getOpt("sort") || "likes";
-  const minLikes = parseInt(getOpt("min-likes") || "0", 10);
-  const minImpressions = parseInt(getOpt("min-impressions") || "0", 10);
-  let pages = clamp(parseInt(getOpt("pages") || "1", 10), 1, 5);
-  let limit = clamp(parseInt(getOpt("limit") || "15", 10), 1, 200);
-  const since = getOpt("since");
+  const sortOpt = parseSortOption();
+  const minLikes = parseIntOption("min-likes") || 0;
+  const minImpressions = parseIntOption("min-impressions") || 0;
+  let pages = clamp(parseIntOption("pages") || 1, SEARCH_PAGE_LIMIT.min, SEARCH_PAGE_LIMIT.max);
+  let limit = clamp(parseIntOption("limit") || DEFAULT_SEARCH_LIMIT, 1, 200);
+  const since = parseSinceOption("since");
   const noReplies = getFlag("no-replies");
   const noRetweets = getFlag("no-retweets");
   const save = getFlag("save");
@@ -179,7 +238,11 @@ async function cmdSearch() {
 
 function cmdPlan() {
   const asJson = getFlag("json");
-  const maxQueries = clamp(parseInt(getOpt("max-queries") || "5", 10), 2, 10);
+  const maxQueries = clamp(
+    parseIntOption("max-queries") || DEFAULT_PLAN_QUERIES,
+    2,
+    10
+  );
 
   const question = readSubjectArg();
   if (!question) {
@@ -201,12 +264,16 @@ async function cmdBrief() {
   const save = getFlag("save");
   const compareLast = getFlag("compare-last");
   const archive = getFlag("archive");
-  const since = getOpt("since") || "7d";
-  const pages = clamp(parseInt(getOpt("pages") || "1", 10), 1, 5);
-  const maxQueries = clamp(parseInt(getOpt("max-queries") || "5", 10), 2, 10);
-  const cacheTtlMs = clamp(parseInt(getOpt("cache-min") || "15", 10), 1, 720) * 60_000;
-  const maxCostRaw = getOpt("max-cost");
-  const maxCost = maxCostRaw ? parseFloat(maxCostRaw) : undefined;
+  const dryRun = getFlag("dry-run");
+  const since = parseSinceOption("since") || "7d";
+  const pages = clamp(parseIntOption("pages") || DEFAULT_BRIEF_PAGES, 1, 5);
+  const maxQueries = clamp(
+    parseIntOption("max-queries") || DEFAULT_PLAN_QUERIES,
+    2,
+    10
+  );
+  const cacheTtlMs = clamp(parseIntOption("cache-min") || DEFAULT_CACHE_MIN, 1, 720) * 60_000;
+  const maxCost = parseFloatOption("max-cost", { positive: true });
 
   const question = readSubjectArg();
   if (!question) {
@@ -223,6 +290,31 @@ async function cmdBrief() {
     );
     console.error("Reduce --pages/--max-queries or use a higher --max-cost.");
     process.exit(1);
+  }
+
+  if (dryRun) {
+    if (asJson) {
+      console.log(
+        JSON.stringify(
+          {
+            question,
+            mode,
+            since,
+            pages,
+            maxQueries,
+            estimatedWorstCaseCost,
+            plan,
+          },
+          null,
+          2
+        )
+      );
+    } else {
+      console.log(planner.formatPlanMarkdown(plan));
+      console.log(`Estimated worst-case reads: ${plan.queries.length * pages * 100}`);
+      console.log(`Estimated worst-case cost: ~$${estimatedWorstCaseCost.toFixed(2)}`);
+    }
+    return;
   }
 
   const allTweets: api.Tweet[] = [];
@@ -432,6 +524,7 @@ Brief options:
   --max-cost USD               Abort if worst-case read cost exceeds budget
   --cache-min N                Cache TTL minutes (default 15)
   --compare-last               Compare against previous snapshot for same question
+  --dry-run                    Print plan + estimated cost only, skip API calls
   --save                       Save brief to drafts dir
   --json                       Output machine-readable JSON`);
 }
