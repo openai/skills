@@ -1,0 +1,7 @@
+interface:
+  display_name: "Gmail Triage"
+  short_description: "Prioritize unread Gmail messages by urgency"
+  icon_small: "./assets/gmail-triage-small.svg"
+  icon_large: "./assets/gmail-triage.svg"
+  brand_color: "#EA4335"
+  default_prompt: "Use $gmail-triage to triage unread Gmail messages and return a priority list of action items."
