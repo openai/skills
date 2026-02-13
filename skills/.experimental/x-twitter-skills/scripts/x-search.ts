@@ -58,7 +58,16 @@ function getFlag(name: string): boolean {
 
 function getOpt(name: string): string | undefined {
   const idx = args.indexOf(`--${name}`);
-  if (idx >= 0 && idx + 1 < args.length) {
+  if (idx >= 0) {
+    if (idx + 1 >= args.length) {
+      console.error(`Missing value for --${name}.`);
+      process.exit(1);
+    }
+    if (args[idx + 1]?.startsWith("--")) {
+      console.error(`Missing value for --${name}.`);
+      process.exit(1);
+    }
+
     const val = args[idx + 1];
     args.splice(idx, 2);
     return val;
