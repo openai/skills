@@ -16,9 +16,7 @@ import { runWatchlistCommand } from "./lib/watchlist";
 const THIS_DIR = dirname(fileURLToPath(import.meta.url));
 const SKILL_DIR = join(THIS_DIR, "..");
 const DRAFTS_DIR =
-  process.env.X_TWITTER_SKILLS_DRAFTS_DIR ||
-  process.env.X_RESEARCH_DRAFTS_DIR ||
-  join(SKILL_DIR, "data", "drafts");
+  process.env.X_TWITTER_SKILLS_DRAFTS_DIR || join(SKILL_DIR, "data", "drafts");
 const BRIEF_HISTORY_DIR = join(SKILL_DIR, "data", "brief-history");
 const SORT_OPTIONS = ["likes", "impressions", "retweets", "recent"] as const;
 type SortOption = (typeof SORT_OPTIONS)[number];
@@ -90,6 +88,10 @@ function parseIntOption(name: string): number | undefined {
   return parsed;
 }
 
+function parseIntOptionOrDefault(name: string, fallback: number): number {
+  return parseIntOption(name) ?? fallback;
+}
+
 function parseFloatOption(name: string, opts: { positive?: boolean } = {}): number | undefined {
   const raw = getOpt(name);
   if (raw === undefined) return undefined;
@@ -144,8 +146,8 @@ async function cmdSearch() {
   const sortOpt = parseSortOption();
   const minLikes = parseIntOption("min-likes") || 0;
   const minImpressions = parseIntOption("min-impressions") || 0;
-  let pages = clamp(parseIntOption("pages") || 1, SEARCH_PAGE_LIMIT.min, SEARCH_PAGE_LIMIT.max);
-  let limit = clamp(parseIntOption("limit") || DEFAULT_SEARCH_LIMIT, 1, 200);
+  let pages = clamp(parseIntOptionOrDefault("pages", 1), SEARCH_PAGE_LIMIT.min, SEARCH_PAGE_LIMIT.max);
+  let limit = clamp(parseIntOptionOrDefault("limit", DEFAULT_SEARCH_LIMIT), 1, 200);
   const since = parseSinceOption("since");
   const noReplies = getFlag("no-replies");
   const noRetweets = getFlag("no-retweets");
@@ -418,7 +420,7 @@ async function cmdThread() {
     process.exit(1);
   }
 
-  const pages = clamp(parseInt(getOpt("pages") || "2", 10), 1, 5);
+  const pages = clamp(parseIntOptionOrDefault("pages", 2), SEARCH_PAGE_LIMIT.min, SEARCH_PAGE_LIMIT.max);
   const archive = getFlag("archive");
   const tweets = await api.thread(tweetId, {
     pages,
@@ -444,7 +446,7 @@ async function cmdProfile() {
     process.exit(1);
   }
 
-  const count = clamp(parseInt(getOpt("count") || "20", 10), 1, 100);
+  const count = clamp(parseIntOptionOrDefault("count", 20), 1, 100);
   const includeReplies = getFlag("replies");
   const asJson = getFlag("json");
 
@@ -541,30 +543,24 @@ Brief options:
 async function main() {
   switch (command) {
     case "search":
-    case "s":
       await cmdSearch();
       break;
     case "plan":
-    case "pl":
       cmdPlan();
       break;
     case "brief":
-    case "br":
       await cmdBrief();
       break;
     case "thread":
-    case "t":
       await cmdThread();
       break;
     case "profile":
-    case "p":
       await cmdProfile();
       break;
     case "tweet":
       await cmdTweet();
       break;
     case "watchlist":
-    case "wl":
       await runWatchlistCommand(args, {
         watchlistPath: join(SKILL_DIR, "data", "watchlist.json"),
         profile: api.profile,
