@@ -4,6 +4,26 @@
 
 import type { Tweet } from "./api";
 
+interface ScoredTweetLike {
+  signalScore?: number;
+  signalReasons?: string[];
+}
+
+function isScoredTweet(tweet: Tweet | ScoredTweetLike): tweet is ScoredTweetLike & Tweet {
+  return (
+    typeof tweet.signalScore === "number" &&
+    Number.isFinite(tweet.signalScore) &&
+    Array.isArray(tweet.signalReasons)
+  );
+}
+
+function signalLine(tweet: Tweet | ScoredTweetLike): string {
+  if (!isScoredTweet(tweet)) return "";
+  const score = tweet.signalScore.toFixed(1);
+  const reasons = tweet.signalReasons?.slice(0, 3).join(", ");
+  return `· score ${score} ${reasons ? `(${reasons})` : ""}`.trim();
+}
+
 function compactNumber(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
@@ -28,14 +48,19 @@ function safeHostname(url: string): string {
   }
 }
 
-export function formatTweetTelegram(t: Tweet, index?: number, opts?: { full?: boolean }): string {
+export function formatTweetTelegram(
+  t: Tweet | ScoredTweetLike,
+  index?: number,
+  opts: { full?: boolean; showSignal?: boolean } = {}
+): string {
   const prefix = index !== undefined ? `${index + 1}. ` : "";
   const engagement = `${compactNumber(t.metrics.likes)}❤️ ${compactNumber(t.metrics.impressions)}👁`;
   const time = timeAgo(t.created_at);
-  const text = opts?.full || t.text.length <= 200 ? t.text : `${t.text.slice(0, 197)}...`;
+  const text = opts.full || t.text.length <= 200 ? t.text : `${t.text.slice(0, 197)}...`;
   const cleanText = text.replace(/https:\/\/t\.co\/\S+/g, "").trim();
+  const signal = opts.showSignal ? ` ${signalLine(t)}` : "";
 
-  let out = `${prefix}@${t.username} (${engagement} · ${time})\n${cleanText}`;
+  let out = `${prefix}@${t.username} (${engagement} · ${time}${signal})\n${cleanText}`;
   if (t.urls.length > 0) {
     out += `\n🔗 ${t.urls[0]}`;
   }
@@ -44,8 +69,8 @@ export function formatTweetTelegram(t: Tweet, index?: number, opts?: { full?: bo
 }
 
 export function formatResultsTelegram(
-  tweets: Tweet[],
-  opts: { query?: string; limit?: number } = {}
+  tweets: Array<Tweet | ScoredTweetLike>,
+  opts: { query?: string; limit?: number; showSignal?: boolean } = {}
 ): string {
   const limit = opts.limit || 15;
   const shown = tweets.slice(0, limit);
@@ -55,7 +80,9 @@ export function formatResultsTelegram(
     out += `🔍 "${opts.query}" — ${tweets.length} results\n\n`;
   }
 
-  out += shown.map((tweet, i) => formatTweetTelegram(tweet, i)).join("\n\n");
+  out += shown
+    .map((tweet, i) => formatTweetTelegram(tweet, i, { showSignal: opts.showSignal }))
+    .join("\n\n");
   if (tweets.length > limit) {
     out += `\n\n... +${tweets.length - limit} more`;
   }
@@ -63,12 +90,16 @@ export function formatResultsTelegram(
   return out;
 }
 
-export function formatTweetMarkdown(t: Tweet): string {
+export function formatTweetMarkdown(
+  t: Tweet | ScoredTweetLike,
+  opts: { showSignal?: boolean } = {}
+): string {
   const engagement = `${t.metrics.likes}L ${t.metrics.impressions}I`;
   const cleanText = t.text.replace(/https:\/\/t\.co\/\S+/g, "").trim();
   const quoted = cleanText.replace(/\n/g, "\n  > ");
+  const signal = opts.showSignal ? ` ${signalLine(t)}` : "";
 
-  let out = `- **@${t.username}** (${engagement}) [Tweet](${t.tweet_url})\n  > ${quoted}`;
+  let out = `- **@${t.username}** (${engagement} ${signal}) [Tweet](${t.tweet_url})\n  > ${quoted}`;
   if (t.urls.length > 0) {
     out += `\n  Links: ${t.urls.map((u) => `[${safeHostname(u)}](${u})`).join(", ")}`;
   }
@@ -78,14 +109,16 @@ export function formatTweetMarkdown(t: Tweet): string {
 
 export function formatResearchMarkdown(
   query: string,
-  tweets: Tweet[],
+  tweets: Array<Tweet | ScoredTweetLike>,
   opts: {
     themes?: { title: string; tweetIds: string[] }[];
     apiCalls?: number;
     queries?: string[];
+    showSignal?: boolean;
   } = {}
 ): string {
   const date = new Date().toISOString().split("T")[0];
+  const topSortLabel = opts.showSignal ? "signal" : "engagement";
 
   let out = `# X/Twitter Skills Research: ${query}\n\n`;
   out += `**Date:** ${date}\n`;
@@ -96,13 +129,18 @@ export function formatResearchMarkdown(
       out += `## ${theme.title}\n\n`;
       const themeTweets = theme.tweetIds
         .map((id) => tweets.find((tweet) => tweet.id === id))
-        .filter(Boolean) as Tweet[];
-      out += themeTweets.map(formatTweetMarkdown).join("\n\n");
+        .filter(Boolean) as Array<Tweet | ScoredTweetLike>;
+      out += themeTweets
+        .map((tweet) => formatTweetMarkdown(tweet, { showSignal: opts.showSignal }))
+        .join("\n\n");
       out += "\n\n";
     }
   } else {
-    out += "## Top Results (by engagement)\n\n";
-    out += tweets.slice(0, 30).map(formatTweetMarkdown).join("\n\n");
+    out += `## Top Results (by ${topSortLabel})\n\n`;
+    out += tweets
+      .slice(0, 30)
+      .map((tweet) => formatTweetMarkdown(tweet, { showSignal: opts.showSignal }))
+      .join("\n\n");
     out += "\n\n";
   }
 

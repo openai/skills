@@ -11,6 +11,7 @@ import * as fmt from "./lib/format";
 import * as planner from "./lib/planner";
 import * as brief from "./lib/brief";
 import * as briefHistory from "./lib/brief-history";
+import { type ScoredTweet, rankBySignal, SIGNAL_DEFAULT_MIN_SCORE } from "./lib/signal";
 import { runWatchlistCommand } from "./lib/watchlist";
 
 const THIS_DIR = dirname(fileURLToPath(import.meta.url));
@@ -18,7 +19,7 @@ const SKILL_DIR = join(THIS_DIR, "..");
 const DRAFTS_DIR =
   process.env.X_TWITTER_SKILLS_DRAFTS_DIR || join(SKILL_DIR, "data", "drafts");
 const BRIEF_HISTORY_DIR = join(SKILL_DIR, "data", "brief-history");
-const SORT_OPTIONS = ["likes", "impressions", "retweets", "recent"] as const;
+const SORT_OPTIONS = ["likes", "impressions", "retweets", "recent", "signal"] as const;
 type SortOption = (typeof SORT_OPTIONS)[number];
 const SEARCH_PAGE_LIMIT = { min: 1, max: 5 } as const;
 const DEFAULT_SEARCH_LIMIT = 15;
@@ -123,10 +124,25 @@ function parseSinceOption(name: string): string | undefined {
 function parseSortOption(): SortOption {
   const sort = getOpt("sort") || "likes";
   if (!SORT_OPTIONS.includes(sort as SortOption)) {
-    console.error(`Invalid --sort value "${sort}". Use one of: likes, impressions, retweets, recent.`);
+    console.error(`Invalid --sort value "${sort}". Use one of: likes, impressions, retweets, recent, signal.`);
     process.exit(1);
   }
   return sort as SortOption;
+}
+
+function parseFloatOptionStrict(name: string, opts: { positive?: boolean } = {}): number | undefined {
+  const raw = getOpt(name);
+  if (raw === undefined) return undefined;
+  const parsed = Number.parseFloat(raw);
+  if (!Number.isFinite(parsed)) {
+    console.error(`Invalid --${name} value "${raw}". Expected a number.`);
+    process.exit(1);
+  }
+  if (opts.positive && parsed < 0) {
+    console.error(`Invalid --${name} value "${raw}". Expected a non-negative number.`);
+    process.exit(1);
+  }
+  return parsed;
 }
 
 function readSubjectArg(): string {
@@ -146,6 +162,8 @@ async function cmdSearch() {
   const sortOpt = parseSortOption();
   const minLikes = parseIntOption("min-likes") || 0;
   const minImpressions = parseIntOption("min-impressions") || 0;
+  const minScore =
+    parseFloatOptionStrict("min-score", { positive: true }) ?? SIGNAL_DEFAULT_MIN_SCORE;
   let pages = clamp(parseIntOptionOrDefault("pages", 1), SEARCH_PAGE_LIMIT.min, SEARCH_PAGE_LIMIT.max);
   let limit = clamp(parseIntOptionOrDefault("limit", DEFAULT_SEARCH_LIMIT), 1, 200);
   const since = parseSinceOption("since");
@@ -181,10 +199,12 @@ async function cmdSearch() {
 
   const mode: "recent" | "archive" = archive ? "archive" : "recent";
   const cacheTtlMs = quick ? 3_600_000 : 900_000;
-  const cacheParams = `mode=${mode}&sort=${sortOpt}&pages=${pages}&since=${since || "none"}`;
+  const scoreParam = sortOpt === "signal" ? `&minScore=${minScore.toFixed(3)}` : "";
+  const cacheParams = `mode=${mode}&sort=${sortOpt}&pages=${pages}&since=${since || "none"}${scoreParam}`;
 
   const cached = cache.get(query, cacheParams, cacheTtlMs);
   let tweets: api.Tweet[];
+  let scoredTweets: ScoredTweet[] | null = null;
 
   if (cached) {
     tweets = cached;
@@ -212,25 +232,39 @@ async function cmdSearch() {
     tweets = api.filterEngagement(tweets, { minLikes: 10 });
   }
 
-  if (sortOpt !== "recent") {
+  if (sortOpt === "signal") {
+    scoredTweets = rankBySignal(tweets, {
+      minScore,
+    });
+    tweets = scoredTweets;
+  } else if (sortOpt !== "recent") {
     tweets = api.sortBy(tweets, sortOpt as "likes" | "impressions" | "retweets");
   }
 
   tweets = api.dedupe(tweets);
+  const display = scoredTweets ? scoredTweets : (tweets as api.Tweet[]);
 
   if (asJson) {
-    console.log(JSON.stringify(tweets.slice(0, limit), null, 2));
+    console.log(JSON.stringify(display.slice(0, limit), null, 2));
   } else if (asMarkdown) {
-    console.log(fmt.formatResearchMarkdown(query, tweets, { queries: [query] }));
+    console.log(fmt.formatResearchMarkdown(query, display, { queries: [query], showSignal: sortOpt === "signal" }));
   } else {
-    console.log(fmt.formatResultsTelegram(tweets, { query, limit }));
+    console.log(
+      fmt.formatResultsTelegram(display, { query, limit, showSignal: sortOpt === "signal" })
+    );
   }
 
   if (save) {
     ensureDir(DRAFTS_DIR);
     const date = new Date().toISOString().split("T")[0];
     const path = join(DRAFTS_DIR, `x-twitter-skills-${slugify(query)}-${date}.md`);
-    writeFileSync(path, fmt.formatResearchMarkdown(query, tweets, { queries: [query] }));
+    writeFileSync(
+      path,
+      fmt.formatResearchMarkdown(query, display, {
+        queries: [query],
+        showSignal: sortOpt === "signal",
+      })
+    );
     console.error(`\nSaved to ${path}`);
   }
 
@@ -242,9 +276,13 @@ async function cmdSearch() {
     console.error(`\n📊 ${modeLabel} search · ${rawTweetCount} tweets read · est. cost ~$${cost}`);
   }
 
-  const filtered = rawTweetCount !== tweets.length ? ` -> ${tweets.length} after filters` : "";
+  const finalCount = display.length;
+  const filtered = rawTweetCount !== finalCount ? ` -> ${finalCount} after filters` : "";
   const sinceLabel = since ? ` | since ${since}` : "";
-  console.error(`${rawTweetCount} tweets${filtered} | sorted by ${sortOpt} | ${pages} page(s)${sinceLabel}`);
+  const scoreLabel = sortOpt === "signal" ? ` | min-score ${minScore}` : "";
+  console.error(
+    `${rawTweetCount} tweets${filtered} | sorted by ${sortOpt} | ${pages} page(s)${scoreLabel}${sinceLabel}`
+  );
 }
 
 function cmdPlan() {
@@ -285,6 +323,7 @@ async function cmdBrief() {
   );
   const cacheTtlMs = clamp(parseIntOption("cache-min") || DEFAULT_CACHE_MIN, 1, 720) * 60_000;
   const maxCost = parseFloatOption("max-cost", { positive: true });
+  const minScore = parseFloatOptionStrict("min-score", { positive: true }) ?? SIGNAL_DEFAULT_MIN_SCORE;
 
   const question = readSubjectArg();
   if (!question) {
@@ -364,6 +403,7 @@ async function cmdBrief() {
     plan,
     queryRuns,
     tweets: allTweets,
+    minSignalScore: minScore,
   });
 
   const slug = slugify(question);
@@ -507,12 +547,13 @@ Commands:
   watchlist check               Check recent from all watchlist accounts
   cache clear                   Clear search cache
 
-Search options:
-  --sort likes|impressions|retweets|recent   (default: likes)
+  Search options:
+  --sort likes|impressions|retweets|recent|signal   (default: likes)
   --since 1h|3h|12h|1d|7d|<ISO>
   --archive                    Use full-archive endpoint
   --min-likes N                Filter minimum likes
   --min-impressions N          Filter minimum impressions
+  --min-score N                Only show signal posts with score >= N (only for --sort signal)
   --pages N                    Pages to fetch, 1-5 (default: 1)
   --limit N                    Results to display (default: 15)
   --quick                      Quick mode: 1 page, max 10 results
@@ -533,6 +574,7 @@ Brief options:
   --pages N                    Pages per planned query (1-5, default 1)
   --max-queries N              Planned query count (2-10, default 5)
   --max-cost USD               Abort if worst-case read cost exceeds budget
+  --min-score N                Min signal score threshold for brief ranking
   --cache-min N                Cache TTL minutes (default 15)
   --compare-last               Compare against previous snapshot for same question
   --dry-run                    Print plan + estimated cost only, skip API calls

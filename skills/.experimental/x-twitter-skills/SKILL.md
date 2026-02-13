@@ -48,7 +48,8 @@ npm run x -- cache clear
 
 Search options:
 
-- `--sort likes|impressions|retweets|recent` (default: `likes`)
+- `--sort likes|impressions|retweets|recent|signal` (default: `likes`)
+- `--min-score N` (applies to `--sort signal`; minimum signal threshold)
 - `--since 1h|3h|12h|1d|7d|<ISO-time>`
 - `--archive` use full-archive endpoint (all-time)
 - `--min-likes N`
@@ -75,6 +76,7 @@ Brief options:
 - `--pages N` (1-5 per planned query)
 - `--max-queries N` (2-10)
 - `--cache-min N` (cache TTL in minutes)
+- `--min-score N` (minimum signal score to include in brief synthesis)
 - `--max-cost USD` (abort if worst-case reads exceed budget)
 - `--compare-last` (show deltas vs last brief on same question)
 - `--dry-run` (print planned queries and estimated cost without API calls)

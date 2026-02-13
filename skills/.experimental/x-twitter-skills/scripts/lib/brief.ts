@@ -1,4 +1,6 @@
 import type { Tweet } from "./api";
+import { rankBySignal } from "./signal";
+import type { ScoredTweet } from "./signal";
 import type { ResearchPlan } from "./planner";
 
 export interface BriefQueryRun {
@@ -7,6 +9,14 @@ export interface BriefQueryRun {
   query: string;
   rawCount: number;
   cached: boolean;
+}
+
+export interface BriefSignalSummary {
+  candidateCount: number;
+  scoredCount: number;
+  minScore: number;
+  maxScore: number;
+  medianScore: number;
 }
 
 export interface BriefReport {
@@ -28,22 +38,23 @@ export interface BriefReport {
   topDomains: Array<{ domain: string; count: number }>;
   themes: Array<{ theme: string; count: number }>;
   polarity: {
-    positiveExamples: Tweet[];
-    negativeExamples: Tweet[];
+    positiveExamples: ScoredTweet[];
+    negativeExamples: ScoredTweet[];
   };
-  topTweets: Tweet[];
+  topSignals: ScoredTweet[];
+  signalSummary: BriefSignalSummary;
 }
 
 const THEME_RULES: Array<{ name: string; regex: RegExp }> = [
   { name: "Reliability", regex: /\b(bug|issue|broken|outage|fail|error|incident|regression)\b/i },
-  { name: "Launches", regex: /\b(launch|release|shipped|announce|ga|beta)\b/i },
+  { name: "Launches", regex: /\b(launch|release|shipped|announce|ga|beta|roadmap)\b/i },
   { name: "Performance", regex: /\b(fast|faster|latency|benchmark|throughput|perf)\b/i },
   { name: "Security", regex: /\b(security|vuln|vulnerability|exploit|hack|breach|risk)\b/i },
   { name: "Economics", regex: /\b(price|pricing|cost|revenue|fees|margin|business)\b/i },
 ];
 
-const POSITIVE_REGEX = /\b(love|great|impressive|bullish|works|fast|better|win|excellent)\b/i;
-const NEGATIVE_REGEX = /\b(bug|broken|scam|slow|hate|concern|issue|bad|worse|regression|risk)\b/i;
+const POSITIVE_REGEX = /\b(love|great|impressive|bullish|works|fast|better|win|excellent|solid)\b/i;
+const NEGATIVE_REGEX = /\b(bug|broken|scam|slow|hate|concern|issue|bad|worse|regression|risk|downtime)\b/i;
 
 function safeDomain(url: string): string | null {
   try {
@@ -64,8 +75,27 @@ function dedupeTweets(tweets: Tweet[]): Tweet[] {
   return out;
 }
 
-function engagementScore(tweet: Tweet): number {
-  return tweet.metrics.likes * 2 + tweet.metrics.retweets * 3 + tweet.metrics.impressions * 0.01;
+function signalSummaryFromRanked(scored: ScoredTweet[], candidates: number): BriefSignalSummary {
+  if (scored.length === 0) {
+    return {
+      candidateCount: candidates,
+      scoredCount: 0,
+      minScore: 0,
+      maxScore: 0,
+      medianScore: 0,
+    };
+  }
+
+  const sorted = [...scored].map((tweet) => tweet.signalScore).sort((a, b) => a - b);
+  const mid = sorted[Math.floor(sorted.length / 2)] ?? 0;
+
+  return {
+    candidateCount: candidates,
+    scoredCount: scored.length,
+    minScore: sorted[0] ?? 0,
+    maxScore: sorted[sorted.length - 1] ?? 0,
+    medianScore: mid,
+  };
 }
 
 export function createBriefReport(input: {
@@ -75,18 +105,21 @@ export function createBriefReport(input: {
   plan: ResearchPlan;
   queryRuns: BriefQueryRun[];
   tweets: Tweet[];
+  minSignalScore?: number;
 }): BriefReport {
   const uniqueTweets = dedupeTweets(input.tweets);
-  const sortedByEngagement = [...uniqueTweets].sort((a, b) => engagementScore(b) - engagementScore(a));
+  const rankedBySignal = rankBySignal(uniqueTweets, {
+    minScore: input.minSignalScore,
+  });
 
   const voiceMap = new Map<string, { postCount: number; likes: number; impressions: number; score: number }>();
-  for (const tweet of uniqueTweets) {
+  for (const tweet of rankedBySignal) {
     const key = tweet.username.toLowerCase();
     const curr = voiceMap.get(key) || { postCount: 0, likes: 0, impressions: 0, score: 0 };
     curr.postCount += 1;
     curr.likes += tweet.metrics.likes;
     curr.impressions += tweet.metrics.impressions;
-    curr.score += engagementScore(tweet);
+    curr.score += tweet.signalScore;
     voiceMap.set(key, curr);
   }
 
@@ -122,8 +155,9 @@ export function createBriefReport(input: {
     .map(([theme, count]) => ({ theme, count }))
     .sort((a, b) => b.count - a.count);
 
-  const positiveExamples = sortedByEngagement.filter((t) => POSITIVE_REGEX.test(t.text)).slice(0, 3);
-  const negativeExamples = sortedByEngagement.filter((t) => NEGATIVE_REGEX.test(t.text)).slice(0, 3);
+  const rankedText = rankedBySignal;
+  const positiveExamples = rankedText.filter((t) => POSITIVE_REGEX.test(t.text)).slice(0, 3);
+  const negativeExamples = rankedText.filter((t) => NEGATIVE_REGEX.test(t.text)).slice(0, 3);
 
   return {
     question: input.question,
@@ -141,12 +175,22 @@ export function createBriefReport(input: {
       positiveExamples,
       negativeExamples,
     },
-    topTweets: sortedByEngagement.slice(0, 10),
+    topSignals: rankedText.slice(0, 10),
+    signalSummary: signalSummaryFromRanked(rankedBySignal, uniqueTweets.length),
   };
 }
 
-function formatTweetLine(tweet: Tweet): string {
-  return `- @${tweet.username} (${tweet.metrics.likes}L/${tweet.metrics.impressions}I) [Tweet](${tweet.tweet_url})`;
+function formatTweetLine(tweet: ScoredTweet): string {
+  const reasons = tweet.signalReasons.length > 0 ? ` · ${tweet.signalReasons.slice(0, 2).join(", ")}` : "";
+  return `- @${tweet.username} (${tweet.metrics.likes}L/${tweet.metrics.impressions}I, score ${tweet.signalScore.toFixed(
+    1
+  )}${reasons}) [Tweet](${tweet.tweet_url})`;
+}
+
+function formatSignalSummary(summary: BriefSignalSummary): string {
+  return `- Signal candidates: ${summary.candidateCount}\n- Scored candidates: ${summary.scoredCount}\n- Score range: ${summary.minScore.toFixed(1)} → ${summary.maxScore.toFixed(
+    1
+  )}\n- Median score: ${summary.medianScore.toFixed(1)}\n`;
 }
 
 export function formatBriefMarkdown(report: BriefReport): string {
@@ -158,6 +202,9 @@ export function formatBriefMarkdown(report: BriefReport): string {
   out += `- Unique tweets: ${report.uniqueTweetCount}\n`;
   out += `- Raw tweet reads: ${report.rawTweetReads}\n`;
   out += `- Est. read cost: ~$${(report.rawTweetReads * 0.005).toFixed(2)}\n\n`;
+
+  out += "## Signal Quality\n\n";
+  out += `${formatSignalSummary(report.signalSummary)}\n`;
 
   out += "## Query Ledger\n\n";
   for (const run of report.queryRuns) {
@@ -217,8 +264,8 @@ export function formatBriefMarkdown(report: BriefReport): string {
     out += "\n";
   }
 
-  out += "## Top Posts\n\n";
-  for (const tweet of report.topTweets) {
+  out += "## Top Signal Posts\n\n";
+  for (const tweet of report.topSignals) {
     out += `${formatTweetLine(tweet)}\n`;
   }
 
