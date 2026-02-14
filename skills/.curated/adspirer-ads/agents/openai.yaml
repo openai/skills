@@ -1,0 +1,14 @@
+interface:
+  display_name: "Adspirer Ads"
+  short_description: "Manage ad campaigns across Google, Meta, LinkedIn & TikTok"
+  icon_small: "./assets/adspirer-small.svg"
+  icon_large: "./assets/adspirer.png"
+  default_prompt: "Check connected ad platforms and summarize recent campaign performance across all active accounts."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "adspirer"
+      description: "Adspirer MCP server for cross-platform ad management"
+      transport: "streamable_http"
+      url: "https://mcp.adspirer.com/mcp"
