@@ -13,6 +13,7 @@ DEFAULT_BASE_URL = "https://sentry.io"
 DEFAULT_ORG = "your-org"
 DEFAULT_PROJECT = "your-project"
 MAX_LIMIT = 50
+DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 IP_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
@@ -51,10 +52,11 @@ def next_cursor(link_header):
     return None
 
 
-def request_json(url, token, retries=1):
+def request_json(url, token, user_agent, retries=1):
     req = Request(url)
     req.add_header("Authorization", f"Bearer {token}")
     req.add_header("Accept", "application/json")
+    req.add_header("User-Agent", user_agent)
 
     attempt = 0
     while True:
@@ -86,7 +88,7 @@ def build_url(base_url, path, params=None):
     return url
 
 
-def paged_get(base_url, path, params, token, limit):
+def paged_get(base_url, path, params, token, user_agent, limit):
     results = []
     cursor = None
     while len(results) < limit:
@@ -95,7 +97,7 @@ def paged_get(base_url, path, params, token, limit):
         if cursor:
             page_params["cursor"] = cursor
         url = build_url(base_url, path, page_params)
-        data, headers = request_json(url, token)
+        data, headers = request_json(url, token, user_agent)
         if not data:
             break
         results.extend(data)
@@ -112,7 +114,7 @@ def require_org_project(org, project):
         )
 
 
-def handle_list_issues(args, token, base_url):
+def handle_list_issues(args, token, base_url, user_agent):
     require_org_project(args.org, args.project)
     limit = min(args.limit, MAX_LIMIT)
     params = {
@@ -123,29 +125,29 @@ def handle_list_issues(args, token, base_url):
         params["query"] = args.query
 
     path = f"/api/0/projects/{args.org}/{args.project}/issues/"
-    issues = paged_get(base_url, path, params, token, limit)
+    issues = paged_get(base_url, path, params, token, user_agent, limit)
     return issues
 
 
-def handle_issue_detail(args, token, base_url):
+def handle_issue_detail(args, token, base_url, user_agent):
     path = f"/api/0/issues/{args.issue_id}/"
     url = build_url(base_url, path)
-    data, _ = request_json(url, token)
+    data, _ = request_json(url, token, user_agent)
     return data
 
 
-def handle_issue_events(args, token, base_url):
+def handle_issue_events(args, token, base_url, user_agent):
     limit = min(args.limit, MAX_LIMIT)
     path = f"/api/0/issues/{args.issue_id}/events/"
-    events = paged_get(base_url, path, {}, token, limit)
+    events = paged_get(base_url, path, {}, token, user_agent, limit)
     return events
 
 
-def handle_event_detail(args, token, base_url):
+def handle_event_detail(args, token, base_url, user_agent):
     require_org_project(args.org, args.project)
     path = f"/api/0/projects/{args.org}/{args.project}/events/{args.event_id}/"
     url = build_url(base_url, path)
-    data, _ = request_json(url, token)
+    data, _ = request_json(url, token, user_agent)
     if data and not args.include_entries:
         data = dict(data)
         data.pop("entries", None)
@@ -170,6 +172,11 @@ def build_parser():
         "--project",
         default=os.environ.get("SENTRY_PROJECT", DEFAULT_PROJECT),
         help="Sentry project slug",
+    )
+    parser.add_argument(
+        "--user-agent",
+        default=os.environ.get("SENTRY_USER_AGENT", DEFAULT_USER_AGENT),
+        help="HTTP User-Agent header for API requests",
     )
     parser.add_argument(
         "--no-redact",
@@ -212,15 +219,16 @@ def main():
         raise RuntimeError("Missing SENTRY_AUTH_TOKEN env var.")
 
     base_url = args.base_url
+    user_agent = args.user_agent
 
     if args.command == "list-issues":
-        data = handle_list_issues(args, token, base_url)
+        data = handle_list_issues(args, token, base_url, user_agent)
     elif args.command == "issue-detail":
-        data = handle_issue_detail(args, token, base_url)
+        data = handle_issue_detail(args, token, base_url, user_agent)
     elif args.command == "issue-events":
-        data = handle_issue_events(args, token, base_url)
+        data = handle_issue_events(args, token, base_url, user_agent)
     elif args.command == "event-detail":
-        data = handle_event_detail(args, token, base_url)
+        data = handle_event_detail(args, token, base_url, user_agent)
     else:
         raise RuntimeError(f"Unknown command: {args.command}")
 
