@@ -50,12 +50,13 @@ Produce a complete, donor-ready RBM logic model that clearly links resources to 
 
 ## Output Format
 
-1. Executive Summary (2-3 sentences)
-2. Logic Model Table (Inputs to Impact)
-3. Outcome Indicators (group by outcome)
-4. SDG Alignment (goal and target references)
-5. Data Collection Plan (method, frequency, owner)
-6. Assumptions and Risks (recommended when uncertainty exists)
+1. Theory of Change (if/then statement plus causal pathway and key assumptions)
+2. Executive Summary (2-3 sentences)
+3. Logic Model Table (Inputs to Impact)
+4. Outcome Indicators (group by outcome)
+5. SDG Alignment (goal and target references)
+6. Data Collection Plan (method, frequency, owner)
+7. Assumptions and Risks (recommended when uncertainty exists)
 
 ## Quality Rules
 
