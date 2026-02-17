@@ -1,0 +1,6 @@
+interface:
+  display_name: "Nonprofit RBM Logic Model"
+  short_description: "Build RBM logic models for nonprofit programs"
+  default_prompt: "Use $nonprofit-rbm-logic-model to create a logic model for a nonprofit program with SMART indicators and SDG mapping."
+policy:
+  allow_implicit_invocation: true
