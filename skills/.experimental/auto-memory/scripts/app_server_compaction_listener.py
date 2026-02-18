@@ -643,6 +643,12 @@ def main() -> int:
         + f"(compaction={'on' if compaction_enabled else 'off'}, autosave={'on' if auto_save_events else 'off'})",
         quiet=args.quiet,
     )
+    _visual_status(
+        "listener_started "
+        + f"compaction={'on' if compaction_enabled else 'off'} "
+        + f"autosave={'on' if auto_save_events else 'off'}",
+        enabled=args.visual_status,
+    )
     if args.prompt_out:
         Path(args.prompt_out).parent.mkdir(parents=True, exist_ok=True)
 
@@ -973,6 +979,11 @@ def main() -> int:
                         f"auto-save skipped for {method}: secret indicators detected ({','.join(secret_indicators)})",
                         quiet=False,
                     )
+                    _visual_status(
+                        "autosave_skipped_secret "
+                        + f"event={method} indicators={','.join(secret_indicators)}",
+                        enabled=args.visual_status,
+                    )
                     _record_event(
                         args.jsonl_log,
                         {
@@ -1000,9 +1011,18 @@ def main() -> int:
                         tags=args.auto_save_tags,
                     )
                     _log(f"auto-save persisted for {method} in project {target_project}", quiet=args.quiet)
+                    _visual_status(
+                        "autosave_persisted "
+                        + f"event={method} note={save_result.get('file') if save_result else 'unknown'}",
+                        enabled=args.visual_status,
+                    )
                 except Exception as exc:
                     save_error = str(exc)
                     _log(f"auto-save error: {save_error}", quiet=False)
+                    _visual_status(
+                        f"autosave_error event={method} error={save_error}",
+                        enabled=args.visual_status,
+                    )
 
                 _record_event(
                     args.jsonl_log,
@@ -1025,6 +1045,7 @@ def main() -> int:
             source_file.close()
 
     _log("auto-memory listener stopped", quiet=args.quiet)
+    _visual_status("listener_stopped", enabled=args.visual_status)
     return 0
 
 

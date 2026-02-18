@@ -27,7 +27,7 @@ Defaults:
 - action log: `$CODEX_HOME/tmp/auto-memory-listener.log`
 - reinjection mode: emits `turn/start` JSON-RPC request payloads (compaction mode)
 - reinjection guardrails: `AUTO_MEMORY_REINJECTION_MAX_CHARS=12000`, `AUTO_MEMORY_REINJECTION_MAX_ESTIMATED_TOKENS=3000`, `AUTO_MEMORY_OVERSIZE_ACTION=skip`
-- optional visual status markers: `AUTO_MEMORY_VISUAL_STATUS=1`
+- visual status markers enabled by default (`AUTO_MEMORY_VISUAL_STATUS=1`; set `0` to disable)
 - optional compaction alert memory notes: `AUTO_MEMORY_SAVE_COMPACTION_ALERTS=1`
 
 Common overrides:
@@ -165,6 +165,8 @@ python3 "$AUTO_MEMORY_DIR/scripts/app_server_compaction_listener.py" \
   - `[auto-memory] pre checkpoint_saved file=...`
   - `[auto-memory] post reinjection_prompt_ready chars=... est_tokens=...`
   - `[auto-memory] post reinjection_emitted status=... sent_chars=...`
+  - `[auto-memory] autosave_persisted event=... note=...`
+  - `[auto-memory] listener_started ...` and `[auto-memory] listener_stopped`
 
 ## Oversize Behavior
 
