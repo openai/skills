@@ -28,6 +28,7 @@ Defaults:
 - reinjection mode: emits `turn/start` JSON-RPC request payloads (compaction mode)
 - reinjection guardrails: `AUTO_MEMORY_REINJECTION_MAX_CHARS=12000`, `AUTO_MEMORY_REINJECTION_MAX_ESTIMATED_TOKENS=3000`, `AUTO_MEMORY_OVERSIZE_ACTION=skip`
 - optional visual status markers: `AUTO_MEMORY_VISUAL_STATUS=1`
+- optional compaction alert memory notes: `AUTO_MEMORY_SAVE_COMPACTION_ALERTS=1`
 
 Common overrides:
 
@@ -48,6 +49,7 @@ Debug-friendly safe mode (no auto injection; keep logs/prompts for inspection):
 AUTO_MEMORY_MODE="compaction" \
 AUTO_MEMORY_QUIET="0" \
 AUTO_MEMORY_VISUAL_STATUS="1" \
+AUTO_MEMORY_SAVE_COMPACTION_ALERTS="1" \
 AUTO_MEMORY_INJECT_TURN_START="0" \
 AUTO_MEMORY_PROMPT_OUT="$CODEX_HOME/tmp/auto-memory-reinjection.txt" \
 AUTO_MEMORY_LOG="$CODEX_HOME/tmp/auto-memory-listener.log" \
@@ -93,7 +95,8 @@ AUTO_MEMORY_AUTO_SAVE_EVENTS="turn/complete,turn/completed" \
 2. Run `compaction_handoff.py --mode post` when compaction completes.
 3. Optionally emit a `turn/start` JSON-RPC request with `reinjection_prompt`.
 4. Optionally persist structured event memory notes through `save_memory.py` for configured completion events.
-5. Skip auto-save when secret-like indicators are detected in generated note content.
+5. Optionally persist compaction failures/skips as memory notes when `--save-compaction-alerts` is enabled.
+6. Skip auto-save when secret-like indicators are detected in generated note content.
 
 ## Basic Usage
 
@@ -134,6 +137,17 @@ python3 "$AUTO_MEMORY_DIR/scripts/app_server_compaction_listener.py" \
   --auto-save-summary-fields "summary,objective,next_step,result,status"
 ```
 
+Enable compaction alert memory notes for failure/skip capture:
+
+```bash
+python3 "$AUTO_MEMORY_DIR/scripts/app_server_compaction_listener.py" \
+  --project "<project>" \
+  --inject-turn-start \
+  --save-compaction-alerts \
+  --compaction-alert-title-prefix "Auto memory compaction" \
+  --compaction-alert-tags "auto-memory,compaction,failure"
+```
+
 ## Output Notes
 
 - With `--inject-turn-start`, emitted payloads are valid JSON-RPC requests for method `turn/start`.
@@ -146,6 +160,7 @@ python3 "$AUTO_MEMORY_DIR/scripts/app_server_compaction_listener.py" \
   - `prompt_chars`, `prompt_tokens_estimated`
   - `prompt_sent_chars`, `prompt_sent_tokens_estimated`
   - `oversize_action`, `oversize_reason`
+- With `--save-compaction-alerts`, listener also emits `action=compaction_alert` JSONL rows and persists memory notes for skipped/error outcomes.
 - With `--visual-status`, stderr includes concise lifecycle markers such as:
   - `[auto-memory] pre checkpoint_saved file=...`
   - `[auto-memory] post reinjection_prompt_ready chars=... est_tokens=...`

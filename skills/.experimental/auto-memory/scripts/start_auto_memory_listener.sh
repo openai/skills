@@ -30,6 +30,9 @@ AUTO_SAVE_TITLE_PREFIX="${AUTO_MEMORY_AUTO_SAVE_TITLE_PREFIX:-Auto memory}"
 AUTO_SAVE_TAGS="${AUTO_MEMORY_AUTO_SAVE_TAGS:-auto-memory,auto-save}"
 AUTO_SAVE_PROJECT_FIELD="${AUTO_MEMORY_AUTO_SAVE_PROJECT_FIELD:-project}"
 AUTO_SAVE_SUMMARY_FIELDS="${AUTO_MEMORY_AUTO_SAVE_SUMMARY_FIELDS:-summary,objective,next_step,result,status}"
+SAVE_COMPACTION_ALERTS="${AUTO_MEMORY_SAVE_COMPACTION_ALERTS:-0}"
+COMPACTION_ALERT_TITLE_PREFIX="${AUTO_MEMORY_COMPACTION_ALERT_TITLE_PREFIX:-Auto memory compaction}"
+COMPACTION_ALERT_TAGS="${AUTO_MEMORY_COMPACTION_ALERT_TAGS:-auto-memory,compaction,failure}"
 INJECT_TURN_START="${AUTO_MEMORY_INJECT_TURN_START:-}"
 
 if [[ -z "$INJECT_TURN_START" ]]; then
@@ -105,6 +108,12 @@ if [[ "$VISUAL_STATUS" == "1" ]]; then
   CMD+=(--visual-status)
 fi
 
+if [[ "$SAVE_COMPACTION_ALERTS" == "1" ]]; then
+  CMD+=(--save-compaction-alerts)
+  CMD+=(--compaction-alert-title-prefix "$COMPACTION_ALERT_TITLE_PREFIX")
+  CMD+=(--compaction-alert-tags "$COMPACTION_ALERT_TAGS")
+fi
+
 CMD+=("$@")
 
 echo "Starting auto-memory listener" >&2
@@ -112,6 +121,7 @@ echo "project=$PROJECT" >&2
 echo "objective=$OBJECTIVE" >&2
 echo "mode=$MODE" >&2
 echo "visual_status=$VISUAL_STATUS" >&2
+echo "save_compaction_alerts=$SAVE_COMPACTION_ALERTS" >&2
 echo "prompt_out=$PROMPT_OUT" >&2
 echo "log=$JSONL_LOG" >&2
 

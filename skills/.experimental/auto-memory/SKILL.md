@@ -97,6 +97,9 @@ export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
   - set `--auto-save-events "turn/complete,turn/completed"` to persist structured event summaries through `save_memory.py`
   - auto-save can infer project from event payload with `--auto-save-project-field`, and can include selected payload fields in summaries with `--auto-save-summary-fields`
   - secret-like payloads are skipped automatically and logged as `skipped_secret`
+- Optional compaction alert memory mode:
+  - set `--save-compaction-alerts` to persist compaction failure/skip signals as memory notes
+  - configure `--compaction-alert-title-prefix` and `--compaction-alert-tags` to tune note metadata
 - Persist outputs:
   - use `--prompt-out` for latest reinjection prompt text
   - use `--jsonl-log` for audit/debug records of detected events and handoff actions
@@ -120,6 +123,7 @@ export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
   - `AUTO_MEMORY_MODE=compaction|autosave|both`
   - `AUTO_MEMORY_AUTO_SAVE_EVENTS`, `AUTO_MEMORY_AUTO_SAVE_TITLE_PREFIX`, `AUTO_MEMORY_AUTO_SAVE_TAGS`
   - `AUTO_MEMORY_AUTO_SAVE_PROJECT_FIELD`, `AUTO_MEMORY_AUTO_SAVE_SUMMARY_FIELDS`, `AUTO_MEMORY_INJECT_TURN_START`
+  - `AUTO_MEMORY_SAVE_COMPACTION_ALERTS`, `AUTO_MEMORY_COMPACTION_ALERT_TITLE_PREFIX`, `AUTO_MEMORY_COMPACTION_ALERT_TAGS`
 
 ## Project Inference Priority
 

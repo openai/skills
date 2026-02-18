@@ -19,6 +19,8 @@ DEFAULT_AUTO_SAVE_TITLE_PREFIX = "Auto memory"
 DEFAULT_AUTO_SAVE_TAGS = "auto-memory,auto-save"
 DEFAULT_AUTO_SAVE_PROJECT_FIELD = "project"
 DEFAULT_AUTO_SAVE_SUMMARY_FIELDS = "summary,objective,next_step,result,status"
+DEFAULT_COMPACTION_ALERT_TITLE_PREFIX = "Auto memory compaction"
+DEFAULT_COMPACTION_ALERT_TAGS = "auto-memory,compaction,failure"
 DEFAULT_REINJECTION_MAX_CHARS = 12000
 DEFAULT_REINJECTION_MAX_ESTIMATED_TOKENS = 3000
 DEFAULT_OVERSIZE_ACTION = "skip"
@@ -128,6 +130,24 @@ def parse_args() -> argparse.Namespace:
         "--auto-save-summary-fields",
         default=DEFAULT_AUTO_SAVE_SUMMARY_FIELDS,
         help="Comma-separated field names (or dotted paths) pulled into note summary.",
+    )
+    parser.add_argument(
+        "--save-compaction-alerts",
+        action="store_true",
+        help=(
+            "Persist compaction failures/skips as memory notes for downstream "
+            "self-improvement workflows."
+        ),
+    )
+    parser.add_argument(
+        "--compaction-alert-title-prefix",
+        default=DEFAULT_COMPACTION_ALERT_TITLE_PREFIX,
+        help="Title prefix used for compaction alert memory notes.",
+    )
+    parser.add_argument(
+        "--compaction-alert-tags",
+        default=DEFAULT_COMPACTION_ALERT_TAGS,
+        help="Comma-separated tags used for compaction alert memory notes.",
     )
     parser.add_argument(
         "--quiet",
@@ -384,6 +404,77 @@ def _build_auto_save_body(
     )
 
 
+def _build_compaction_alert_body(
+    *,
+    event_kind: str,
+    mode: str,
+    thread_id: str | None,
+    objective: str,
+    status: str,
+    reinjection_status: str,
+    oversize_reason: list[str],
+    prompt_chars: int,
+    prompt_tokens_estimated: int,
+    prompt_sent: bool,
+    prompt_sent_chars: int,
+    prompt_sent_tokens_estimated: int,
+    error: str | None,
+    payload: Any,
+    ts_iso: str,
+) -> str:
+    summary_lines = [
+        f"- Compaction event `{event_kind}` produced status `{status}`.",
+        f"- Reinjection status: `{reinjection_status}`.",
+    ]
+    if oversize_reason:
+        summary_lines.append(f"- Oversize reasons: {', '.join(oversize_reason)}")
+    if error:
+        summary_lines.append(f"- Error: {error}")
+
+    context_lines = [
+        f"- Timestamp (UTC): {ts_iso}",
+        f"- Thread ID: {thread_id or 'unknown'}",
+        f"- Event kind: {event_kind}",
+        f"- Mode: {mode}",
+        f"- Objective: {objective or 'unspecified'}",
+    ]
+
+    verification_lines = [
+        f"- prompt_chars={prompt_chars}",
+        f"- prompt_tokens_estimated={prompt_tokens_estimated}",
+        f"- prompt_sent={prompt_sent}",
+        f"- prompt_sent_chars={prompt_sent_chars}",
+        f"- prompt_sent_tokens_estimated={prompt_sent_tokens_estimated}",
+    ]
+
+    payload_preview = _truncate_payload_preview(payload)
+
+    return (
+        "## Summary\n"
+        + "\n".join(summary_lines)
+        + "\n\n## Context\n"
+        + "\n".join(context_lines)
+        + "\n\n## Decision\n"
+        + "- Persist this compaction anomaly to durable memory for future iteration and regression prevention.\n"
+        + "\n## Rationale\n"
+        + "- Compaction skips/failures are high-signal inputs for improving reinjection and prompt-budget strategy.\n"
+        + "\n## Implementation\n"
+        + "- Event captured by `app_server_compaction_listener.py` compaction alert mode.\n"
+        + "- Note persisted via `save_memory.py` under the configured project scope.\n"
+        + "\n## Verification\n"
+        + "\n".join(verification_lines)
+        + "\n\n## Follow-ups\n"
+        + "- Feed this note into self-improve and loop orchestration acceptance gates.\n"
+        + "- Adjust reinjection budget/action only when repeated similar failures are observed.\n"
+        + "\n## Event Payload (truncated)\n"
+        + "```json\n"
+        + payload_preview
+        + "\n```\n"
+        + "\n## Changelog\n"
+        + f"- {ts_iso}: created via compaction alert auto-save.\n"
+    )
+
+
 def _run_handoff(
     mode: str,
     project: str,
@@ -510,6 +601,16 @@ def _truncate_prompt_to_budget(prompt: str, max_chars: int, max_tokens: int) -> 
     if budget_chars <= len(marker):
         return prompt[:budget_chars]
     return prompt[: budget_chars - len(marker)].rstrip() + marker
+
+
+def _should_save_compaction_alert(status: str, reinjection_status: str) -> bool:
+    if status == "error":
+        return True
+    return reinjection_status in (
+        "skipped_oversize",
+        "skipped_truncate_budget",
+        "skipped_missing_thread_id",
+    )
 
 
 def main() -> int:
@@ -709,29 +810,119 @@ def main() -> int:
                         elif reinjection_status in ("skipped_oversize", "skipped_truncate_budget"):
                             status = "skipped_oversize"
 
-                        _record_event(
-                            args.jsonl_log,
-                            {
-                                "action": "compaction",
-                                "event": event_kind,
-                                "mode": mode,
-                                "thread_id": thread_id,
-                                "status": status,
-                                "project": project,
-                                "checkpoint_file": None if not result else result.get("checkpoint_file"),
-                                "reinjection_status": reinjection_status,
-                                "oversize_action": args.oversize_action,
-                                "oversize_reason": oversize_reason,
-                                "prompt_chars": prompt_chars,
-                                "prompt_tokens_estimated": prompt_tokens_estimated,
-                                "prompt_sent": prompt_sent,
-                                "prompt_sent_chars": prompt_sent_chars,
-                                "prompt_sent_tokens_estimated": prompt_sent_tokens_estimated,
-                                "reinjection_max_chars": max(0, args.reinjection_max_chars),
-                                "reinjection_max_estimated_tokens": max(0, args.reinjection_max_estimated_tokens),
-                                "error": err,
-                            },
-                        )
+                        compaction_record = {
+                            "action": "compaction",
+                            "event": event_kind,
+                            "mode": mode,
+                            "thread_id": thread_id,
+                            "status": status,
+                            "project": project,
+                            "checkpoint_file": None if not result else result.get("checkpoint_file"),
+                            "reinjection_status": reinjection_status,
+                            "oversize_action": args.oversize_action,
+                            "oversize_reason": oversize_reason,
+                            "prompt_chars": prompt_chars,
+                            "prompt_tokens_estimated": prompt_tokens_estimated,
+                            "prompt_sent": prompt_sent,
+                            "prompt_sent_chars": prompt_sent_chars,
+                            "prompt_sent_tokens_estimated": prompt_sent_tokens_estimated,
+                            "reinjection_max_chars": max(0, args.reinjection_max_chars),
+                            "reinjection_max_estimated_tokens": max(0, args.reinjection_max_estimated_tokens),
+                            "error": err,
+                        }
+                        _record_event(args.jsonl_log, compaction_record)
+
+                        if args.save_compaction_alerts and _should_save_compaction_alert(status, reinjection_status):
+                            ts_iso = now_iso()
+                            alert_title = _build_auto_save_title(
+                                args.compaction_alert_title_prefix,
+                                event_kind,
+                                thread_id,
+                                ts_iso,
+                            )
+                            alert_body = _build_compaction_alert_body(
+                                event_kind=event_kind,
+                                mode=mode,
+                                thread_id=thread_id,
+                                objective=args.objective.strip(),
+                                status=status,
+                                reinjection_status=reinjection_status,
+                                oversize_reason=oversize_reason,
+                                prompt_chars=prompt_chars,
+                                prompt_tokens_estimated=prompt_tokens_estimated,
+                                prompt_sent=prompt_sent,
+                                prompt_sent_chars=prompt_sent_chars,
+                                prompt_sent_tokens_estimated=prompt_sent_tokens_estimated,
+                                error=err,
+                                payload=params if params is not None else message,
+                                ts_iso=ts_iso,
+                            )
+                            alert_secret_indicators = detect_secret_indicators(f"{alert_title}\n{alert_body}")
+                            if alert_secret_indicators:
+                                _log(
+                                    "compaction alert memory note skipped: secret indicators detected "
+                                    + f"({','.join(alert_secret_indicators)})",
+                                    quiet=False,
+                                )
+                                _record_event(
+                                    args.jsonl_log,
+                                    {
+                                        "action": "compaction_alert",
+                                        "event": event_kind,
+                                        "mode": mode,
+                                        "thread_id": thread_id,
+                                        "status": "skipped_secret",
+                                        "project": project,
+                                        "title": alert_title,
+                                        "secret_indicators": alert_secret_indicators,
+                                        "error": None,
+                                    },
+                                )
+                            else:
+                                alert_save_result: dict[str, Any] | None = None
+                                alert_save_error: str | None = None
+                                try:
+                                    alert_save_result = _run_save_memory(
+                                        project=project,
+                                        title=alert_title,
+                                        body=alert_body,
+                                        tags=args.compaction_alert_tags,
+                                    )
+                                    _log(
+                                        "compaction alert memory note persisted "
+                                        + f"for {event_kind} in project {project}",
+                                        quiet=args.quiet,
+                                    )
+                                    _visual_status(
+                                        "compaction_alert_persisted "
+                                        + f"note={alert_save_result.get('file') if alert_save_result else 'unknown'}",
+                                        enabled=args.visual_status,
+                                    )
+                                except Exception as exc:
+                                    alert_save_error = str(exc)
+                                    _log(f"compaction alert memory note error: {alert_save_error}", quiet=False)
+                                    _visual_status(
+                                        f"compaction_alert_error {alert_save_error}",
+                                        enabled=args.visual_status,
+                                    )
+
+                                _record_event(
+                                    args.jsonl_log,
+                                    {
+                                        "action": "compaction_alert",
+                                        "event": event_kind,
+                                        "mode": mode,
+                                        "thread_id": thread_id,
+                                        "status": "ok" if alert_save_error is None else "error",
+                                        "project": project,
+                                        "title": alert_title,
+                                        "note_file": None if not alert_save_result else alert_save_result.get("file"),
+                                        "canonical_file": None
+                                        if not alert_save_result
+                                        else alert_save_result.get("canonical_file"),
+                                        "error": alert_save_error,
+                                    },
+                                )
 
             if auto_save_events and method in auto_save_events:
                 event_id = _extract_event_id(message)
