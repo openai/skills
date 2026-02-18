@@ -24,6 +24,7 @@ OVERSIZE_ACTION="${AUTO_MEMORY_OVERSIZE_ACTION:-skip}"
 QUERY="${AUTO_MEMORY_QUERY:-}"
 INPUT_FILE="${AUTO_MEMORY_INPUT_FILE:-}"
 QUIET="${AUTO_MEMORY_QUIET:-1}"
+VISUAL_STATUS="${AUTO_MEMORY_VISUAL_STATUS:-0}"
 AUTO_SAVE_EVENTS="${AUTO_MEMORY_AUTO_SAVE_EVENTS:-turn/complete,turn/completed}"
 AUTO_SAVE_TITLE_PREFIX="${AUTO_MEMORY_AUTO_SAVE_TITLE_PREFIX:-Auto memory}"
 AUTO_SAVE_TAGS="${AUTO_MEMORY_AUTO_SAVE_TAGS:-auto-memory,auto-save}"
@@ -100,12 +101,17 @@ if [[ "$QUIET" == "1" ]]; then
   CMD+=(--quiet)
 fi
 
+if [[ "$VISUAL_STATUS" == "1" ]]; then
+  CMD+=(--visual-status)
+fi
+
 CMD+=("$@")
 
 echo "Starting auto-memory listener" >&2
 echo "project=$PROJECT" >&2
 echo "objective=$OBJECTIVE" >&2
 echo "mode=$MODE" >&2
+echo "visual_status=$VISUAL_STATUS" >&2
 echo "prompt_out=$PROMPT_OUT" >&2
 echo "log=$JSONL_LOG" >&2
 

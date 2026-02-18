@@ -100,6 +100,7 @@ export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
 - Persist outputs:
   - use `--prompt-out` for latest reinjection prompt text
   - use `--jsonl-log` for audit/debug records of detected events and handoff actions
+  - use `--visual-status` for concise human-readable compaction/reinjection runtime markers on stderr
 
 ### One-command launcher
 
@@ -114,6 +115,7 @@ export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
   - `AUTO_MEMORY_PROJECT`, `AUTO_MEMORY_OBJECTIVE`, `AUTO_MEMORY_LIMIT`
   - `AUTO_MEMORY_QUERY`, `AUTO_MEMORY_PROMPT_OUT`, `AUTO_MEMORY_LOG`
   - `AUTO_MEMORY_OUTPUT_FRAMING`, `AUTO_MEMORY_REQUEST_ID_PREFIX`, `AUTO_MEMORY_INPUT_FILE`, `AUTO_MEMORY_QUIET`
+  - `AUTO_MEMORY_VISUAL_STATUS` (`1` enables concise runtime status markers)
   - `AUTO_MEMORY_REINJECTION_MAX_CHARS`, `AUTO_MEMORY_REINJECTION_MAX_ESTIMATED_TOKENS`, `AUTO_MEMORY_OVERSIZE_ACTION`
   - `AUTO_MEMORY_MODE=compaction|autosave|both`
   - `AUTO_MEMORY_AUTO_SAVE_EVENTS`, `AUTO_MEMORY_AUTO_SAVE_TITLE_PREFIX`, `AUTO_MEMORY_AUTO_SAVE_TAGS`

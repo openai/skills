@@ -27,6 +27,7 @@ Defaults:
 - action log: `$CODEX_HOME/tmp/auto-memory-listener.log`
 - reinjection mode: emits `turn/start` JSON-RPC request payloads (compaction mode)
 - reinjection guardrails: `AUTO_MEMORY_REINJECTION_MAX_CHARS=12000`, `AUTO_MEMORY_REINJECTION_MAX_ESTIMATED_TOKENS=3000`, `AUTO_MEMORY_OVERSIZE_ACTION=skip`
+- optional visual status markers: `AUTO_MEMORY_VISUAL_STATUS=1`
 
 Common overrides:
 
@@ -46,6 +47,7 @@ Debug-friendly safe mode (no auto injection; keep logs/prompts for inspection):
 ```bash
 AUTO_MEMORY_MODE="compaction" \
 AUTO_MEMORY_QUIET="0" \
+AUTO_MEMORY_VISUAL_STATUS="1" \
 AUTO_MEMORY_INJECT_TURN_START="0" \
 AUTO_MEMORY_PROMPT_OUT="$CODEX_HOME/tmp/auto-memory-reinjection.txt" \
 AUTO_MEMORY_LOG="$CODEX_HOME/tmp/auto-memory-listener.log" \
@@ -144,6 +146,10 @@ python3 "$AUTO_MEMORY_DIR/scripts/app_server_compaction_listener.py" \
   - `prompt_chars`, `prompt_tokens_estimated`
   - `prompt_sent_chars`, `prompt_sent_tokens_estimated`
   - `oversize_action`, `oversize_reason`
+- With `--visual-status`, stderr includes concise lifecycle markers such as:
+  - `[auto-memory] pre checkpoint_saved file=...`
+  - `[auto-memory] post reinjection_prompt_ready chars=... est_tokens=...`
+  - `[auto-memory] post reinjection_emitted status=... sent_chars=...`
 
 ## Oversize Behavior
 

@@ -134,6 +134,14 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Suppress non-error stderr logs.",
     )
+    parser.add_argument(
+        "--visual-status",
+        action="store_true",
+        help=(
+            "Emit concise compaction/reinjection status lines to stderr for "
+            "human-visible runtime feedback."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -145,6 +153,12 @@ def _log(message: str, quiet: bool = False) -> None:
     if quiet:
         return
     print(message, file=sys.stderr, flush=True)
+
+
+def _visual_status(message: str, enabled: bool) -> None:
+    if not enabled:
+        return
+    print(f"[auto-memory] {message}", file=sys.stderr, flush=True)
 
 
 def _write_jsonl(path: str, payload: dict[str, Any]) -> None:
@@ -566,6 +580,10 @@ def main() -> int:
                     if dedupe_key not in seen_compaction_keys:
                         seen_compaction_keys.add(dedupe_key)
                         _log(f"detected {event_kind}, running {mode} handoff", quiet=args.quiet)
+                        _visual_status(
+                            f"{event_kind} detected mode={mode} thread={thread_id or 'unknown'}",
+                            enabled=args.visual_status,
+                        )
                         result: dict[str, Any] | None = None
                         err: str | None = None
                         reinjection_status = "not_applicable"
@@ -588,6 +606,18 @@ def main() -> int:
                             prompt_tokens_estimated = int(
                                 result.get("reinjection_prompt_estimated_tokens") or _estimate_token_count(prompt)
                             )
+                            if mode == "pre":
+                                _visual_status(
+                                    "pre checkpoint_saved "
+                                    + f"file={result.get('checkpoint_file') or 'unknown'}",
+                                    enabled=args.visual_status,
+                                )
+                            else:
+                                _visual_status(
+                                    "post reinjection_prompt_ready "
+                                    + f"chars={prompt_chars} est_tokens={prompt_tokens_estimated}",
+                                    enabled=args.visual_status,
+                                )
                             if prompt and args.prompt_out:
                                 Path(args.prompt_out).write_text(prompt + "\n", encoding="utf-8")
                             if mode == "post" and prompt and args.inject_turn_start and thread_id:
@@ -606,6 +636,11 @@ def main() -> int:
                                             + f"({','.join(oversize_reason)})",
                                             quiet=False,
                                         )
+                                        _visual_status(
+                                            "post reinjection_skipped_oversize "
+                                            + f"reasons={','.join(oversize_reason)}",
+                                            enabled=args.visual_status,
+                                        )
                                     elif args.oversize_action == "truncate":
                                         send_prompt = _truncate_prompt_to_budget(
                                             prompt,
@@ -617,6 +652,10 @@ def main() -> int:
                                             _log(
                                                 "reinjection skipped: truncate budget resolved to empty prompt",
                                                 quiet=False,
+                                            )
+                                            _visual_status(
+                                                "post reinjection_skipped_empty_truncate_budget",
+                                                enabled=args.visual_status,
                                             )
                                         else:
                                             reinjection_status = "truncated_then_emitted"
@@ -641,13 +680,28 @@ def main() -> int:
                                         counter=inject_counter,
                                     )
                                     prompt_sent = True
+                                    _visual_status(
+                                        "post reinjection_emitted "
+                                        + f"status={reinjection_status} sent_chars={prompt_sent_chars} "
+                                        + f"sent_est_tokens={prompt_sent_tokens_estimated}",
+                                        enabled=args.visual_status,
+                                    )
                             elif mode == "post" and prompt and args.inject_turn_start and not thread_id:
                                 reinjection_status = "skipped_missing_thread_id"
+                                _visual_status(
+                                    "post reinjection_skipped_missing_thread_id",
+                                    enabled=args.visual_status,
+                                )
                             elif mode == "post" and prompt and not args.inject_turn_start:
                                 reinjection_status = "generated_not_injected"
+                                _visual_status(
+                                    "post reinjection_generated_not_injected",
+                                    enabled=args.visual_status,
+                                )
                         except Exception as exc:
                             err = str(exc)
                             _log(f"handoff error: {err}", quiet=False)
+                            _visual_status(f"{mode} handoff_error {err}", enabled=args.visual_status)
 
                         status = "ok"
                         if err is not None:
