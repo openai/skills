@@ -65,6 +65,43 @@ python3 "$RALPH_DIR/scripts/ralph_loop.py" \
 - Optional integration with `$auto-memory`: use memory snapshots for richer iteration context.
 - Optional integration with `$self-improve`: use one-change + gate decisions as acceptance wrapper around Ralph iterations.
 
+## Read-only audit overlay pilot
+
+Use this when you need a bounded comparison between your normal Ralph control loop and a read-only audit companion.
+
+```bash
+export RALPH_DIR="$CODEX_HOME/skills/ralph-wiggum-loop"
+
+python3 "$RALPH_DIR/scripts/evaluate_ralph_readonly_overlay.py" \
+  --project ralph-loop-eval \
+  --repo-path /path/to/repo \
+  --goal "Repair repository until tests pass." \
+  --control-runs 6 \
+  --readonly-runs 6 \
+  --acceptance-criteria tests_pass
+```
+
+Each trigger creates:
+- one run note named `Ralph Loop Evaluation Run / <run_id>`
+- one aggregate note named `Ralph Loop Evaluation Aggregate / <YYYY-MM-DD>`
+- an `output-last-message.txt` artifact in `~/.codex/tmp/ralph-readonly-audit-pilot` (or custom `--artifacts-dir`)
+
+`output-last-message.txt` uses additive schema `v1.1` (backward compatible):
+- existing keys are preserved
+- added keys include:
+  - `schema_version`, `timestamp_utc`
+  - `decision`, `readonly`, `changed_in_readonly`
+  - `search_enabled`, `search_disabled_simulated`
+  - `verification_failure_injected`, `compaction_cycle_injected`, `compaction_checkpoint_id`
+  - `acceptance_criteria`, `test_command`
+
+Search-disabled simulation metadata is explicit:
+- `search_enabled=false` on the configured trigger index
+- `search_disabled_simulated=true` only on that trigger
+
+Pilot prompt template for a separate evaluator:
+`references/loop_evaluation_agent_prompt.md`
+
 ## Behavior Guarantees
 
 - Single-process loop owner for planning, patching, verification, and state.
@@ -82,3 +119,14 @@ python3 "$RALPH_DIR/scripts/ralph_loop.py" \
 - `references/prompt_template.md`: Prompt composition template used each iteration.
 - `references/failure_domains.md`: Failure taxonomy and operator guidance.
 - `requirements.txt`: Minimal dependency set.
+
+## Agent Team Protocol Adapter (2026-02-19)
+
+Use this adapter when Ralph runs as a `Builder` under `/Users/maleick/.codex/skills/agent-team-protocol`.
+
+- Keep Ralph as the change executor only.
+- Emit protocol-compatible handoff fields after each iteration.
+- Keep bounded policy intact: one change-set, one verification pass.
+- Route completion through `review` before final acceptance.
+
+Reference: `references/agent-team-protocol-adapter.md`
