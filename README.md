@@ -24,16 +24,29 @@ $skill-installer gh-address-comments
 For experimental skills, specify the skill folder. For example:
 
 ```
-$skill-installer install the create-plan skill from the .experimental folder
+$skill-installer install the ralph-wiggum-loop skill from the .experimental folder
 ```
 
 Or provide the GitHub directory URL:
 
 ```
-$skill-installer install https://github.com/openai/skills/tree/main/skills/.experimental/create-plan
+$skill-installer install https://github.com/openai/skills/tree/main/skills/.experimental/ralph-wiggum-loop
 ```
 
 After installing a skill, restart Codex to pick up new skills.
+
+## Auditing skill integrity
+
+For a quick repository audit, run:
+
+```bash
+for skill_dir in /opt/skills/skills/.curated/* /opt/skills/skills/.experimental/* /opt/skills/skills/.system/*; do
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  python3 /opt/skills/skills/.system/skill-creator/scripts/quick_validate.py "$skill_dir"
+done
+
+python3 /opt/skills/scripts/check_skill_references.py
+```
 
 ## License
 
