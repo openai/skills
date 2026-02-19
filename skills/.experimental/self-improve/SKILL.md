@@ -69,6 +69,7 @@ Persist durable outcome:
 python3 "$AUTO_MEMORY_DIR/scripts/save_memory.py" \
   --project "<project>" \
   --title "<repo>: self-improve iteration <id>" \
+  --strict-sections \
   --body "<memory note body>" \
   --tags "self-improve,decision,eval"
 ```
