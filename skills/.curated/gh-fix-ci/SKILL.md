@@ -8,7 +8,7 @@ description: "Use when a user asks to debug or fix failing GitHub PR checks that
 
 ## Overview
 
-Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failure snippet, then propose a fix plan and implement after explicit approval.
+Use gh to wait for PR checks with adaptive polling, then inspect failures for actionable logs. Summarize failure context, propose a fix plan, and implement only after explicit approval.
 - If a plan-oriented skill (for example `create-plan`) is available, use it; otherwise draft a concise plan inline and request approval before implementing.
 
 Prereq: authenticate with the standard GitHub CLI once (for example, run `gh auth login`), then confirm with `gh auth status` (repo + workflow scopes are typically required).
@@ -21,8 +21,9 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 
 ## Quick start
 
-- `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
-- Add `--json` if you want machine-friendly output for summarization.
+- Wait for checks to settle: `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "<number-or-url>"`
+- If failures remain, inspect them: `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
+- Add `--json` to either script for machine-friendly output.
 
 ## Workflow
 
@@ -33,6 +34,13 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
    - Prefer the current branch PR: `gh pr view --json number,url`.
    - If the user provides a PR number or URL, use that directly.
 3. Inspect failing checks (GitHub Actions only).
+   - First wait for check stabilization (avoids over-polling and catches late checks that appear after matrix jobs):
+     - `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "<number-or-url>"`
+     - Script behavior:
+       - Polls faster when many checks are pending.
+       - Polls slower when only long-running checks remain.
+       - Requires consecutive no-pending polls before declaring success (catches late checks like coverage-summary jobs).
+       - Exits non-zero as soon as a failure appears.
    - Preferred: run the bundled script (handles gh field drift and job-log fallbacks):
      - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
      - Add `--json` for machine-friendly output.
@@ -55,9 +63,21 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 7. Implement after approval.
    - Apply the approved plan, summarize diffs/tests, and ask about opening a PR.
 8. Recheck status.
-   - After changes, suggest re-running the relevant tests and `gh pr checks` to confirm.
+   - After changes, run:
+     - `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "<number-or-url>"`
+   - If it exits non-zero, run:
+     - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
 
 ## Bundled Resources
+
+### scripts/wait_for_pr_checks.py
+
+Wait for PR checks using adaptive polling and stabilization to reduce noisy polling while still detecting late-added checks.
+
+Usage examples:
+- `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "123"`
+- `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "123" --timeout-seconds 5400`
+- `python "<path-to-skill>/scripts/wait_for_pr_checks.py" --repo "." --pr "123" --json`
 
 ### scripts/inspect_pr_checks.py
 
