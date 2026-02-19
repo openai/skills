@@ -28,6 +28,7 @@ from common import (
     titles_are_near_duplicates,
     write_note,
 )
+from protocol_tags import build_protocol_tags
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,6 +44,15 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=[],
         help="Add a single tag (repeatable).",
+    )
+    parser.add_argument("--protocol-task-id", default="", help="Protocol task id for standardized tagging.")
+    parser.add_argument("--protocol-state", default="", help="Protocol lifecycle state for standardized tagging.")
+    parser.add_argument("--protocol-owner-role", default="", help="Protocol owner role for standardized tagging.")
+    parser.add_argument("--protocol-handoff-id", default="", help="Protocol handoff id for standardized tagging.")
+    parser.add_argument(
+        "--protocol-project",
+        default="",
+        help="Optional protocol project tag value (defaults to --project).",
     )
     parser.add_argument(
         "--strict-sections",
@@ -67,6 +77,29 @@ def parse_tag_inputs(tags_csv: str, explicit_tags: list[str]) -> list[str]:
         raw.extend([piece.strip() for piece in tags_csv.split(",") if piece.strip()])
     raw.extend([tag.strip() for tag in explicit_tags if tag.strip()])
     return normalize_tags(raw)
+
+
+def parse_protocol_tag_inputs(args: argparse.Namespace, project: str) -> list[str]:
+    has_protocol_args = any(
+        [
+            args.protocol_task_id.strip(),
+            args.protocol_state.strip(),
+            args.protocol_owner_role.strip(),
+            args.protocol_handoff_id.strip(),
+            args.protocol_project.strip(),
+        ]
+    )
+    if not has_protocol_args:
+        return []
+
+    protocol_project = args.protocol_project.strip() or project
+    return build_protocol_tags(
+        task_id=args.protocol_task_id,
+        state=args.protocol_state,
+        owner_role=args.protocol_owner_role,
+        handoff_id=args.protocol_handoff_id,
+        project=protocol_project,
+    )
 
 
 def mark_superseded(note_path: Path, canonical_filename: str, timestamp: str) -> None:
@@ -176,6 +209,12 @@ def main() -> int:
     memory_dir.mkdir(parents=True, exist_ok=True)
 
     incoming_tags = parse_tag_inputs(args.tags, args.tag)
+    try:
+        protocol_tags = parse_protocol_tag_inputs(args, project)
+    except Exception as exc:
+        print(json.dumps({"status": "error", "error": str(exc)}, indent=2))
+        return 2
+    incoming_tags = merge_tags(incoming_tags, protocol_tags)
     notes = list_notes(memory_dir)
     normalized_title = normalize_title_for_match(title)
     exact_matches = [note for note in notes if normalize_title_for_match(note.title) == normalized_title]
@@ -255,6 +294,7 @@ def main() -> int:
                 "canonical_file": canonical_file,
                 "reconciled_superseded_files": superseded_files,
                 "tags": merged_tags,
+                "protocol_tags": protocol_tags,
             },
             indent=2,
         )

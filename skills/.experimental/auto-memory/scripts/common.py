@@ -353,8 +353,17 @@ def normalize_tags(raw_tags: list[str]) -> list[str]:
     tags: list[str] = []
     seen: set[str] = set()
     for tag in raw_tags:
-        normalized = re.sub(r"\s+", "-", tag.strip().lower())
-        normalized = re.sub(r"[^a-z0-9._-]+", "-", normalized).strip("-")
+        candidate = re.sub(r"\s+", "-", tag.strip().lower())
+        if ":" in candidate:
+            key_part, value_part = candidate.split(":", 1)
+            key = re.sub(r"[^a-z0-9._-]+", "-", key_part).strip("-")
+            value = re.sub(r"[^a-z0-9._-]+", "-", value_part).strip("-")
+            if key and value:
+                normalized = f"{key}:{value}"
+            else:
+                normalized = key or value
+        else:
+            normalized = re.sub(r"[^a-z0-9._-]+", "-", candidate).strip("-")
         if not normalized or normalized in seen:
             continue
         seen.add(normalized)

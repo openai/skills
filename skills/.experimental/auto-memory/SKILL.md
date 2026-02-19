@@ -220,3 +220,16 @@ Allowed note pattern example:
 - `references/secret-redaction-rules.md` for redaction and env-storage policy
 - `references/compaction-handoff.md` for pre/post compaction command patterns
 - `references/app-server-listener.md` for event listener setup and injection behavior
+
+## Agent Team Protocol Memory Adapter (2026-02-19)
+
+When used with `/Users/maleick/.codex/skills/agent-team-protocol`, store and retrieve memory with protocol tags to prevent bleed-over.
+
+Required tags for protocol durability:
+- `task_id:<TASK_ID>`
+- `state:<STATE>`
+- `owner_role:<ROLE>`
+- `handoff_id:<HANDOFF_ID>`
+- `project:<PROJECT_NAME>`
+
+Reference: `references/agent-team-memory-tags.md`
