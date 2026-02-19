@@ -118,3 +118,27 @@ python3 "$AUTO_MEMORY_DIR/scripts/store_secret_env.py" \
 - `references/prompt-contract.md`
 - `references/eval-criteria.md`
 - `references/auto-memory-integration.md`
+
+## Agent Team Protocol Review Adapter (2026-02-19)
+
+When used with `/Users/maleick/.codex/skills/agent-team-protocol`, `self-improve` is the acceptance gate owner.
+
+- Enforce reviewer separation (no self-approval).
+- Keep existing smoke+regression dual-gate decision contract.
+- On conflicting review outcomes, escalate and stop instead of retrying in-loop.
+
+Reference: `references/agent-team-review-gate.md`
+
+Optional policy CLI:
+
+```bash
+python3 "$SELF_IMPROVE_DIR/scripts/agent_team_review_gate.py" \
+  --decision accept \
+  --smoke-status pass \
+  --regression-status fail \
+  --author-id builder-01 \
+  --final-reviewer-id reviewer-01 \
+  --enforce-reviewer-separation \
+  --reviewer-decision reviewer-01:accept \
+  --reviewer-decision reviewer-02:reject
+```
