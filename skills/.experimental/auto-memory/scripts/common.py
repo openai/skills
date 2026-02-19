@@ -60,6 +60,10 @@ SECRET_PATTERNS = [
 
 FRONTMATTER_PATTERN = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
 HEADING_PATTERN = re.compile(r"^##\s+(.+?)\s*$", re.MULTILINE)
+PLAIN_REQUIRED_HEADING_PATTERN = re.compile(
+    r"^(summary|context|decision|rationale|implementation|verification|follow-ups|changelog)$",
+    re.IGNORECASE,
+)
 
 
 @dataclass
@@ -212,26 +216,59 @@ def choose_latest_note(notes: list[NoteRecord]) -> NoteRecord:
     return max(notes, key=lambda note: parse_iso_datetime(note.date))
 
 
-def parse_body_sections(body: str) -> tuple[dict[str, str], list[tuple[str, str]]]:
+def _contains_escaped_headings(text: str) -> bool:
+    if "\\n" not in text:
+        return False
+    markers = ["\\n## "] + [f"\\n{name}" for name in REQUIRED_SECTIONS]
+    return any(marker in text for marker in markers)
+
+
+def _preprocess_body_text(body: str) -> str:
     text = body.strip()
-    matches = list(HEADING_PATTERN.finditer(text))
-    if not matches:
+    if _contains_escaped_headings(text):
+        text = text.replace("\\r\\n", "\n").replace("\\n", "\n")
+    # Recover malformed heading lines like "- ## Summary".
+    text = re.sub(r"(?m)^\s*[-*]\s+##\s+", "## ", text)
+    return text
+
+
+def parse_body_sections(body: str) -> tuple[dict[str, str], list[tuple[str, str]]]:
+    text = _preprocess_body_text(body)
+    if not text:
+        return {}, []
+
+    lines = text.splitlines()
+    heading_entries: list[tuple[int, str, bool]] = []
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        markdown_match = re.match(r"^##\s+(.+?)\s*$", stripped)
+        if markdown_match:
+            heading_raw = markdown_match.group(1).strip()
+            canonical = SECTION_LOOKUP.get(heading_raw.lower())
+            heading_entries.append((index, canonical or heading_raw, canonical is not None))
+            continue
+
+        plain_match = PLAIN_REQUIRED_HEADING_PATTERN.match(stripped)
+        if plain_match:
+            canonical = SECTION_LOOKUP[plain_match.group(1).lower()]
+            heading_entries.append((index, canonical, True))
+
+    if not heading_entries:
         return {}, []
 
     required: dict[str, str] = {}
     extras: list[tuple[str, str]] = []
-
-    for index, match in enumerate(matches):
-        heading_raw = match.group(1).strip()
-        start = match.end()
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
-        content = text[start:end].strip()
-        canonical = SECTION_LOOKUP.get(heading_raw.lower())
-        if canonical:
-            existing = required.get(canonical, "")
-            required[canonical] = f"{existing}\n{content}".strip() if existing else content
+    for idx, (line_no, heading_name, is_required) in enumerate(heading_entries):
+        next_line_no = heading_entries[idx + 1][0] if idx + 1 < len(heading_entries) else len(lines)
+        content = "\n".join(lines[line_no + 1 : next_line_no]).strip()
+        if is_required:
+            existing = required.get(heading_name, "")
+            required[heading_name] = f"{existing}\n{content}".strip() if existing else content
             continue
-        extras.append((heading_raw, content))
+        extras.append((heading_name, content))
     return required, extras
 
 

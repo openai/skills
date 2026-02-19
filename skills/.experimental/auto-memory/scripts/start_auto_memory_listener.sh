@@ -3,12 +3,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 LISTENER_SCRIPT="$SCRIPT_DIR/app_server_compaction_listener.py"
+REQUIREMENTS_FILE="$SCRIPT_DIR/../requirements.txt"
 
 DEFAULT_PROJECT_RAW="$(basename "$PWD")"
 DEFAULT_PROJECT="$(printf '%s' "$DEFAULT_PROJECT_RAW" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*//;s/-*$//')"
 DEFAULT_PROJECT="${DEFAULT_PROJECT:-workspace}"
 
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
+AUTO_MEMORY_PYTHON="${AUTO_MEMORY_PYTHON:-python3}"
 
 PROJECT="${AUTO_MEMORY_PROJECT:-$DEFAULT_PROJECT}"
 OBJECTIVE="${AUTO_MEMORY_OBJECTIVE:-Continue the active task using preserved context after compaction.}"
@@ -45,8 +47,25 @@ fi
 
 mkdir -p "$(dirname "$PROMPT_OUT")" "$(dirname "$JSONL_LOG")"
 
+if ! command -v "$AUTO_MEMORY_PYTHON" >/dev/null 2>&1; then
+  echo "Configured interpreter not found: AUTO_MEMORY_PYTHON=$AUTO_MEMORY_PYTHON" >&2
+  exit 2
+fi
+
+if ! "$AUTO_MEMORY_PYTHON" -c "import yaml" >/dev/null 2>&1; then
+  echo "Missing Python dependency: PyYAML for auto-memory listener." >&2
+  if [[ -f "$REQUIREMENTS_FILE" ]]; then
+    echo "Install with:" >&2
+    echo "  $AUTO_MEMORY_PYTHON -m pip install -r $REQUIREMENTS_FILE" >&2
+  else
+    echo "Install with:" >&2
+    echo "  $AUTO_MEMORY_PYTHON -m pip install PyYAML" >&2
+  fi
+  exit 3
+fi
+
 CMD=(
-  python3 "$LISTENER_SCRIPT"
+  "$AUTO_MEMORY_PYTHON" "$LISTENER_SCRIPT"
   --project "$PROJECT"
   --objective "$OBJECTIVE"
   --limit "$LIMIT"
@@ -122,6 +141,7 @@ echo "objective=$OBJECTIVE" >&2
 echo "mode=$MODE" >&2
 echo "visual_status=$VISUAL_STATUS" >&2
 echo "save_compaction_alerts=$SAVE_COMPACTION_ALERTS" >&2
+echo "python=$AUTO_MEMORY_PYTHON" >&2
 echo "prompt_out=$PROMPT_OUT" >&2
 echo "log=$JSONL_LOG" >&2
 

@@ -512,6 +512,7 @@ def _run_save_memory(project: str, title: str, body: str, tags: str) -> dict[str
         project,
         "--title",
         title,
+        "--strict-sections",
         "--body",
         body,
     ]

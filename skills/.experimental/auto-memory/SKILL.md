@@ -15,6 +15,19 @@ Store secret values only in `$CODEX_HOME/env/<project>/.env`; keep memory notes 
 ```bash
 export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
+export AUTO_MEMORY_PYTHON="${AUTO_MEMORY_PYTHON:-python3}"
+```
+
+Install required Python packages:
+
+```bash
+"$AUTO_MEMORY_PYTHON" -m pip install -r "$AUTO_MEMORY_DIR/requirements.txt"
+```
+
+Verify the dependency bootstrap:
+
+```bash
+"$AUTO_MEMORY_PYTHON" -c "import yaml; print('ok')"
 ```
 
 ## Operations
@@ -116,6 +129,7 @@ export AUTO_MEMORY_DIR="$CODEX_HOME/skills/auto-memory"
   - objective defaults to carry-forward compaction recovery text
   - emits `turn/start` reinjection requests automatically in compaction and both modes
 - Override defaults with env vars:
+  - `AUTO_MEMORY_PYTHON` (defaults to `python3`)
   - `AUTO_MEMORY_PROJECT`, `AUTO_MEMORY_OBJECTIVE`, `AUTO_MEMORY_LIMIT`
   - `AUTO_MEMORY_QUERY`, `AUTO_MEMORY_PROMPT_OUT`, `AUTO_MEMORY_LOG`
   - `AUTO_MEMORY_OUTPUT_FRAMING`, `AUTO_MEMORY_REQUEST_ID_PREFIX`, `AUTO_MEMORY_INPUT_FILE`, `AUTO_MEMORY_QUIET`

@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from common import (
+    DEFAULT_SECTION_CONTENT,
     MemoryValidationError,
     append_changelog_entry,
     choose_latest_note,
@@ -42,6 +43,14 @@ def parse_args() -> argparse.Namespace:
         action="append",
         default=[],
         help="Add a single tag (repeatable).",
+    )
+    parser.add_argument(
+        "--strict-sections",
+        action="store_true",
+        help=(
+            "Reject writes when Decision/Rationale/Implementation/Verification/Follow-ups "
+            "resolve to placeholder content."
+        ),
     )
     return parser.parse_args()
 
@@ -103,6 +112,35 @@ def clear_superseded_marker(note_path: Path) -> None:
 
 def latest_by_declared_date(notes):
     return max(notes, key=lambda note: parse_iso_datetime(note.date))
+
+
+STRICT_SECTION_NAMES = (
+    "Decision",
+    "Rationale",
+    "Implementation",
+    "Verification",
+    "Follow-ups",
+)
+
+
+def _is_placeholder_section(section_name: str, value: str) -> bool:
+    text = value.strip()
+    if not text:
+        return True
+
+    normalized = text.lower()
+    default = DEFAULT_SECTION_CONTENT[section_name].strip().lower()
+    if normalized == default:
+        return True
+    return normalized in {"todo", "- todo", "- to do", "tbd", "- tbd"}
+
+
+def strict_section_violations(required_sections: dict[str, str]) -> list[str]:
+    violations: list[str] = []
+    for section_name in STRICT_SECTION_NAMES:
+        if _is_placeholder_section(section_name, required_sections.get(section_name, "")):
+            violations.append(section_name)
+    return violations
 
 
 def main() -> int:
@@ -168,6 +206,21 @@ def main() -> int:
         merged_tags = incoming_tags
         updated_path = next_note_path(memory_dir, title)
         extras = incoming_extras
+
+    if args.strict_sections:
+        invalid_sections = strict_section_violations(merged)
+        if invalid_sections:
+            print(
+                json.dumps(
+                    {
+                        "status": "error",
+                        "error": "strict-sections validation failed",
+                        "invalid_sections": invalid_sections,
+                    },
+                    indent=2,
+                )
+            )
+            return 2
 
     frontmatter = {
         "title": title,
