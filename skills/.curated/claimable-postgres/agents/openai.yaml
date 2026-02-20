@@ -1,0 +1,6 @@
+interface:
+  display_name: "Claimable Postgres"
+  short_description: "Instant temporary Postgres via pg.new"
+  icon_small: "./assets/neon-small.svg"
+  icon_large: "./assets/neon.jpg"
+  default_prompt: "Create a quick claimable Postgres database and help me set DATABASE_URL."

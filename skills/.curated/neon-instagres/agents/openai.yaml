@@ -1,6 +1,0 @@
-interface:
-  display_name: "Neon Instagres"
-  short_description: "Instant Postgres databases via Neon Instagres"
-  icon_small: "./assets/neon-small.svg"
-  icon_large: "./assets/neon.jpg"
-  default_prompt: "Create a quick Neon Instagres database and help me set DATABASE_URL."

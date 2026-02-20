@@ -1,8 +1,8 @@
-# Instagres Public API Reference
+# Claimable Postgres Public API Reference
 
 ## Create Database
 
-**Endpoint:** `POST https://instagres.com/api/v1/database`
+**Endpoint:** `POST https://pg.new/api/v1/database`
 
 **Content-Type:** `application/json`
 
@@ -23,7 +23,7 @@
   "created_at": "2025-01-15T10:30:00.000Z",
   "updated_at": "2025-01-15T10:30:00.000Z",
   "expires_at": "2025-01-18T10:30:00.000Z",
-  "claim_url": "https://instagres.com/claim/01abc123-4567-7890-abcd-1234567890ab",
+  "claim_url": "https://pg.new/claim/01abc123-4567-7890-abcd-1234567890ab",
   "connection_string": "postgresql://neondb_owner:npg_xxxxxxxxxxxx@ep-example-name-pooler.c-2.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
 }
 ```
@@ -62,7 +62,7 @@
 
 ## Claim Database
 
-**URL:** `https://instagres.com/claim/{database_id}`
+**URL:** `https://pg.new/claim/{database_id}`
 
 This is a web page, not an API endpoint. Users visit this URL in a browser to:
 1. Sign in to their Neon account (or create one)
@@ -80,12 +80,12 @@ This is a web page, not an API endpoint. Users visit this URL in a browser to:
 
 ```bash
 # Create a database
-curl -X POST https://instagres.com/api/v1/database \
+curl -X POST https://pg.new/api/v1/database \
   -H "Content-Type: application/json" \
   -d '{"ref": "my-app"}'
 
 # Create with logical replication enabled
-curl -X POST https://instagres.com/api/v1/database \
+curl -X POST https://pg.new/api/v1/database \
   -H "Content-Type: application/json" \
   -d '{"ref": "my-app", "logicalReplication": true}'
 ```
@@ -93,7 +93,7 @@ curl -X POST https://instagres.com/api/v1/database \
 ### JavaScript/TypeScript
 
 ```typescript
-const response = await fetch("https://instagres.com/api/v1/database", {
+const response = await fetch("https://pg.new/api/v1/database", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ ref: "my-app" }),
@@ -109,7 +109,7 @@ console.log(db.connection_string);
 import requests
 
 response = requests.post(
-    "https://instagres.com/api/v1/database",
+    "https://pg.new/api/v1/database",
     json={"ref": "my-app"}
 )
 
