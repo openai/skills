@@ -21,7 +21,7 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 
 ## Quick start
 
-- `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
+- `python3 "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
 - Add `--json` if you want machine-friendly output for summarization.
 
 ## Workflow
@@ -34,7 +34,7 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
    - If the user provides a PR number or URL, use that directly.
 3. Inspect failing checks (GitHub Actions only).
    - Preferred: run the bundled script (handles gh field drift and job-log fallbacks):
-     - `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
+     - `python3 "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "<number-or-url>"`
      - Add `--json` for machine-friendly output.
    - Manual fallback:
      - `gh pr checks <pr> --json name,state,bucket,link,startedAt,completedAt,workflow`
@@ -64,6 +64,6 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 Fetch failing PR checks, pull GitHub Actions logs, and extract a failure snippet. Exits non-zero when failures remain so it can be used in automation.
 
 Usage examples:
-- `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "123"`
-- `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "https://github.com/org/repo/pull/123" --json`
-- `python "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --max-lines 200 --context 40`
+- `python3 "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "123"`
+- `python3 "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --pr "https://github.com/org/repo/pull/123" --json`
+- `python3 "<path-to-skill>/scripts/inspect_pr_checks.py" --repo "." --max-lines 200 --context 40`
