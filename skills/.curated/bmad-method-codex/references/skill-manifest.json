@@ -1,0 +1,8 @@
+{
+  "name": "bmad-method-codex",
+  "skill_version": "0.2.0",
+  "target_codex_profile": "codex-5.3",
+  "source_repo": "https://github.com/bmad-code-org/BMAD-METHOD",
+  "release_api": "https://api.github.com/repos/bmad-code-org/BMAD-METHOD/releases/latest",
+  "notes": "Neutral, update-first design for Codex 5.3"
+}
