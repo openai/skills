@@ -1,0 +1,36 @@
+{
+  "id": "arch-routing-v2",
+  "type": "ARCH_DECISION",
+  "title": "Use versioned API routing at the gateway",
+  "summary": "Route client traffic through a versioned gateway layer to support safe API evolution and compatibility.",
+  "content": {
+    "decision": "Adopt versioned routing (for example, /api/v1, /api/v2) and centralize route mapping in the gateway.",
+    "rationale": "Allows incremental backend changes without breaking existing clients and keeps routing policy in one place.",
+    "alternatives": [
+      "unversioned routes with feature flags",
+      "per-service routing rules",
+      "header-based version negotiation only"
+    ],
+    "trade_offs": "Adds gateway configuration overhead and requires route lifecycle management during migrations."
+  },
+  "tags": [
+    "architecture",
+    "routing",
+    "api"
+  ],
+  "retrieval_hints": [
+    "routing",
+    "gateway",
+    "versioning",
+    "api routes"
+  ],
+  "provenance": {
+    "source": "team-design-review",
+    "ref": "arch-042",
+    "note": "Example architecture decision for projection and search docs"
+  },
+  "validity": {
+    "status": "active",
+    "replaced_by": null
+  }
+}
