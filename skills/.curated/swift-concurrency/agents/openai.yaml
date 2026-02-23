@@ -1,0 +1,4 @@
+interface:
+  display_name: "Swift Concurrency"
+  short_description: "Swift async/await, actors, task groups"
+  default_prompt: "Use $swift-concurrency to implement or review cancellable, race-safe Swift concurrency code."
