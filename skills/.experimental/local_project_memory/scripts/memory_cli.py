@@ -7,7 +7,7 @@ import re
 import sqlite3
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -50,7 +50,7 @@ VIEW_FIELDS = {
 
 
 def now_iso() -> str:
-  return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+  return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def emit_json(payload: Any) -> None:

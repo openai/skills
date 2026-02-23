@@ -67,6 +67,33 @@ Update memory when work is done or when the user specifies:
    - `python3 "$MEMORY_CLI" vacuum --dry-run`
    - `python3 "$MEMORY_CLI" vacuum`
 
+## Global Memory Namespace Guidance (for global/shared memory mode)
+
+When global/shared memory is available, use a `namespace` to keep knowledge organized and safe to reuse across projects.
+
+Use namespaces for two broad categories:
+
+- **Project-shared knowledge**: information that multiple repositories may need (for example, UI reading backend API conventions, contracts, deployment assumptions).
+- **User-global knowledge**: personal but durable working preferences that help the agent work better across all projects.
+
+Recommended namespace patterns:
+
+- `project:<repo-or-domain>` for cross-project technical knowledge
+- `user:habits` for user working preferences and habits
+- `user:workflow` for preferred steps/checklists
+- `user:git` for commit style, commit type conventions, branch naming preferences
+- `team:<org-or-squad>` for shared team standards (if applicable)
+
+Examples of good user-global memory content (namespaced):
+
+- preferred commit types (e.g., `feat`, `fix`, `chore`, release commit style)
+- commit message formatting preferences (Conventional Commits, subject length, imperative mood)
+- preferred debugging workflow order
+- preferred verification sequence (tests, lint, typecheck)
+- communication preferences (brief updates vs detailed updates)
+
+Do not mix user-global preferences into a project namespace unless they are explicitly project-specific.
+
 ## Agent Rules
 
 1. **Search first**: Before planning, always call `search` with `--view compact` or explicit `--select`.
@@ -79,18 +106,23 @@ Update memory when work is done or when the user specifies:
    - workflow patterns
    - known issues and workarounds
    - persistent task context
-5. **Never store**:
+5. **Use namespace intentionally in global/shared memory** (when supported):
+   - Use project namespaces for reusable technical knowledge that may help other repositories
+   - Use user namespaces for cross-project preferences/habits (including commit type conventions and preferred workflows)
+   - Keep user-global preferences separate from project-specific facts
+   - Prefer stable namespace names over ad hoc labels
+6. **Never store**:
    - secrets or credentials
    - API keys or tokens
    - raw logs or debug output
    - full transcripts
    - private reasoning or thought processes
    - temporary session state
-6. **Evolution over replacement**:
+7. **Evolution over replacement**:
    - When meaning changes, create new MU
    - Deprecate old MU with `--replaced-by`
    - Never delete without deprecating first
-7. **Optimize token usage**: Prefer minimal field projection to reduce token consumption.
+8. **Optimize token usage**: Prefer minimal field projection to reduce token consumption.
 
 ## Practical Examples
 
@@ -197,6 +229,38 @@ python3 "$MEMORY_CLI" search "database" --type CONSTRAINTS --view compact
 
 # Find workflows related to deployment
 python3 "$MEMORY_CLI" search "deploy" --type WORKFLOW --select id,title,content.steps
+```
+
+### Global Namespace Examples (when global/shared memory mode is enabled)
+
+```bash
+# Cross-project technical knowledge (backend info reusable by UI project)
+echo '{
+  "id": "api-error-shape-v1",
+  "type": "INTERFACE_SPEC",
+  "title": "Shared API error response shape",
+  "summary": "Backend error JSON format consumed by UI and integrations",
+  "content": {
+    "format": {"error": {"code": "string", "message": "string", "details": "object|null"}}
+  },
+  "tags": ["api", "backend", "ui", "errors"]
+}' | python3 "$MEMORY_CLI" upsert -
+# (Use global scope + namespace when supported, e.g. namespace: project:backend)
+
+# User-global git preferences (commit types and commit style)
+echo '{
+  "id": "git-commit-style-preferences-v1",
+  "type": "WORKFLOW",
+  "title": "User commit message preferences",
+  "summary": "Preferred commit types and formatting for commits across projects",
+  "content": {
+    "commit_types": ["feat", "fix", "chore", "docs", "refactor", "test"],
+    "style": "Conventional Commits",
+    "subject_rules": ["imperative mood", "short summary", "no trailing period"]
+  },
+  "tags": ["git", "commits", "workflow", "preferences"]
+}' | python3 "$MEMORY_CLI" upsert -
+# (Use global scope + namespace when supported, e.g. namespace: user:git)
 ```
 
 ## Memory Unit Contract
