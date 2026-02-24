@@ -11,6 +11,12 @@ You have access to `linkedin` – a CLI tool for LinkedIn automation. Use it to 
 
 Each command sends a request to Linked API, which runs a real cloud browser to perform the action on LinkedIn. Operations are **not instant** – expect 30 seconds to several minutes depending on complexity.
 
+If `linkedin` is not available, install it:
+
+```bash
+npm install -g @linkedapi/linkedin-cli
+```
+
 ## Authentication
 
 If a command fails with exit code 2 (authentication error), ask the user to set up their account:
