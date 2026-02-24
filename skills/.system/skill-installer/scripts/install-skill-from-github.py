@@ -27,6 +27,7 @@ class Args:
     dest: str | None = None
     name: str | None = None
     method: str = "auto"
+    force: bool = False
 
 
 @dataclass
@@ -169,10 +170,14 @@ def _validate_skill(path: str) -> None:
         raise InstallError("SKILL.md not found in selected skill directory.")
 
 
-def _copy_skill(src: str, dest_dir: str) -> None:
+def _copy_skill(src: str, dest_dir: str, *, force: bool = False) -> None:
     os.makedirs(os.path.dirname(dest_dir), exist_ok=True)
     if os.path.exists(dest_dir):
-        raise InstallError(f"Destination already exists: {dest_dir}")
+        if not force:
+            raise InstallError(
+                f"Destination already exists: {dest_dir}  (use --force to overwrite)"
+            )
+        shutil.rmtree(dest_dir)
     shutil.copytree(src, dest_dir)
 
 
@@ -263,6 +268,11 @@ def _parse_args(argv: list[str]) -> Args:
         choices=["auto", "download", "git"],
         default="auto",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing skill directory",
+    )
     return parser.parse_args(argv, namespace=Args())
 
 
@@ -287,11 +297,13 @@ def main(argv: list[str]) -> int:
                 if not skill_name:
                     raise InstallError("Unable to derive skill name.")
                 dest_dir = os.path.join(dest_root, skill_name)
-                if os.path.exists(dest_dir):
-                    raise InstallError(f"Destination already exists: {dest_dir}")
+                if os.path.exists(dest_dir) and not args.force:
+                    raise InstallError(
+                        f"Destination already exists: {dest_dir}  (use --force to overwrite)"
+                    )
                 skill_src = os.path.join(repo_root, path)
                 _validate_skill(skill_src)
-                _copy_skill(skill_src, dest_dir)
+                _copy_skill(skill_src, dest_dir, force=args.force)
                 installed.append((skill_name, dest_dir))
         finally:
             if os.path.isdir(tmp_dir):
