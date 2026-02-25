@@ -31,7 +31,7 @@ postgres({
 ## Behavior
 
 1. On `vite dev`, checks if `DATABASE_URL` exists in env file
-2. If missing, provisions a new claimable Postgres database
+2. If missing, provisions a new Neon Claimable Postgres database
 3. Writes connection string to the env file
 4. Logs the claim URL to console
 

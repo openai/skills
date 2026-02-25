@@ -56,7 +56,9 @@ The CLI writes three variables to your env file:
 |----------|-------------|
 | `DATABASE_URL` | Pooled connection string (default) |
 | `DATABASE_URL_DIRECT` | Direct connection string |
-| `{prefix}INSTAGRES_CLAIM_URL` | Claim URL (valid for 7 days) |
+| `{prefix}POSTGRES_CLAIM_URL` | Claim URL (valid for 7 days) |
+
+By default, the prefix is `PUBLIC_`, so the default variable name is `PUBLIC_POSTGRES_CLAIM_URL`.
 
 ## SDK Usage
 

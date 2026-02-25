@@ -1,5 +1,5 @@
 interface:
-  display_name: "Claimable Postgres"
+  display_name: "Neon Claimable Postgres"
   short_description: "Instant temporary Postgres via pg.new"
   icon_small: "./assets/neon-small.svg"
   icon_large: "./assets/neon.jpg"

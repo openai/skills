@@ -1,4 +1,4 @@
-# Claimable Postgres Public API Reference
+# Neon Claimable Postgres Public API Reference
 
 ## Create Database
 
