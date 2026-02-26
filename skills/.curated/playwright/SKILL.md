@@ -17,19 +17,50 @@ Before proposing commands, check whether `npx` is available (the wrapper depends
 command -v npx >/dev/null 2>&1
 ```
 
-If it is not available, pause and ask the user to install Node.js/npm (which provides `npx`). Provide these steps verbatim:
+If that fails, check whether a `nodeenv` is already active or configured:
 
 ```bash
-# Verify Node/npm are installed
+[[ -n "${NODE_VIRTUAL_ENV:-}" && -x "${NODE_VIRTUAL_ENV}/bin/npx" ]] || \
+[[ -n "${NODEENV_ROOT:-}" && -x "${NODEENV_ROOT}/bin/npx" ]] || \
+[[ -n "${VIRTUAL_ENV:-}" && -x "${VIRTUAL_ENV}/bin/npx" ]]
+```
+
+If neither check succeeds, pause and ask the user to set up Node tooling. Provide these steps verbatim:
+
+```bash
+# Option A: system Node/npm
+# Verify Node/npm are installed:
 node --version
 npm --version
 
 # If missing, install Node.js/npm, then:
 npm install -g @playwright/cli@latest
 playwright-cli --help
+
+# Option B: nodeenv inside the current Python environment (venv/conda/pyenv-virtualenv)
+# pyenv itself is optional; use whichever `python` is active.
+python -m pip install nodeenv
+python -m nodeenv ~/.nodeenvs/codex-playwright
+source ~/.nodeenvs/codex-playwright/bin/activate
+export NODEENV_ROOT="${NODE_VIRTUAL_ENV}"
+npx --version
+
+# Option C: nodeenv via pipx (good default on externally-managed Python distros)
+pipx --version
+pipx run --spec nodeenv nodeenv ~/.nodeenvs/codex-playwright
+source ~/.nodeenvs/codex-playwright/bin/activate
+export NODEENV_ROOT="${NODE_VIRTUAL_ENV}"
+npx --version
+
+# Option D: nodeenv via pip (fallback when no managed env and no pipx)
+python3 -m pip install --user nodeenv
+python3 -m nodeenv ~/.nodeenvs/codex-playwright
+source ~/.nodeenvs/codex-playwright/bin/activate
+export NODEENV_ROOT="${NODE_VIRTUAL_ENV}"
+npx --version
 ```
 
-Once `npx` is present, proceed with the wrapper script. A global install of `playwright-cli` is optional.
+Once `npx` is present (PATH, active `nodeenv`, or `NODEENV_ROOT`), proceed with the wrapper script. A global install of `playwright-cli` is optional.
 
 ## Skill path (set once)
 
@@ -121,7 +152,7 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 
 ## Wrapper script
 
-The wrapper script uses `npx --package @playwright/cli playwright-cli` so the CLI can run without a global install:
+The wrapper script uses `npx --package @playwright/cli playwright-cli` so the CLI can run without a global install. It can resolve `npx` from PATH, an activated `nodeenv`, or `NODEENV_ROOT`:
 
 ```bash
 "$PWCLI" --help
