@@ -1,6 +1,6 @@
 interface:
   display_name: "Neon Claimable Postgres"
-  short_description: "Instant temporary Postgres via pg.new"
+  short_description: "Create a 72h claimable Postgres DB, no account needed"
   icon_small: "./assets/neon-small.svg"
   icon_large: "./assets/neon.jpg"
   default_prompt: "Create a quick claimable Postgres database and help me set DATABASE_URL."
