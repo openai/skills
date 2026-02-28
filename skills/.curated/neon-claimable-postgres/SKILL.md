@@ -54,8 +54,6 @@ Common flags:
 - `-L, --logical-replication`: enable logical replication
 - `-r, --ref <id>`: set source/referrer id
 
-Full CLI reference: [references/get-db.md](./references/get-db.md)
-
 ### SDK (`get-db/sdk`)
 
 Use this for scripts and programmatic provisioning flows.
@@ -77,8 +75,6 @@ curl -X POST https://pg.new/api/v1/database \
   -d '{"ref":"my-app"}'
 ```
 
-Full API reference: [references/api.md](./references/api.md)
-
 ### Vite Plugin
 
 Use this for Vite projects that need automatic database setup on `vite dev`.
@@ -91,8 +87,6 @@ export default defineConfig({
   plugins: [postgres()],
 });
 ```
-
-Full Vite plugin reference: [references/vite-plugin.md](./references/vite-plugin.md)
 
 ## Agent Workflow
 
