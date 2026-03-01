@@ -1,0 +1,10 @@
+[
+  { "question_id": "api_required_paths", "score_int": 8 },
+  { "question_id": "api_contract_clarity", "score_int": 8 },
+  { "question_id": "speed_p95", "score_int": 7 },
+  { "question_id": "speed_stability", "score_int": 7 },
+  { "question_id": "reliability_success_rate", "score_int": 9 },
+  { "question_id": "reliability_retry_idempotency", "score_int": 8 },
+  { "question_id": "result_goal_fit", "score_int": 8 },
+  { "question_id": "result_operational_cost", "score_int": 7 }
+]

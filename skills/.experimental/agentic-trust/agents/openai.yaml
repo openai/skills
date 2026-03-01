@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Trust"
+  short_description: "Search services, inspect trust evidence, load local rating memory, and submit valid deterministic reviews"
+  default_prompt: "Use $agentic-trust to search Agentic Trust, inspect a service, fetch the current questionnaire, compare with local review memory, and submit a 0..10 review only when the evidence is sufficient."
