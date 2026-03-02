@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenGrep Asana Triage"
+  short_description: "Asana OpenGrep triage workflow"
+  default_prompt: "Use $opengrep-asana-triage and use $asana to triage open OpenGrep Asana findings, validate each in code, and open a draft PR for false-positive rule fixes."
