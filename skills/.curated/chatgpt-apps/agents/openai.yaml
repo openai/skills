@@ -1,6 +1,6 @@
 interface:
   display_name: "ChatGPT Apps"
-  short_description: "Docs-first, example-first ChatGPT app scaffolding"
+  short_description: "Build and scaffold ChatGPT apps"
   default_prompt: "Use $chatgpt-apps to classify the app archetype first, fetch current OpenAI Apps SDK docs before generating code, default to the standard `search` and `fetch` tools when the app is connector-like or sync-oriented, adapt the closest upstream example when one fits, and only fall back to the local Node scaffold for minimal `@modelcontextprotocol/ext-apps` starters. Produce a working repo shape, then report what validation was actually run."
 dependencies:
   tools:
