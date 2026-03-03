@@ -1,0 +1,4 @@
+interface:
+  display_name: "Experiment Designer"
+  short_description: "Design statistically rigorous experiments"
+  default_prompt: "Use $experiment-designer to design a complete experiment plan for my product change."
