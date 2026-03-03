@@ -1,0 +1,7 @@
+interface:
+  display_name: "Ranger"
+  short_description: "Prove your code works with a QA agent in the browser"
+  icon_small: "./assets/ranger-small.svg"
+  icon_large: "./assets/ranger.png"
+  brand_color: "#36221D"
+  default_prompt: "Use $ranger to define the user flows for this feature as scenarios and validate them in the browser while you develop."
