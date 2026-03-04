@@ -1,6 +1,6 @@
 interface:
   display_name: "Ranger"
-  short_description: "Prove your code works with a QA agent in the browser"
+  short_description: "Spawn browser agents that test your app and send you replays"
   icon_small: "./assets/ranger-small.svg"
   icon_large: "./assets/ranger.png"
   brand_color: "#36221D"
