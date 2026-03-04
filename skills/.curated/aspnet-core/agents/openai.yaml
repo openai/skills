@@ -1,0 +1,5 @@
+interface:
+  display_name: "ASP.NET Core"
+  short_description: "[Windows only] Build and review ASP.NET Core web apps"
+  icon_large: "./assets/dotnet-logo.png"
+  default_prompt: "Create a new $aspnet-core website for me."
