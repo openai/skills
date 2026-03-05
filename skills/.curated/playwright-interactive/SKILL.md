@@ -5,7 +5,7 @@ description: "Persistent browser and Electron interaction through `js_repl` for 
 
 # Playwright Interactive Skill
 
-Use this skill when a task needs interactive browser or Electron work in a persistent `js_repl` session. Keep the Playwright handles alive across code edits, reloads, and repeated checks so iteration stays fast.
+Use a persistent `js_repl` Playwright session to debug local web or Electron apps, keep the same handles alive across iterations, and run functional plus visual QA without restarting the whole toolchain unless the process ownership changed.
 
 ## Preconditions
 
@@ -81,29 +81,122 @@ try {
 }
 ```
 
+Binding rules:
+
+- Use `var` for the shared top-level Playwright handles because later `js_repl` cells reuse them.
+- The setup cells below are intentionally short happy paths. If a handle looks stale, set that binding to `undefined` and rerun the cell instead of adding recovery logic everywhere.
+- Prefer one named handle per surface you care about (`page`, `mobilePage`, `appWindow`) over repeatedly rediscovering pages from the context.
+
+Shared web helpers:
+
+```javascript
+var resetWebHandles = function () {
+  context = undefined;
+  page = undefined;
+  mobileContext = undefined;
+  mobilePage = undefined;
+};
+
+var ensureWebBrowser = async function () {
+  if (browser && !browser.isConnected()) {
+    browser = undefined;
+    resetWebHandles();
+  }
+
+  browser ??= await chromium.launch({ headless: false });
+  return browser;
+};
+
+var reloadWebContexts = async function () {
+  for (const currentContext of [context, mobileContext]) {
+    if (!currentContext) continue;
+    for (const p of currentContext.pages()) {
+      await p.reload({ waitUntil: "domcontentloaded" });
+    }
+  }
+  console.log("Reloaded existing web tabs");
+};
+```
+
+## Choose Session Mode
+
+For web apps, use an explicit viewport by default and treat native-window mode as a separate validation pass.
+
+- Use an explicit viewport for routine iteration, breakpoint checks, reproducible screenshots, snapshot diffs, and model-assisted localization. This is the default because it is stable across machines and avoids host window-manager variability.
+- When you need deterministic high-DPI behavior, keep the explicit viewport and add `deviceScaleFactor` rather than switching straight to native-window mode.
+- Use native-window mode (`viewport: null`) for a separate headed pass when you need to validate launched window size, OS-level DPI behavior, browser chrome interactions, or bugs that may depend on the host display configuration.
+- For Electron, assume native-window behavior all the time. Electron launches through Playwright with `noDefaultViewport`, so treat it like a real desktop window and check the as-launched size and layout before resizing anything.
+- When signoff depends on both layout breakpoints and real desktop behavior, do both passes: explicit viewport first for deterministic QA, then native-window validation for final environment-specific checks.
+- Treat switching modes as a context reset. Do not reuse a viewport-emulated `context` for a native-window pass or vice versa; close the old `page` and `context`, then create a new one for the new mode.
+
 ## Start or Reuse Web Session
+
+Desktop and mobile web sessions share the same `browser`, helpers, and QA flow. The main difference is which context and page pair you create.
+
+### Desktop Web Context
 
 Set `TARGET_URL` to the app you are debugging. For local servers, prefer `127.0.0.1` over `localhost`.
 
 ```javascript
-const TARGET_URL = "http://127.0.0.1:3000";
+var TARGET_URL = "http://127.0.0.1:3000";
 
-if (!browser) {
-  browser = await chromium.launch({ headless: false });
-}
+if (page?.isClosed()) page = undefined;
 
-if (!context) {
-  context = await browser.newContext({
-    viewport: { width: 1600, height: 900 },
-  });
-}
-
-if (!page) {
-  page = await context.newPage();
-}
+await ensureWebBrowser();
+context ??= await browser.newContext({
+  viewport: { width: 1600, height: 900 },
+});
+page ??= await context.newPage();
 
 await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
 console.log("Loaded:", await page.title());
+```
+
+If `context` or `page` is stale, set `context = page = undefined` and rerun the cell.
+
+### Mobile Web Context
+
+Reuse `TARGET_URL` when it already exists; otherwise set a mobile target directly.
+
+```javascript
+var MOBILE_TARGET_URL = typeof TARGET_URL === "string"
+  ? TARGET_URL
+  : "http://127.0.0.1:3000";
+
+if (mobilePage?.isClosed()) mobilePage = undefined;
+
+await ensureWebBrowser();
+mobileContext ??= await browser.newContext({
+  viewport: { width: 390, height: 844 },
+  isMobile: true,
+  hasTouch: true,
+});
+mobilePage ??= await mobileContext.newPage();
+
+await mobilePage.goto(MOBILE_TARGET_URL, { waitUntil: "domcontentloaded" });
+console.log("Loaded mobile:", await mobilePage.title());
+```
+
+If `mobileContext` or `mobilePage` is stale, set `mobileContext = mobilePage = undefined` and rerun the cell.
+
+### Native-Window Web Pass
+
+```javascript
+var TARGET_URL = "http://127.0.0.1:3000";
+
+await ensureWebBrowser();
+
+await page?.close().catch(() => {});
+await context?.close().catch(() => {});
+page = undefined;
+context = undefined;
+
+browser ??= await chromium.launch({ headless: false });
+context = await browser.newContext({ viewport: null });
+page = await context.newPage();
+
+await page.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
+console.log("Loaded native window:", await page.title());
 ```
 
 ## Start or Reuse Electron Session
@@ -111,21 +204,29 @@ console.log("Loaded:", await page.title());
 Set `ELECTRON_ENTRY` to `.` when the current workspace is the Electron app and `package.json` points `main` to the right entry file. If you need to target a specific main-process file directly, use a path such as `./main.js` instead.
 
 ```javascript
-const ELECTRON_ENTRY = ".";
+var ELECTRON_ENTRY = ".";
 
-if (electronApp) {
+if (appWindow?.isClosed()) appWindow = undefined;
+
+if (!appWindow && electronApp) {
   await electronApp.close().catch(() => {});
+  electronApp = undefined;
 }
 
-electronApp = await electronLauncher.launch({
+electronApp ??= await electronLauncher.launch({
   args: [ELECTRON_ENTRY],
-  cwd: process.cwd(),
 });
 
-appWindow = await electronApp.firstWindow();
+appWindow ??= await electronApp.firstWindow();
 
 console.log("Loaded Electron window:", await appWindow.title());
 ```
+
+If `js_repl` is not already running from the Electron app workspace, pass `cwd` explicitly when launching.
+
+If the app process looks stale, set `electronApp = appWindow = undefined` and rerun the cell.
+
+If you already have an Electron session but need a fresh process after a main-process, preload, or startup change, use the restart cell in the next section instead of rerunning this one.
 
 ## Reuse Sessions During Iteration
 
@@ -134,10 +235,7 @@ Keep the same session alive whenever you can.
 Web renderer reload:
 
 ```javascript
-for (const p of context.pages()) {
-  await p.reload({ waitUntil: "domcontentloaded" });
-}
-console.log("Reloaded existing tabs");
+await reloadWebContexts();
 ```
 
 Electron renderer-only reload:
@@ -151,15 +249,18 @@ Electron restart after main-process, preload, or startup changes:
 
 ```javascript
 await electronApp.close().catch(() => {});
+electronApp = undefined;
+appWindow = undefined;
 
 electronApp = await electronLauncher.launch({
-  args: ["."],
-  cwd: process.cwd(),
+  args: [ELECTRON_ENTRY],
 });
 
 appWindow = await electronApp.firstWindow();
 console.log("Relaunched Electron window:", await appWindow.title());
 ```
+
+If your launch requires an explicit `cwd`, include the same `cwd` here.
 
 Default posture:
 
@@ -181,7 +282,6 @@ Default posture:
 - Re-run functional QA.
 - Re-run visual QA.
 - Capture final artifacts only after the current state is the one you are evaluating.
-- Execute cleanup before ending the task or leaving the session.
 
 ### Reload Decision
 
@@ -221,8 +321,7 @@ Default posture:
 - If any required visible region is clipped, cut off, obscured, or pushed outside the viewport in the state you are evaluating, treat that as a bug even if page-level scroll metrics appear acceptable.
 - Look for clipping, overflow, distortion, layout imbalance, inconsistent spacing, alignment problems, illegible text, weak contrast, broken layering, and awkward motion states.
 - Judge aesthetic quality as well as correctness. The UI should feel intentional, coherent, and visually pleasing for the task.
-- Prefer viewport screenshots for signoff. Use full-page captures only as secondary debugging artifacts.
-- If the full-window screenshot is not enough to judge a region confidently, capture a focused screenshot for that region.
+- Prefer viewport screenshots for signoff. Use full-page captures only as secondary debugging artifacts, and capture a focused screenshot when a region needs closer inspection.
 - If motion makes a screenshot ambiguous, wait briefly for the UI to settle, then capture the image you are actually evaluating.
 - Before signoff, explicitly ask: what visible part of this interface have I not yet inspected closely?
 - Before signoff, explicitly ask: what visible defect would most likely embarrass this result if the user looked closely?
@@ -232,11 +331,9 @@ Default posture:
 - The functional path passed with normal user input.
 - Coverage is explicit against the shared QA inventory: note which requirements, implemented features, controls, states, and claims were exercised, and call out any intentional exclusions.
 - The visual QA pass covered the whole relevant interface.
-- Each user-visible claim has a matching visual check and artifact from the state where that claim matters.
+- Each user-visible claim has a matching visual check and reviewed screenshot artifact from the state and viewport or window size where that claim matters.
 - The viewport-fit checks passed for the intended initial view and any required minimum supported viewport or window size.
 - If the product launches in a window, the as-launched size, placement, and initial layout were checked before any manual resize or repositioning.
-- The screenshots directly support the claims you are making.
-- The required screenshots were reviewed for the relevant states and viewport or window sizes established during QA.
 - The UI is not just functional; it is visually coherent and not aesthetically weak for the task.
 - Functional correctness, viewport fit, and visual quality must each pass on their own; one does not imply the others.
 - A short exploratory pass was completed for interactive products, and the response mentions what that pass covered.
@@ -246,49 +343,241 @@ Default posture:
 
 ## Screenshot Examples
 
-Prefer JPEG at `quality: 85` for `view_image` artifacts unless lossless inspection is specifically required.
+If you plan to emit a screenshot through `codex.emitImage(...)`, use the CSS-normalized paths in the next section by default. Those are the canonical examples for screenshots that will be interpreted by the model or used for coordinate-based follow-up actions. Keep raw captures as an exception for fidelity-sensitive debugging only; the raw exception examples appear after the normalization guidance.
 
-Desktop example:
+### Model-bound screenshots (default)
 
-```javascript
-const { unlink } = await import("node:fs/promises");
-const desktopPath = `${codex.tmpDir}/desktop.jpg`;
+If you will emit a screenshot with `codex.emitImage(...)` for model interpretation, normalize it to CSS pixels for the exact region you captured before emitting. This keeps returned coordinates aligned with Playwright CSS pixels if the reply is later used for clicking, and it also reduces image payload size and model token cost.
 
-await page.screenshot({ path: desktopPath, type: "jpeg", quality: 85 });
-await codex.tool("view_image", { path: desktopPath });
-await unlink(desktopPath).catch(() => {});
-```
+Do not emit raw native-window screenshots by default. Skip normalization only when you explicitly need device-pixel fidelity, such as Retina or DPI artifact debugging, pixel-accurate rendering inspection, or another fidelity-sensitive case where raw pixels matter more than payload size. For local-only inspection that will not be emitted to the model, raw capture is fine.
 
-Electron example:
+Do not assume `page.screenshot({ scale: "css" })` is enough in native-window mode (`viewport: null`). In Chromium on macOS Retina displays, headed native-window screenshots can still come back at device-pixel size even when `scale: "css"` is requested. The same caveat applies to Electron windows launched through Playwright because Electron runs with `noDefaultViewport`, and `appWindow.screenshot({ scale: "css" })` may still return device-pixel output.
 
-```javascript
-const { unlink } = await import("node:fs/promises");
-const electronPath = `${codex.tmpDir}/electron-window.jpg`;
+Use separate normalization paths for web pages and Electron windows:
 
-await appWindow.screenshot({ path: electronPath, type: "jpeg", quality: 85 });
-await codex.tool("view_image", { path: electronPath });
-await unlink(electronPath).catch(() => {});
-```
+- Web: prefer `page.screenshot({ scale: "css" })` directly. If native-window Chromium still returns device-pixel output, resize inside the current page with canvas; no scratch page is required.
+- Electron: do not use `appWindow.context().newPage()` or `electronApp.context().newPage()` as a scratch page. Electron contexts do not support that path reliably. Capture in the main process with `BrowserWindow.capturePage(...)`, resize with `nativeImage.resize(...)`, and emit those bytes directly.
 
-Mobile example:
+Shared helpers and conventions:
 
 ```javascript
-const { unlink } = await import("node:fs/promises");
-
-if (!mobileContext) {
-  mobileContext = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    isMobile: true,
-    hasTouch: true,
+var emitJpeg = async function (bytes) {
+  await codex.emitImage({
+    bytes,
+    mimeType: "image/jpeg",
   });
-  mobilePage = await mobileContext.newPage();
-}
+};
 
-await mobilePage.goto(TARGET_URL, { waitUntil: "domcontentloaded" });
-const mobilePath = `${codex.tmpDir}/mobile.jpg`;
-await mobilePage.screenshot({ path: mobilePath, type: "jpeg", quality: 85 });
-await codex.tool("view_image", { path: mobilePath });
-await unlink(mobilePath).catch(() => {});
+var emitWebJpeg = async function (surface, options = {}) {
+  await emitJpeg(await surface.screenshot({
+    type: "jpeg",
+    quality: 85,
+    scale: "css",
+    ...options,
+  }));
+};
+
+var clickCssPoint = async function ({ surface, x, y, clip }) {
+  await surface.mouse.click(
+    clip ? clip.x + x : x,
+    clip ? clip.y + y : y
+  );
+};
+
+var tapCssPoint = async function ({ page, x, y, clip }) {
+  await page.touchscreen.tap(
+    clip ? clip.x + x : x,
+    clip ? clip.y + y : y
+  );
+};
+```
+
+- Use `page` or `mobilePage` for web, or `appWindow` for Electron, as the `surface`.
+- Treat `clip` as CSS pixels from `getBoundingClientRect()` in the renderer.
+- Prefer JPEG at `quality: 85` unless lossless fidelity is specifically required.
+- For full-image captures, use returned `{ x, y }` directly.
+- For clipped captures, add the clip origin back when clicking.
+
+### Web CSS normalization
+
+Preferred web path for explicit-viewport contexts, and often for web in general:
+
+```javascript
+await emitWebJpeg(page);
+```
+
+Mobile web uses the same path; substitute `mobilePage` for `page`:
+
+```javascript
+await emitWebJpeg(mobilePage);
+```
+
+If the model returns `{ x, y }`, click it directly:
+
+```javascript
+await clickCssPoint({ surface: page, x, y });
+```
+
+Mobile web click path:
+
+```javascript
+await tapCssPoint({ page: mobilePage, x, y });
+```
+
+For web `clip` screenshots or element screenshots in this normal path, `scale: "css"` usually works directly. Add the region origin back when clicking.
+
+- `await emitWebJpeg(page, { clip })`
+- `await emitWebJpeg(mobilePage, { clip })`
+- `await clickCssPoint({ surface: page, clip, x, y })`
+- `await tapCssPoint({ page: mobilePage, clip, x, y })`
+- `await clickCssPoint({ surface: page, clip: box, x, y })` after `const box = await locator.boundingBox()`
+
+Web native-window fallback when `scale: "css"` still comes back at device-pixel size:
+
+```javascript
+var emitWebScreenshotCssScaled = async function ({ page, clip, quality = 0.85 } = {}) {
+  var NodeBuffer = (await import("node:buffer")).Buffer;
+  const target = clip
+    ? { width: clip.width, height: clip.height }
+    : await page.evaluate(() => ({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      }));
+
+  const screenshotBuffer = await page.screenshot({
+    type: "png",
+    ...(clip ? { clip } : {}),
+  });
+
+  const bytes = await page.evaluate(
+    async ({ imageBase64, targetWidth, targetHeight, quality }) => {
+      const image = new Image();
+      image.src = `data:image/png;base64,${imageBase64}`;
+      await image.decode();
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, "image/jpeg", quality)
+      );
+
+      return new Uint8Array(await blob.arrayBuffer());
+    },
+    {
+      imageBase64: NodeBuffer.from(screenshotBuffer).toString("base64"),
+      targetWidth: target.width,
+      targetHeight: target.height,
+      quality,
+    }
+  );
+
+  await emitJpeg(bytes);
+};
+```
+
+For a full viewport fallback capture, treat returned `{ x, y }` as direct CSS coordinates:
+
+```javascript
+await emitWebScreenshotCssScaled({ page });
+await clickCssPoint({ surface: page, x, y });
+```
+
+For a clipped fallback capture, add the clip origin back:
+
+```javascript
+await emitWebScreenshotCssScaled({ page, clip });
+await clickCssPoint({ surface: page, clip, x, y });
+```
+
+### Electron CSS normalization
+
+For Electron, normalize in the main process instead of opening a scratch Playwright page. The helper below returns CSS-scaled bytes for the full content area or for a clipped CSS-pixel region. Treat `clip` as content-area CSS pixels, for example values taken from `getBoundingClientRect()` in the renderer.
+
+```javascript
+var emitElectronScreenshotCssScaled = async function ({ electronApp, clip, quality = 85 } = {}) {
+  const bytes = await electronApp.evaluate(async ({ BrowserWindow }, { clip, quality }) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    const image = clip ? await win.capturePage(clip) : await win.capturePage();
+
+    const target = clip
+      ? { width: clip.width, height: clip.height }
+      : (() => {
+          const [width, height] = win.getContentSize();
+          return { width, height };
+        })();
+
+    const resized = image.resize({
+      width: target.width,
+      height: target.height,
+      quality: "best",
+    });
+
+    return resized.toJPEG(quality);
+  }, { clip, quality });
+
+  await emitJpeg(bytes);
+};
+```
+
+Full Electron window:
+
+```javascript
+await emitElectronScreenshotCssScaled({ electronApp });
+await clickCssPoint({ surface: appWindow, x, y });
+```
+
+Clipped Electron region using CSS pixels from the renderer:
+
+```javascript
+var clip = await appWindow.evaluate(() => {
+  const rect = document.getElementById("board").getBoundingClientRect();
+  return {
+    x: Math.round(rect.x),
+    y: Math.round(rect.y),
+    width: Math.round(rect.width),
+    height: Math.round(rect.height),
+  };
+});
+
+await emitElectronScreenshotCssScaled({ electronApp, clip });
+await clickCssPoint({ surface: appWindow, clip, x, y });
+```
+
+### Raw Screenshot Exception Examples
+
+Use these only when raw pixels matter more than CSS-coordinate alignment, such as Retina or DPI artifact debugging, pixel-accurate rendering inspection, or other fidelity-sensitive review.
+
+Web desktop raw emit:
+
+```javascript
+await codex.emitImage({
+  bytes: await page.screenshot({ type: "jpeg", quality: 85 }),
+  mimeType: "image/jpeg",
+});
+```
+
+Electron raw emit:
+
+```javascript
+await codex.emitImage({
+  bytes: await appWindow.screenshot({ type: "jpeg", quality: 85 }),
+  mimeType: "image/jpeg",
+});
+```
+
+Mobile raw emit after the mobile web context is already running:
+
+```javascript
+await codex.emitImage({
+  bytes: await mobilePage.screenshot({ type: "jpeg", quality: 85 }),
+  mimeType: "image/jpeg",
+});
 ```
 
 ## Viewport Fit Checks (Required)
@@ -395,5 +684,6 @@ If you plan to exit Codex immediately after debugging, run the cleanup cell firs
 - `page.goto: net::ERR_CONNECTION_REFUSED`: make sure the dev server is still running in a persistent TTY session, recheck the port, and prefer `http://127.0.0.1:<port>`.
 - `electron.launch` hangs, times out, or exits immediately: verify the local `electron` dependency, confirm the `args` target, and make sure any renderer dev server is already running before launch.
 - `Identifier has already been declared`: reuse the existing top-level bindings, choose a new name, or wrap the code in `{ ... }`. Use `js_repl_reset` only when the kernel is genuinely stuck.
+- `browserContext.newPage: Protocol error (Target.createTarget): Not supported` while working with Electron: do not use `appWindow.context().newPage()` or `electronApp.context().newPage()` as a scratch page; use the Electron-specific screenshot normalization flow in the model-bound screenshots section.
 - `js_repl` timed out or reset: rerun the bootstrap cell and recreate the session with shorter, more focused cells.
 - Browser launch or network operations fail immediately: confirm the session was started with `--sandbox danger-full-access` and restart that way if needed.
