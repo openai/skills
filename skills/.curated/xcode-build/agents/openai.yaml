@@ -1,0 +1,4 @@
+interface:
+  display_name: "Xcode Build"
+  short_description: "Build and test iOS Xcode projects"
+  default_prompt: "Use $xcode-build to build this iOS project and run the tests."
