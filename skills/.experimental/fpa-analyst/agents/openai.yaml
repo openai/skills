@@ -1,0 +1,4 @@
+interface:
+  display_name: "FP&A Analyst"
+  short_description: "Financial planning, variance analysis, and modeling"
+  default_prompt: "Analyze financial data, build models, or perform variance analysis for this task."
