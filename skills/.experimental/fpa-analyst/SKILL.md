@@ -1,116 +1,153 @@
 ---
 name: "fpa-analyst"
-description: "Use when the task involves financial planning and analysis: variance analysis (budget vs actual), financial modeling (DCF, sensitivity), forecasting, KPI dashboards, month-end close, or parsing financial statements."
+description: "Use when tasks involve financial planning and analysis: variance analysis, financial modeling, forecasting, KPI dashboards, month-end close support, or financial statement analysis. Trigger when the user needs budget-vs-actual comparisons, DCF models, sensitivity tables, revenue forecasts, or structured financial reporting."
 ---
 
-
-# FP&A Analyst
+# FP&A Analyst Skill
 
 ## When to use
-- Budget vs actual variance analysis
-- Revenue or expense forecasting
-- Financial modeling (DCF, three-statement, sensitivity/scenario analysis)
-- Parsing and analyzing financial statements (income statement, balance sheet, cash flow)
-- KPI dashboard creation or metric calculation
-- Month-end close support (accruals, reconciliations, flux analysis)
-- Ad hoc financial data analysis or reporting
+- Variance analysis: budget vs. actual, prior period vs. current, forecast vs. actual.
+- Financial statement parsing, restructuring, or ratio analysis (income statement, balance sheet, cash flow).
+- Revenue and expense forecasting (trend-based, driver-based, seasonal decomposition).
+- KPI dashboard creation with metrics relevant to the business model.
+- Financial modeling: DCF, sensitivity/scenario analysis, three-statement models, LBO basics.
+- Month-end close support: accruals, journal entry review, reconciliation checks, flux analysis.
 
-## Core workflow
+IMPORTANT: System and user instructions always take precedence.
 
-1. **Understand the data.** Before any analysis, inspect the source files. Identify column headers, date formats, currency, granularity (monthly/quarterly/annual), and any obvious data quality issues (blanks, duplicates, mixed formats).
-2. **Clarify the ask.** Confirm what the user needs: a model, a report, a visualization, a recommendation, or just a number. Ask once, then execute.
-3. **Build incrementally.** Start with the simplest version that answers the question. Add complexity only when requested.
-4. **Show your work.** Every output number should be traceable back to source data. Label assumptions explicitly.
-5. **Deliver clean output.** Format numbers with commas and appropriate decimal places. Use consistent units. Round appropriately for the audience (executives get thousands/millions, accountants get cents).
+## Workflow
+1. Clarify the deliverable: model, report, dashboard, or analysis memo.
+2. Identify the data source: spreadsheet, CSV, database, or raw numbers from the user.
+3. Structure the analysis with clear assumptions separated from calculations.
+4. Build with formulas and references, never hardcoded derived values.
+5. Validate outputs: check that totals tie, ratios are reasonable, and signs are correct.
+6. Present findings with a brief executive summary before the detail.
 
-## Variance analysis
+## Temp and output conventions
+- Use `tmp/fpa/` for intermediate files; delete when done.
+- Write final artifacts under `output/fpa/` when working in this repo.
+- Keep filenames descriptive: `variance_analysis_q1.xlsx`, `dcf_model_acme.xlsx`, `kpi_dashboard.xlsx`.
 
-When comparing budget to actual:
-- Calculate both dollar variance (Actual - Budget) and percentage variance ((Actual - Budget) / Budget)
-- Flag material variances (typically >5% or >$10K, but ask the user for their threshold)
-- Separate volume vs price vs mix variances when the data supports it
-- Group by the most useful dimension first (department, cost center, GL account, product line)
-- Always include a "Total" row and a brief narrative summary of the top 3-5 drivers
+## Primary tooling
+- Use `openpyxl` for building `.xlsx` models with formatting, formulas, and structure.
+- Use `pandas` for data ingestion, transformation, pivots, and aggregation.
+- Use `numpy` for time-series math, growth rates, and statistical calculations.
+- Use `matplotlib` or `openpyxl.chart` for visualizations when needed.
+- If an internal spreadsheet tool is available, use it to recalculate formulas and render sheets.
 
-Example output structure:
-```
-| Category       | Budget    | Actual    | $ Var     | % Var  | Driver                    |
-|----------------|-----------|-----------|-----------|--------|---------------------------|
-| Revenue        | 1,200,000 | 1,150,000 | (50,000)  | (4.2%) | Lower volume in Product A |
-| COGS           | 720,000   | 695,000   | 25,000    | 3.5%   | Favorable material costs  |
-| Gross Profit   | 480,000   | 455,000   | (25,000)  | (5.2%) |                           |
-```
-
-## Financial modeling
-
-### DCF
-- Project free cash flow 5-10 years, then apply a terminal value (Gordon Growth or exit multiple)
-- Default assumptions: WACC 8-12%, terminal growth 2-3%, unless the user specifies otherwise
-- Always run a sensitivity table on the two most impactful assumptions (typically WACC and growth rate)
-- Sanity-check the output: if implied EV/Revenue or EV/EBITDA is wildly off-market, flag it
-
-### Three-statement model
-- Income statement drives the balance sheet and cash flow statement
-- Use percentage-of-revenue for most line items unless the user provides specific drivers
-- Balance sheet must balance (Assets = Liabilities + Equity) -- verify this programmatically
-- Cash flow statement should reconcile net income to ending cash
-
-### Sensitivity / scenario analysis
-- Base, upside, downside as minimum scenarios
-- Use a two-variable data table for key sensitivities
-- Present results as a formatted matrix
-
-## Forecasting
-
-- Start with historical trend analysis (at least 12 months if available)
-- Default to linear regression or growth rate extrapolation for simplicity
-- For seasonal data, use seasonal decomposition or period-over-period growth rates
-- Always show forecast vs historical on the same chart for visual validation
-- Include confidence intervals or a range when possible
-- Call out any structural breaks in the historical data that make extrapolation risky
-
-## Working with financial data in Python
-
-Prefer `pandas` for tabular financial data. Use `openpyxl` for Excel I/O.
-
-```python
-import pandas as pd
-
-# Common financial data patterns
-df['variance_pct'] = (df['actual'] - df['budget']) / df['budget']
-df['ytd'] = df.groupby('account')['amount'].cumsum()
-df['rolling_12m'] = df.groupby('account')['amount'].transform(lambda x: x.rolling(12).sum())
-```
-
-For visualizations, prefer `matplotlib` for static charts or `plotly` for interactive dashboards.
-
-## Formatting conventions
-
-- Negative numbers in parentheses: `(50,000)` not `-50,000`
-- Percentages with one decimal: `4.2%`
-- Currency with commas, no cents for amounts over $1,000: `$1,200,000`
-- Dates in the user's preferred format; default to `MMM YYYY` for monthly, `YYYY` for annual
-- Tables aligned right for numbers, left for labels
-
-## Month-end close support
-
-- Accrual calculations: identify recurring expenses not yet invoiced, estimate based on historical patterns or contracts
-- Account reconciliations: compare GL balance to subledger or bank statement, list reconciling items
-- Flux analysis: compare current month to prior month and prior year same month, explain significant movements
-- Journal entry suggestions: provide debit/credit pairs with GL account codes when the user supplies a chart of accounts
-
-## Dependencies
-
+## Dependencies (install if missing)
 Prefer `uv` for dependency management.
 
+Python packages:
 ```
-uv pip install pandas openpyxl matplotlib plotly
+uv pip install openpyxl pandas numpy
 ```
-
 If `uv` is unavailable:
 ```
-python3 -m pip install pandas openpyxl matplotlib plotly
+python3 -m pip install openpyxl pandas numpy
+```
+Optional (for charts and rendering):
+```
+uv pip install matplotlib
 ```
 
 ## Environment
 No required environment variables.
+
+## Variance analysis
+- Always show: actual, budget/forecast, dollar variance, and percent variance.
+- Favorable variances are positive for revenue, negative for expenses. Use sign conventions consistently and state them.
+- Flag any line item with variance exceeding 5% or a materiality threshold the user specifies.
+- Group variances by: volume, price/rate, mix, and timing when the data supports it.
+- Include a waterfall or bridge summary for material P&L variances.
+- For flux analysis (month-end), compare current month vs. prior month AND vs. same month prior year.
+
+## Financial statement analysis
+- Standardize line items before comparing across periods or companies.
+- Compute common-size statements (each line as % of revenue or total assets).
+- Key ratios to surface automatically:
+  - Profitability: gross margin, operating margin, net margin, EBITDA margin.
+  - Liquidity: current ratio, quick ratio, cash conversion cycle.
+  - Leverage: debt-to-equity, interest coverage, net debt / EBITDA.
+  - Efficiency: DSO, DPO, DIO, asset turnover.
+- Flag ratio changes > 200 bps period-over-period as items to investigate.
+
+## Forecasting
+- State the method used: straight-line trend, CAGR extrapolation, driver-based, or seasonal decomposition.
+- Driver-based is preferred when business drivers are available (units x price, headcount x cost-per-head, etc.).
+- For seasonal businesses, decompose into trend + seasonal index before projecting.
+- Always show assumptions in a clearly labeled assumptions block (blue font for inputs if building a spreadsheet).
+- Include at minimum three scenarios: base, upside, downside.
+- Show confidence ranges or scenario bands rather than single-point estimates when possible.
+
+## KPI dashboards
+- Lead with 5-8 KPIs maximum. More dilutes focus.
+- Every KPI needs: current value, prior period value, target/budget, and trend direction.
+- Match KPIs to the business model:
+  - SaaS: MRR/ARR, churn rate, LTV/CAC, net revenue retention, runway.
+  - E-commerce: GMV, AOV, conversion rate, CAC, repeat purchase rate.
+  - Manufacturing: throughput, yield, COGS per unit, capacity utilization.
+  - Services: utilization rate, average billing rate, backlog, revenue per employee.
+- Use conditional formatting: green for on-track, yellow for watch, red for off-track.
+- Include a 12-month trend sparkline or mini-chart for each KPI when the data exists.
+
+## Financial modeling
+
+### General principles
+- Separate inputs (blue font), calculations (black font), and outputs into distinct sections or tabs.
+- One formula per row, copied across columns for time periods. No mixed logic in the same row.
+- Time axis flows left-to-right: historical periods on the left, projection periods on the right.
+- Label every assumption with units and source.
+- Circular references are not allowed. If a model requires them (e.g., interest on average debt), use an iterative macro note or break the circularity with a prior-period approximation.
+
+### DCF model structure
+1. **Revenue build**: top-down (market size x share) or bottom-up (units x price).
+2. **Operating model**: revenue -> gross profit -> EBITDA -> EBIT, with each cost line driven by an assumption.
+3. **Free cash flow**: EBIT x (1 - tax rate) + D&A - capex - change in NWC.
+4. **Terminal value**: Gordon Growth (FCF x (1+g) / (WACC - g)) or exit multiple. Show both, note which is primary.
+5. **Discount**: mid-year convention unless told otherwise. WACC inputs on a separate assumptions line.
+6. **Output**: enterprise value, bridge to equity value, implied share price if applicable.
+7. **Sensitivity table**: 2D table varying WACC and terminal growth rate (or exit multiple). Use `openpyxl` data-table formatting.
+
+### Sensitivity / scenario analysis
+- 2D sensitivity tables: vary two key assumptions (rows and columns).
+- Scenario analysis: define discrete scenarios (base/bull/bear) with a scenario toggle cell.
+- Probability-weighted expected value when the user provides scenario probabilities.
+
+## Month-end close support
+- Reconciliation: compare two data sources (GL vs. subledger, bank vs. book) and flag differences above a threshold.
+- Accrual estimates: calculate based on run-rate, days elapsed, or contractual terms. Show the math.
+- Journal entry review: validate debits = credits, accounts are valid, and descriptions are clear.
+- Close checklist: if the user provides their close process, help track completion and flag open items.
+- Flux analysis: compare each GL account to prior month and prior year, flag outliers, draft variance explanations.
+
+## Formatting requirements
+- Follow the spreadsheet skill's finance formatting conventions:
+  - Blue text for inputs, black for formulas, green for links.
+  - Negative numbers in red parentheses.
+  - Zeros displayed as `-`.
+  - Units in headers: `Revenue ($K)`, `Margin (%)`, `Headcount (#)`.
+  - Multiples formatted as `5.2x`.
+- Currency, percentage, and date formats must be explicit and consistent.
+- Headers visually distinct. Section breaks with merged cells and dark fill for model section headers.
+- Totals should sum the visible range above. Hide gridlines in finished models.
+
+## Presentation of results
+- Lead with a 2-3 sentence executive summary: what changed, why it matters, what to do about it.
+- Use plain language for non-finance stakeholders. Avoid jargon without context.
+- Quantify impact in dollars and percentages, not just percentages alone.
+- Separate "what happened" (descriptive) from "what to do" (prescriptive).
+- If the user is preparing for a board meeting or leadership review, structure the output as talking points with supporting data.
+
+## Common pitfalls to check
+- Revenue recognized in the wrong period (cutoff issues).
+- Double-counting intercompany transactions.
+- Mixing fiscal and calendar year periods.
+- Using EBITDA when the business is capital-intensive (use free cash flow instead).
+- Forecasting growth rates that imply the company becomes larger than the market.
+- Ignoring working capital impact on cash flow.
+- Confusing run-rate with actual annualized results.
+- Sign convention errors: treating expense reductions as negative variance when they should be favorable.
+
+## References
+- Detailed reference guides are in `references/` for specific analysis types.
