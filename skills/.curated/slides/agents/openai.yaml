@@ -1,0 +1,6 @@
+interface:
+  display_name: "Slides"
+  short_description: "Create and edit PPTX slide decks"
+  icon_small: "./assets/slides-small.svg"
+  icon_large: "./assets/slides.png"
+  default_prompt: "Use $slides to create or update this PPTX slide deck with PptxGenJS and validate the layout."
