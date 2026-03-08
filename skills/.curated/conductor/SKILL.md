@@ -16,6 +16,21 @@ allowed-tools: Bash(conductor *), Bash(python3 *conductor_api.py*), Bash(npm ins
 - **Never echo auth tokens** in output or logs.
 - **Infer the profile from context.** When the user mentions an environment (e.g. "dev", "prod", "staging"), append `--profile {env}` to CLI commands. If unsure which profile to use, list available profiles by reading `~/.conductor-cli/config.yaml` and ask the user to confirm.
 
+## Updating this skill
+
+If the user asks to update or upgrade Conductor skills, or if you suspect this skill may be outdated, run:
+
+```bash
+curl -sSL https://conductor-oss.github.io/conductor-skills/install.sh | bash -s -- --all --upgrade
+```
+
+On Windows:
+```powershell
+irm https://conductor-oss.github.io/conductor-skills/install.ps1 -OutFile install.ps1; .\install.ps1 -All -Upgrade
+```
+
+This checks for a newer version and upgrades all installed agents.
+
 ## First-time setup
 
 When a user has nothing set up yet, follow **every** step below in order. Do not skip steps.
