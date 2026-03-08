@@ -11,20 +11,30 @@ allowed-tools: Bash(conductor *), Bash(python3 *conductor_api.py*), Bash(npm ins
 - **Never use `python3 -c`** for any purpose — not to construct JSON, parse output, format results, or post-process data. Instead:
   - Write JSON to files using the Write tool or heredoc, then pass the file path to CLI commands.
   - Format and summarize command output directly in your response text. You can read and interpret JSON output yourself — do not spawn Python to do it.
-- **Always install and use the `conductor` CLI**. If it's missing, install it (`npm install -g @conductor-oss/conductor-cli`). Only fall back to `scripts/conductor_api.py` if Node.js/npm cannot be installed.
+- **Always install and use the `conductor` CLI proactively**. If it's missing, **run** `npm install -g @conductor-oss/conductor-cli` yourself — do not just tell the user to do it. Only fall back to `scripts/conductor_api.py` if Node.js/npm cannot be installed.
 - **Use `--json` flags** when available to get structured output from the CLI, then summarize the results in your response text.
 - **Never echo auth tokens** in output or logs.
 - **Infer the profile from context.** When the user mentions an environment (e.g. "dev", "prod", "staging"), append `--profile {env}` to CLI commands. If unsure which profile to use, list available profiles by reading `~/.conductor-cli/config.yaml` and ask the user to confirm.
 
-## Prerequisites
+## First-time setup
 
-Check for the `conductor` CLI and install it if missing:
+When a user has nothing set up yet, follow **every** step below in order. Do not skip steps.
+
+### Step 1 — Install the CLI
+
+Check whether `conductor` is already installed:
 
 ```bash
-conductor --version || npm install -g @conductor-oss/conductor-cli
+conductor --version
 ```
 
-If npm/Node.js is not available, install Node.js first:
+If it is **not** installed, check for npm/Node.js:
+
+```bash
+npm --version
+```
+
+If npm is **also** missing, install Node.js first:
 
 ```bash
 # macOS
@@ -33,7 +43,17 @@ brew install node
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - && sudo apt-get install -y nodejs
 ```
 
-Then install the CLI: `npm install -g @conductor-oss/conductor-cli`
+Then install the CLI — **run this yourself**, do not just tell the user to do it:
+
+```bash
+npm install -g @conductor-oss/conductor-cli
+```
+
+Verify success:
+
+```bash
+conductor --version
+```
 
 **Fallback** — Only if Node.js/npm truly cannot be installed (e.g. restricted environment), use the bundled REST API script:
 
@@ -41,19 +61,26 @@ Then install the CLI: `npm install -g @conductor-oss/conductor-cli`
 export CONDUCTOR_API="<path-to-this-skill>/scripts/conductor_api.py"
 ```
 
-### Connecting to a server
+### Step 2 — Choose a server
 
-If no Conductor server is running, you have two options:
+**Ask the user** whether they want to:
+
+- **Option A** — Start a local server (good for development/testing)
+- **Option B** — Connect to an existing remote server
+
+Do not assume one or the other — present both options and let the user decide.
 
 **Option A — Start a local server:**
 
 ```bash
 conductor server start
-# Optionally specify port or version:
-conductor server start --port 8080 --version latest
 ```
 
-Verify it's running: `conductor server status`
+Verify it's running:
+
+```bash
+conductor server status
+```
 
 **Option B — Connect to an existing server:**
 
@@ -61,26 +88,32 @@ Verify it's running: `conductor server status`
 export CONDUCTOR_SERVER_URL="http://your-server:8080/api"
 ```
 
-Then check if the server requires authentication:
+### Step 3 — Test connectivity and handle auth
+
+Test that the CLI can reach the server:
 
 ```bash
 conductor workflow list
 ```
 
-If you get a 401/403 error, the server requires auth. Set credentials using one of:
+If this succeeds, the server does not require auth — proceed to Step 4.
+
+If you get a **401 or 403** error, the server requires authentication. **Only then** ask the user for credentials, and set them via environment variables (never echo the actual values):
 
 ```bash
 # Key + Secret (recommended for Orkes/Enterprise)
-export CONDUCTOR_AUTH_KEY="your-key"
-export CONDUCTOR_AUTH_SECRET="your-secret"
+export CONDUCTOR_AUTH_KEY="<ask user>"
+export CONDUCTOR_AUTH_SECRET="<ask user>"
 
 # Or a pre-existing token
-export CONDUCTOR_AUTH_TOKEN="your-token"
+export CONDUCTOR_AUTH_TOKEN="<ask user>"
 ```
 
-### Saving connection profiles
+Then re-test: `conductor workflow list`
 
-Save named profiles to avoid setting env vars each time:
+### Step 4 — Save as a named profile
+
+**Always** save the connection as a named profile so the user doesn't have to set env vars each time:
 
 ```bash
 # Local server (no auth)
@@ -88,14 +121,21 @@ conductor config save --server http://localhost:8080/api --profile local
 
 # Remote server with auth
 conductor config save --server https://play.orkes.io/api --auth-key KEY --auth-secret SECRET --profile orkes
-
-# Use a profile
-conductor workflow list --profile orkes
 ```
 
 Profiles are stored in `~/.conductor-cli/config.yaml`.
 
 Never echo auth tokens, keys, or secrets in output.
+
+### Step 5 — Verify
+
+Confirm the CLI can communicate with the server by running a final check:
+
+```bash
+conductor workflow list --profile <profile-name>
+```
+
+Report the result to the user. Setup is complete.
 
 ## 1) Workflow definitions
 
@@ -128,17 +168,17 @@ conductor workflow create workflow.json
 
 Always write to a file first, then pass the file path to the CLI or script.
 
-**Step 3**: Check for missing workers. After registering, identify all SIMPLE tasks in the workflow and verify each has a task definition registered on the server:
+**Step 3 (required)**: Check for missing workers. After registering, you **must** identify all SIMPLE tasks in the workflow and verify each has a task definition registered on the server:
 
 ```bash
 conductor taskDef list
 ```
 
-For each SIMPLE task whose `name` does not appear in the task definitions, inform the user and offer to:
+Compare the SIMPLE task names in the workflow against the returned task definitions. For each SIMPLE task whose `name` does not appear in the task definitions, **inform the user** that the task has no registered worker and **offer to**:
 1. Create the task definition: `conductor taskDef create taskdef.json`
 2. Scaffold and run a worker using the appropriate SDK (see [workers.md](references/workers.md))
 
-This prevents workflows from getting stuck on tasks with no worker polling for them.
+**Do not skip this step.** Workflows will get stuck on SIMPLE tasks with no worker polling for them.
 
 ### Update a definition
 
@@ -338,7 +378,8 @@ When a user asks to write a worker:
 2. Install the SDK for that language
 3. Create a worker file using the pattern from [workers.md](references/workers.md)
 4. The worker's task type must match the `"name"` of the SIMPLE task in the workflow definition
-5. Start the worker — it polls automatically and picks up tasks
+5. **Include a comment or docstring noting that the worker must be idempotent** (safe to retry), since Conductor may redeliver the same task on failure or timeout
+6. Start the worker — it polls automatically and picks up tasks
 
 ## 9) Enterprise features (Orkes)
 

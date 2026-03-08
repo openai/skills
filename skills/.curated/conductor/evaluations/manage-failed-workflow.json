@@ -14,7 +14,7 @@
     "Step 9: Report results: how many retried successfully, any that failed to retry"
   ],
   "success_criteria": [
-    "Search uses time filter for today's date, not all-time",
+    "Search command includes a time filter (e.g., --start-time-after with today's date or similar), not an unfiltered all-time search",
     "Failed workflows are listed with relevant diagnostic info before retrying",
     "Failed task details (task name, error, retry count) are extracted from execution",
     "User is informed about failures before bulk retry (not blindly retried)",

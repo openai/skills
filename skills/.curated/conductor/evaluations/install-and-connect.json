@@ -15,12 +15,12 @@
     "Step 9: Confirm connectivity by listing workflows successfully"
   ],
   "success_criteria": [
-    "CLI is installed automatically if missing, not just suggested",
+    "Plan includes running the CLI install command (npm install -g @conductor-oss/conductor-cli), not just telling the user to do it",
     "Node.js installation is attempted if npm is unavailable",
     "User is given a choice between local server and existing server",
     "Auth credentials are requested only when the server returns 401/403",
     "Connection is saved as a named profile for reuse",
-    "Auth tokens, keys, and secrets are never echoed in output",
+    "Plan does not include commands that would print auth tokens, keys, or secrets to stdout",
     "Final verification confirms the CLI can communicate with the server"
   ]
 }

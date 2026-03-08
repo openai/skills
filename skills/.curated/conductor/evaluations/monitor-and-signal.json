@@ -15,7 +15,7 @@
   "success_criteria": [
     "Running workflows are searched and listed before acting on a specific one",
     "Workflow execution is fetched with task details to identify the pending task",
-    "The correct task reference name is identified from execution details (not guessed)",
+    "Plan describes fetching execution details first and extracting the task reference name from them, rather than assuming a task name",
     "Signal command uses the correct workflowId, taskRefName, and status",
     "Output JSON is provided with the signal to advance the workflow",
     "Workflow status is verified after signaling to confirm it progressed",

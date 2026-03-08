@@ -93,7 +93,7 @@ def call_claude(api_key, model, system, user_message, max_tokens=4096):
 # ---------------------------------------------------------------------------
 
 def load_skill_context():
-    """Load SKILL.md and referenced files as context for the agent."""
+    """Load SKILL.md, references, and examples as context for the agent."""
     parts = []
 
     skill_md = SKILL_DIR / "SKILL.md"
@@ -105,6 +105,11 @@ def load_skill_context():
         for ref_file in sorted(refs_dir.glob("*.md")):
             parts.append(f"# {ref_file.name}\n\n{ref_file.read_text()}")
 
+    examples_dir = SKILL_DIR / "examples"
+    if examples_dir.exists():
+        for ex_file in sorted(examples_dir.glob("*.md")):
+            parts.append(f"# Example: {ex_file.stem}\n\n{ex_file.read_text()}")
+
     return "\n\n---\n\n".join(parts)
 
 
@@ -114,16 +119,32 @@ def load_skill_context():
 
 def run_agent(api_key, model, skill_context, query, verbose=False):
     """Send the eval query to Claude acting as an agent with the skill."""
-    system = f"""You are an AI coding agent with access to the following skill for Conductor workflow orchestration.
-Your tools include: Bash (shell commands), Read/Write/Edit (files), Grep/Glob (search).
+    system = f"""You are an AI coding agent with access to the Conductor workflow skill. Your tools include: Bash (shell commands), Read/Write/Edit (files), Grep/Glob (search).
 
-When the user asks you to do something, describe step by step exactly what you would do:
-- What commands you would run (show the exact bash commands)
-- What files you would read or write
-- What decisions you would make and why
-- What you would say to the user
+You must follow the skill instructions precisely. Key rules:
+- ALWAYS install the `conductor` CLI proactively if missing — RUN `npm install -g @conductor-oss/conductor-cli` yourself, do NOT just tell the user to install it. If npm is missing, install Node.js first (brew install node on macOS, nodesource on Linux) BEFORE installing the CLI. Only fall back to `scripts/conductor_api.py` if Node.js/npm truly cannot be installed.
+- When setting up a server connection, ALWAYS ask the user to choose between local and remote — do not assume one or the other.
+- Request auth credentials ONLY when the server returns 401/403 — never ask for auth preemptively.
+- ALWAYS save the connection as a named profile using `conductor config save` so it persists for reuse.
+- ALWAYS verify the setup works with a final connectivity check (e.g. `conductor workflow list`).
+- NEVER use `python3 -c` for any purpose.
+- NEVER echo auth tokens, keys, or secrets in output — use env vars or CLI flags, and redact any sensitive values.
+- Write workflow JSON to a file first, then pass the file path to CLI commands.
+- After registering a workflow, you MUST check `conductor taskDef list` to verify all SIMPLE tasks have registered workers. For any SIMPLE task missing from the task definitions, flag it to the user and offer to create the task definition and scaffold a worker.
+- When writing workers, always include a comment or docstring noting the worker must be idempotent (safe to retry on failure/timeout).
+- Use `--profile` flag when the user mentions an environment (dev, prod, staging).
+- Use `--json` flags when available for structured output.
 
-Be specific and concrete. Show actual commands, not placeholders.
+When responding, describe the exact steps you would take:
+1. Show the exact bash commands you would run (real commands, not placeholders)
+2. Show the exact file contents you would write (complete JSON, not truncated)
+3. Explain your decision logic at EVERY branching point — cover ALL paths, not just the happy path. For example:
+   - If the user needs a server: present both local and remote options and let them choose
+   - If a command returns 401/403: describe how you would handle auth
+   - If a tool/CLI is missing: show the fallback approach
+4. Show what you would communicate to the user at each step
+
+Follow the patterns from the examples in the skill context. Be thorough — cover prerequisites, the main action, all conditional branches, verification, and cleanup/next-steps.
 
 --- SKILL INSTRUCTIONS ---
 
@@ -131,19 +152,30 @@ Be specific and concrete. Show actual commands, not placeholders.
 
     user_msg = f"""User query: {query}
 
-Describe in detail what steps you would take to handle this request. Include the exact commands you would run, files you would create, and what you would communicate to the user."""
+Describe in detail the complete sequence of steps you would take to handle this request. Show exact commands, exact file contents, and exact user communications. Follow the skill rules strictly."""
 
     if verbose:
         print(f"  [AGENT] Sending query to {model}...")
 
-    return call_claude(api_key, model, system, user_msg)
+    return call_claude(api_key, model, system, user_msg, max_tokens=8192)
 
 
 def judge_response(api_key, judge_model, query, agent_response, expected_behavior, success_criteria, verbose=False):
     """Use Claude as judge to evaluate the agent response."""
-    system = """You are an evaluation judge. Your job is to assess whether an AI agent's planned response meets the expected behavior and success criteria for a given task.
+    system = """You are an evaluation judge for an AI coding agent. The agent was given a task and described the steps it WOULD take (a plan), without actually executing anything.
 
-You must evaluate EACH success criterion individually and return a JSON object with this exact structure:
+You must evaluate EACH success criterion individually based on the agent's described plan.
+
+Evaluation guidelines:
+- The agent is describing a PLAN, not showing actual execution output. Judge whether the plan WOULD satisfy each criterion if executed.
+- "CLI is installed automatically" means the plan includes running the install command proactively (not just suggesting the user do it).
+- "Auth tokens are never echoed" means the plan does not include printing/logging actual token values, and uses env vars or redacted placeholders appropriately.
+- "Workflow definition is fetched from the server" means the plan includes a command to fetch it (e.g., `conductor workflow get ...`), even though no actual server response is shown.
+- "Commands are shown" means the agent wrote out the actual CLI commands it would run, not vague descriptions.
+- If the agent describes a conditional path (e.g., "if 401 then request auth"), credit the criterion if the relevant branch is covered.
+- Be lenient on exact formatting but strict on whether the correct commands and approach are used.
+
+Return a JSON object with this exact structure:
 {
   "criteria_results": [
     {
@@ -157,7 +189,7 @@ You must evaluate EACH success criterion individually and return a JSON object w
   "summary": "1-2 sentence overall assessment"
 }
 
-Be strict but fair. A criterion passes if the agent's response demonstrates it would be met.
+Set overall_score to the fraction of criteria that passed (passed / total). Set overall_pass to true if at least 80% of criteria pass.
 Return ONLY valid JSON, no other text."""
 
     user_msg = f"""## User Query

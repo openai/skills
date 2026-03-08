@@ -19,7 +19,7 @@
     "Function parameters map to expected inputParameters",
     "Return value provides meaningful outputData",
     "TaskHandler is configured with scan_for_annotated_workers=True",
-    "Worker is idempotent — safe to retry",
+    "Worker implementation or comments acknowledge idempotency (safe to retry)",
     "Server connection uses env vars, not hardcoded credentials",
     "Auth tokens are never echoed in output"
   ]

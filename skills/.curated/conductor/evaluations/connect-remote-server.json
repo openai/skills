@@ -20,6 +20,6 @@
     "Credentials are set via env vars or --auth-key/--auth-secret flags",
     "Connection is verified with a real API call after auth setup",
     "User is offered to save the config as a profile for future use",
-    "Auth keys, secrets, and tokens are never echoed in output"
+    "Plan does not include commands that would print auth keys, secrets, or tokens to stdout"
   ]
 }

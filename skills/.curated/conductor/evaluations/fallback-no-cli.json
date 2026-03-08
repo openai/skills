@@ -15,7 +15,7 @@
   "success_criteria": [
     "CLI installation is attempted first before falling back",
     "Fallback is only used after confirming CLI cannot be installed",
-    "The bundled conductor_api.py script is used, not raw curl commands",
+    "Plan uses the bundled scripts/conductor_api.py fallback, not raw curl/wget commands",
     "CONDUCTOR_SERVER_URL is verified before making API calls",
     "Script output is parsed and presented clearly to the user",
     "User is informed they're using the fallback and why",

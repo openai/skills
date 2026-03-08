@@ -13,7 +13,7 @@
     "Step 8: Provide a brief text summary of the workflow flow alongside the diagram"
   ],
   "success_criteria": [
-    "Workflow definition is fetched from the server, not fabricated",
+    "Plan includes a command to fetch the workflow definition from the server (e.g., conductor workflow get order-processing) before generating the diagram",
     "Mermaid diagram uses only safe syntax: flowchart TD/LR, --> arrows, no style/title/classDef",
     "SWITCH tasks render as diamond nodes with labeled case edges",
     "FORK_JOIN tasks show parallel branches converging at a join",
