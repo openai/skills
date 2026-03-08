@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Codex LaTeX Icon</title>
+  <desc id="desc">Small icon for Codex LaTeX skill.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1f3a"/>
+      <stop offset="100%" stop-color="#178f98"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="44" fill="url(#bg)"/>
+  <text x="52" y="218" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="118" font-weight="700" fill="#ffffff">L</text>
+  <text x="128" y="232" font-family="'JetBrains Mono', Consolas, monospace" font-size="68" fill="#ffd166">TX</text>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="480" viewBox="0 0 1600 480" role="img" aria-labelledby="title desc">
+  <title id="title">Codex LaTeX Banner</title>
+  <desc id="desc">Banner image for the Codex LaTeX skill.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1f3a"/>
+      <stop offset="55%" stop-color="#124d77"/>
+      <stop offset="100%" stop-color="#178f98"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f7c948"/>
+      <stop offset="100%" stop-color="#ffd166"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="480" fill="url(#bg)"/>
+  <circle cx="1300" cy="120" r="180" fill="#ffffff" fill-opacity="0.07"/>
+  <circle cx="1425" cy="370" r="150" fill="#ffffff" fill-opacity="0.06"/>
+
+  <rect x="96" y="120" width="10" height="240" fill="url(#accent)" rx="5"/>
+  <text x="140" y="215" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="86" font-weight="700" fill="#ffffff">Codex LaTeX</text>
+  <text x="140" y="285" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="34" fill="#dbe7f3">Research-grade paper writing skill for structured LaTeX workflows</text>
+
+  <text x="140" y="360" font-family="'JetBrains Mono', 'Fira Code', Consolas, monospace" font-size="30" fill="#ffd166">\\documentclass{article}  \\begin{abstract} ... \\end{abstract}</text>
+</svg>
