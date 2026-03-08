@@ -128,6 +128,18 @@ conductor workflow create workflow.json
 
 Always write to a file first, then pass the file path to the CLI or script.
 
+**Step 3**: Check for missing workers. After registering, identify all SIMPLE tasks in the workflow and verify each has a task definition registered on the server:
+
+```bash
+conductor taskDef list
+```
+
+For each SIMPLE task whose `name` does not appear in the task definitions, inform the user and offer to:
+1. Create the task definition: `conductor taskDef create taskdef.json`
+2. Scaffold and run a worker using the appropriate SDK (see [workers.md](references/workers.md))
+
+This prevents workflows from getting stuck on tasks with no worker polling for them.
+
 ### Update a definition
 
 ```bash
@@ -314,7 +326,21 @@ conductor server logs -f
 conductor server stop
 ```
 
-## 8) Enterprise features (Orkes)
+## 8) Writing workers
+
+Workers execute SIMPLE tasks in workflows. They poll the server, run business logic, and return results. See [workers.md](references/workers.md) for full SDK examples.
+
+SDKs available: **Python** (`pip install conductor-python`), **JavaScript** (`npm install @io-orkes/conductor-javascript`), **Java** (`org.conductoross:conductor-client`), **Go**, **C#**, **Ruby**, **Rust** — all at [github.com/conductor-oss](https://github.com/conductor-oss).
+
+When a user asks to write a worker:
+
+1. Ask which language they prefer
+2. Install the SDK for that language
+3. Create a worker file using the pattern from [workers.md](references/workers.md)
+4. The worker's task type must match the `"name"` of the SIMPLE task in the workflow definition
+5. Start the worker — it polls automatically and picks up tasks
+
+## 9) Enterprise features (Orkes)
 
 These require Orkes Conductor (orkes.io):
 
@@ -322,7 +348,7 @@ These require Orkes Conductor (orkes.io):
 - **Secrets**: `conductor secret list/get/put/delete`
 - **Webhooks**: `conductor webhook list/create/update/delete`
 
-## 9) Workflow visualization
+## 10) Workflow visualization
 
 Generate a Mermaid flowchart when users ask to visualize a workflow, or after creating a workflow definition. This renders in any Markdown viewer (GitHub, VS Code, Codex).
 
@@ -361,7 +387,13 @@ flowchart TD
 
 ### Conductor UI
 
-If a Conductor server is running, interactive workflow visualizations are available at the server UI (typically port `8080` or `5000` — the same host as `CONDUCTOR_SERVER_URL` without the `/api` path).
+If a Conductor server is running, link the user to the visual workflow editor:
+
+```
+{SERVER_UI_URL}/workflowDef/{workflowName}
+```
+
+Where `SERVER_UI_URL` is the server host without `/api` (e.g. `http://localhost:8080` or `https://play.orkes.io`). For example: `http://localhost:8080/workflowDef/order-processing`
 
 ## Output formatting
 
