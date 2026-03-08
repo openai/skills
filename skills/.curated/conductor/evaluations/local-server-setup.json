@@ -1,0 +1,26 @@
+{
+  "name": "Start Local Server and Create First Workflow",
+  "skills": ["conductor"],
+  "query": "Start a local Conductor server and create a simple hello world workflow",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is installed, install if missing",
+    "Step 2: Start local server using `conductor server start`",
+    "Step 3: Verify server is running with `conductor server status`",
+    "Step 4: Test connectivity with `conductor workflow list` (should return empty list)",
+    "Step 5: No auth setup needed for local server (no 401/403)",
+    "Step 6: Consult references/workflow-definition.md for JSON schema",
+    "Step 7: Create a simple workflow definition JSON and write to file",
+    "Step 8: Register with `conductor workflow create workflow.json`",
+    "Step 9: Start the workflow with `conductor workflow start -w <name> -i '{}'`",
+    "Step 10: Check execution status and report result"
+  ],
+  "success_criteria": [
+    "Local server is started before attempting any API calls",
+    "Server status is verified before proceeding",
+    "No auth credentials are set or requested for local server",
+    "Workflow definition is valid JSON written to a file first",
+    "Workflow is registered before being started",
+    "Execution status is checked and reported to user",
+    "Server start uses the CLI, not Docker or manual steps"
+  ]
+}
