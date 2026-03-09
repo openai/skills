@@ -8,3 +8,6 @@ dependencies:
   tools:
     - type: "mcp"
       value: "webpilot"
+      description: "Webpilot MCP server for CDP-free browser automation over WebSocket."
+      transport: "websocket"
+      url: "ws://localhost:7331"
