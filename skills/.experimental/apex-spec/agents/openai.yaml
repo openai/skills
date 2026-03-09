@@ -1,0 +1,7 @@
+interface:
+  display_name: "Apex Spec System"
+  short_description: "Specification-driven AI development workflow"
+  brand_color: "#2563EB"
+
+policy:
+  allow_implicit_invocation: true
