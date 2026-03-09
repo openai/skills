@@ -1,0 +1,9 @@
+interface:
+  name: Webpilot
+  description: CDP-free browser automation — drive a real browser via Chrome extension + WebSocket. No Playwright, no Puppeteer, no detectable debugging port.
+policy:
+  invocation: implicit
+dependencies:
+  tools:
+    - type: mcp
+      name: webpilot
