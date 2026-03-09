@@ -186,6 +186,405 @@ Compression guidance:
 
 ## Practical Examples
 
+## Exact `memory_cli.py` Usage Reference
+
+This section is a copyable reference for the CLI at [scripts/memory_cli.py](/Users/bisegni/source/github/openai-skills/skills/.experimental/local_project_memory/scripts/memory_cli.py).
+
+### 1. Resolve the CLI path
+
+Run commands from the target project root, but point `MEMORY_CLI` at the skill-local script:
+
+```bash
+export SKILL_DIR="/absolute/path/to/local_project_memory"
+export MEMORY_CLI="$SKILL_DIR/scripts/memory_cli.py"
+```
+
+If you are already inside this repo, that can be:
+
+```bash
+export MEMORY_CLI="/Users/bisegni/source/github/openai-skills/skills/.experimental/local_project_memory/scripts/memory_cli.py"
+```
+
+### 2. Basic command shape
+
+```bash
+python3 "$MEMORY_CLI" [--scope project|global] [--namespace <name>] <command> [command options]
+```
+
+Rules:
+
+- `--scope project` is the default.
+- `--scope global` requires `--namespace`.
+- For project scope, the CLI uses the nearest `.memory/` directory or the current git root.
+- For global scope, IDs are internally namespaced, but you still use plain IDs in commands.
+
+### 3. Commands
+
+#### `init`
+
+Initialize storage.
+
+```bash
+python3 "$MEMORY_CLI" init
+python3 "$MEMORY_CLI" --scope global --namespace user:git init
+python3 "$MEMORY_CLI" --scope global --namespace project:backend init
+```
+
+What it does:
+
+- Project scope: creates `.memory/memory.db` in the current directory.
+- Global scope: creates a shared SQLite DB for namespaced memory.
+
+#### `stats`
+
+Show counts, type totals, tag totals, link totals, orphan counts, DB path, and last update time.
+
+```bash
+python3 "$MEMORY_CLI" stats
+python3 "$MEMORY_CLI" --scope global --namespace user:git stats
+python3 "$MEMORY_CLI" --scope global --namespace project:backend stats
+```
+
+This is the command that fails if you do:
+
+```bash
+python3 "$MEMORY_CLI" stats --scope global
+```
+
+because global scope must include:
+
+```bash
+--namespace user:git
+```
+
+or another namespace such as `user:workflow`, `project:backend`, or `team:platform`.
+
+#### `search`
+
+Full-text search over title, summary, tags, retrieval hints, content, and type.
+
+```bash
+python3 "$MEMORY_CLI" search "authentication"
+python3 "$MEMORY_CLI" search "authentication" --view compact
+python3 "$MEMORY_CLI" search "authentication" --view tiny
+python3 "$MEMORY_CLI" search "authentication" --view full
+python3 "$MEMORY_CLI" search "authentication" --k 3
+python3 "$MEMORY_CLI" search "authentication" --type ARCH_DECISION
+python3 "$MEMORY_CLI" search "authentication" --tag auth
+python3 "$MEMORY_CLI" search "authentication" --select id,type,title,summary
+python3 "$MEMORY_CLI" search "authentication" --neighbors-k 5
+python3 "$MEMORY_CLI" search "authentication" --no-include-neighborhood
+python3 "$MEMORY_CLI" search "authentication" --include-deprecated
+python3 "$MEMORY_CLI" --scope global --namespace user:workflow search "commit messages"
+```
+
+Useful combinations:
+
+```bash
+python3 "$MEMORY_CLI" search "migration" --type KNOWN_ISSUE --select id,title,summary
+python3 "$MEMORY_CLI" search "API" --type INTERFACE_SPEC --k 5
+python3 "$MEMORY_CLI" search "release" --tag workflow --view compact
+```
+
+#### `get`
+
+Fetch one memory unit by ID.
+
+```bash
+python3 "$MEMORY_CLI" get auth-jwt-tokens
+python3 "$MEMORY_CLI" get auth-jwt-tokens --view tiny
+python3 "$MEMORY_CLI" get auth-jwt-tokens --view compact
+python3 "$MEMORY_CLI" get auth-jwt-tokens --select id,title,content.decision,content.rationale
+python3 "$MEMORY_CLI" --scope global --namespace user:git get commit-style
+```
+
+#### `upsert`
+
+Insert or update one memory unit from a JSON file or stdin.
+
+From a file:
+
+```bash
+python3 "$MEMORY_CLI" upsert ./memory/auth-jwt-tokens.json
+python3 "$MEMORY_CLI" --scope global --namespace user:workflow upsert ./memory/verification-order.json
+```
+
+From stdin:
+
+```bash
+echo '{
+  "id": "auth-jwt-tokens",
+  "type": "ARCH_DECISION",
+  "title": "Use JWT for API authentication",
+  "summary": "JWT supports stateless authentication across services.",
+  "content": {
+    "decision": "Use JWT access tokens for API auth",
+    "rationale": "Stateless auth fits the service architecture"
+  },
+  "tags": ["auth", "api"],
+  "retrieval_hints": ["authentication", "login", "jwt"]
+}' | python3 "$MEMORY_CLI" upsert -
+```
+
+Global example:
+
+```bash
+echo '{
+  "id": "commit-style",
+  "type": "WORKFLOW",
+  "title": "Conventional commit preference",
+  "summary": "Use conventional commits with short imperative subjects.",
+  "content": {
+    "style": "conventional commits",
+    "subject_mood": "imperative",
+    "subject_length": "short"
+  },
+  "tags": ["git", "commits"],
+  "retrieval_hints": ["commit format", "commit message", "conventional commits"]
+}' | python3 "$MEMORY_CLI" --scope global --namespace user:git upsert -
+```
+
+#### `related`
+
+Show linked memories for one memory unit.
+
+```bash
+python3 "$MEMORY_CLI" related auth-jwt-tokens
+python3 "$MEMORY_CLI" related auth-jwt-tokens --k 3
+python3 "$MEMORY_CLI" related auth-jwt-tokens --link-type related
+python3 "$MEMORY_CLI" related auth-jwt-tokens --link-type duplicate_candidate
+python3 "$MEMORY_CLI" related auth-jwt-tokens --include-deprecated
+```
+
+Valid link types:
+
+- `related`
+- `similar`
+- `duplicate_candidate`
+- `supersedes`
+
+#### `dedupe`
+
+List likely duplicate memories.
+
+```bash
+python3 "$MEMORY_CLI" dedupe
+python3 "$MEMORY_CLI" dedupe --k 20
+python3 "$MEMORY_CLI" dedupe --include-deprecated
+python3 "$MEMORY_CLI" --scope global --namespace project:backend dedupe
+```
+
+#### `merge-suggest`
+
+Recommend which duplicate memory should stay canonical.
+
+```bash
+python3 "$MEMORY_CLI" merge-suggest auth-jwt-tokens
+python3 "$MEMORY_CLI" merge-suggest auth-jwt-tokens --include-deprecated
+```
+
+#### `deprecate`
+
+Mark a memory unit as deprecated and point to its replacement.
+
+```bash
+python3 "$MEMORY_CLI" deprecate auth-jwt-tokens --replaced-by auth-jwt-v2
+python3 "$MEMORY_CLI" --scope global --namespace user:git deprecate commit-style-v1 --replaced-by commit-style-v2
+```
+
+#### `relink`
+
+Recompute similarity and duplicate links.
+
+```bash
+python3 "$MEMORY_CLI" relink auth-jwt-tokens
+python3 "$MEMORY_CLI" relink --all
+python3 "$MEMORY_CLI" --scope global --namespace project:backend relink --all
+```
+
+#### `vacuum`
+
+Delete deprecated memory units permanently and compact the SQLite database.
+
+Preview first:
+
+```bash
+python3 "$MEMORY_CLI" vacuum --dry-run
+python3 "$MEMORY_CLI" --scope global --namespace user:git vacuum --dry-run
+```
+
+Actually delete deprecated units:
+
+```bash
+python3 "$MEMORY_CLI" vacuum
+python3 "$MEMORY_CLI" --scope global --namespace user:git vacuum
+```
+
+### 4. Exact MU JSON shape for `upsert`
+
+Required fields:
+
+- `id`
+- `type`
+- `title`
+- `summary`
+- `content`
+
+Allowed `type` values:
+
+- `ARCH_DECISION`
+- `INTERFACE_SPEC`
+- `CONSTRAINTS`
+- `GLOSSARY`
+- `WORKFLOW`
+- `KNOWN_ISSUE`
+- `TASK_CONTEXT`
+
+Minimal valid payload:
+
+```json
+{
+  "id": "auth-jwt-tokens",
+  "type": "ARCH_DECISION",
+  "title": "Use JWT for API authentication",
+  "summary": "JWT supports stateless authentication across services.",
+  "content": {
+    "decision": "Use JWT access tokens"
+  }
+}
+```
+
+Full payload example:
+
+```json
+{
+  "id": "auth-jwt-tokens",
+  "type": "ARCH_DECISION",
+  "title": "Use JWT for API authentication",
+  "summary": "JWT supports stateless authentication across services.",
+  "content": {
+    "decision": "Use JWT access tokens for API auth",
+    "rationale": "Stateless auth fits the service architecture",
+    "alternatives": ["session-cookie", "opaque token"]
+  },
+  "tags": ["auth", "api", "security"],
+  "retrieval_hints": ["authentication", "login", "jwt"],
+  "provenance": {
+    "source": "implementation",
+    "author": "codex"
+  },
+  "validity": {
+    "status": "active",
+    "replaced_by": null
+  },
+  "updated_at": "2026-03-08T12:00:00Z"
+}
+```
+
+Validation rules from the script:
+
+- `id` must match `[A-Za-z0-9._:-]+`
+- `title` must be a non-empty string
+- `summary` must be a non-empty string
+- `content` must be a JSON object
+- `tags` must be an array of strings
+- `retrieval_hints` must be an array of strings
+- `provenance`, if present, must be an object
+- `validity.status` must be `active` or `deprecated`
+- if `validity.status` is `deprecated`, `validity.replaced_by` is required
+- `updated_at` is optional and defaults to the current UTC time
+- `summary + content` must be at most 50,000 characters
+- payloads containing obvious secret markers are rejected
+
+### 5. Common exact mistakes
+
+Wrong:
+
+```bash
+python3 "$MEMORY_CLI" stats --scope global
+```
+
+Right:
+
+```bash
+python3 "$MEMORY_CLI" --scope global --namespace user:git stats
+```
+
+Wrong:
+
+```bash
+python3 "$MEMORY_CLI" search auth --type decision
+```
+
+Right:
+
+```bash
+python3 "$MEMORY_CLI" search auth --type ARCH_DECISION
+```
+
+Wrong:
+
+```bash
+python3 "$MEMORY_CLI" upsert memory.json
+```
+
+if `memory.json` contains:
+
+```json
+{
+  "id": "bad id with spaces",
+  "type": "DECISION"
+}
+```
+
+Right:
+
+```json
+{
+  "id": "good-id",
+  "type": "ARCH_DECISION",
+  "title": "Short title",
+  "summary": "One-sentence summary.",
+  "content": {
+    "decision": "Stored as an object"
+  }
+}
+```
+
+### 6. Fast-start recipes
+
+Check project memory:
+
+```bash
+python3 "$MEMORY_CLI" init
+python3 "$MEMORY_CLI" stats
+python3 "$MEMORY_CLI" search "authentication" --select id,type,title,summary
+```
+
+Check global user preferences:
+
+```bash
+python3 "$MEMORY_CLI" --scope global --namespace user:workflow init
+python3 "$MEMORY_CLI" --scope global --namespace user:workflow stats
+python3 "$MEMORY_CLI" --scope global --namespace user:workflow search "verification"
+```
+
+Store one memory from stdin:
+
+```bash
+echo '{
+  "id": "test-order",
+  "type": "WORKFLOW",
+  "title": "Verification order",
+  "summary": "Run tests before lint when debugging regressions.",
+  "content": {
+    "order": ["tests", "lint", "manual verification"]
+  },
+  "tags": ["verification", "workflow"],
+  "retrieval_hints": ["test order", "verify changes"]
+}' | python3 "$MEMORY_CLI" upsert -
+```
+
 ### Before Starting Work
 
 ```bash
