@@ -57,12 +57,19 @@ Update memory when work is done or when the user specifies:
 2. **Search before planning**: Always call search with minimal fields:
    - `python3 "$MEMORY_CLI" search "<query>" --view compact`
    - or `python3 "$MEMORY_CLI" search "<query>" --select id,type,title,summary`
-3. **Get details when needed**: Use selective get for partial content:
+3. **Inspect the neighborhood when useful**:
+   - `python3 "$MEMORY_CLI" search "<query>" --neighbors-k 5`
+   - `python3 "$MEMORY_CLI" related <mu_id>`
+   - `python3 "$MEMORY_CLI" dedupe`
+4. **Get details when needed**: Use selective get for partial content:
    - `python3 "$MEMORY_CLI" get <mu_id> --select id,type,content.decision,validity.status`
-4. **Write after completion**: Store durable insights with `upsert`.
-5. **Deprecate when evolving**: If meaning changes, create new MU and deprecate old:
+5. **Write after completion**: Store durable insights with `upsert`.
+6. **Deprecate when evolving**: If meaning changes, create new MU and deprecate old:
    - `python3 "$MEMORY_CLI" deprecate <old_id> --replaced-by <new_id>`
-6. **Maintain periodically**: Clean up deprecated entries:
+7. **Refresh links after bulk edits when needed**:
+   - `python3 "$MEMORY_CLI" relink <mu_id>`
+   - `python3 "$MEMORY_CLI" relink --all`
+8. **Maintain periodically**: Clean up deprecated entries:
    - `python3 "$MEMORY_CLI" stats`
    - `python3 "$MEMORY_CLI" vacuum --dry-run`
    - `python3 "$MEMORY_CLI" vacuum`
@@ -98,31 +105,84 @@ Do not mix user-global preferences into a project namespace unless they are expl
 
 1. **Search first**: Before planning, always call `search` with `--view compact` or explicit `--select`.
 2. **Use skill-local CLI path**: Resolve `SKILL_DIR` to the installed skill directory, set `MEMORY_CLI="$SKILL_DIR/scripts/memory_cli.py"`, and call `python3 "$MEMORY_CLI" ...` from the target project root.
-3. **Selective retrieval**: Use `get --select` when partial content is sufficient.
-4. **Store only durable information**:
+3. **Use graph-aware retrieval**:
+   - Use `search` first for direct recall
+   - Use inline `neighborhood` or `related` to inspect nearby memories before creating a new one
+   - Use `dedupe` or `merge-suggest` when you suspect overlap
+4. **Selective retrieval**: Use `get --select` when partial content is sufficient.
+5. **Store only durable information**:
    - architectural decisions
    - constraints and limitations
    - interface specifications
    - workflow patterns
    - known issues and workarounds
    - persistent task context
-5. **Use namespace intentionally in global/shared memory** (when supported):
+6. **Store atomic memories**:
+   - one memory unit should capture one idea only
+   - do not combine multiple decisions, multiple issues, or long mixed notes into one MU
+   - if two facts may evolve independently, store them as separate MUs
+   - prefer linking many small MUs over writing one large MU
+7. **Optimize for minimum text, maximum information**:
+   - use a short precise `title`
+   - keep `summary` to one dense sentence
+   - keep `content` shallow and factual
+   - prefer key facts, constraints, rationale, and identifiers over prose
+   - avoid filler words, repeated context, and narration
+   - use `tags` and `retrieval_hints` to improve recall instead of expanding the summary
+8. **Write with stable retrieval language**:
+   - include the canonical nouns users will search for
+   - include old/new names if terminology changed
+   - include subsystem, API, feature, or workflow names explicitly
+9. **Use namespace intentionally in global/shared memory** (when supported):
    - Use project namespaces for reusable technical knowledge that may help other repositories
    - Use user namespaces for cross-project preferences/habits (including commit type conventions and preferred workflows)
    - Keep user-global preferences separate from project-specific facts
    - Prefer stable namespace names over ad hoc labels
-6. **Never store**:
+10. **Never store**:
    - secrets or credentials
    - API keys or tokens
    - raw logs or debug output
    - full transcripts
    - private reasoning or thought processes
    - temporary session state
-7. **Evolution over replacement**:
+11. **Evolution over replacement**:
    - When meaning changes, create new MU
    - Deprecate old MU with `--replaced-by`
    - Never delete without deprecating first
-8. **Optimize token usage**: Prefer minimal field projection to reduce token consumption.
+12. **Optimize token usage**: Prefer minimal field projection to reduce token consumption.
+
+## Memory Writing Logic
+
+Use this decision rule before storing a memory:
+
+1. Is this durable beyond the current session?
+   - If no, do not store it.
+2. Can it be expressed as one atomic fact, rule, decision, spec, issue, or workflow?
+   - If no, split it.
+3. Will a future agent search for this directly?
+   - If yes, include those search terms in `title`, `summary`, `tags`, or `retrieval_hints`.
+4. Can any sentence be removed without losing meaning?
+   - If yes, remove it.
+
+Good MU shape:
+
+- `title`: what it is
+- `summary`: why it matters
+- `content`: only the fields needed to act on it later
+
+Bad MU shape:
+
+- long narrative summaries
+- mixed “decision + issue + workaround + future ideas” blobs
+- copied logs, transcripts, or ticket text
+- generic summaries with no searchable terms
+
+Compression guidance:
+
+- Prefer `"constraint": "...", "impact": "...", "workaround": "..."` over paragraphs
+- Prefer `"endpoint": "/x", "methods": ["GET"]` over prose API descriptions
+- Prefer one concise alternative list over long tradeoff essays
+- Prefer 3 focused tags over 12 vague tags
 
 ## Practical Examples
 
@@ -193,6 +253,10 @@ echo '{
   },
   "tags": ["api", "users", "rest"]
 }' | python3 "$MEMORY_CLI" upsert -
+
+# Inspect related memories before adding another auth decision
+python3 "$MEMORY_CLI" search "authentication" --neighbors-k 5
+python3 "$MEMORY_CLI" related auth-jwt-tokens
 ```
 
 ### Evolving Decisions
@@ -210,6 +274,12 @@ python3 "$MEMORY_CLI" search "authentication" --include-deprecated
 ```bash
 # Check memory stats
 python3 "$MEMORY_CLI" stats
+
+# Review likely duplicates
+python3 "$MEMORY_CLI" dedupe
+
+# Refresh links after editing many memories
+python3 "$MEMORY_CLI" relink --all
 
 # Preview what would be cleaned
 python3 "$MEMORY_CLI" vacuum --dry-run
@@ -299,7 +369,9 @@ python3 "$MEMORY_CLI" search "<query>" \
   [--tag substring] \
   [--include-deprecated] \
   [--view tiny|compact|full] \
-  [--select path1,path2,...]
+  [--select path1,path2,...] \
+  [--include-neighborhood|--no-include-neighborhood] \
+  [--neighbors-k 3]
 
 # Get specific memory unit
 python3 "$MEMORY_CLI" get <mu_id> \
@@ -311,6 +383,19 @@ python3 "$MEMORY_CLI" upsert <file_or_dash>
 
 # Deprecate memory unit
 python3 "$MEMORY_CLI" deprecate <mu_id> --replaced-by <new_id>
+
+# Inspect related memories
+python3 "$MEMORY_CLI" related <mu_id> [--k 8] [--link-type TYPE] [--include-deprecated]
+
+# List duplicate candidates
+python3 "$MEMORY_CLI" dedupe [--k 8] [--include-deprecated]
+
+# Recompute similarity links
+python3 "$MEMORY_CLI" relink <mu_id>
+python3 "$MEMORY_CLI" relink --all
+
+# Suggest canonical memory among duplicates
+python3 "$MEMORY_CLI" merge-suggest <mu_id> [--include-deprecated]
 
 # Clean deprecated entries
 python3 "$MEMORY_CLI" vacuum [--dry-run]
