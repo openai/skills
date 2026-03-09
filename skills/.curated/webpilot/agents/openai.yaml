@@ -7,4 +7,4 @@ policy:
 dependencies:
   tools:
     - type: "mcp"
-      value: webpilot
+      value: "webpilot"
