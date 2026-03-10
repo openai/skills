@@ -1,0 +1,13 @@
+interface:
+  display_name: "Complex Task Methodology"
+  short_description: "S0-S3 general complex task execution methodology for development/research/operations. Five-dimension scoring, DAG parallel execution, QA audit loop."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.png"
+  brand_color: "#8B5CF6"
+  default_prompt: "Please use the Complex Task Three-Step Methodology to evaluate and execute this task"
+
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools: []

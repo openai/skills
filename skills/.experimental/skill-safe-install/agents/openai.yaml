@@ -1,0 +1,13 @@
+interface:
+  display_name: "Skill Safe Install"
+  short_description: "L0-level skill safe installation workflow. Force执行 Step0-5 (duplicate check → search → review → sandbox → install → whitelist) when installing skills."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.png"
+  brand_color: "#EF4444"
+  default_prompt: "Please use the safe installation workflow to install this skill"
+
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools: []

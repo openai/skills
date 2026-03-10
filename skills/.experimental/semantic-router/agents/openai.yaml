@@ -1,0 +1,13 @@
+interface:
+  display_name: "Semantic Router"
+  short_description: "Production-grade session routing system with four-layer recognition (system filter → keywords → indicators → semantic similarity), four-pool architecture (highspeed/intelligence/humanities/agent), five-branch routing, automatic fallback loop."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.png"
+  brand_color: "#10B981"
+  default_prompt: "Please use semantic routing to select the optimal model pool for this task"
+
+policy:
+  allow_implicit_invocation: true
+
+dependencies:
+  tools: []
