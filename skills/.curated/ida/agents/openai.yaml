@@ -1,0 +1,4 @@
+interface:
+  display_name: "IDA"
+  short_description: "Guidance for IDA Pro reverse engineering"
+  default_prompt: "Use $ida to analyze a binary in IDA Pro, write focused IDAPython, and load bundled docs only as needed."
