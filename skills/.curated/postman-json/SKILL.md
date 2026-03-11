@@ -1,34 +1,36 @@
 ---
-name: postman-json
-description: Generate and maintain Postman collection JSON files from Express source code. Use when new API endpoints are added, existing endpoints are changed, or multiple routes must be synced into a single up-to-date collection that mirrors route/module structure and request requirements.
+name: "postman-json"
+description: "Use when the user needs to generate or update Postman collection JSON from Express or Node route source code, especially after endpoint or middleware changes; discover mounted routers from app.use(...) aliases (ESM imports and CommonJS require), parse router methods, infer auth/body/upload requirements, and sync a deterministic generated subtree."
 ---
 
 # Postman JSON
 
-## Overview
+Generate or refresh a Postman collection from Express source files. Keep the generated Postman tree aligned with code structure and request requirements inferred from handlers and middleware.
 
-Generate or update a Postman collection by reading an Express server entry file and discovered route modules. Mirror route-file structure into Postman folders and infer request requirements such as bearer auth, JSON body fields, multipart file fields, and verification tokens.
+## Quick start
 
-## Run This Workflow
+- Run `scripts/sync_postman_collection.py` with explicit `--project-root` and `--server-file` when the repo has multiple server entry points.
+- Re-run after route or middleware edits so the generated subtree stays accurate.
+- Treat the script output as source-of-truth for generated Postman endpoints.
 
-1. Detect mounted routers from `app.use("/prefix", router)` in the Express server entry file.
-2. Parse each router file and discover `router.<method>(...)` endpoints.
-3. Infer request requirements from route handlers and middleware usage:
-- Bearer auth when auth middleware is present.
-- JSON body fields from `req.body` access.
-- Multipart form-data and file fields when upload middleware is present.
-- Additional body fields from imported middleware (for example `turnstileToken`).
-4. Sync a Postman collection JSON:
-- Keep non-generated top-level items.
-- Replace the generated root tree so added endpoints appear and removed ones disappear.
-- Keep the Postman folder hierarchy aligned with route file paths in the codebase.
+## Workflow
 
-## Use The Script
+1. Discover mounted routers from `app.use("/prefix", routerAlias)` in the server file.
+2. Resolve `routerAlias` to route modules from both ESM imports and CommonJS `require(...)` aliases.
+3. Parse each route module for `router.<method>(path, ...middleware, handler)` calls.
+4. Infer request requirements from middleware/handler context and imported middleware source:
+- Bearer auth when auth middleware is detected.
+- Multipart mode with file fields when upload middleware or `req.file`/`req.files` usage is detected.
+- Body fields from `req.body` access and middleware-derived fields (for example `turnstileToken`).
+5. Sync collection JSON:
+- Preserve non-generated top-level items.
+- Replace only the generated root subtree.
+- Keep folder hierarchy aligned with route file paths.
 
-Run:
+## Use the script
 
 ```bash
-python3 skills/postman-json/scripts/sync_postman_collection.py \
+python3 skills/.curated/postman-json/scripts/sync_postman_collection.py \
   --project-root . \
   --server-file ./src/server.js \
   --output ./postman/my-api.postman_collection.json \
@@ -36,23 +38,30 @@ python3 skills/postman-json/scripts/sync_postman_collection.py \
   --base-url "http://localhost:3000"
 ```
 
-Default behavior when options are omitted:
+When flags are omitted, defaults are:
 
-- Auto-detect the server file (`server.js`, `app.js`, `src/server.js`, `src/app.js`, `backend/server.js`, `backend/app.js`, then fallback scan).
-- Write to `./postman/<project-name>.postman_collection.json`.
-- Use collection name `<Project Name> API`.
-- Set `baseUrl` variable to `http://localhost:3000`.
+- Server auto-discovery from common entry paths (`server.js`, `app.js`, `src/server.js`, `src/app.js`, `backend/server.js`, `backend/app.js`) then fallback scan.
+- Output at `./postman/<project-name>.postman_collection.json`.
+- Collection name `<Project Name> API`.
+- `baseUrl` variable `http://localhost:3000`.
 
-## Validate The Output
+## Validation checklist
 
-After syncing, verify:
+1. Endpoints appear in the expected source-structure folder path.
+2. Auth-protected endpoints include bearer auth with `{{shopToken}}`.
+3. Multipart endpoints include file fields and required text fields.
+4. JSON endpoints include expected body templates.
+5. Removed routes no longer appear in the generated subtree.
 
-1. New endpoints appear in the expected source-structure folder.
-2. Auth-protected endpoints include bearer auth (`{{shopToken}}`).
-3. Multipart endpoints include file field placeholders and required text fields.
-4. JSON endpoints include request body templates matching required fields.
+## Reference map
 
-## References
+Read only what you need:
 
-- See [`references/request-inference-rules.md`](references/request-inference-rules.md) for route parsing and request-template inference rules.
-- Use [`scripts/sync_postman_collection.py`](scripts/sync_postman_collection.py) for deterministic collection generation and update.
+- `references/request-inference-rules.md` -> route parsing and request-template inference details.
+- `scripts/sync_postman_collection.py` -> deterministic sync behavior and parser implementation.
+
+## Quality rules
+
+- Keep inference deterministic and route-scoped; avoid file-wide leakage between endpoints.
+- Prefer parser updates over hand-editing generated Postman request bodies.
+- Preserve non-generated collection content when syncing.
