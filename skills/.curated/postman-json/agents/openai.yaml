@@ -1,0 +1,4 @@
+interface:
+  display_name: "Postman JSON"
+  short_description: "Generate and sync Postman collections from backend routes"
+  default_prompt: "Use $postman-json to generate or update a Postman collection JSON from my Express backend endpoints."
