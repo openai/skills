@@ -232,15 +232,47 @@ def resolve_module_path(from_file: Path, import_path: str) -> Optional[Path]:
 
 def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
     imports: Dict[str, Path] = {}
-    pattern = re.compile(
+    esm_pattern = re.compile(
         r"""import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["']\s*;?"""
     )
-    for match in pattern.finditer(text):
+    cjs_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*(?:\.[A-Za-z_$][\w$]*)?\s*;?"""
+    )
+    cjs_destructured_pattern = re.compile(
+        r"""(?:const|let|var)\s*\{\s*([^}]+)\s*\}\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*;?"""
+    )
+
+    for match in esm_pattern.finditer(text):
         alias = match.group(1)
         source = match.group(2)
         resolved = resolve_module_path(file_path, source)
         if resolved:
             imports[alias] = resolved
+
+    for match in cjs_pattern.finditer(text):
+        alias = match.group(1)
+        source = match.group(2)
+        resolved = resolve_module_path(file_path, source)
+        if resolved:
+            imports[alias] = resolved
+
+    for match in cjs_destructured_pattern.finditer(text):
+        raw_bindings = match.group(1)
+        source = match.group(2)
+        resolved = resolve_module_path(file_path, source)
+        if not resolved:
+            continue
+        for raw_binding in split_top_level_commas(raw_bindings):
+            binding = raw_binding.strip()
+            if not binding or binding.startswith("..."):
+                continue
+            if ":" in binding:
+                binding = binding.split(":", 1)[1].strip()
+            if "=" in binding:
+                binding = binding.split("=", 1)[0].strip()
+            alias = extract_identifier(binding)
+            if alias:
+                imports[alias] = resolved
     return imports
 
 
@@ -409,7 +441,6 @@ def parse_route_endpoints(
 ) -> List[Dict[str, Any]]:
     route_text = read_text(route_file)
     route_imports = parse_default_imports(route_file, route_text)
-    route_upload_fields = extract_upload_fields(route_text)
     try:
         route_relative = str(route_file.relative_to(project_root))
     except ValueError:
@@ -428,9 +459,10 @@ def parse_route_endpoints(
         middleware_parts = parts[1:-1]
         handler_source = parts[-1]
         middleware_names = [name for name in (extract_identifier(p) for p in middleware_parts) if name]
+        route_scope_source = "\n".join([*middleware_parts, handler_source])
 
         body_fields = set(extract_body_fields(handler_source))
-        upload_fields = set(route_upload_fields)
+        upload_fields = set(extract_upload_fields(route_scope_source))
         auth_required = False
         needs_file = bool(re.search(r"\breq\.files?\b", handler_source))
 
