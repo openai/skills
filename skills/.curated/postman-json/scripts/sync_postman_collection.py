@@ -640,9 +640,21 @@ def parse_route_endpoints(
     router_names: List[str]
     mounted_router_identifier = extract_identifier(mounted_router_name or "")
     if mounted_router_identifier:
-        router_names = sorted(
+        mounted_aliases = sorted(
             expand_identifier_aliases(route_text, {mounted_router_identifier})
         )
+        has_endpoint_calls = False
+        for alias in mounted_aliases:
+            if any(iter_object_calls(route_text, alias, HTTP_METHODS)):
+                has_endpoint_calls = True
+                break
+
+        # Common Express pattern: server imports route module as `usersRouter`,
+        # but the module itself defines routes on `router`.
+        if has_endpoint_calls:
+            router_names = mounted_aliases
+        else:
+            router_names = extract_router_identifiers(route_text)
     else:
         router_names = extract_router_identifiers(route_text)
 
