@@ -13,24 +13,12 @@ Learn more:
 
 Skills in [`.system`](skills/.system/) are automatically installed in the latest version of Codex.
 
-To install [curated](skills/.curated/) or [experimental](skills/.experimental/) skills, you can use the `$skill-installer` inside Codex.
+To install [curated](skills/.curated/) skills, you can use the `$skill-installer` inside Codex.
 
 Curated skills can be installed by name (defaults to `skills/.curated`):
 
 ```
 $skill-installer gh-address-comments
-```
-
-For experimental skills, specify the skill folder. For example:
-
-```
-$skill-installer install the create-plan skill from the .experimental folder
-```
-
-Or provide the GitHub directory URL:
-
-```
-$skill-installer install https://github.com/openai/skills/tree/main/skills/.experimental/create-plan
 ```
 
 After installing a skill, restart Codex to pick up new skills.
