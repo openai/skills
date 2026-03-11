@@ -1,0 +1,4 @@
+interface:
+  display_name: PayMe
+  short_description: Send and receive USDC/USDT crypto payments across multiple blockchains
+  default_prompt: Check my PayMe wallet balance
