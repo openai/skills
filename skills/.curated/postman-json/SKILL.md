@@ -32,7 +32,7 @@ Generate or refresh a Postman collection from Express source files. Keep the gen
 ```bash
 python3 skills/.curated/postman-json/scripts/sync_postman_collection.py \
   --project-root . \
-  --server-file ./src/server.js \
+  --server-file ./src/server.ts \
   --output ./postman/my-api.postman_collection.json \
   --collection-name "My API" \
   --base-url "http://localhost:3000"
@@ -40,7 +40,7 @@ python3 skills/.curated/postman-json/scripts/sync_postman_collection.py \
 
 When flags are omitted, defaults are:
 
-- Server auto-discovery from common entry paths (`server.js`, `app.js`, `src/server.js`, `src/app.js`, `backend/server.js`, `backend/app.js`) then fallback scan.
+- Server auto-discovery from common entry paths (`server.js`/`server.ts`, `app.js`/`app.ts`, `src/server.js`/`src/server.ts`, `src/app.js`/`src/app.ts`, `backend/server.js`/`backend/server.ts`, `backend/app.js`/`backend/app.ts`) then fallback scan.
 - Output at `./postman/<project-name>.postman_collection.json`.
 - Collection name `<Project Name> API`.
 - `baseUrl` variable `http://localhost:3000`.

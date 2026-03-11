@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
@@ -16,6 +17,12 @@ POSTMAN_SCHEMA = (
     "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 )
 POSTMAN_VARIABLE_PATTERN = re.compile(r"\{\{\s*([A-Za-z_$][\w$-]*)\s*\}\}")
+
+
+@dataclass(frozen=True)
+class ImportBinding:
+    source_path: Path
+    imported_symbol: Optional[str] = None
 
 
 def read_text(path: Path) -> str:
@@ -600,17 +607,19 @@ def resolve_module_path(from_file: Path, import_path: str) -> Optional[Path]:
     candidate = (from_file.parent / import_path).resolve()
     if candidate.is_file():
         return candidate
-    with_js = candidate.with_suffix(".js")
-    if with_js.is_file():
-        return with_js
-    index_js = candidate / "index.js"
-    if index_js.is_file():
-        return index_js
+    for suffix in (".js", ".ts"):
+        with_suffix = candidate.with_suffix(suffix)
+        if with_suffix.is_file():
+            return with_suffix
+    for index_name in ("index.js", "index.ts"):
+        index_file = candidate / index_name
+        if index_file.is_file():
+            return index_file
     return None
 
 
-def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
-    imports: Dict[str, Path] = {}
+def parse_default_imports(file_path: Path, text: str) -> Dict[str, ImportBinding]:
+    imports: Dict[str, ImportBinding] = {}
     esm_default_pattern = re.compile(
         r"""import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["']\s*;?"""
     )
@@ -621,7 +630,7 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         r"""import\s+([A-Za-z_$][\w$]*)\s*,\s*\{\s*([^}]+)\s*\}\s*from\s*["']([^"']+)["']\s*;?"""
     )
     cjs_pattern = re.compile(
-        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*(?:\.[A-Za-z_$][\w$]*)?\s*;?"""
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*(?:\.([A-Za-z_$][\w$]*))?\s*;?"""
     )
     cjs_destructured_pattern = re.compile(
         r"""(?:const|let|var)\s*\{\s*([^}]+)\s*\}\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*;?"""
@@ -632,7 +641,7 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         source = match.group(2)
         resolved = resolve_module_path(file_path, source)
         if resolved:
-            imports[alias] = resolved
+            imports[alias] = ImportBinding(source_path=resolved, imported_symbol="default")
 
     for match in esm_named_pattern.finditer(text):
         raw_bindings = match.group(1)
@@ -640,9 +649,11 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         resolved = resolve_module_path(file_path, source)
         if not resolved:
             continue
-        for alias in extract_named_binding_aliases(raw_bindings):
+        for alias, original in extract_named_binding_aliases(raw_bindings).items():
             if alias:
-                imports[alias] = resolved
+                imports[alias] = ImportBinding(
+                    source_path=resolved, imported_symbol=original
+                )
 
     for match in esm_default_named_pattern.finditer(text):
         default_alias = match.group(1)
@@ -651,17 +662,22 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         resolved = resolve_module_path(file_path, source)
         if not resolved:
             continue
-        imports[default_alias] = resolved
-        for alias in extract_named_binding_aliases(raw_bindings):
+        imports[default_alias] = ImportBinding(
+            source_path=resolved, imported_symbol="default"
+        )
+        for alias, original in extract_named_binding_aliases(raw_bindings).items():
             if alias:
-                imports[alias] = resolved
+                imports[alias] = ImportBinding(
+                    source_path=resolved, imported_symbol=original
+                )
 
     for match in cjs_pattern.finditer(text):
         alias = match.group(1)
         source = match.group(2)
+        member = match.group(3)
         resolved = resolve_module_path(file_path, source)
         if resolved:
-            imports[alias] = resolved
+            imports[alias] = ImportBinding(source_path=resolved, imported_symbol=member)
 
     for match in cjs_destructured_pattern.finditer(text):
         raw_bindings = match.group(1)
@@ -669,9 +685,11 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         resolved = resolve_module_path(file_path, source)
         if not resolved:
             continue
-        for alias in extract_named_binding_aliases(raw_bindings):
+        for alias, original in extract_named_binding_aliases(raw_bindings).items():
             if alias:
-                imports[alias] = resolved
+                imports[alias] = ImportBinding(
+                    source_path=resolved, imported_symbol=original
+                )
     return imports
 
 
@@ -749,13 +767,29 @@ def infer_field_example(field_name: str) -> Any:
 
 
 def ensure_variable(
-    collection: Dict[str, Any], key: str, default_value: str, description: str
+    collection: Dict[str, Any],
+    key: str,
+    default_value: str,
+    description: str,
+    overwrite: bool = False,
 ) -> None:
     variables = collection.setdefault("variable", [])
     for variable in variables:
         if variable.get("key") == key:
+            if overwrite:
+                variable["value"] = default_value
+                variable["type"] = "string"
+                variable["description"] = description
             return
     variables.append({"key": key, "value": default_value, "type": "string", "description": description})
+
+
+def get_variable_value(collection: Dict[str, Any], key: str) -> Optional[str]:
+    for variable in collection.get("variable", []):
+        if variable.get("key") == key:
+            value = variable.get("value")
+            return value if isinstance(value, str) else None
+    return None
 
 
 def resolve_path_from_root(root: Path, raw_path: str) -> Path:
@@ -813,11 +847,17 @@ def discover_server_file(project_root: Path, explicit_server_file: Optional[str]
 
     preferred_candidates = [
         "server.js",
+        "server.ts",
         "app.js",
+        "app.ts",
         "src/server.js",
+        "src/server.ts",
         "src/app.js",
+        "src/app.ts",
         "backend/server.js",
+        "backend/server.ts",
         "backend/app.js",
+        "backend/app.ts",
     ]
     for rel in preferred_candidates:
         candidate = (project_root / rel).resolve()
@@ -826,30 +866,31 @@ def discover_server_file(project_root: Path, explicit_server_file: Optional[str]
 
     excluded_dirs = {"node_modules", ".git", "dist", "build", "coverage"}
     scanned_candidates: List[Path] = []
-    rglob_iter = project_root.rglob("*.js")
-    while True:
-        try:
-            candidate = next(rglob_iter)
-        except StopIteration:
-            break
-        except PermissionError as exc:
-            print(
-                f"Warning: skipping restricted directory while scanning for server file: {exc}",
-                file=sys.stderr,
-            )
-            continue
-        relative_parts = candidate.relative_to(project_root).parts
-        if any(part in excluded_dirs for part in relative_parts[:-1]):
-            continue
-        try:
-            text = read_text(candidate)
-        except UnicodeDecodeError:
-            continue
-        app_identifiers = extract_express_app_identifiers(text)
-        if not app_identifiers:
-            continue
-        if any(re.search(rf"\b{re.escape(name)}\.use\s*\(", text) for name in app_identifiers):
-            scanned_candidates.append(candidate.resolve())
+    for pattern in ("*.js", "*.ts"):
+        rglob_iter = project_root.rglob(pattern)
+        while True:
+            try:
+                candidate = next(rglob_iter)
+            except StopIteration:
+                break
+            except OSError as exc:
+                print(
+                    f"Warning: skipping inaccessible path while scanning for server file: {exc}",
+                    file=sys.stderr,
+                )
+                continue
+            relative_parts = candidate.relative_to(project_root).parts
+            if any(part in excluded_dirs for part in relative_parts[:-1]):
+                continue
+            try:
+                text = read_text(candidate)
+            except (OSError, UnicodeDecodeError):
+                continue
+            app_identifiers = extract_express_app_identifiers(text)
+            if not app_identifiers:
+                continue
+            if any(re.search(rf"\b{re.escape(name)}\.use\s*\(", text) for name in app_identifiers):
+                scanned_candidates.append(candidate.resolve())
 
     if not scanned_candidates:
         return None
@@ -896,7 +937,11 @@ def extract_mounts(server_path: Path, server_text: str) -> List[Dict[str, Any]]:
                         continue
                     inline_source = parse_require_source(callback_expr)
                     router_name = None if inline_source else extract_identifier(callback_expr)
-                    route_file: Optional[Path] = imports.get(router_name) if router_name else None
+                    route_file: Optional[Path] = (
+                        imports.get(router_name).source_path
+                        if router_name and router_name in imports
+                        else None
+                    )
 
                     if not route_file and inline_source:
                         route_file = resolve_module_path(server_path, inline_source)
@@ -925,6 +970,309 @@ def extract_mounts(server_path: Path, server_text: str) -> List[Dict[str, Any]]:
     return mounts
 
 
+def find_matching_brace(text: str, open_idx: int) -> Optional[int]:
+    depth = 0
+    state: Optional[str] = None
+    escaped = False
+    i = open_idx
+    while i < len(text):
+        ch = text[i]
+        nxt = text[i + 1] if i + 1 < len(text) else ""
+
+        if state == "line_comment":
+            if ch == "\n":
+                state = None
+            i += 1
+            continue
+        if state == "block_comment":
+            if ch == "*" and nxt == "/":
+                state = None
+                i += 2
+                continue
+            i += 1
+            continue
+        if state in {"single", "double", "template"}:
+            if escaped:
+                escaped = False
+                i += 1
+                continue
+            if ch == "\\":
+                escaped = True
+                i += 1
+                continue
+            if (
+                (state == "single" and ch == "'")
+                or (state == "double" and ch == '"')
+                or (state == "template" and ch == "`")
+            ):
+                state = None
+            i += 1
+            continue
+
+        if ch == "/" and nxt == "/":
+            state = "line_comment"
+            i += 2
+            continue
+        if ch == "/" and nxt == "*":
+            state = "block_comment"
+            i += 2
+            continue
+        if ch == "'":
+            state = "single"
+            i += 1
+            continue
+        if ch == '"':
+            state = "double"
+            i += 1
+            continue
+        if ch == "`":
+            state = "template"
+            i += 1
+            continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return i
+        i += 1
+    return None
+
+
+def find_statement_end(text: str, start_idx: int) -> int:
+    paren = 0
+    curly = 0
+    square = 0
+    state: Optional[str] = None
+    escaped = False
+    i = start_idx
+    while i < len(text):
+        ch = text[i]
+        nxt = text[i + 1] if i + 1 < len(text) else ""
+
+        if state == "line_comment":
+            if ch == "\n":
+                state = None
+            i += 1
+            continue
+        if state == "block_comment":
+            if ch == "*" and nxt == "/":
+                state = None
+                i += 2
+                continue
+            i += 1
+            continue
+        if state in {"single", "double", "template"}:
+            if escaped:
+                escaped = False
+                i += 1
+                continue
+            if ch == "\\":
+                escaped = True
+                i += 1
+                continue
+            if (
+                (state == "single" and ch == "'")
+                or (state == "double" and ch == '"')
+                or (state == "template" and ch == "`")
+            ):
+                state = None
+            i += 1
+            continue
+
+        if ch == "/" and nxt == "/":
+            state = "line_comment"
+            i += 2
+            continue
+        if ch == "/" and nxt == "*":
+            state = "block_comment"
+            i += 2
+            continue
+        if ch == "'":
+            state = "single"
+            i += 1
+            continue
+        if ch == '"':
+            state = "double"
+            i += 1
+            continue
+        if ch == "`":
+            state = "template"
+            i += 1
+            continue
+
+        if ch == "(":
+            paren += 1
+        elif ch == ")":
+            paren -= 1
+        elif ch == "{":
+            curly += 1
+        elif ch == "}":
+            curly -= 1
+        elif ch == "[":
+            square += 1
+        elif ch == "]":
+            square -= 1
+        elif ch == ";" and paren == 0 and curly == 0 and square == 0:
+            return i + 1
+        i += 1
+    return len(text)
+
+
+def collect_exported_local_candidates(source_text: str, export_name: str) -> set[str]:
+    candidates = {export_name}
+
+    export_list_pattern = re.compile(r"""export\s*\{\s*([^}]+)\s*\}\s*;?""")
+    for match in export_list_pattern.finditer(source_text):
+        bindings = extract_named_binding_aliases(match.group(1))
+        for alias, original in bindings.items():
+            if alias == export_name:
+                candidates.add(original)
+
+    module_exports_pattern = re.compile(r"""module\.exports\s*=\s*\{""")
+    for match in module_exports_pattern.finditer(source_text):
+        open_brace = source_text.find("{", match.start())
+        if open_brace == -1:
+            continue
+        close_brace = find_matching_brace(source_text, open_brace)
+        if close_brace is None:
+            continue
+        for part in split_top_level_commas(source_text[open_brace + 1 : close_brace]):
+            entry = part.strip()
+            if not entry:
+                continue
+            if ":" in entry:
+                left, right = entry.split(":", 1)
+                key = parse_js_string_literal(left.strip()) or extract_identifier(left)
+                value_identifier = extract_identifier(right)
+                if key == export_name and value_identifier and value_identifier != "async":
+                    candidates.add(value_identifier)
+            else:
+                shorthand = extract_identifier(entry)
+                if shorthand == export_name:
+                    candidates.add(shorthand)
+
+    return candidates
+
+
+def collect_scoped_source_for_symbol(source_text: str, export_name: str) -> Optional[str]:
+    snippets: List[str] = []
+    seen_spans: set[Tuple[int, int]] = set()
+    seen_inline_snippets: set[str] = set()
+
+    def append_span(start: int, end: int) -> None:
+        if end <= start:
+            return
+        key = (start, end)
+        if key in seen_spans:
+            return
+        seen_spans.add(key)
+        snippets.append(source_text[start:end])
+
+    def append_inline_snippet(snippet: str) -> None:
+        normalized = snippet.strip()
+        if not normalized or normalized in seen_inline_snippets:
+            return
+        seen_inline_snippets.add(normalized)
+        snippets.append(normalized)
+
+    def assignment_span_end(match_start: int, after_match_idx: int) -> int:
+        end = find_statement_end(source_text, match_start)
+        if end != len(source_text):
+            return end
+        # ASI-safe fallback when there is no trailing semicolon.
+        open_brace = source_text.find("{", after_match_idx)
+        if open_brace != -1:
+            close_brace = find_matching_brace(source_text, open_brace)
+            if close_brace is not None:
+                return close_brace + 1
+        return end
+
+    symbols_to_scan: set[str]
+    if export_name == "default":
+        symbols_to_scan = set()
+        for pattern in (
+            re.compile(r"""export\s+default\b"""),
+            re.compile(r"""module\.exports\s*="""),
+            re.compile(r"""(?:module\.)?exports\.default\s*="""),
+        ):
+            for match in pattern.finditer(source_text):
+                end = assignment_span_end(match.start(), match.end())
+                append_span(match.start(), end)
+                statement = source_text[match.start() : end]
+                rhs = None
+                export_default_match = re.search(
+                    r"""export\s+default\s+(.+?)\s*;?\s*$""",
+                    statement,
+                    re.DOTALL,
+                )
+                if export_default_match:
+                    rhs = export_default_match.group(1).strip()
+                else:
+                    assignment_rhs_match = re.search(r"""=\s*(.+?)\s*;?\s*$""", statement, re.DOTALL)
+                    if assignment_rhs_match:
+                        rhs = assignment_rhs_match.group(1).strip()
+                if rhs:
+                    identifier = extract_identifier(rhs)
+                    if identifier:
+                        symbols_to_scan.add(identifier)
+    else:
+        module_exports_pattern = re.compile(r"""module\.exports\s*=\s*\{""")
+        for match in module_exports_pattern.finditer(source_text):
+            open_brace = source_text.find("{", match.start())
+            if open_brace == -1:
+                continue
+            close_brace = find_matching_brace(source_text, open_brace)
+            if close_brace is None:
+                continue
+            object_body = source_text[open_brace + 1 : close_brace]
+            for part in split_top_level_commas(object_body):
+                entry = part.strip()
+                if not entry or ":" not in entry:
+                    continue
+                left, right = entry.split(":", 1)
+                key = parse_js_string_literal(left.strip()) or extract_identifier(left)
+                if key == export_name:
+                    append_inline_snippet(right)
+        symbols_to_scan = collect_exported_local_candidates(source_text, export_name)
+
+    for symbol in symbols_to_scan:
+        function_pattern = re.compile(
+            rf"""(?:export\s+)?(?:async\s+)?function\s+{re.escape(symbol)}\s*\("""
+        )
+        for match in function_pattern.finditer(source_text):
+            param_open = match.end() - 1
+            param_close = find_matching_paren(source_text, param_open)
+            if param_close is None:
+                continue
+            open_brace = source_text.find("{", param_close + 1)
+            if open_brace == -1:
+                continue
+            close_brace = find_matching_brace(source_text, open_brace)
+            if close_brace is None:
+                continue
+            append_span(match.start(), close_brace + 1)
+
+        for pattern in (
+            re.compile(
+                rf"""(?:export\s+)?(?:const|let|var)\s+{re.escape(symbol)}\s*="""
+            ),
+            re.compile(
+                rf"""(?:module\.)?exports\.{re.escape(symbol)}\s*="""
+            ),
+            re.compile(
+                rf"""module\.exports\s*\[\s*["']{re.escape(symbol)}["']\s*\]\s*="""
+            ),
+        ):
+            for match in pattern.finditer(source_text):
+                append_span(
+                    match.start(),
+                    assignment_span_end(match.start(), match.end()),
+                )
+
+    return "\n".join(snippets) if snippets else None
+
+
 def analyze_source_requirements(source_text: str) -> Dict[str, Any]:
     return {
         "body_fields": extract_body_fields(source_text),
@@ -934,11 +1282,95 @@ def analyze_source_requirements(source_text: str) -> Dict[str, Any]:
     }
 
 
+def build_endpoint_from_parts(
+    *,
+    method: str,
+    route_path: str,
+    middleware_parts: List[str],
+    handler_source: str,
+    mount_path: str,
+    route_imports: Dict[str, ImportBinding],
+    requirement_cache: Dict[Tuple[Path, Optional[str]], Dict[str, Any]],
+    route_relative: str,
+) -> Dict[str, Any]:
+    middleware_names: List[str] = []
+    for middleware_part in middleware_parts:
+        for middleware_name in extract_identifiers_from_expr(middleware_part):
+            if middleware_name not in middleware_names:
+                middleware_names.append(middleware_name)
+    route_scope_source = "\n".join([*middleware_parts, handler_source])
+
+    body_fields = set(extract_body_fields(route_scope_source))
+    upload_fields = set(extract_upload_fields(route_scope_source))
+    auth_required = False
+    needs_file = bool(re.search(r"\breq\.files?\b", route_scope_source))
+
+    for middleware in middleware_names:
+        lowered = middleware.lower()
+        if "auth" in lowered:
+            auth_required = True
+        if "upload" in lowered:
+            needs_file = True
+
+        binding = route_imports.get(middleware)
+        if not binding:
+            continue
+        source_path = binding.source_path
+        imported_symbol = binding.imported_symbol
+        if not source_path.exists():
+            continue
+
+        cache_key = (source_path, imported_symbol)
+        if cache_key not in requirement_cache:
+            try:
+                source_text = read_text(source_path)
+            except (OSError, UnicodeDecodeError) as exc:
+                print(
+                    f"Warning: cannot read middleware source {source_path}: {exc}",
+                    file=sys.stderr,
+                )
+                continue
+
+            if imported_symbol:
+                scoped_source = collect_scoped_source_for_symbol(
+                    source_text, imported_symbol
+                )
+                if scoped_source:
+                    requirement_cache[cache_key] = analyze_source_requirements(
+                        scoped_source
+                    )
+                else:
+                    # If scoped extraction misses a valid export shape,
+                    # fall back to file-level inference instead of dropping signals.
+                    requirement_cache[cache_key] = analyze_source_requirements(source_text)
+            else:
+                requirement_cache[cache_key] = analyze_source_requirements(source_text)
+
+        requirement = requirement_cache[cache_key]
+        body_fields.update(requirement["body_fields"])
+        upload_fields.update(requirement["upload_fields"])
+        auth_required = auth_required or requirement["auth"]
+        needs_file = needs_file or requirement["needs_file"]
+
+    full_path = path_join(mount_path, route_path)
+    return {
+        "method": method.upper(),
+        "path": full_path,
+        "path_postman": to_postman_path(full_path),
+        "route_file_relative": route_relative,
+        "middleware_names": middleware_names,
+        "body_fields": sorted(body_fields),
+        "upload_fields": sorted(upload_fields),
+        "needs_file": needs_file or bool(upload_fields),
+        "auth_required": auth_required,
+    }
+
+
 def parse_route_endpoints(
     route_file: Path,
     mount_path: str,
     project_root: Path,
-    requirement_cache: Dict[Path, Dict[str, Any]],
+    requirement_cache: Dict[Tuple[Path, Optional[str]], Dict[str, Any]],
     mounted_router_name: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     try:
@@ -994,59 +1426,17 @@ def parse_route_endpoints(
 
             middleware_parts = parts[1:-1]
             handler_source = parts[-1]
-            middleware_names: List[str] = []
-            for middleware_part in middleware_parts:
-                for middleware_name in extract_identifiers_from_expr(middleware_part):
-                    if middleware_name not in middleware_names:
-                        middleware_names.append(middleware_name)
-            route_scope_source = "\n".join([*middleware_parts, handler_source])
-
-            body_fields = set(extract_body_fields(route_scope_source))
-            upload_fields = set(extract_upload_fields(route_scope_source))
-            auth_required = False
-            needs_file = bool(re.search(r"\breq\.files?\b", route_scope_source))
-
-            for middleware in middleware_names:
-                lowered = middleware.lower()
-                if "auth" in lowered:
-                    auth_required = True
-                if "upload" in lowered:
-                    needs_file = True
-
-                source_path = route_imports.get(middleware)
-                if not source_path or not source_path.exists():
-                    continue
-
-                if source_path not in requirement_cache:
-                    try:
-                        requirement_cache[source_path] = analyze_source_requirements(
-                            read_text(source_path)
-                        )
-                    except (OSError, UnicodeDecodeError) as exc:
-                        print(
-                            f"Warning: cannot read middleware source {source_path}: {exc}",
-                            file=sys.stderr,
-                        )
-                        continue
-                requirement = requirement_cache[source_path]
-                body_fields.update(requirement["body_fields"])
-                upload_fields.update(requirement["upload_fields"])
-                auth_required = auth_required or requirement["auth"]
-                needs_file = needs_file or requirement["needs_file"]
-
-            full_path = path_join(mount_path, route_path)
             endpoints.append(
-                {
-                    "method": method.upper(),
-                    "path": full_path,
-                    "path_postman": to_postman_path(full_path),
-                    "route_file_relative": route_relative,
-                    "middleware_names": middleware_names,
-                    "body_fields": sorted(body_fields),
-                    "upload_fields": sorted(upload_fields),
-                    "needs_file": needs_file or bool(upload_fields),
-                    "auth_required": auth_required,
-                }
+                build_endpoint_from_parts(
+                    method=method,
+                    route_path=route_path,
+                    middleware_parts=middleware_parts,
+                    handler_source=handler_source,
+                    mount_path=mount_path,
+                    route_imports=route_imports,
+                    requirement_cache=requirement_cache,
+                    route_relative=route_relative,
+                )
             )
         for method, method_args, route_path in iter_router_route_calls(route_text, router_name):
             handler_parts = split_top_level_commas(method_args)
@@ -1055,59 +1445,17 @@ def parse_route_endpoints(
 
             middleware_parts = handler_parts[:-1]
             handler_source = handler_parts[-1]
-            middleware_names: List[str] = []
-            for middleware_part in middleware_parts:
-                for middleware_name in extract_identifiers_from_expr(middleware_part):
-                    if middleware_name not in middleware_names:
-                        middleware_names.append(middleware_name)
-            route_scope_source = "\n".join([*middleware_parts, handler_source])
-
-            body_fields = set(extract_body_fields(route_scope_source))
-            upload_fields = set(extract_upload_fields(route_scope_source))
-            auth_required = False
-            needs_file = bool(re.search(r"\breq\.files?\b", route_scope_source))
-
-            for middleware in middleware_names:
-                lowered = middleware.lower()
-                if "auth" in lowered:
-                    auth_required = True
-                if "upload" in lowered:
-                    needs_file = True
-
-                source_path = route_imports.get(middleware)
-                if not source_path or not source_path.exists():
-                    continue
-
-                if source_path not in requirement_cache:
-                    try:
-                        requirement_cache[source_path] = analyze_source_requirements(
-                            read_text(source_path)
-                        )
-                    except (OSError, UnicodeDecodeError) as exc:
-                        print(
-                            f"Warning: cannot read middleware source {source_path}: {exc}",
-                            file=sys.stderr,
-                        )
-                        continue
-                requirement = requirement_cache[source_path]
-                body_fields.update(requirement["body_fields"])
-                upload_fields.update(requirement["upload_fields"])
-                auth_required = auth_required or requirement["auth"]
-                needs_file = needs_file or requirement["needs_file"]
-
-            full_path = path_join(mount_path, route_path)
             endpoints.append(
-                {
-                    "method": method.upper(),
-                    "path": full_path,
-                    "path_postman": to_postman_path(full_path),
-                    "route_file_relative": route_relative,
-                    "middleware_names": middleware_names,
-                    "body_fields": sorted(body_fields),
-                    "upload_fields": sorted(upload_fields),
-                    "needs_file": needs_file or bool(upload_fields),
-                    "auth_required": auth_required,
-                }
+                build_endpoint_from_parts(
+                    method=method,
+                    route_path=route_path,
+                    middleware_parts=middleware_parts,
+                    handler_source=handler_source,
+                    mount_path=mount_path,
+                    route_imports=route_imports,
+                    requirement_cache=requirement_cache,
+                    route_relative=route_relative,
+                )
             )
 
     return endpoints
@@ -1279,7 +1627,11 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
         default=None,
         help="Postman collection name. Defaults to <Project Name> API",
     )
-    parser.add_argument("--base-url", default="http://localhost:3000", help="Default baseUrl variable")
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="Default baseUrl variable. When omitted, existing collection value is preserved.",
+    )
     parser.add_argument(
         "--generated-root-name",
         default="source",
@@ -1322,7 +1674,7 @@ def main(argv: Sequence[str]) -> int:
         )
         return 1
 
-    requirement_cache: Dict[Path, Dict[str, Any]] = {}
+    requirement_cache: Dict[Tuple[Path, Optional[str]], Dict[str, Any]] = {}
     endpoints: List[Dict[str, Any]] = []
     for mount in mounts:
         route_file = mount["route_file"]
@@ -1372,18 +1724,23 @@ def main(argv: Sequence[str]) -> int:
         collection["info"].setdefault("name", collection_name)
     collection["info"]["schema"] = POSTMAN_SCHEMA
 
+    base_url_value = args.base_url
+    if base_url_value is None:
+        base_url_value = get_variable_value(collection, "baseUrl") or "http://localhost:3000"
+
     ensure_variable(
         collection,
         "baseUrl",
-        args.base_url,
+        base_url_value,
         "Base URL for API requests, including protocol and port.",
+        overwrite=args.base_url is not None,
     )
 
     generated_root = build_generated_tree(endpoints, args.generated_root_name)
     replace_generated_root(collection, generated_root, args.generated_root_name)
     referenced_variables = collect_referenced_variables(generated_root)
     for variable_name in sorted(referenced_variables):
-        default_value, description = infer_variable_metadata(variable_name, args.base_url)
+        default_value, description = infer_variable_metadata(variable_name, base_url_value)
         ensure_variable(collection, variable_name, default_value, description)
 
     output_file.parent.mkdir(parents=True, exist_ok=True)
