@@ -26,7 +26,7 @@ Infer requirements in this order:
 
 ### Auth
 
-- If middleware name contains `auth`, set bearer auth with `{{shopToken}}`.
+- If middleware name contains `auth`, set bearer auth with `{{token}}`.
 - If middleware source reads `req.headers.authorization`, set bearer auth.
 
 ### Body Mode
@@ -39,7 +39,6 @@ Infer requirements in this order:
 
 - Extract from `req.body.<field>` and `req.body?.<field>`.
 - Include destructured fields from patterns like `const { fieldA } = req.body`.
-- Add middleware-derived fields (for example `turnstileToken`) when detected.
 
 ## Update Strategy
 
@@ -49,5 +48,4 @@ On each sync:
 2. Replace the generated root subtree entirely with fresh route output.
 3. Keep collection variables and ensure defaults exist:
 - `baseUrl`
-- `shopToken`
-- `turnstileToken`
+- `token`

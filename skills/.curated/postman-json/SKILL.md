@@ -21,7 +21,7 @@ Generate or refresh a Postman collection from Express source files. Keep the gen
 4. Infer request requirements from middleware/handler context and imported middleware source:
 - Bearer auth when auth middleware is detected.
 - Multipart mode with file fields when upload middleware or `req.file`/`req.files` usage is detected.
-- Body fields from `req.body` access and middleware-derived fields (for example `turnstileToken`).
+- Body fields from `req.body` access.
 5. Sync collection JSON:
 - Preserve non-generated top-level items.
 - Replace only the generated root subtree.
@@ -48,7 +48,7 @@ When flags are omitted, defaults are:
 ## Validation checklist
 
 1. Endpoints appear in the expected source-structure folder path.
-2. Auth-protected endpoints include bearer auth with `{{shopToken}}`.
+2. Auth-protected endpoints include bearer auth with `{{token}}`.
 3. Multipart endpoints include file fields and required text fields.
 4. JSON endpoints include expected body templates.
 5. Removed routes no longer appear in the generated subtree.
