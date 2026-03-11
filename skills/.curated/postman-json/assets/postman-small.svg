@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Postman icon">
+  <defs>
+    <linearGradient id="pmSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff8f45" />
+      <stop offset="100%" stop-color="#ff6c37" />
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="384" height="384" rx="92" fill="#fff4ef" />
+  <circle cx="200" cy="200" r="132" fill="url(#pmSmall)" />
+  <path d="M138 223l71-34-49 68h34l74-102-71 34 49-68h-34z" fill="#ffffff" />
+</svg>
