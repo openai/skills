@@ -458,10 +458,10 @@ flowchart TD
 If a Conductor server is running, link the user to the visual workflow editor:
 
 ```
-{SERVER_UI_URL}/workflowDef/{workflowName}
+{BASE_URL}/workflowDef/{workflowName}
 ```
 
-Where `SERVER_UI_URL` is the server host without `/api` (e.g. `http://localhost:8080` or `https://play.orkes.io`). For example: `http://localhost:8080/workflowDef/order-processing`
+Where `BASE_URL` is derived from `CONDUCTOR_SERVER_URL` by stripping the `/api` suffix. For example, if `CONDUCTOR_SERVER_URL` is `http://localhost:8080/api`, then the UI link is `http://localhost:8080/workflowDef/order-processing`. Always resolve the actual URL — never output a placeholder like `{SERVER_UI_URL}`.
 
 ## Output formatting
 
