@@ -214,6 +214,87 @@ def skip_whitespace_and_comments(text: str, idx: int) -> int:
     return idx
 
 
+def mask_js_comments_and_strings(text: str) -> str:
+    """Replace comment/string regions with spaces while preserving indexes."""
+    chars = list(text)
+    state: Optional[str] = None
+    escaped = False
+    i = 0
+    while i < len(chars):
+        ch = chars[i]
+        nxt = chars[i + 1] if i + 1 < len(chars) else ""
+
+        if state == "line_comment":
+            if ch == "\n":
+                state = None
+                i += 1
+                continue
+            chars[i] = " "
+            i += 1
+            continue
+        if state == "block_comment":
+            if ch == "*" and nxt == "/":
+                chars[i] = " "
+                chars[i + 1] = " "
+                state = None
+                i += 2
+                continue
+            if ch != "\n":
+                chars[i] = " "
+            i += 1
+            continue
+        if state in {"single", "double", "template"}:
+            if ch != "\n":
+                chars[i] = " "
+            if escaped:
+                escaped = False
+                i += 1
+                continue
+            if ch == "\\":
+                escaped = True
+                i += 1
+                continue
+            if (
+                (state == "single" and ch == "'")
+                or (state == "double" and ch == '"')
+                or (state == "template" and ch == "`")
+            ):
+                state = None
+            i += 1
+            continue
+
+        if ch == "/" and nxt == "/":
+            chars[i] = " "
+            chars[i + 1] = " "
+            state = "line_comment"
+            i += 2
+            continue
+        if ch == "/" and nxt == "*":
+            chars[i] = " "
+            chars[i + 1] = " "
+            state = "block_comment"
+            i += 2
+            continue
+        if ch == "'":
+            chars[i] = " "
+            state = "single"
+            i += 1
+            continue
+        if ch == '"':
+            chars[i] = " "
+            state = "double"
+            i += 1
+            continue
+        if ch == "`":
+            chars[i] = " "
+            state = "template"
+            i += 1
+            continue
+        i += 1
+
+    return "".join(chars)
+
+
 def match_chained_method_call(
     text: str, start_idx: int
 ) -> Optional[Tuple[str, str, int]]:
@@ -242,8 +323,9 @@ def match_chained_method_call(
 def iter_router_route_calls(
     text: str, router_name: str
 ) -> Iterable[Tuple[str, str, str]]:
+    scan_text = mask_js_comments_and_strings(text)
     pattern = re.compile(rf"\b{re.escape(router_name)}\.route\s*\(")
-    for match in pattern.finditer(text):
+    for match in pattern.finditer(scan_text):
         open_idx = match.end() - 1
         close_idx = find_matching_paren(text, open_idx)
         if close_idx is None:
@@ -272,8 +354,9 @@ def iter_object_calls(
     text: str, object_name: str, methods: Optional[Iterable[str]] = None
 ) -> Iterable[Tuple[str, str, int, int]]:
     allowed = set(m.lower() for m in methods) if methods else None
+    scan_text = mask_js_comments_and_strings(text)
     pattern = re.compile(rf"\b{re.escape(object_name)}\.([A-Za-z_$][\w$]*)\s*\(")
-    for match in pattern.finditer(text):
+    for match in pattern.finditer(scan_text):
         method = match.group(1)
         if allowed is not None and method.lower() not in allowed:
             continue
