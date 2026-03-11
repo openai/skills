@@ -146,6 +146,37 @@ app.use("/users", usersRouter);
         self.assertEqual(mounts[0]["mount_path"], "/users")
         self.assertEqual(mounts[0]["route_file"], route_file.resolve())
 
+    def test_extract_mounts_resolves_named_esm_router_import(self) -> None:
+        server_text = """\
+import express from "express";
+import { usersRouter } from "./routes/users.js";
+
+const app = express();
+app.use("/users", usersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            route_file = project_root / "routes/users.js"
+            route_file.parent.mkdir(parents=True, exist_ok=True)
+            route_file.write_text(
+                """\
+import express from "express";
+
+const router = express.Router();
+export { router as usersRouter };
+""",
+                encoding="utf-8",
+            )
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        self.assertEqual(len(mounts), 1)
+        self.assertEqual(mounts[0]["router_name"], "usersRouter")
+        self.assertEqual(mounts[0]["mount_path"], "/users")
+        self.assertEqual(mounts[0]["route_file"], route_file.resolve())
+
     def test_extract_mounts_supports_inline_require_final_argument(self) -> None:
         server_text = """\
 const express = require("express");

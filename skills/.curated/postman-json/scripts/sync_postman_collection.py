@@ -408,8 +408,14 @@ def resolve_module_path(from_file: Path, import_path: str) -> Optional[Path]:
 
 def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
     imports: Dict[str, Path] = {}
-    esm_pattern = re.compile(
+    esm_default_pattern = re.compile(
         r"""import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["']\s*;?"""
+    )
+    esm_named_pattern = re.compile(
+        r"""import\s*\{\s*([^}]+)\s*\}\s*from\s*["']([^"']+)["']\s*;?"""
+    )
+    esm_default_named_pattern = re.compile(
+        r"""import\s+([A-Za-z_$][\w$]*)\s*,\s*\{\s*([^}]+)\s*\}\s*from\s*["']([^"']+)["']\s*;?"""
     )
     cjs_pattern = re.compile(
         r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*(?:\.[A-Za-z_$][\w$]*)?\s*;?"""
@@ -418,12 +424,34 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         r"""(?:const|let|var)\s*\{\s*([^}]+)\s*\}\s*=\s*require\(\s*["']([^"']+)["']\s*\)\s*;?"""
     )
 
-    for match in esm_pattern.finditer(text):
+    for match in esm_default_pattern.finditer(text):
         alias = match.group(1)
         source = match.group(2)
         resolved = resolve_module_path(file_path, source)
         if resolved:
             imports[alias] = resolved
+
+    for match in esm_named_pattern.finditer(text):
+        raw_bindings = match.group(1)
+        source = match.group(2)
+        resolved = resolve_module_path(file_path, source)
+        if not resolved:
+            continue
+        for alias in extract_named_binding_aliases(raw_bindings):
+            if alias:
+                imports[alias] = resolved
+
+    for match in esm_default_named_pattern.finditer(text):
+        default_alias = match.group(1)
+        raw_bindings = match.group(2)
+        source = match.group(3)
+        resolved = resolve_module_path(file_path, source)
+        if not resolved:
+            continue
+        imports[default_alias] = resolved
+        for alias in extract_named_binding_aliases(raw_bindings):
+            if alias:
+                imports[alias] = resolved
 
     for match in cjs_pattern.finditer(text):
         alias = match.group(1)
@@ -632,11 +660,12 @@ def extract_mounts(server_path: Path, server_text: str) -> List[Dict[str, Any]]:
             if method != "use":
                 continue
             parts = split_top_level_commas(args)
-            if len(parts) < 2:
+            if not parts:
                 continue
-            mount_path = parse_js_string_literal(parts[0])
-            if not mount_path:
-                continue
+            mount_path = "/"
+            parsed_mount_path = parse_js_string_literal(parts[0]) if len(parts) >= 2 else None
+            if parsed_mount_path is not None:
+                mount_path = parsed_mount_path or "/"
 
             final_arg = parts[-1].strip()
             inline_source = parse_require_source(final_arg)
