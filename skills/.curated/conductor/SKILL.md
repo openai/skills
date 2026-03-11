@@ -11,10 +11,10 @@ allowed-tools: Bash(conductor *), Bash(python3 *conductor_api.py*), Bash(npm ins
 - **Never use `python3 -c`** for any purpose — not to construct JSON, parse output, format results, or post-process data. Instead:
   - Write JSON to files using the Write tool or heredoc, then pass the file path to CLI commands.
   - Format and summarize command output directly in your response text. You can read and interpret JSON output yourself — do not spawn Python to do it.
-- **Always install and use the `conductor` CLI proactively**. If it's missing, **run** `npm install -g @conductor-oss/conductor-cli` yourself — do not just tell the user to do it. Only fall back to `scripts/conductor_api.py` if Node.js/npm cannot be installed.
+- **Always install and use the `conductor` CLI proactively**. If it's missing, **run** `npm install -g @conductor-oss/conductor-cli` yourself — do not just tell the user to do it. You **must** verify the CLI is unavailable (`conductor --version`) and that npm/Node.js cannot be installed (`npm --version`) before falling back to `scripts/conductor_api.py`. Never skip straight to the fallback — always attempt CLI installation first.
 - **Use `--json` flags** when available to get structured output from the CLI, then summarize the results in your response text.
 - **Never echo auth tokens** in output or logs.
-- **Infer the profile from context.** When the user mentions an environment (e.g. "dev", "prod", "staging"), append `--profile {env}` to CLI commands. If unsure which profile to use, list available profiles by reading `~/.conductor-cli/config.yaml` and ask the user to confirm.
+- **Server resolution order: `--profile` > `CONDUCTOR_SERVER_URL` > auto-detection.** The CLI auto-detects a running local server (if started via `conductor server start`), `CONDUCTOR_SERVER_URL` overrides that, and `--profile {env}` overrides both. Most commands need no flags — the CLI finds the server automatically. Only append `--profile {env}` when the user mentions a named environment (e.g. dev, qa, prod, staging, uat). If unsure which profile exists, read `~/.conductor-cli/config.yaml` and ask the user to confirm. Only create named profiles when the user explicitly wants to switch between multiple environments.
 
 ## Updating this skill
 
@@ -70,7 +70,7 @@ Verify success:
 conductor --version
 ```
 
-**Fallback** — Only if Node.js/npm truly cannot be installed (e.g. restricted environment), use the bundled REST API script:
+**Fallback** — You **must** attempt CLI installation before using the fallback. Even if the user says they cannot install Node.js/npm, still run `conductor --version` first to check if the CLI is already present, and then run `npm --version` to confirm npm is truly unavailable. Only after **both** checks fail and Node.js/npm genuinely cannot be installed (e.g. restricted environment, no package manager available) should you fall back to the bundled REST API script:
 
 ```bash
 export CONDUCTOR_API="<path-to-this-skill>/scripts/conductor_api.py"
@@ -89,6 +89,12 @@ Do not assume one or the other — present both options and let the user decide.
 
 ```bash
 conductor server start
+```
+
+The CLI auto-detects the running server — no env var needed. To use a custom port:
+
+```bash
+conductor server start --port 3000
 ```
 
 Verify it's running:
@@ -126,31 +132,26 @@ export CONDUCTOR_AUTH_TOKEN="<ask user>"
 
 Then re-test: `conductor workflow list`
 
-### Step 4 — Save as a named profile
+### Step 4 — Verify
 
-**Always** save the connection as a named profile so the user doesn't have to set env vars each time:
-
-```bash
-# Local server (no auth)
-conductor config save --server http://localhost:8080/api --profile local
-
-# Remote server with auth
-conductor config save --server https://play.orkes.io/api --auth-key KEY --auth-secret SECRET --profile orkes
-```
-
-Profiles are stored in `~/.conductor-cli/config.yaml`.
-
-Never echo auth tokens, keys, or secrets in output.
-
-### Step 5 — Verify
-
-Confirm the CLI can communicate with the server by running a final check:
+Confirm the CLI can communicate with the server:
 
 ```bash
-conductor workflow list --profile <profile-name>
+conductor workflow list
 ```
 
 Report the result to the user. Setup is complete.
+
+**Optional — named profiles for multiple environments:**
+
+If the user wants to switch between multiple servers (e.g. dev, staging, prod), save each as a named profile:
+
+```bash
+conductor config save --server https://dev.example.com/api --auth-key KEY --auth-secret SECRET --profile dev
+conductor config save --server https://prod.example.com/api --auth-key KEY --auth-secret SECRET --profile prod
+```
+
+Then use `--profile {env}` on CLI commands to target a specific environment. Profiles are stored in `~/.conductor-cli/config.yaml`. Never echo auth tokens, keys, or secrets in output.
 
 ## 1) Workflow definitions
 
@@ -376,6 +377,17 @@ Start a local Conductor server for testing:
 
 ```bash
 conductor server start
+```
+
+The CLI auto-detects the running server. To use a custom port:
+
+```bash
+conductor server start --port 3000
+```
+
+Other server commands:
+
+```bash
 conductor server status
 conductor server logs -f
 conductor server stop

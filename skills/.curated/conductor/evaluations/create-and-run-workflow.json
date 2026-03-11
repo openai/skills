@@ -4,7 +4,7 @@
   "query": "Create a workflow that fetches data from an API and processes it, then run it",
   "expected_behavior": [
     "Step 1: Check if `conductor` CLI is available by running `conductor --version`",
-    "Step 2: Verify CONDUCTOR_SERVER_URL is set; if not, ask user to set it",
+    "Step 2: Verify server is reachable (CLI auto-detects local server, or uses CONDUCTOR_SERVER_URL for remote)",
     "Step 3: Consult references/workflow-definition.md for JSON schema and task types",
     "Step 4: Construct a workflow definition JSON with HTTP task for API fetch and SIMPLE task for processing",
     "Step 5: Include proper inputParameters with ${...} expressions to pass data between tasks",
@@ -20,6 +20,7 @@
     "Workflow definition follows the schema from references/workflow-definition.md",
     "Workflow includes at least two tasks with correct types (HTTP, SIMPLE)",
     "Tasks use ${...} expressions to wire inputs/outputs between them",
+    "Any $.varName referenced in JavaScript scripts (INLINE expression, DO_WHILE loopCondition, SWITCH javascript expression) is declared as an inputParameters key on that task",
     "Workflow is registered before being started (create before start)",
     "SIMPLE tasks are checked against task definitions before starting the workflow",
     "Missing workers are flagged and user is offered to scaffold one",

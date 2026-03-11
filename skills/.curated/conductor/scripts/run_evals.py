@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """Automated evaluation runner for Conductor skill.
 
-Uses Claude as both the agent-under-test and the judge.
-Requires ANTHROPIC_API_KEY env var.
+Supports multiple LLM providers: Anthropic, OpenAI, and Google Gemini.
 
 Usage:
-    # Run all evals
+    # Run all evals (default: Anthropic Claude)
     python3 scripts/run_evals.py
+
+    # Run with OpenAI
+    python3 scripts/run_evals.py --model gpt-4o
+
+    # Run with Gemini
+    python3 scripts/run_evals.py --model gemini-2.5-pro
+
+    # Explicit provider (useful for custom/fine-tuned models)
+    python3 scripts/run_evals.py --provider openai --model ft:gpt-4o:my-org
+
+    # Use a different provider for the judge
+    python3 scripts/run_evals.py --model gpt-4o --judge-model claude-sonnet-4-20250514
 
     # Run specific eval(s)
     python3 scripts/run_evals.py evaluations/install-and-connect.json
-
-    # Run with a specific model
-    python3 scripts/run_evals.py --model claude-sonnet-4-20250514
 
     # Run with verbose output
     python3 scripts/run_evals.py --verbose
@@ -36,37 +44,79 @@ from pathlib import Path
 
 DEFAULT_MODEL = "claude-sonnet-4-20250514"
 JUDGE_MODEL = "claude-sonnet-4-20250514"
-API_URL = "https://api.anthropic.com/v1/messages"
 SKILL_DIR = Path(__file__).resolve().parent.parent
 EVAL_DIR = SKILL_DIR / "evaluations"
+
+PROVIDER_URLS = {
+    "anthropic": "https://api.anthropic.com/v1/messages",
+    "openai": "https://api.openai.com/v1/chat/completions",
+    "gemini": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+}
+
+PROVIDER_ENV_KEYS = {
+    "anthropic": "ANTHROPIC_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+}
+
+# ---------------------------------------------------------------------------
+# Provider detection
+# ---------------------------------------------------------------------------
+
+def detect_provider(model):
+    """Detect provider from model name. Returns provider string."""
+    m = model.lower()
+    if any(m.startswith(p) for p in ("claude-", "claude3", "claude_")):
+        return "anthropic"
+    if any(m.startswith(p) for p in ("gpt-", "gpt4", "o1", "o3", "o4", "ft:gpt", "chatgpt")):
+        return "openai"
+    if any(m.startswith(p) for p in ("gemini-", "gemini/")):
+        return "gemini"
+    return None
+
+
+def resolve_provider(model, explicit_provider=None):
+    """Resolve provider, preferring explicit flag over auto-detection."""
+    if explicit_provider:
+        return explicit_provider
+    detected = detect_provider(model)
+    if not detected:
+        print(
+            f"Error: Cannot auto-detect provider for model '{model}'.\n"
+            f"Use --provider {{anthropic,openai,gemini}} to specify explicitly.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    return detected
+
+
+def get_api_key(provider):
+    """Get the API key for a provider from environment variables."""
+    env_var = PROVIDER_ENV_KEYS[provider]
+    key = os.environ.get(env_var, "")
+    if not key:
+        console_urls = {
+            "anthropic": "https://console.anthropic.com/",
+            "openai": "https://platform.openai.com/api-keys",
+            "gemini": "https://aistudio.google.com/apikey",
+        }
+        print(f"Error: {env_var} is not set.", file=sys.stderr)
+        print(f"Get your key at {console_urls[provider]}", file=sys.stderr)
+        sys.exit(1)
+    return key
 
 
 # ---------------------------------------------------------------------------
 # API helpers
 # ---------------------------------------------------------------------------
 
-def call_claude(api_key, model, system, user_message, max_tokens=4096):
-    """Call Claude API via urllib (stdlib only)."""
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": api_key,
-        "anthropic-version": "2023-06-01",
-    }
-    body = json.dumps({
-        "model": model,
-        "max_tokens": max_tokens,
-        "system": system,
-        "messages": [{"role": "user", "content": user_message}],
-    }).encode()
-
-    req = urllib.request.Request(API_URL, data=body, headers=headers, method="POST")
-
-    retries = 3
+def _api_call(url, headers, body_bytes, retries=3):
+    """Make an HTTP POST with retries on transient errors."""
+    req = urllib.request.Request(url, data=body_bytes, headers=headers, method="POST")
     for attempt in range(retries):
         try:
             with urllib.request.urlopen(req, timeout=120) as resp:
-                data = json.loads(resp.read().decode())
-                return data["content"][0]["text"]
+                return json.loads(resp.read().decode())
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503, 529) and attempt < retries - 1:
                 wait = 2 ** (attempt + 1)
@@ -86,6 +136,81 @@ def call_claude(api_key, model, system, user_message, max_tokens=4096):
                 continue
             print(f"Connection error: {e.reason}", file=sys.stderr)
             sys.exit(1)
+
+
+def call_anthropic(api_key, model, system, user_message, max_tokens=4096):
+    """Call Anthropic Messages API."""
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": api_key,
+        "anthropic-version": "2023-06-01",
+    }
+    body = json.dumps({
+        "model": model,
+        "max_tokens": max_tokens,
+        "system": system,
+        "messages": [{"role": "user", "content": user_message}],
+    }).encode()
+    data = _api_call(PROVIDER_URLS["anthropic"], headers, body)
+    return data["content"][0]["text"]
+
+
+def call_openai(api_key, model, system, user_message, max_tokens=4096):
+    """Call OpenAI Chat Completions API."""
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+    body = json.dumps({
+        "model": model,
+        "max_completion_tokens": max_tokens,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user_message},
+        ],
+    }).encode()
+    data = _api_call(PROVIDER_URLS["openai"], headers, body)
+    msg = data["choices"][0]["message"]
+    content = msg.get("content") or ""
+    if not content:
+        refusal = msg.get("refusal", "")
+        finish = data["choices"][0].get("finish_reason", "unknown")
+        print(
+            f"  [WARN] OpenAI returned empty content. "
+            f"finish_reason={finish}, refusal={refusal!r}",
+            file=sys.stderr,
+        )
+    return content
+
+
+def call_gemini(api_key, model, system, user_message, max_tokens=4096):
+    """Call Google Gemini via its OpenAI-compatible endpoint."""
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+    body = json.dumps({
+        "model": model,
+        "max_completion_tokens": max_tokens,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user_message},
+        ],
+    }).encode()
+    data = _api_call(PROVIDER_URLS["gemini"], headers, body)
+    return data["choices"][0]["message"]["content"]
+
+
+PROVIDER_CALLERS = {
+    "anthropic": call_anthropic,
+    "openai": call_openai,
+    "gemini": call_gemini,
+}
+
+
+def call_llm(provider, api_key, model, system, user_message, max_tokens=4096):
+    """Unified LLM call that dispatches to the correct provider."""
+    return PROVIDER_CALLERS[provider](api_key, model, system, user_message, max_tokens)
 
 
 # ---------------------------------------------------------------------------
@@ -117,8 +242,8 @@ def load_skill_context():
 # Eval runner
 # ---------------------------------------------------------------------------
 
-def run_agent(api_key, model, skill_context, query, verbose=False):
-    """Send the eval query to Claude acting as an agent with the skill."""
+def run_agent(provider, api_key, model, skill_context, query, verbose=False):
+    """Send the eval query to an LLM acting as an agent with the skill."""
     system = f"""You are an AI coding agent with access to the Conductor workflow skill. Your tools include: Bash (shell commands), Read/Write/Edit (files), Grep/Glob (search).
 
 You must follow the skill instructions precisely. Key rules:
@@ -155,12 +280,19 @@ Follow the patterns from the examples in the skill context. Be thorough — cove
 Describe in detail the complete sequence of steps you would take to handle this request. Show exact commands, exact file contents, and exact user communications. Follow the skill rules strictly."""
 
     if verbose:
-        print(f"  [AGENT] Sending query to {model}...")
+        print(f"  [AGENT] Sending query to {provider}:{model}...")
 
-    return call_claude(api_key, model, system, user_msg, max_tokens=8192)
+    response = call_llm(provider, api_key, model, system, user_msg, max_tokens=8192)
+    if not response or not response.strip():
+        print(
+            f"  [WARN] Agent ({provider}:{model}) returned an empty response. "
+            f"The model may not support the prompt size or refused to answer.",
+            file=sys.stderr,
+        )
+    return response
 
 
-def judge_response(api_key, judge_model, query, agent_response, expected_behavior, success_criteria, verbose=False):
+def judge_response(judge_provider, api_key, judge_model, query, agent_response, expected_behavior, success_criteria, verbose=False):
     """Use Claude as judge to evaluate the agent response."""
     system = """You are an evaluation judge for an AI coding agent. The agent was given a task and described the steps it WOULD take (a plan), without actually executing anything.
 
@@ -207,9 +339,9 @@ Return ONLY valid JSON, no other text."""
 Evaluate each success criterion. Return JSON only."""
 
     if verbose:
-        print(f"  [JUDGE] Evaluating with {judge_model}...")
+        print(f"  [JUDGE] Evaluating with {judge_provider}:{judge_model}...")
 
-    raw = call_claude(api_key, judge_model, system, user_msg)
+    raw = call_llm(judge_provider, api_key, judge_model, system, user_msg)
 
     # Extract JSON from response (handle markdown code blocks)
     text = raw.strip()
@@ -231,7 +363,8 @@ Evaluate each success criterion. Return JSON only."""
         }
 
 
-def run_single_eval(api_key, model, judge_model, skill_context, eval_file, verbose=False):
+def run_single_eval(provider, api_key, model, judge_provider, judge_api_key,
+                     judge_model, skill_context, eval_file, verbose=False):
     """Run a single evaluation and return results."""
     with open(eval_file) as f:
         eval_data = json.load(f)
@@ -244,11 +377,12 @@ def run_single_eval(api_key, model, judge_model, skill_context, eval_file, verbo
     print(f"\n{'='*60}")
     print(f"  EVAL: {name}")
     print(f"  FILE: {Path(eval_file).name}")
-    print(f"  MODEL: {model}")
+    print(f"  MODEL: {provider}:{model}")
+    print(f"  JUDGE: {judge_provider}:{judge_model}")
     print(f"{'='*60}")
 
     # Step 1: Run agent
-    agent_response = run_agent(api_key, model, skill_context, query, verbose)
+    agent_response = run_agent(provider, api_key, model, skill_context, query, verbose)
 
     if verbose:
         print(f"\n  --- Agent Response ---")
@@ -257,7 +391,7 @@ def run_single_eval(api_key, model, judge_model, skill_context, eval_file, verbo
 
     # Step 2: Judge response
     judgment = judge_response(
-        api_key, judge_model, query, agent_response,
+        judge_provider, judge_api_key, judge_model, query, agent_response,
         expected_behavior, success_criteria, verbose
     )
 
@@ -282,6 +416,7 @@ def run_single_eval(api_key, model, judge_model, skill_context, eval_file, verbo
     return {
         "name": name,
         "file": str(Path(eval_file).name),
+        "provider": provider,
         "model": model,
         "overall_pass": overall,
         "overall_score": score,
@@ -299,7 +434,16 @@ def run_single_eval(api_key, model, judge_model, skill_context, eval_file, verbo
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run automated evaluations for the Conductor skill"
+        description="Run automated evaluations for the Conductor skill",
+        epilog="""
+Examples:
+  python3 scripts/run_evals.py                                   # Anthropic (default)
+  python3 scripts/run_evals.py --model gpt-4o                    # OpenAI
+  python3 scripts/run_evals.py --model gemini-2.5-pro            # Google Gemini
+  python3 scripts/run_evals.py --provider openai --model ft:gpt-4o:my-org
+  python3 scripts/run_evals.py --model gpt-4o --judge-model claude-sonnet-4-20250514
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "files", nargs="*",
@@ -310,8 +454,16 @@ def main():
         help=f"Model for agent-under-test (default: {DEFAULT_MODEL})"
     )
     parser.add_argument(
+        "--provider", choices=["anthropic", "openai", "gemini"], default=None,
+        help="Provider for agent model (auto-detected from model name if omitted)"
+    )
+    parser.add_argument(
         "--judge-model", default=JUDGE_MODEL,
         help=f"Model for judge (default: {JUDGE_MODEL})"
+    )
+    parser.add_argument(
+        "--judge-provider", choices=["anthropic", "openai", "gemini"], default=None,
+        help="Provider for judge model (auto-detected from model name if omitted)"
     )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument("--json", action="store_true", dest="json_output", help="Output JSON report")
@@ -319,12 +471,13 @@ def main():
 
     args = parser.parse_args()
 
-    # Check API key
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not api_key:
-        print("Error: ANTHROPIC_API_KEY is not set.", file=sys.stderr)
-        print("Get your key at https://console.anthropic.com/", file=sys.stderr)
-        sys.exit(1)
+    # Resolve providers
+    provider = resolve_provider(args.model, args.provider)
+    judge_provider = resolve_provider(args.judge_model, args.judge_provider)
+
+    # Get API keys
+    api_key = get_api_key(provider)
+    judge_api_key = get_api_key(judge_provider) if judge_provider != provider else api_key
 
     judge_model = args.judge_model
 
@@ -342,7 +495,9 @@ def main():
     print("Loading skill context...")
     skill_context = load_skill_context()
     print(f"Loaded {len(skill_context)} chars of skill context")
-    print(f"Running {len(eval_files)} evaluation(s) with model: {args.model}")
+    print(f"Running {len(eval_files)} evaluation(s)")
+    print(f"  Agent: {provider}:{args.model}")
+    print(f"  Judge: {judge_provider}:{judge_model}")
 
     # Run evals
     results = []
@@ -353,7 +508,11 @@ def main():
         if eval_file.name == "README.md":
             continue
 
-        result = run_single_eval(api_key, args.model, judge_model, skill_context, eval_file, args.verbose)
+        result = run_single_eval(
+            provider, api_key, args.model,
+            judge_provider, judge_api_key, judge_model,
+            skill_context, eval_file, args.verbose,
+        )
         results.append(result)
 
     # Summary
@@ -366,6 +525,8 @@ def main():
     print(f"\n{'='*60}")
     print(f"  SUMMARY")
     print(f"{'='*60}")
+    print(f"  Agent:    {provider}:{args.model}")
+    print(f"  Judge:    {judge_provider}:{judge_model}")
     print(f"  Evals:    {passed_evals}/{total_evals} passed")
     print(f"  Criteria: {passed_criteria}/{total_criteria} passed")
     print(f"  Avg score: {avg_score:.0%}")
@@ -379,7 +540,9 @@ def main():
 
     # JSON report
     report = {
+        "provider": provider,
         "model": args.model,
+        "judge_provider": judge_provider,
         "judge_model": judge_model,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "summary": {

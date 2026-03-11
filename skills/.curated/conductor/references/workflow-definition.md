@@ -117,6 +117,9 @@ Common jq patterns:
 - Aggregate: `{total: ([.[].amount] | add), count: length}`
 - Flatten: `[.[][] | .field]`
 
+> **Rule for all JavaScript-evaluated tasks (INLINE, DO_WHILE, SWITCH with `javascript` evaluator):**
+> Every variable referenced as `$.varName` inside a script or condition **must** be declared as an `inputParameters` key on that task. The `$` object in the script is the task's resolved `inputParameters` map.
+
 ### INLINE
 Execute lightweight scripts (JavaScript via GraalVM).
 ```json
@@ -158,6 +161,20 @@ Conditional branching based on a value or JavaScript expression.
   "defaultCase": [{"...default task...": ""}]
 }
 ```
+When using `evaluatorType: "javascript"`, the same `$.varName` rule applies — all variables referenced in the expression must be declared in `inputParameters`:
+```json
+{
+  "name": "switch_task", "taskReferenceName": "js_route", "type": "SWITCH",
+  "evaluatorType": "javascript",
+  "expression": "$.priority > 5 ? 'high' : 'low'",
+  "inputParameters": {"priority": "${workflow.input.priority}"},
+  "decisionCases": {
+    "high": [{"...urgent task...": ""}],
+    "low": [{"...normal task...": ""}]
+  },
+  "defaultCase": [{"...default task...": ""}]
+}
+```
 
 ### FORK_JOIN / JOIN
 Execute tasks in parallel. Always pair FORK_JOIN with a JOIN task.
@@ -175,9 +192,13 @@ Loop until a condition is met.
   "name": "loop", "taskReferenceName": "loop_ref", "type": "DO_WHILE",
   "loopCondition": "if ($.loop_ref['iteration'] < $.value) true; else false;",
   "loopOver": [{"...task...": ""}],
-  "inputParameters": {"value": "${workflow.input.count}"}
+  "inputParameters": {
+    "value": "${workflow.input.count}",
+    "loop_ref": "${loop_ref.output}"
+  }
 }
 ```
+**Important**: The `loopCondition` is evaluated as JavaScript. The same `$.varName` rule applies — every variable referenced as `$.varName` must be declared in `inputParameters`. Here, `$.loop_ref['iteration']` requires `loop_ref` to be declared. The mapping `"loop_ref": "${loop_ref.output}"` wires the task's own output (which includes the `iteration` counter) back into the script's scope.
 
 ### WAIT
 Pause execution until a signal, a duration elapses, or a specific date/time is reached. Use `conductor task signal` to resume a signal-based wait.

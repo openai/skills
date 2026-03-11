@@ -49,17 +49,26 @@ Tests the fallback path when Node.js/npm cannot be installed, using the bundled 
 
 ### Automated (recommended)
 
-The eval runner uses Claude as both the agent-under-test and the judge. Requires `ANTHROPIC_API_KEY`.
+The eval runner supports multiple LLM providers: **Anthropic**, **OpenAI**, and **Google Gemini**. The provider is auto-detected from the model name, or can be set explicitly with `--provider`.
 
 ```bash
-# Run all evals
+# Run all evals with Anthropic (default)
 python3 scripts/run_evals.py
+
+# Run with OpenAI
+python3 scripts/run_evals.py --model gpt-4o
+
+# Run with Google Gemini
+python3 scripts/run_evals.py --model gemini-2.5-pro
+
+# Explicit provider (for custom/fine-tuned models)
+python3 scripts/run_evals.py --provider openai --model ft:gpt-4o:my-org
+
+# Use different providers for agent vs judge
+python3 scripts/run_evals.py --model gpt-4o --judge-model claude-sonnet-4-20250514
 
 # Run a specific eval
 python3 scripts/run_evals.py evaluations/profile-switching.json
-
-# Test with a specific model
-python3 scripts/run_evals.py --model claude-haiku-4-5-20251001
 
 # Verbose output (shows agent response)
 python3 scripts/run_evals.py --verbose
@@ -67,10 +76,10 @@ python3 scripts/run_evals.py --verbose
 # Save JSON report
 python3 scripts/run_evals.py --json --output report.json
 
-# Compare models
-python3 scripts/run_evals.py --model claude-haiku-4-5-20251001 -o haiku.json
-python3 scripts/run_evals.py --model claude-sonnet-4-20250514 -o sonnet.json
-python3 scripts/run_evals.py --model claude-opus-4-20250514 -o opus.json
+# Compare across providers
+python3 scripts/run_evals.py --model claude-sonnet-4-20250514 -o anthropic.json
+python3 scripts/run_evals.py --model gpt-4o -o openai.json
+python3 scripts/run_evals.py --model gemini-2.5-pro -o gemini.json
 ```
 
 Exit code is `0` if all evals pass, `1` if any fail — suitable for CI/CD gates.
@@ -81,11 +90,13 @@ Exit code is `0` if all evals pass, `1` if any fail — suitable for CI/CD gates
 2. Submit the `query` from the evaluation JSON file to the agent
 3. Verify each step in `expected_behavior` is followed in order
 4. Check all items in `success_criteria` pass
-5. Test across models: Haiku, Sonnet, and Opus
+5. Test across models and providers
 
 ### Prerequisites
 
-- **Automated evals**: `ANTHROPIC_API_KEY` env var (get at https://console.anthropic.com/)
+- **Anthropic**: `ANTHROPIC_API_KEY` env var (get at https://console.anthropic.com/)
+- **OpenAI**: `OPENAI_API_KEY` env var (get at https://platform.openai.com/api-keys)
+- **Gemini**: `GEMINI_API_KEY` env var (get at https://aistudio.google.com/apikey)
 - **Local server evals**: No prerequisites — the agent should install CLI and start the server
 - **Remote server evals**: Need a running Conductor server URL
 - **Profile switching evals**: Need at least two profiles saved in `~/.conductor-cli/config.yaml`
@@ -131,6 +142,7 @@ When adding Conductor evaluations:
 - "SIMPLE tasks are checked against task definitions before starting"
 - "Profile names are inferred from context ('dev' and 'prod')"
 - "Mermaid diagram uses diamond nodes for SWITCH tasks"
+- "Every $.varName in JS scripts (INLINE, DO_WHILE, SWITCH) is declared as an inputParameters key"
 
 **Bad** (vague, untestable):
 - "Workflow is created correctly"
