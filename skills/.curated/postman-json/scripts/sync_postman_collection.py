@@ -215,6 +215,181 @@ def extract_identifier(expr: str) -> Optional[str]:
     return match.group(1) if match else None
 
 
+def extract_named_binding_aliases(raw_bindings: str) -> Dict[str, str]:
+    aliases: Dict[str, str] = {}
+    for raw_binding in split_top_level_commas(raw_bindings):
+        binding = raw_binding.strip()
+        if not binding or binding.startswith("..."):
+            continue
+        if "=" in binding:
+            binding = binding.split("=", 1)[0].strip()
+        original: Optional[str] = None
+        alias: Optional[str] = None
+        if re.search(r"\bas\b", binding):
+            left, right = re.split(r"\bas\b", binding, maxsplit=1)
+            original = extract_identifier(left)
+            alias = extract_identifier(right)
+        elif ":" in binding:
+            left, right = binding.split(":", 1)
+            original = extract_identifier(left)
+            alias = extract_identifier(right)
+        else:
+            original = extract_identifier(binding)
+            alias = original
+        if original and alias:
+            aliases[alias] = original
+    return aliases
+
+
+def expand_identifier_aliases(source_text: str, base_identifiers: set[str]) -> set[str]:
+    aliases = set(base_identifiers)
+    assignment_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\s*;?"""
+    )
+    changed = True
+    while changed:
+        changed = False
+        for match in assignment_pattern.finditer(source_text):
+            alias, original = match.groups()
+            if original in aliases and alias not in aliases:
+                aliases.add(alias)
+                changed = True
+    return aliases
+
+
+def extract_express_factory_aliases(source_text: str) -> set[str]:
+    aliases: set[str] = {"express"}
+    esm_pattern = re.compile(
+        r"""import\s+([A-Za-z_$][\w$]*)\s+from\s+["']express["']\s*;?"""
+    )
+    cjs_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\s*;?"""
+    )
+    for match in esm_pattern.finditer(source_text):
+        aliases.add(match.group(1))
+    for match in cjs_pattern.finditer(source_text):
+        aliases.add(match.group(1))
+    return aliases
+
+
+def extract_express_app_identifiers(source_text: str, include_default: bool = True) -> List[str]:
+    express_factories = extract_express_factory_aliases(source_text)
+    app_identifiers: set[str] = set()
+    call_assign_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\s*\(\s*\)\s*;?"""
+    )
+    inline_require_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\s*\(\s*\)\s*;?"""
+    )
+
+    for match in call_assign_pattern.finditer(source_text):
+        app_name, factory_alias = match.groups()
+        if factory_alias in express_factories:
+            app_identifiers.add(app_name)
+    for match in inline_require_pattern.finditer(source_text):
+        app_identifiers.add(match.group(1))
+
+    app_identifiers = expand_identifier_aliases(source_text, app_identifiers)
+    if include_default:
+        # Keep legacy compatibility for files that still mount on `app.use(...)`
+        # even when another Express instance alias is also discovered.
+        app_identifiers.add("app")
+    return sorted(app_identifiers)
+
+
+def extract_router_identifiers(source_text: str) -> List[str]:
+    express_factories = extract_express_factory_aliases(source_text)
+    router_factories: set[str] = set()
+    router_identifiers: set[str] = set()
+
+    esm_named_pattern = re.compile(
+        r"""import\s*\{\s*([^}]+)\s*\}\s*from\s*["']express["']\s*;?"""
+    )
+    cjs_named_pattern = re.compile(
+        r"""(?:const|let|var)\s*\{\s*([^}]+)\s*\}\s*=\s*require\(\s*["']express["']\s*\)\s*;?"""
+    )
+    member_alias_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\.Router\s*;?"""
+    )
+    require_member_alias_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\.Router\s*;?"""
+    )
+    member_call_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\.Router\(\s*\)\s*;?"""
+    )
+    factory_call_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\(\s*\)\s*;?"""
+    )
+    require_member_call_pattern = re.compile(
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\.Router\(\s*\)\s*;?"""
+    )
+
+    for match in esm_named_pattern.finditer(source_text):
+        for alias, original in extract_named_binding_aliases(match.group(1)).items():
+            if original == "Router":
+                router_factories.add(alias)
+    for match in cjs_named_pattern.finditer(source_text):
+        for alias, original in extract_named_binding_aliases(match.group(1)).items():
+            if original == "Router":
+                router_factories.add(alias)
+    for match in member_alias_pattern.finditer(source_text):
+        alias, source_alias = match.groups()
+        if source_alias in express_factories:
+            router_factories.add(alias)
+    for match in require_member_alias_pattern.finditer(source_text):
+        router_factories.add(match.group(1))
+    for match in member_call_pattern.finditer(source_text):
+        router_name, source_alias = match.groups()
+        if source_alias in express_factories:
+            router_identifiers.add(router_name)
+    for match in factory_call_pattern.finditer(source_text):
+        router_name, factory_alias = match.groups()
+        if factory_alias in router_factories:
+            router_identifiers.add(router_name)
+    for match in require_member_call_pattern.finditer(source_text):
+        router_identifiers.add(match.group(1))
+
+    # Keep legacy compatibility for files that still register routes on `router.<method>(...)`
+    # even when other router variable names are detected.
+    router_identifiers.add("router")
+    return sorted(router_identifiers)
+
+
+def unwrap_parenthesized_expr(expr: str) -> str:
+    candidate = expr.strip()
+    while candidate.startswith("(") and candidate.endswith(")"):
+        closing_idx = find_matching_paren(candidate, 0)
+        if closing_idx != len(candidate) - 1:
+            break
+        candidate = candidate[1:-1].strip()
+    return candidate
+
+
+def parse_require_source(expr: str) -> Optional[str]:
+    candidate = unwrap_parenthesized_expr(expr)
+    match = re.match(
+        r"""^require\(\s*["']([^"']+)["']\s*\)(?:\.[A-Za-z_$][\w$]*)?$""",
+        candidate,
+    )
+    return match.group(1) if match else None
+
+
+def infer_exported_identifier(source_text: str) -> Optional[str]:
+    export_default_pattern = re.compile(
+        r"""export\s+default\s+([A-Za-z_$][\w$]*)\s*;?"""
+    )
+    module_exports_pattern = re.compile(
+        r"""module\.exports\s*=\s*([A-Za-z_$][\w$]*)\s*;?"""
+    )
+    match = export_default_pattern.search(source_text)
+    if match:
+        return match.group(1)
+    match = module_exports_pattern.search(source_text)
+    if match:
+        return match.group(1)
+    return None
+
+
 def resolve_module_path(from_file: Path, import_path: str) -> Optional[Path]:
     if not import_path.startswith("."):
         return None
@@ -262,15 +437,7 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
         resolved = resolve_module_path(file_path, source)
         if not resolved:
             continue
-        for raw_binding in split_top_level_commas(raw_bindings):
-            binding = raw_binding.strip()
-            if not binding or binding.startswith("..."):
-                continue
-            if ":" in binding:
-                binding = binding.split(":", 1)[1].strip()
-            if "=" in binding:
-                binding = binding.split("=", 1)[0].strip()
-            alias = extract_identifier(binding)
+        for alias in extract_named_binding_aliases(raw_bindings):
             if alias:
                 imports[alias] = resolved
     return imports
@@ -374,7 +541,10 @@ def discover_server_file(project_root: Path, explicit_server_file: Optional[str]
             text = read_text(candidate)
         except UnicodeDecodeError:
             continue
-        if "app.use(" in text and "express" in text:
+        app_identifiers = extract_express_app_identifiers(text, include_default=False)
+        if not app_identifiers:
+            continue
+        if any(re.search(rf"\b{re.escape(name)}\.use\s*\(", text) for name in app_identifiers):
             scanned_candidates.append(candidate.resolve())
 
     if not scanned_candidates:
@@ -399,28 +569,47 @@ def default_collection_name(project_root: Path) -> str:
 def extract_mounts(server_path: Path, server_text: str) -> List[Dict[str, Any]]:
     imports = parse_default_imports(server_path, server_text)
     mounts: List[Dict[str, Any]] = []
-    for method, args, _start, _end in iter_object_calls(server_text, "app", {"use"}):
-        if method != "use":
-            continue
-        parts = split_top_level_commas(args)
-        if len(parts) < 2:
-            continue
-        mount_path = parse_js_string_literal(parts[0])
-        if not mount_path:
-            continue
-        router_name = extract_identifier(parts[-1])
-        if not router_name:
-            continue
-        route_file = imports.get(router_name)
-        if not route_file:
-            continue
-        mounts.append(
-            {
-                "router_name": router_name,
-                "mount_path": mount_path,
-                "route_file": route_file,
-            }
-        )
+    seen: set[Tuple[str, Path, str]] = set()
+    for app_name in extract_express_app_identifiers(server_text):
+        for method, args, _start, _end in iter_object_calls(server_text, app_name, {"use"}):
+            if method != "use":
+                continue
+            parts = split_top_level_commas(args)
+            if len(parts) < 2:
+                continue
+            mount_path = parse_js_string_literal(parts[0])
+            if not mount_path:
+                continue
+
+            final_arg = parts[-1].strip()
+            inline_source = parse_require_source(final_arg)
+            router_name = None if inline_source else extract_identifier(final_arg)
+            route_file: Optional[Path] = imports.get(router_name) if router_name else None
+
+            if not route_file and inline_source:
+                route_file = resolve_module_path(server_path, inline_source)
+                if route_file and not router_name:
+                    try:
+                        router_name = infer_exported_identifier(read_text(route_file))
+                    except (OSError, UnicodeDecodeError):
+                        router_name = None
+                    if not router_name:
+                        router_name = Path(inline_source).stem
+
+            if not route_file or not router_name:
+                continue
+
+            key = (mount_path, route_file, router_name)
+            if key in seen:
+                continue
+            seen.add(key)
+            mounts.append(
+                {
+                    "router_name": router_name,
+                    "mount_path": mount_path,
+                    "route_file": route_file,
+                }
+            )
     return mounts
 
 
@@ -438,6 +627,7 @@ def parse_route_endpoints(
     mount_path: str,
     project_root: Path,
     requirement_cache: Dict[Path, Dict[str, Any]],
+    mounted_router_name: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     route_text = read_text(route_file)
     route_imports = parse_default_imports(route_file, route_text)
@@ -447,62 +637,72 @@ def parse_route_endpoints(
         route_relative = route_file.name
     endpoints: List[Dict[str, Any]] = []
 
-    for method, args, _start, _end in iter_object_calls(route_text, "router", HTTP_METHODS):
-        parts = split_top_level_commas(args)
-        if len(parts) < 2:
-            continue
+    router_names: List[str]
+    mounted_router_identifier = extract_identifier(mounted_router_name or "")
+    if mounted_router_identifier:
+        router_names = sorted(
+            expand_identifier_aliases(route_text, {mounted_router_identifier})
+        )
+    else:
+        router_names = extract_router_identifiers(route_text)
 
-        route_path = parse_js_string_literal(parts[0])
-        if route_path is None:
-            continue
-
-        middleware_parts = parts[1:-1]
-        handler_source = parts[-1]
-        middleware_names = [name for name in (extract_identifier(p) for p in middleware_parts) if name]
-        route_scope_source = "\n".join([*middleware_parts, handler_source])
-
-        body_fields = set(extract_body_fields(handler_source))
-        upload_fields = set(extract_upload_fields(route_scope_source))
-        auth_required = False
-        needs_file = bool(re.search(r"\breq\.files?\b", handler_source))
-
-        for middleware in middleware_names:
-            lowered = middleware.lower()
-            if "auth" in lowered:
-                auth_required = True
-            if "upload" in lowered:
-                needs_file = True
-            if "turnstile" in lowered:
-                body_fields.add("turnstileToken")
-
-            source_path = route_imports.get(middleware)
-            if not source_path or not source_path.exists():
+    for router_name in router_names:
+        for method, args, _start, _end in iter_object_calls(route_text, router_name, HTTP_METHODS):
+            parts = split_top_level_commas(args)
+            if len(parts) < 2:
                 continue
 
-            if source_path not in requirement_cache:
-                requirement_cache[source_path] = analyze_source_requirements(
-                    read_text(source_path)
-                )
-            requirement = requirement_cache[source_path]
-            body_fields.update(requirement["body_fields"])
-            upload_fields.update(requirement["upload_fields"])
-            auth_required = auth_required or requirement["auth"]
-            needs_file = needs_file or requirement["needs_file"]
+            route_path = parse_js_string_literal(parts[0])
+            if route_path is None:
+                continue
 
-        full_path = path_join(mount_path, route_path)
-        endpoints.append(
-            {
-                "method": method.upper(),
-                "path": full_path,
-                "path_postman": to_postman_path(full_path),
-                "route_file_relative": route_relative,
-                "middleware_names": middleware_names,
-                "body_fields": sorted(body_fields),
-                "upload_fields": sorted(upload_fields),
-                "needs_file": needs_file or bool(upload_fields),
-                "auth_required": auth_required,
-            }
-        )
+            middleware_parts = parts[1:-1]
+            handler_source = parts[-1]
+            middleware_names = [name for name in (extract_identifier(p) for p in middleware_parts) if name]
+            route_scope_source = "\n".join([*middleware_parts, handler_source])
+
+            body_fields = set(extract_body_fields(handler_source))
+            upload_fields = set(extract_upload_fields(route_scope_source))
+            auth_required = False
+            needs_file = bool(re.search(r"\breq\.files?\b", handler_source))
+
+            for middleware in middleware_names:
+                lowered = middleware.lower()
+                if "auth" in lowered:
+                    auth_required = True
+                if "upload" in lowered:
+                    needs_file = True
+                if "turnstile" in lowered:
+                    body_fields.add("turnstileToken")
+
+                source_path = route_imports.get(middleware)
+                if not source_path or not source_path.exists():
+                    continue
+
+                if source_path not in requirement_cache:
+                    requirement_cache[source_path] = analyze_source_requirements(
+                        read_text(source_path)
+                    )
+                requirement = requirement_cache[source_path]
+                body_fields.update(requirement["body_fields"])
+                upload_fields.update(requirement["upload_fields"])
+                auth_required = auth_required or requirement["auth"]
+                needs_file = needs_file or requirement["needs_file"]
+
+            full_path = path_join(mount_path, route_path)
+            endpoints.append(
+                {
+                    "method": method.upper(),
+                    "path": full_path,
+                    "path_postman": to_postman_path(full_path),
+                    "route_file_relative": route_relative,
+                    "middleware_names": middleware_names,
+                    "body_fields": sorted(body_fields),
+                    "upload_fields": sorted(upload_fields),
+                    "needs_file": needs_file or bool(upload_fields),
+                    "auth_required": auth_required,
+                }
+            )
 
     return endpoints
 
@@ -699,7 +899,7 @@ def main(argv: Sequence[str]) -> int:
     mounts = extract_mounts(server_file, server_text)
     if not mounts:
         print(
-            "Error: no mounted routers discovered from app.use(...) in server file.",
+            "Error: no mounted routers discovered from <expressInstance>.use(...) in server file.",
             file=sys.stderr,
         )
         return 1
@@ -717,6 +917,7 @@ def main(argv: Sequence[str]) -> int:
                 mount_path=mount["mount_path"],
                 project_root=project_root,
                 requirement_cache=requirement_cache,
+                mounted_router_name=mount.get("router_name"),
             )
         )
 
@@ -733,18 +934,6 @@ def main(argv: Sequence[str]) -> int:
         "baseUrl",
         args.base_url,
         "Base URL for API requests, including protocol and port.",
-    )
-    ensure_variable(
-        collection,
-        "shopToken",
-        "replace-with-shop-token",
-        "Bearer token used by auth middleware.",
-    )
-    ensure_variable(
-        collection,
-        "turnstileToken",
-        "replace-with-turnstile-token",
-        "Turnstile token for human verification when required.",
     )
 
     generated_root = build_generated_tree(endpoints, args.generated_root_name)
