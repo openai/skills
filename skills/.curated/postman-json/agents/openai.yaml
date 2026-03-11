@@ -1,0 +1,6 @@
+interface:
+  display_name: "Postman JSON"
+  short_description: "Generate and sync Postman collections from Express routes"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.svg"
+  default_prompt: "Use $postman-json to generate or update a Postman collection JSON from Express route files and mounted routers."
