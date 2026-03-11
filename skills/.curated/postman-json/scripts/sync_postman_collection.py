@@ -391,13 +391,13 @@ def extract_router_identifiers(source_text: str) -> List[str]:
         r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\.Router\s*;?"""
     )
     member_call_pattern = re.compile(
-        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\.Router\(\s*\)\s*;?"""
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\.Router\(\s*[^)]*\)\s*;?"""
     )
     factory_call_pattern = re.compile(
-        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\(\s*\)\s*;?"""
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\(\s*[^)]*\)\s*;?"""
     )
     require_member_call_pattern = re.compile(
-        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\.Router\(\s*\)\s*;?"""
+        r"""(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*require\(\s*["']express["']\s*\)\.Router\(\s*[^)]*\)\s*;?"""
     )
 
     for match in esm_named_pattern.finditer(source_text):
