@@ -177,6 +177,137 @@ export { router as usersRouter };
         self.assertEqual(mounts[0]["mount_path"], "/users")
         self.assertEqual(mounts[0]["route_file"], route_file.resolve())
 
+    def test_extract_mounts_non_literal_multi_argument_mount_falls_back_to_root(self) -> None:
+        server_text = """\
+const express = require("express");
+const usersRouter = require("./routes/users");
+
+const app = express();
+const apiPrefix = "/users";
+app.use(apiPrefix, usersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            route_file = project_root / "routes/users.js"
+            route_file.parent.mkdir(parents=True, exist_ok=True)
+            route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        self.assertEqual(len(mounts), 1)
+        self.assertEqual(mounts[0]["router_name"], "usersRouter")
+        self.assertEqual(mounts[0]["mount_path"], "/")
+        self.assertEqual(mounts[0]["route_file"], route_file.resolve())
+
+    def test_extract_mounts_supports_multiple_router_callbacks(self) -> None:
+        server_text = """\
+const express = require("express");
+const usersRouter = require("./routes/users");
+const ordersRouter = require("./routes/orders");
+
+const app = express();
+app.use("/api", usersRouter, ordersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            users_route_file = project_root / "routes/users.js"
+            orders_route_file = project_root / "routes/orders.js"
+            users_route_file.parent.mkdir(parents=True, exist_ok=True)
+            users_route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            orders_route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        self.assertEqual(len(mounts), 2)
+        by_router = {mount["router_name"]: mount for mount in mounts}
+        self.assertEqual(by_router["usersRouter"]["mount_path"], "/api")
+        self.assertEqual(by_router["usersRouter"]["route_file"], users_route_file.resolve())
+        self.assertEqual(by_router["ordersRouter"]["mount_path"], "/api")
+        self.assertEqual(by_router["ordersRouter"]["route_file"], orders_route_file.resolve())
+
+    def test_extract_mounts_supports_middleware_then_router_multi_arg_use(self) -> None:
+        server_text = """\
+const express = require("express");
+const authMiddleware = require("./middleware/auth");
+const usersRouter = require("./routes/users");
+
+const app = express();
+app.use(authMiddleware, usersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            middleware_file = project_root / "middleware/auth.js"
+            users_route_file = project_root / "routes/users.js"
+            middleware_file.parent.mkdir(parents=True, exist_ok=True)
+            users_route_file.parent.mkdir(parents=True, exist_ok=True)
+            middleware_file.write_text(
+                "module.exports = (req, res, next) => next();\n", encoding="utf-8"
+            )
+            users_route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        by_router = {mount["router_name"]: mount for mount in mounts}
+        self.assertEqual(by_router["usersRouter"]["mount_path"], "/")
+        self.assertEqual(by_router["usersRouter"]["route_file"], users_route_file.resolve())
+
+    def test_extract_mounts_ignores_middleware_call_expr_but_keeps_router_callback(self) -> None:
+        server_text = """\
+const express = require("express");
+const usersRouter = require("./routes/users");
+
+const app = express();
+app.use(cors(), usersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            users_route_file = project_root / "routes/users.js"
+            users_route_file.parent.mkdir(parents=True, exist_ok=True)
+            users_route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        self.assertEqual(len(mounts), 1)
+        self.assertEqual(mounts[0]["router_name"], "usersRouter")
+        self.assertEqual(mounts[0]["mount_path"], "/")
+        self.assertEqual(mounts[0]["route_file"], users_route_file.resolve())
+
+    def test_extract_mounts_ignores_require_call_expr_but_keeps_router_callback(self) -> None:
+        server_text = """\
+const express = require("express");
+const usersRouter = require("./routes/users");
+
+const app = express();
+app.use(require("./middleware/auth")(), usersRouter);
+"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir)
+            server_file = project_root / "server.js"
+            users_route_file = project_root / "routes/users.js"
+            auth_file = project_root / "middleware/auth.js"
+            users_route_file.parent.mkdir(parents=True, exist_ok=True)
+            auth_file.parent.mkdir(parents=True, exist_ok=True)
+            users_route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            auth_file.write_text(
+                "module.exports = () => (req, res, next) => next();\n", encoding="utf-8"
+            )
+            server_file.write_text(server_text, encoding="utf-8")
+
+            mounts = extract_mounts(server_file, server_text)
+
+        self.assertEqual(len(mounts), 1)
+        self.assertEqual(mounts[0]["router_name"], "usersRouter")
+        self.assertEqual(mounts[0]["mount_path"], "/")
+        self.assertEqual(mounts[0]["route_file"], users_route_file.resolve())
+
     def test_extract_mounts_supports_inline_require_final_argument(self) -> None:
         server_text = """\
 const express = require("express");

@@ -32,6 +32,13 @@ def parse_js_string_literal(token: str) -> Optional[str]:
     body = token[1:-1]
     if quote == "`" and "${" in body:
         return None
+    if quote in {"'", '"'}:
+        if quote == "'":
+            body = body.replace("\\'", "'")
+        if quote == '"':
+            body = body.replace('\\"', '"')
+        body = body.replace("\\/", "/")
+        body = body.replace("\\\\", "\\")
     return body
 
 
@@ -291,10 +298,6 @@ def extract_express_app_identifiers(source_text: str, include_default: bool = Tr
         app_identifiers.add(match.group(1))
 
     app_identifiers = expand_identifier_aliases(source_text, app_identifiers)
-    if include_default:
-        # Keep legacy compatibility for files that still mount on `app.use(...)`
-        # even when another Express instance alias is also discovered.
-        app_identifiers.add("app")
     return sorted(app_identifiers)
 
 
@@ -350,9 +353,7 @@ def extract_router_identifiers(source_text: str) -> List[str]:
     for match in require_member_call_pattern.finditer(source_text):
         router_identifiers.add(match.group(1))
 
-    # Keep legacy compatibility for files that still register routes on `router.<method>(...)`
-    # even when other router variable names are detected.
-    router_identifiers.add("router")
+    router_identifiers = expand_identifier_aliases(source_text, router_identifiers)
     return sorted(router_identifiers)
 
 
@@ -364,6 +365,40 @@ def unwrap_parenthesized_expr(expr: str) -> str:
             break
         candidate = candidate[1:-1].strip()
     return candidate
+
+
+def extract_callback_expressions(expr: str) -> List[str]:
+    candidate = unwrap_parenthesized_expr(expr)
+    if not candidate:
+        return []
+    if candidate.startswith("..."):
+        candidate = candidate[3:].lstrip()
+    if candidate.startswith("[") and candidate.endswith("]"):
+        nested_exprs: List[str] = []
+        for part in split_top_level_commas(candidate[1:-1]):
+            nested_exprs.extend(extract_callback_expressions(part))
+        return nested_exprs
+    return [candidate]
+
+
+def extract_identifiers_from_expr(expr: str) -> List[str]:
+    identifiers: List[str] = []
+    for candidate in extract_callback_expressions(expr):
+        identifier = extract_identifier(candidate)
+        if identifier and identifier not in identifiers:
+            identifiers.append(identifier)
+    return identifiers
+
+
+def is_call_expression(expr: str) -> bool:
+    candidate = unwrap_parenthesized_expr(expr)
+    if not candidate:
+        return False
+    open_idx = candidate.find("(")
+    if open_idx == -1:
+        return False
+    close_idx = find_matching_paren(candidate, open_idx)
+    return close_idx == len(candidate) - 1
 
 
 def parse_require_source(expr: str) -> Optional[str]:
@@ -474,6 +509,11 @@ def parse_default_imports(file_path: Path, text: str) -> Dict[str, Path]:
 
 def extract_body_fields(source_text: str) -> List[str]:
     fields = set(re.findall(r"req\.body(?:\?\.|\.)([A-Za-z_$][\w$]*)", source_text))
+    bracket_fields = re.findall(
+        r"""req\.body(?:\?\.)?\s*\[\s*["']([A-Za-z_$][\w$]*)["']\s*\]""",
+        source_text,
+    )
+    fields.update(bracket_fields)
     destructured = re.findall(
         r"\{\s*([A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*)\s*\}\s*=\s*req\.body",
         source_text,
@@ -616,7 +656,7 @@ def discover_server_file(project_root: Path, explicit_server_file: Optional[str]
         if candidate.is_file():
             return candidate
 
-    excluded_dirs = {"node_modules", ".git", "dist", "build", "coverage", "skills"}
+    excluded_dirs = {"node_modules", ".git", "dist", "build", "coverage"}
     scanned_candidates: List[Path] = []
     for candidate in project_root.rglob("*.js"):
         relative_parts = candidate.relative_to(project_root).parts
@@ -663,39 +703,46 @@ def extract_mounts(server_path: Path, server_text: str) -> List[Dict[str, Any]]:
             if not parts:
                 continue
             mount_path = "/"
-            parsed_mount_path = parse_js_string_literal(parts[0]) if len(parts) >= 2 else None
-            if parsed_mount_path is not None:
-                mount_path = parsed_mount_path or "/"
+            callback_parts = parts
+            if len(parts) >= 2:
+                parsed_mount_path = parse_js_string_literal(parts[0])
+                if parsed_mount_path is not None:
+                    mount_path = parsed_mount_path or "/"
+                    callback_parts = parts[1:]
 
-            final_arg = parts[-1].strip()
-            inline_source = parse_require_source(final_arg)
-            router_name = None if inline_source else extract_identifier(final_arg)
-            route_file: Optional[Path] = imports.get(router_name) if router_name else None
+            for callback_part in callback_parts:
+                for callback_expr in extract_callback_expressions(callback_part):
+                    callback_expr = callback_expr.strip()
+                    if is_call_expression(callback_expr) and not parse_require_source(callback_expr):
+                        continue
+                    inline_source = parse_require_source(callback_expr)
+                    router_name = None if inline_source else extract_identifier(callback_expr)
+                    route_file: Optional[Path] = imports.get(router_name) if router_name else None
 
-            if not route_file and inline_source:
-                route_file = resolve_module_path(server_path, inline_source)
-                if route_file and not router_name:
-                    try:
-                        router_name = infer_exported_identifier(read_text(route_file))
-                    except (OSError, UnicodeDecodeError):
-                        router_name = None
-                    if not router_name:
-                        router_name = Path(inline_source).stem
+                    if not route_file and inline_source:
+                        route_file = resolve_module_path(server_path, inline_source)
+                        if route_file and not router_name:
+                            try:
+                                router_name = infer_exported_identifier(read_text(route_file))
+                            except (OSError, UnicodeDecodeError):
+                                router_name = None
+                            if not router_name:
+                                router_name = Path(inline_source).stem
 
-            if not route_file or not router_name:
-                continue
+                    if not route_file or not router_name:
+                        continue
 
-            key = (mount_path, route_file, router_name)
-            if key in seen:
-                continue
-            seen.add(key)
-            mounts.append(
-                {
-                    "router_name": router_name,
-                    "mount_path": mount_path,
-                    "route_file": route_file,
-                }
-            )
+                    key = (mount_path, route_file, router_name)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    mounts.append(
+                        {
+                            "router_name": router_name,
+                            "mount_path": mount_path,
+                            "route_file": route_file,
+                        }
+                    )
     return mounts
 
 
@@ -715,7 +762,11 @@ def parse_route_endpoints(
     requirement_cache: Dict[Path, Dict[str, Any]],
     mounted_router_name: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    route_text = read_text(route_file)
+    try:
+        route_text = read_text(route_file)
+    except (OSError, UnicodeDecodeError) as exc:
+        print(f"Warning: cannot read route file {route_file}: {exc}", file=sys.stderr)
+        return []
     route_imports = parse_default_imports(route_file, route_text)
     try:
         route_relative = str(route_file.relative_to(project_root))
@@ -743,6 +794,12 @@ def parse_route_endpoints(
             router_names = extract_router_identifiers(route_text)
     else:
         router_names = extract_router_identifiers(route_text)
+    if not router_names:
+        print(
+            f"Warning: no router identifiers detected in {route_file}",
+            file=sys.stderr,
+        )
+        return []
 
     for router_name in router_names:
         for method, args, _start, _end in iter_object_calls(route_text, router_name, HTTP_METHODS):
@@ -756,10 +813,14 @@ def parse_route_endpoints(
 
             middleware_parts = parts[1:-1]
             handler_source = parts[-1]
-            middleware_names = [name for name in (extract_identifier(p) for p in middleware_parts) if name]
+            middleware_names: List[str] = []
+            for middleware_part in middleware_parts:
+                for middleware_name in extract_identifiers_from_expr(middleware_part):
+                    if middleware_name not in middleware_names:
+                        middleware_names.append(middleware_name)
             route_scope_source = "\n".join([*middleware_parts, handler_source])
 
-            body_fields = set(extract_body_fields(handler_source))
+            body_fields = set(extract_body_fields(route_scope_source))
             upload_fields = set(extract_upload_fields(route_scope_source))
             auth_required = False
             needs_file = bool(re.search(r"\breq\.files?\b", handler_source))
@@ -776,9 +837,16 @@ def parse_route_endpoints(
                     continue
 
                 if source_path not in requirement_cache:
-                    requirement_cache[source_path] = analyze_source_requirements(
-                        read_text(source_path)
-                    )
+                    try:
+                        requirement_cache[source_path] = analyze_source_requirements(
+                            read_text(source_path)
+                        )
+                    except (OSError, UnicodeDecodeError) as exc:
+                        print(
+                            f"Warning: cannot read middleware source {source_path}: {exc}",
+                            file=sys.stderr,
+                        )
+                        continue
                 requirement = requirement_cache[source_path]
                 body_fields.update(requirement["body_fields"])
                 upload_fields.update(requirement["upload_fields"])
@@ -804,9 +872,14 @@ def parse_route_endpoints(
 
 
 def build_request(endpoint: Dict[str, Any]) -> Dict[str, Any]:
+    path_segments = [segment for segment in endpoint["path_postman"].split("/") if segment]
     request: Dict[str, Any] = {
         "method": endpoint["method"],
-        "url": f"{{{{baseUrl}}}}{endpoint['path_postman']}",
+        "url": {
+            "raw": f"{{{{baseUrl}}}}{endpoint['path_postman']}",
+            "host": ["{{baseUrl}}"],
+            "path": path_segments,
+        },
         "description": (
             f"{AUTO_GENERATED_TAG}\n"
             f"Endpoint: {endpoint['method']} {endpoint['path']}\n"
@@ -870,7 +943,8 @@ def build_generated_tree(endpoints: Sequence[Dict[str, Any]], root_name: str) ->
         endpoints, key=lambda entry: (entry["route_file_relative"], entry["path"], entry["method"])
     )
     for endpoint in sorted_endpoints:
-        route_parts = Path(endpoint["route_file_relative"]).with_suffix("").parts
+        normalized_relative = str(endpoint["route_file_relative"]).replace("\\", "/")
+        route_parts = Path(normalized_relative).with_suffix("").parts
         current = root
         for part in route_parts:
             current = ensure_folder(current["item"], part)
@@ -907,6 +981,12 @@ def load_collection(path: Path, collection_name: str) -> Dict[str, Any]:
     data.setdefault("info", {})
     data.setdefault("item", [])
     data.setdefault("variable", [])
+    existing_schema = data.get("info", {}).get("schema", "")
+    if existing_schema and existing_schema != POSTMAN_SCHEMA:
+        print(
+            f"Warning: existing collection uses schema {existing_schema!r}; upgrading to {POSTMAN_SCHEMA!r}. Verify manually.",
+            file=sys.stderr,
+        )
     if "name" not in data["info"]:
         data["info"]["name"] = collection_name
     if "schema" not in data["info"]:
@@ -1007,22 +1087,39 @@ def main(argv: Sequence[str]) -> int:
         if not route_file.exists():
             print(f"Warning: route file not found: {route_file}", file=sys.stderr)
             continue
-        endpoints.extend(
-            parse_route_endpoints(
-                route_file=route_file,
-                mount_path=mount["mount_path"],
-                project_root=project_root,
-                requirement_cache=requirement_cache,
-                mounted_router_name=mount.get("router_name"),
-            )
+        file_endpoints = parse_route_endpoints(
+            route_file=route_file,
+            mount_path=mount["mount_path"],
+            project_root=project_root,
+            requirement_cache=requirement_cache,
+            mounted_router_name=mount.get("router_name"),
         )
+        if not file_endpoints:
+            print(
+                f"Warning: no endpoints found in {route_file} (mounted at '{mount['mount_path']}'). Check router variable names.",
+                file=sys.stderr,
+            )
+        endpoints.extend(file_endpoints)
+
+    seen_endpoints: set[Tuple[str, str]] = set()
+    deduped_endpoints: List[Dict[str, Any]] = []
+    for endpoint in endpoints:
+        key = (endpoint["method"], endpoint["path"])
+        if key in seen_endpoints:
+            continue
+        seen_endpoints.add(key)
+        deduped_endpoints.append(endpoint)
+    endpoints = deduped_endpoints
 
     if not endpoints:
         print("Error: no router endpoints discovered.", file=sys.stderr)
         return 1
 
     collection = load_collection(output_file, collection_name)
-    collection["info"]["name"] = collection.get("info", {}).get("name") or collection_name
+    if args.collection_name:
+        collection["info"]["name"] = args.collection_name
+    else:
+        collection["info"].setdefault("name", collection_name)
     collection["info"]["schema"] = POSTMAN_SCHEMA
 
     ensure_variable(
