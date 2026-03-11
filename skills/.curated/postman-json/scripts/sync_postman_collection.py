@@ -458,14 +458,30 @@ def extract_body_fields(source_text: str) -> List[str]:
 
 
 def extract_upload_fields(source_text: str) -> List[str]:
-    return sorted(
-        set(
-            re.findall(
-                r"upload\.(?:single|array|fields)\(\s*['\"]([A-Za-z_$][\w$-]*)['\"]",
-                source_text,
-            )
-        )
+    upload_fields: set[str] = set()
+    field_name_pattern = re.compile(
+        r"""(?:\bname\b|["']name["'])\s*:\s*(['"])([A-Za-z_$][\w$-]*)\1"""
     )
+    for method, args, _start, _end in iter_object_calls(
+        source_text, "upload", {"single", "array", "fields"}
+    ):
+        parts = split_top_level_commas(args)
+        if not parts:
+            continue
+        first_arg = parts[0].strip()
+        if method in {"single", "array"}:
+            field_name = parse_js_string_literal(first_arg)
+            if field_name:
+                upload_fields.add(field_name)
+            continue
+        if method == "fields":
+            direct_name = parse_js_string_literal(first_arg)
+            if direct_name:
+                upload_fields.add(direct_name)
+            upload_fields.update(
+                match.group(2) for match in field_name_pattern.finditer(first_arg)
+            )
+    return sorted(upload_fields)
 
 
 def path_join(prefix: str, suffix: str) -> str:
@@ -535,7 +551,8 @@ def discover_server_file(project_root: Path, explicit_server_file: Optional[str]
     excluded_dirs = {"node_modules", ".git", "dist", "build", "coverage", "skills"}
     scanned_candidates: List[Path] = []
     for candidate in project_root.rglob("*.js"):
-        if any(part in excluded_dirs for part in candidate.parts):
+        relative_parts = candidate.relative_to(project_root).parts
+        if any(part in excluded_dirs for part in relative_parts[:-1]):
             continue
         try:
             text = read_text(candidate)
@@ -847,6 +864,16 @@ def replace_generated_root(
     collection["item"] = kept
 
 
+def item_references_variable(item: Any, variable_name: str) -> bool:
+    if isinstance(item, str):
+        return f"{{{{{variable_name}}}}}" in item
+    if isinstance(item, list):
+        return any(item_references_variable(entry, variable_name) for entry in item)
+    if isinstance(item, dict):
+        return any(item_references_variable(value, variable_name) for value in item.values())
+    return False
+
+
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Generate/update Postman collection JSON from Express routes."
@@ -950,6 +977,21 @@ def main(argv: Sequence[str]) -> int:
 
     generated_root = build_generated_tree(endpoints, args.generated_root_name)
     replace_generated_root(collection, generated_root, args.generated_root_name)
+
+    if item_references_variable(generated_root, "shopToken"):
+        ensure_variable(
+            collection,
+            "shopToken",
+            "replace-with-shop-token",
+            "Bearer token for authenticated API requests.",
+        )
+    if item_references_variable(generated_root, "turnstileToken"):
+        ensure_variable(
+            collection,
+            "turnstileToken",
+            "replace-with-turnstile-token",
+            "Turnstile token used by routes requiring challenge verification.",
+        )
 
     output_file.parent.mkdir(parents=True, exist_ok=True)
     output_file.write_text(json.dumps(collection, indent=2) + "\n", encoding="utf-8")

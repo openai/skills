@@ -259,6 +259,28 @@ app.use("/users", usersRouter);
 
         self.assertEqual(discovered, server_file.resolve())
 
+    def test_discover_server_file_excluded_dirs_are_scoped_to_project_root(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_root = Path(temp_dir) / "build" / "repo"
+            project_root.mkdir(parents=True, exist_ok=True)
+            server_file = project_root / "index.js"
+            route_file = project_root / "routes/users.js"
+            route_file.parent.mkdir(parents=True, exist_ok=True)
+            route_file.write_text("module.exports = {};\n", encoding="utf-8")
+            server_file.write_text(
+                """\
+const express = require("express");
+const usersRouter = require("./routes/users");
+const app = express();
+app.use("/users", usersRouter);
+""",
+                encoding="utf-8",
+            )
+
+            discovered = discover_server_file(project_root, explicit_server_file=None)
+
+        self.assertEqual(discovered, server_file.resolve())
+
     def test_discover_server_file_fallback_ignores_non_express_app_use_files(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             project_root = Path(temp_dir)
