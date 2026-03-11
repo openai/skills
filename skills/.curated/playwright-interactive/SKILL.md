@@ -365,6 +365,7 @@ var emitJpeg = async function (bytes) {
   await codex.emitImage({
     bytes,
     mimeType: "image/jpeg",
+    detail: "original",
   });
 };
 
@@ -559,6 +560,7 @@ Web desktop raw emit:
 await codex.emitImage({
   bytes: await page.screenshot({ type: "jpeg", quality: 85 }),
   mimeType: "image/jpeg",
+  detail: "original",
 });
 ```
 
@@ -568,6 +570,7 @@ Electron raw emit:
 await codex.emitImage({
   bytes: await appWindow.screenshot({ type: "jpeg", quality: 85 }),
   mimeType: "image/jpeg",
+  detail: "original",
 });
 ```
 
@@ -577,6 +580,7 @@ Mobile raw emit after the mobile web context is already running:
 await codex.emitImage({
   bytes: await mobilePage.screenshot({ type: "jpeg", quality: 85 }),
   mimeType: "image/jpeg",
+  detail: "original",
 });
 ```
 
