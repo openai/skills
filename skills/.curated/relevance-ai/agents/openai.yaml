@@ -1,0 +1,15 @@
+interface:
+  display_name: "Relevance AI"
+  short_description: "Manage AI agents, tools, and workflows on Relevance AI"
+  icon_small: "./assets/relevance-ai-small.svg"
+  icon_large: "./assets/relevance-ai.png"
+  brand_color: "#4F46E5"
+  default_prompt: "Use the Relevance AI MCP to list agents and tools in the current project, then help accomplish the user's goal."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "relevance-ai"
+      description: "Relevance AI MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.relevanceai.com/"
