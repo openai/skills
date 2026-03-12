@@ -67,8 +67,10 @@ CLI
 """
 
 import argparse
+import contextlib
 import json
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -122,22 +124,24 @@ def resolve_soffice() -> str:
     return abspath(soffice)
 
 
+def disable_temp_soffice_profile() -> bool:
+    value = os.environ.get("LIBREOFFICE_DISABLE_TEMP_PROFILE", "")
+    if value.strip().lower() in {"1", "true", "yes", "on"}:
+        return True
+    return os.name == "nt" and platform.machine().lower() in {"arm64", "aarch64"}
+
+
 def resolve_fc_list_command() -> list[str]:
     env_value = os.environ.get("FC_LIST_PATH")
     if env_value and exists(env_value):
         path = abspath(env_value)
-    else:
-        script_dir = os.path.dirname(abspath(__file__))
-        preferred = [
-            join(script_dir, "fc_list_compat.py"),
-        ]
-        path = ""
-        for candidate in preferred:
-            if exists(candidate):
-                path = abspath(candidate)
-                break
+    elif os.name == "nt":
+        compat = join(os.path.dirname(abspath(__file__)), "fc_list_compat.py")
+        path = abspath(compat) if exists(compat) else ""
         if not path:
             path = shutil.which("fc-list.exe") or shutil.which("fc-list") or ""
+    else:
+        path = shutil.which("fc-list.exe") or shutil.which("fc-list") or ""
     if not path:
         raise FileNotFoundError(
             "Could not locate 'fc-list'. Set FC_LIST_PATH or add it to PATH."
@@ -413,7 +417,9 @@ def _run_soffice_convert(cmd: list[str]) -> None:
     )
 
 
-def _export_to_odp(pptx_path: str, user_profile: str | None, out_dir: str, stem: str) -> str:
+def _export_to_odp_once(
+    pptx_path: str, user_profile: str | None, out_dir: str, stem: str
+) -> str:
     bin_path = resolve_soffice()
     cmd_odp = [bin_path]
     if user_profile:
@@ -431,6 +437,15 @@ def _export_to_odp(pptx_path: str, user_profile: str | None, out_dir: str, stem:
     _run_soffice_convert(cmd_odp)
     odp_path = join(out_dir, f"{stem}.odp")
     return odp_path if wait_for_file(odp_path) else ""
+
+
+def _export_to_odp(pptx_path: str, user_profile: str | None, out_dir: str, stem: str) -> str:
+    odp_path = _export_to_odp_once(pptx_path, user_profile, out_dir, stem)
+    if odp_path:
+        return odp_path
+    if os.name == "nt" and user_profile:
+        return _export_to_odp_once(pptx_path, None, out_dir, stem)
+    return ""
 
 
 def _collect_face_map(root: ET.Element, ns: dict[str, str]) -> dict[str, str]:
@@ -803,21 +818,19 @@ def _build_master_page_map(
 def detect_missing_fonts_odp(pptx_path: str) -> tuple[set[str], dict[int, list[str]]]:
     pptx_path = abspath(pptx_path)
     used = extract_used_fonts_from_pptx(pptx_path)
-    user_profile_ctx = None
-    user_profile_path = None
-    if os.name != "nt":
-        user_profile_ctx = tempfile.TemporaryDirectory(prefix="soffice_profile_")
-        user_profile_path = user_profile_ctx.__enter__()
-    try:
+    use_temp_profile = not disable_temp_soffice_profile()
+    with contextlib.ExitStack() as stack:
+        user_profile_path = None
+        if use_temp_profile:
+            user_profile_path = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="soffice_profile_")
+            )
         with tempfile.TemporaryDirectory(prefix="soffice_convert_") as out:
             stem = splitext(basename(pptx_path))[0]
             odp_path = _export_to_odp(pptx_path, user_profile_path, out, stem)
             if not odp_path:
                 return set(), {}
             slide_fams = _extract_slide_families_from_odp(odp_path)
-    finally:
-        if user_profile_ctx is not None:
-            user_profile_ctx.__exit__(None, None, None)
 
     missing_overall: set[str] = set()
     missing_by_slide: dict[int, list[str]] = {}
@@ -872,21 +885,19 @@ def main() -> None:
     slide_fams: dict[int, set[str]] = {}
     odp_available = False
     if args.include_substituted:
-        user_profile_ctx = None
-        user_profile_path = None
-        if os.name != "nt":
-            user_profile_ctx = tempfile.TemporaryDirectory(prefix="soffice_profile_")
-            user_profile_path = user_profile_ctx.__enter__()
-        try:
+        use_temp_profile = not disable_temp_soffice_profile()
+        with contextlib.ExitStack() as stack:
+            user_profile_path = None
+            if use_temp_profile:
+                user_profile_path = stack.enter_context(
+                    tempfile.TemporaryDirectory(prefix="soffice_profile_")
+                )
             with tempfile.TemporaryDirectory(prefix="soffice_convert_") as out:
                 stem = splitext(basename(pptx_path))[0]
                 odp_path = _export_to_odp(pptx_path, user_profile_path, out, stem)
                 if odp_path:
                     slide_fams = _extract_slide_families_from_odp(odp_path)
                     odp_available = True
-        finally:
-            if user_profile_ctx is not None:
-                user_profile_ctx.__exit__(None, None, None)
 
     syn_map = _build_fc_synonym_map()
     font_missing_by_slide: dict[int, list[str]] = {}

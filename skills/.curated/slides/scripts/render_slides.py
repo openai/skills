@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # Copyright (c) OpenAI. All rights reserved.
 import argparse
+import contextlib
 import glob
 import os
+import platform
 import re
 import shutil
 import subprocess
@@ -11,31 +13,12 @@ import time
 import xml.etree.ElementTree as ET
 from os import makedirs, replace
 from os.path import abspath, basename, exists, expanduser, join, splitext
-from typing import Sequence, cast
+from typing import cast
 from zipfile import ZipFile
 
 from pdf2image import convert_from_path, pdfinfo_from_path
 
 EMU_PER_INCH: int = 914_400
-
-
-def _resolve_executable(
-    name: str,
-    env_var: str | None = None,
-    candidates: Sequence[str] = (),
-) -> str:
-    if env_var:
-        env_value = os.environ.get(env_var)
-        if env_value and exists(env_value):
-            return abspath(env_value)
-    from_path = shutil.which(name)
-    if from_path:
-        return abspath(from_path)
-    for candidate in candidates:
-        if candidate and exists(candidate):
-            return abspath(candidate)
-    return ""
-
 
 def resolve_soffice() -> str:
     env_value = os.environ.get("SOFFICE_PATH")
@@ -50,7 +33,7 @@ def resolve_soffice() -> str:
             if exists(candidate):
                 return abspath(candidate)
 
-    soffice = shutil.which("soffice.exe") or shutil.which("soffice")
+    soffice = shutil.which("soffice.exe") or shutil.which("soffice") or shutil.which("libreoffice")
     if not soffice:
         raise FileNotFoundError(
             "Could not locate 'soffice'. Set SOFFICE_PATH or add LibreOffice to PATH."
@@ -86,6 +69,13 @@ def resolve_poppler_bin() -> str | None:
     return None
 
 
+def disable_temp_soffice_profile() -> bool:
+    value = os.environ.get("LIBREOFFICE_DISABLE_TEMP_PROFILE", "")
+    if value.strip().lower() in {"1", "true", "yes", "on"}:
+        return True
+    return os.name == "nt" and platform.machine().lower() in {"arm64", "aarch64"}
+
+
 def calc_dpi_via_ooxml(input_path: str, max_w_px: int, max_h_px: int) -> int:
     """Calculate DPI from OOXML `ppt/presentation.xml` slide size (cx/cy in EMUs)."""
     with ZipFile(input_path, "r") as zf:
@@ -111,12 +101,13 @@ def calc_dpi_via_pdf(input_path: str, max_w_px: int, max_h_px: int) -> int:
     For PDFs, use the PDF directly (avoids unnecessary conversion and failures).
     """
     is_pdf = input_path.lower().endswith(".pdf")
-    user_profile_ctx = None
-    user_profile_path = None
-    if os.name != "nt":
-        user_profile_ctx = tempfile.TemporaryDirectory(prefix="soffice_profile_")
-        user_profile_path = user_profile_ctx.__enter__()
-    try:
+    use_temp_profile = not disable_temp_soffice_profile()
+    with contextlib.ExitStack() as stack:
+        user_profile_path = None
+        if use_temp_profile:
+            user_profile_path = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="soffice_profile_")
+            )
         with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
             stem = splitext(basename(input_path))[0]
             pdf_path = (
@@ -168,9 +159,6 @@ def calc_dpi_via_pdf(input_path: str, max_w_px: int, max_h_px: int) -> int:
             if width_in <= 0 or height_in <= 0:
                 raise RuntimeError("Invalid PDF page size values.")
             return round(min(max_w_px / width_in, max_h_px / height_in))
-    finally:
-        if user_profile_ctx is not None:
-            user_profile_ctx.__exit__(None, None, None)
 
 
 def run_cmd_no_check(cmd: list[str]) -> None:
@@ -201,7 +189,7 @@ def wait_for_file(path: str, timeout_s: float = 20.0) -> bool:
     return exists(path) and os.path.getsize(path) > 0
 
 
-def convert_to_pdf(
+def _convert_to_pdf_once(
     pptx_path: str,
     user_profile: str | None,
     convert_tmp_dir: str,
@@ -264,6 +252,20 @@ def convert_to_pdf(
     return ""
 
 
+def convert_to_pdf(
+    pptx_path: str,
+    user_profile: str | None,
+    convert_tmp_dir: str,
+    stem: str,
+) -> str:
+    pdf_path = _convert_to_pdf_once(pptx_path, user_profile, convert_tmp_dir, stem)
+    if pdf_path:
+        return pdf_path
+    if os.name == "nt" and user_profile:
+        return _convert_to_pdf_once(pptx_path, None, convert_tmp_dir, stem)
+    return ""
+
+
 def rasterize(
     input_path: str,
     out_dir: str,
@@ -274,15 +276,18 @@ def rasterize(
     input_path = abspath(input_path)
     stem = splitext(basename(input_path))[0]
 
-    # LibreOffice on this Windows ARM machine fails when given a temporary
-    # custom UserInstallation path. Keep the isolated profile on non-Windows
-    # platforms, but let Windows use the default LibreOffice profile.
-    user_profile_ctx = None
-    user_profile_path = None
-    if os.name != "nt":
-        user_profile_ctx = tempfile.TemporaryDirectory(prefix="soffice_profile_")
-        user_profile_path = user_profile_ctx.__enter__()
-    try:
+    # Isolated temporary profiles remain the default because they avoid lock
+    # contention when multiple LibreOffice conversions run concurrently. On
+    # Windows, convert_to_pdf() can retry without a temporary profile if the
+    # isolated-profile attempt fails, and callers may explicitly opt out by
+    # setting LIBREOFFICE_DISABLE_TEMP_PROFILE=1.
+    use_temp_profile = not disable_temp_soffice_profile()
+    with contextlib.ExitStack() as stack:
+        user_profile_path = None
+        if use_temp_profile:
+            user_profile_path = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="soffice_profile_")
+            )
         # Write conversion outputs into a temp directory to avoid any IO oddities
         with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
             is_pdf = input_path.lower().endswith(".pdf")
@@ -311,9 +316,6 @@ def rasterize(
                     poppler_path=resolve_poppler_bin(),
                 ),
             )
-    finally:
-        if user_profile_ctx is not None:
-            user_profile_ctx.__exit__(None, None, None)
     # Rename convert_from_path's output format f'slide{thread_id:04d}-{page_num:02d}.png'
     slides = []
     for src_path in paths_raw:

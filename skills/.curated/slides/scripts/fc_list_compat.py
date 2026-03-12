@@ -2,8 +2,12 @@
 import argparse
 import os
 import sys
-import winreg
 from fontTools.ttLib import TTCollection, TTFont
+
+if os.name == "nt":
+    import winreg
+else:
+    winreg = None  # type: ignore[assignment]
 
 
 def norm_path(font_dir: str, value: str) -> str:
@@ -16,6 +20,8 @@ def norm_path(font_dir: str, value: str) -> str:
 
 
 def registry_font_paths() -> list[str]:
+    if os.name != "nt" or winreg is None:
+        return []
     results: list[str] = []
     font_dir = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
     keys = [
@@ -111,6 +117,8 @@ def iter_font_name_rows(path: str) -> list[tuple[str, str, str]]:
 
 
 def main() -> int:
+    if os.name != "nt":
+        return 0
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument("--format", default="%{family}\t%{fullname}\t%{postscriptname}\n")
     args, _ = parser.parse_known_args()
