@@ -1,7 +1,6 @@
 ---
 name: relevance-ai
 description: Manage AI agents, tools & multi-agent workforces on Relevance AI. Use when the user wants to create agents, build tool workflows, orchestrate multi-agent systems, or manage knowledge tables via the Relevance AI API.
-license: Apache-2.0
 metadata:
   short-description: Manage AI agents, tools, and workflows on Relevance AI
 ---
