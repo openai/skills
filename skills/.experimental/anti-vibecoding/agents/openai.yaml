@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anti Vibecoding"
+  short_description: "Clarification-first coding guardrail"
+  default_prompt: "Use $anti-vibecoding to clarify requirements before any execution."
