@@ -33,14 +33,13 @@ Keep this file short; the full source of truth is the latest OpenAI Sora guide p
 - Reference up to two characters per generation with `characters: [{"id": "..."}]`.
 - Mention the character name verbatim in the prompt; the ID alone is not enough.
 - Characters can be combined with `input_reference`.
-- Character uploads depicting human likeness are blocked by default.
+- In this skill, character workflows are limited to non-human subjects.
 
 ## Edits vs remix
 - Preferred: `POST /v1/videos/edits`
 - Legacy/deprecated: `POST /v1/videos/{video_id}/remix`
 - Use edits for new integrations.
-- The `video` field can reference an existing video ID or an uploaded video file.
-- If uploading a new source video for editing, set `model` explicitly.
+- In this skill, use edits for existing generated video IDs only.
 
 ## Extensions
 - Use `POST /v1/videos/extensions` to continue a completed video.
@@ -57,7 +56,7 @@ Keep this file short; the full source of truth is the latest OpenAI Sora guide p
 ## Core endpoints
 - `POST /videos`: create
 - `POST /videos/characters`: create a reusable character
-- `POST /videos/edits`: edit an existing or uploaded video
+- `POST /videos/edits`: edit an existing generated video by ID
 - `POST /videos/extensions`: extend a completed video
 - `GET /videos/{id}`: retrieve status/details
 - `GET /videos/{id}/content`: download content

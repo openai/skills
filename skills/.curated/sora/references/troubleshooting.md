@@ -33,12 +33,8 @@
 - Fix: convert to jpg/png/webp, remove faces, and resize to match `--size`.
 
 ## Character continuity is weak
-- Cause: the character clip is too long, too human-like, mismatched in aspect ratio, or the prompt never names the character.
+- Cause: the character clip is too long, mismatched in aspect ratio, outside the skill's non-human character workflow, or the prompt never names the character.
 - Fix: use a short non-human MP4, match aspect ratio to the target shot, and mention the character name verbatim in the prompt.
-
-## Uploaded-video edit fails
-- Cause: uploaded-video editing is limited to eligible customers, or `--model` was omitted.
-- Fix: prefer editing an existing generated video by ID. If you must upload a source video, set `--model` explicitly.
 
 ## Extension looks jumpy or drifts
 - Cause: the continuation prompt changes too many things at once, or asks for a hard scene break.

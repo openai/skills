@@ -1,6 +1,6 @@
 ---
 name: "sora"
-description: "Use when the user asks to generate, edit, extend, poll, list, download, or delete Sora videos, create reusable Sora character references, or run local multi-video queues via the bundled CLI (`scripts/sora.py`); includes requests like: (i) generate AI video, (ii) edit this Sora clip, (iii) extend this video, (iv) create a character reference, (v) download video/thumbnail/spritesheet, and (vi) Sora batch planning; requires `OPENAI_API_KEY` and Sora API access."
+description: "Use when the user asks to generate, edit, extend, poll, list, download, or delete Sora videos, create reusable non-human Sora character references, or run local multi-video queues via the bundled CLI (`scripts/sora.py`); includes requests like: (i) generate AI video, (ii) edit this Sora clip, (iii) extend this video, (iv) create a character reference, (v) download video/thumbnail/spritesheet, and (vi) Sora batch planning; requires `OPENAI_API_KEY` and Sora API access."
 ---
 
 
@@ -70,7 +70,7 @@ If the key is missing, give the user these steps:
 - Character uploads currently work best with short `2`-`4` second non-human MP4s in `16:9` or `9:16`, at `720p`-`1080p`.
 - Extensions can add up to `20` seconds each, up to six times per source video, for a maximum total length of `120` seconds.
 - Extensions currently do not support characters or image references.
-- Uploaded-video editing is limited to eligible customers; generated-video editing by ID is the normal path.
+- This skill supports editing existing generated videos by ID.
 - The official Batch API currently supports `POST /v1/videos` only, with JSON bodies rather than multipart uploads.
 - Output sizes are limited by model (see `references/video-api.md` for the supported sizes).
 - Video creation is async; you must poll for completion before downloading.
@@ -82,7 +82,7 @@ If the key is missing, give the user these steps:
 - No copyrighted characters or copyrighted music.
 - No real people (including public figures).
 - Input images with human faces are rejected.
-- Character uploads depicting human likeness are blocked by default.
+- Character uploads in this skill are for non-human subjects only.
 
 ## Prompt augmentation
 Reformat prompts into a structured, production-oriented spec. Only make implicit details explicit; do not invent new creative requirements.

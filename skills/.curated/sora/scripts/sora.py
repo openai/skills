@@ -1071,33 +1071,18 @@ def _cmd_edit(args: argparse.Namespace) -> int:
     prompt = _augment_prompt(args, prompt)
     json_out = _normalize_json_out(args.json_out, "edit.json")
 
-    payload: Dict[str, Any] = {"prompt": prompt}
-    video_path = getattr(args, "video_file", None)
-
-    if args.id:
-        payload["video"] = {"id": args.id}
-    else:
-        if not video_path:
-            _die("Use --id or --video-file.")
-        if not args.model:
-            _die("--model is required when editing an uploaded source video.")
-        payload["model"] = _normalize_model(args.model)
+    payload: Dict[str, Any] = {"prompt": prompt, "video": {"id": args.id}}
 
     if args.dry_run:
-        preview = dict(payload)
-        if video_path:
-            preview["video"] = video_path
-        _print_request({"endpoint": "/v1/videos/edits", **preview})
+        _print_request({"endpoint": "/v1/videos/edits", **payload})
         _write_json_out(
             json_out,
-            {"dry_run": True, "request": {"endpoint": "/v1/videos/edits", **preview}},
+            {"dry_run": True, "request": {"endpoint": "/v1/videos/edits", **payload}},
         )
         return 0
 
     client = _create_client()
-    with _open_video_upload(video_path, label="Source video") as video_file:
-        files = [("video", video_file)] if video_file is not None else None
-        result = _video_post(client, "/videos/edits", payload, files=files)
+    result = _video_post(client, "/videos/edits", payload)
     _print_json(result)
     _write_json_out(json_out, result)
     return 0
@@ -1249,7 +1234,7 @@ def main() -> int:
     batch_parser.add_argument("--fail-fast", action="store_true")
     batch_parser.set_defaults(func=_create_batch)
 
-    character_parser = subparsers.add_parser("create-character", help="Create a reusable character from a video")
+    character_parser = subparsers.add_parser("create-character", help="Create a reusable non-human character from a video")
     character_parser.add_argument("--name", required=True)
     character_parser.add_argument("--video-file", required=True)
     character_parser.add_argument("--dry-run", action="store_true")
@@ -1264,11 +1249,8 @@ def main() -> int:
     _add_json_out(extend_parser)
     extend_parser.set_defaults(func=_cmd_extend)
 
-    edit_parser = subparsers.add_parser("edit", help="Edit an existing or uploaded video")
-    edit_source = edit_parser.add_mutually_exclusive_group(required=True)
-    edit_source.add_argument("--id", help="Existing video ID to edit")
-    edit_source.add_argument("--video-file", help="Path to a source video file to upload")
-    edit_parser.add_argument("--model")
+    edit_parser = subparsers.add_parser("edit", help="Edit an existing generated video by ID")
+    edit_parser.add_argument("--id", required=True, help="Existing generated video ID to edit")
     edit_parser.add_argument("--dry-run", action="store_true")
     _add_prompt_args(edit_parser)
     _add_json_out(edit_parser)

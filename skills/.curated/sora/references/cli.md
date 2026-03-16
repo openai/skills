@@ -5,8 +5,8 @@ This file contains the command catalog for the bundled Sora CLI. Keep `SKILL.md`
 ## What this CLI does
 - `create`: create a new video job
 - `create-and-poll`: create a job, poll until complete, optionally download
-- `create-character`: upload a reusable character reference clip
-- `edit`: edit an existing generated video or an uploaded source video
+- `create-character`: upload a reusable non-human character reference clip
+- `edit`: edit an existing generated video by ID
 - `extend`: continue a completed video
 - `poll`: wait for an existing job to finish
 - `status`: retrieve job status/details
@@ -141,15 +141,6 @@ Edit an existing generated video by ID:
 uv run --with openai python "$SORA_CLI" edit \
   --id video_abc123 \
   --prompt "Same shot and camera move; shift the palette to teal, sand, and rust."
-```
-
-Edit an uploaded source video:
-
-```bash
-uv run --with openai python "$SORA_CLI" edit \
-  --video-file source.mp4 \
-  --model sora-2-pro \
-  --prompt "Add a warm backlight and soften the contrast."
 ```
 
 ## Extend
