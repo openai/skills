@@ -15,11 +15,17 @@ The Relevance AI MCP integration enables building and managing AI agent systems.
 
 ### Step 0: Set up Relevance AI MCP (if not already configured)
 
-If any MCP call fails because the Relevance AI MCP is not connected, pause and help the user set it up. See `reference/setup.md` for detailed steps. After setup, the user will need to restart Codex before continuing.
+Skip straight to Step 1 if the MCP server might already be configured — the only reliable way to check is to call an actual MCP tool.
+
+If MCP tool calls fail because the server is not configured, help the user set it up. See `reference/setup.md` for detailed steps. After setup, the user will need to restart Codex before continuing.
+
+**Do NOT use `codex mcp list` to check authentication status.** Remote MCP servers like Relevance AI will show `Auth: Unsupported` in the CLI — this is normal and does NOT mean auth has failed. The CLI cannot detect OAuth state for remote servers. Ignore this status and try calling an actual MCP tool instead.
+
+**Never re-run `codex mcp login` if the user says they already completed OAuth.** If MCP calls return auth errors after the user has authenticated, tell them to restart Codex — do not open a second login flow.
 
 ### Step 1: Verify connectivity
 
-Run `relevance-ai:relevance_list_agents` and `relevance-ai:relevance_list_tools` to confirm the MCP connection is working. If either fails, revisit Step 0.
+Call `relevance-ai:relevance_list_agents` to confirm the MCP connection is working. This is the **only** reliable way to check — actually call an MCP tool and see if it succeeds.
 
 ### Step 2: Identify the goal
 
