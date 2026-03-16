@@ -16,18 +16,19 @@
 - [Constraints & invariants](#constraints--invariants)
 - [Text, dialogue & audio](#text-dialogue--audio)
 - [Avoiding artifacts](#avoiding-artifacts)
-- [Remixing](#remixing)
+- [Editing & extensions](#editing--extensions)
 - [Iterate deliberately](#iterate-deliberately)
 
 ## Mindset & tradeoffs
 - Treat the prompt like a cinematography brief, not a contract.
 - The same prompt can yield different results; rerun for variants.
 - Short prompts give more creative freedom; longer prompts give more control.
-- Shorter clips tend to follow instructions better; consider stitching two 4s clips instead of a single 8s if precision matters.
+- Shorter clips tend to follow instructions better; even though `16`s and `20`s are available, start shorter when precision matters.
 
 ## API-controlled params
-- Model, size, and seconds are controlled by API params, not prose.
+- Model, size, seconds, and character IDs are controlled by API params, not prose.
 - Put desired duration in the `seconds` param; the prompt cannot make a clip longer.
+- `1920x1080` and `1080x1920` require `sora-2-pro`.
 
 ## Structure
 - Use short labeled lines; omit sections that do not matter.
@@ -82,6 +83,9 @@ Dialogue:
 ## Character continuity
 - Keep character descriptors consistent across shots; reuse phrasing.
 - Avoid mixing competing traits that can shift identity or pose.
+- When using uploaded character assets, mention the character name verbatim in the prompt.
+- Use no more than two characters per generation.
+- Character uploads work best from short non-human MP4 reference clips.
 
 ## Multi-shot prompts
 - You can describe multiple shots in one prompt, but keep each shot block distinct.
@@ -101,7 +105,8 @@ Dialogue:
 
 ## Constraints & invariants
 - State what must not change: "same shot", "same framing", "keep background".
-- Repeat invariants in every remix to reduce drift.
+- Repeat invariants in every edit to reduce drift.
+- Use invariants sparingly in extensions; tell the model what should continue, not just what should stay frozen.
 
 ## Text, dialogue & audio
 - Keep text short and specific; quote exact strings.
@@ -126,9 +131,11 @@ Dialogue:
 - Keep camera motion smooth and limited.
 - Add explicit negatives when needed: "avoid flicker", "avoid jitter", "no fast motion".
 
-## Remixing
-- Change one thing at a time: palette, lighting, or action.
-- Keep camera and subject consistent unless the change requests otherwise.
+## Editing & extensions
+- Prefer edits when the shot is mostly right and you want one targeted change.
+- Prefer extensions when the existing clip should continue forward in time.
+- For edits, change one thing at a time: palette, lighting, or action.
+- For extensions, describe the next beat clearly and preserve motion continuity.
 - If a shot misfires, simplify: freeze the camera, reduce action, clear background, then add complexity back in.
 
 ## Iterate deliberately

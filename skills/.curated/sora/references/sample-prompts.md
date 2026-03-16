@@ -9,6 +9,9 @@ For prompting principles (structure, invariants, iteration), see `references/pro
 - [UI demo (screen recording style)](#ui-demo-screen-recording-style)
 - [Cinematic detail shot](#cinematic-detail-shot)
 - [Social ad (6s with beats)](#social-ad-6s-with-beats)
+- [Character continuity shot](#character-continuity-shot)
+- [Edit follow-up](#edit-follow-up)
+- [Extension follow-up](#extension-follow-up)
 - [Motion graphics explainer](#motion-graphics-explainer)
 - [Ambient loop (atmosphere)](#ambient-loop-atmosphere)
 
@@ -65,6 +68,36 @@ Camera: 50mm, gentle handheld drift
 Lighting/mood: warm, cozy, natural light
 Text (verbatim): "Fresh roast" (top-left), "Weekly delivery" (bottom-right)
 Constraints: no logos; text must be legible; avoid fast motion
+```
+
+## Character continuity shot
+```
+Use case: mascot continuity
+Primary request: Mossy, a moss-covered teapot mascot, rushes through a lantern-lit market at dusk
+Scene/background: narrow alley, hanging lanterns, light haze
+Subject: Mossy the moss-covered teapot mascot
+Action: quick jog through the alley, glances toward camera near the end
+Camera: 35mm, shoulder-height tracking shot, smooth lateral move
+Lighting/mood: warm dusk practicals, cinematic glow
+Color palette: moss green, warm amber, charcoal
+Constraints: keep Mossy's silhouette, moss texture, and teapot proportions consistent
+Avoid: flicker; warped limbs; identity drift
+```
+
+## Edit follow-up
+```
+Primary request: same shot and camera move; change only the palette to teal, sand, and rust with a warmer backlight
+Constraints: keep the subject, framing, and motion unchanged
+Avoid: new objects; reframing; speed changes
+```
+
+## Extension follow-up
+```
+Primary request: continue the same shot as the camera rises above the rooftops and reveals sunrise over the city
+Action: maintain the existing motion, then gently tilt upward into the skyline reveal
+Lighting/mood: dawn light growing warmer through the extension
+Constraints: preserve scene continuity, camera direction, and overall pacing
+Avoid: abrupt cuts; jumpy motion; sudden subject changes
 ```
 
 ## Motion graphics explainer
