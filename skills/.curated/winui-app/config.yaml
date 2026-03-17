@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://aka.ms/configuration-dsc-schema/0.2
+
+##################################################################################################################################
+# This configuration installs the tools needed to get started building Windows apps with WinUI.                                  #
+#                                                                                                                                #
+# This will:                                                                                                                     #
+#   * Enable Developer Mode                                                                                                      #
+#   * Install Visual Studio Community 2026                                                                                       #
+#   * Install the WinUI / Windows App SDK workloads                                                                              #
+##################################################################################################################################
+properties:
+  assertions:
+    - resource: Microsoft.Windows.Developer/OsVersion
+      directives:
+        description: Verify min OS version requirement
+        allowPrerelease: true
+      settings:
+        MinVersion: '10.0.17763'
+  resources:
+    - resource: Microsoft.Windows.Settings/WindowsSettings
+      directives:
+        description: Enable Developer Mode
+        securityContext: elevated
+        allowPrerelease: true
+      settings:
+        DeveloperMode: true
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      id: Visual Studio
+      directives:
+        description: Install Visual Studio Community 2026
+        securityContext: elevated
+      settings:
+        id: Microsoft.VisualStudio.Community
+        source: winget
+    - resource: Microsoft.VisualStudio.DSC/VSComponents
+      id: Workloads ManagedDesktop
+      dependsOn:
+        - Visual Studio
+      directives:
+        description: Install required VS workloads (ManagedDesktop, Windows App SDK)
+        allowPrerelease: true
+        securityContext: elevated
+      settings:
+        productId: Microsoft.VisualStudio.Product.Community
+        channelId: VisualStudio.18.Release
+        components:
+          - Microsoft.VisualStudio.Workload.ManagedDesktop
+          - Microsoft.VisualStudio.Workload.Universal
+          - Microsoft.VisualStudio.ComponentGroup.WindowsAppSDK.Cs
+  configurationVersion: 0.2.0
