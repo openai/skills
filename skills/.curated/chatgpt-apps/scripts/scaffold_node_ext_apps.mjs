@@ -510,7 +510,7 @@ function usage() {
     "",
     "If the executable bit is unavailable, run:",
     "  node scripts/scaffold_node_ext_apps.mjs <output_dir> [--app-name <name>] [--tool-name <name>] [--port <number>] [--force]",
-  ].join("\\n");
+  ].join("\n");
 }
 
 function parseArgs(argv) {
@@ -564,7 +564,7 @@ function parseArgs(argv) {
   }
 
   if (!args.outputDir) {
-    throw new Error(`Missing required output directory.\\n\\n${usage()}`);
+    throw new Error(`Missing required output directory.\n\n${usage()}`);
   }
 
   return args;
