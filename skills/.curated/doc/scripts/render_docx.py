@@ -85,11 +85,32 @@ def calc_dpi_via_pdf(input_path: str, max_w_px: int, max_h_px: int) -> int:
             if not isinstance(size_val, str):
                 raise RuntimeError("Failed to read PDF page size for DPI computation.")
 
-            m = re.search(r"(\d+)\s*x\s*(\d+)\s*pts", size_val)
+            m = re.search(
+                r"([0-9]+(?:\.[0-9]+)?)\s*x\s*([0-9]+(?:\.[0-9]+)?)\s*pts\b",
+                size_val,
+            )
             if not m:
-                raise RuntimeError("Unrecognized PDF page size format.")
-            width_pts = int(m.group(1))
-            height_pts = int(m.group(2))
+                m = re.search(
+                    r"([0-9]+(?:\.[0-9]+)?)\s*x\s*([0-9]+(?:\.[0-9]+)?)\s*in\b",
+                    size_val,
+                )
+                if m:
+                    width_pts = float(m.group(1)) * 72.0
+                    height_pts = float(m.group(2)) * 72.0
+                else:
+                    m = re.search(
+                        r"([0-9]+(?:\.[0-9]+)?)\s*x\s*([0-9]+(?:\.[0-9]+)?)\b",
+                        size_val,
+                    )
+                    if not m:
+                        raise RuntimeError(
+                            f"Unrecognized PDF page size format: {size_val!r}"
+                        )
+                    width_pts = float(m.group(1))
+                    height_pts = float(m.group(2))
+            else:
+                width_pts = float(m.group(1))
+                height_pts = float(m.group(2))
             width_in = width_pts / 72.0
             height_in = height_pts / 72.0
             if width_in <= 0 or height_in <= 0:
