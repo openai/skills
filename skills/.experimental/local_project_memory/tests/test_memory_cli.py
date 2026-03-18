@@ -185,6 +185,22 @@ class MemoryCliTest(unittest.TestCase):
     self.assertEqual([item["id"] for item in alpha_results], ["workflow-auth"])
     self.assertEqual([item["id"] for item in beta_results], ["workflow-auth"])
 
+  def test_search_multi_token_query_uses_or_semantics(self) -> None:
+    self.upsert(
+      base_mu(
+        "pv-sample-timestamps",
+        "PV sample timestamps in doc generator",
+        "Generated docs include one timestamp per sample.",
+        mu_type="TASK_CONTEXT",
+        tags=["timestamps", "doc_generator"],
+        hints=["timestamps", "samples"],
+        content={"field": "dataTimestamps.timestamps", "step": "monotonic-ms"},
+      )
+    )
+
+    results = self.run_cli("search", "mldp mongodb perf test doc_generator timestamps", "--view", "compact")
+    self.assertEqual([item["id"] for item in results], ["pv-sample-timestamps"])
+
 
 if __name__ == "__main__":
   unittest.main()

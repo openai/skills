@@ -541,6 +541,20 @@ def tokenize_text(value: str) -> list[str]:
   return re.findall(r"[a-z0-9]+", value.lower())
 
 
+def fts_or_query_from_text(value: str) -> str:
+  tokens = tokenize_text(value)
+  unique_tokens: list[str] = []
+  seen: set[str] = set()
+  for token in tokens:
+    if token in seen:
+      continue
+    unique_tokens.append(token)
+    seen.add(token)
+  if not unique_tokens:
+    fail("Invalid search query: expected at least one alphanumeric token.")
+  return " OR ".join(unique_tokens)
+
+
 def mu_search_text(mu: dict[str, Any]) -> str:
   content = mu.get("content", {})
   parts = [
@@ -1023,12 +1037,13 @@ def cmd_search(args: argparse.Namespace) -> None:
   if type is not None and type not in MU_TYPES:
     valid_types = ", ".join(sorted(MU_TYPES))
     fail(f"Invalid --type: '{type}'. Must be one of: {valid_types}")
+  fts_query = fts_or_query_from_text(query)
 
   target = resolve_storage_target(args)
   conn, _ = run_query(target)
 
   where_clauses = ["memory_fts MATCH ?"]
-  params: list[Any] = [query]
+  params: list[Any] = [fts_query]
 
   prefix = storage_id_prefix(target["scope"], target["namespace"])
   if prefix:
@@ -1067,7 +1082,7 @@ def cmd_search(args: argparse.Namespace) -> None:
         conn,
         target,
         row["id"],
-        query,
+        fts_query,
         neighbors_k,
         include_deprecated,
       )
