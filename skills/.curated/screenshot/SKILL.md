@@ -128,7 +128,8 @@ python3 <path-to-skill>/scripts/take_screenshot.py --app "<App>" --mode temp
 ### Multi-display behavior
 
 - On macOS, full-screen captures save one file per display when multiple monitors are connected.
-- On Linux and Windows, full-screen captures use the virtual desktop (all monitors in one image); use `--region` to isolate a single display when needed.
+- On Windows, full-screen captures save one file per display by default (`-d1`, `-d2`, etc.) to avoid mixed-DPI offset issues. Use `-VirtualDesktop` to force one stitched image.
+- On Linux, full-screen captures use the virtual desktop (all monitors in one image); use `--region` to isolate a single display when needed.
 
 ### Linux prerequisites and selection logic
 
@@ -167,11 +168,25 @@ powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot
 powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot.ps1 -Mode temp
 ```
 
+- Full-screen on multi-monitor Windows (default behavior: one file per display with `-d1`, `-d2` suffixes):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot.ps1 -Mode temp
+```
+
+- Force a single stitched virtual-desktop image on Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot.ps1 -Mode temp -VirtualDesktop
+```
+
 - Explicit path:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot.ps1 -Path "C:\Temp\screen.png"
 ```
+
+On multi-monitor Windows, the first display keeps the exact requested path and additional displays are written as sibling files such as `screen-d2.png`.
 
 - Pixel region (x,y,w,h):
 
@@ -263,5 +278,7 @@ gnome-screenshot -w -f output/window.png
 - If you see "screen capture checks are blocked in the sandbox", "could not create image from display", or Swift `ModuleCache` permission errors in a sandboxed run, rerun the command with escalated permissions.
 - If macOS app/window capture returns no matches, run `--list-windows --app "AppName"` and retry with `--window-id`, and make sure the app is visible on screen.
 - If Linux region/window capture fails, check tool availability with `command -v scrot`, `command -v gnome-screenshot`, and `command -v import`.
+- If Windows active-window or handle capture fails, make sure the target window is visible and not minimized.
+- If Windows full-screen capture is offset on mixed-scale monitors, run without `-VirtualDesktop` (default per-display mode).
 - If saving to the OS default location fails with permission errors in a sandbox, rerun the command with escalated permissions.
 - Always report the saved file path in the response.
