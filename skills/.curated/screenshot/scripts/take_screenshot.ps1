@@ -34,8 +34,14 @@ function New-DefaultFilename {
   "$Prefix-$(Get-Timestamp).$Format"
 }
 
+function Test-ExplicitPathProvided {
+  param([string]$CandidatePath)
+
+  return -not [string]::IsNullOrWhiteSpace($CandidatePath)
+}
+
 function Resolve-OutputPath {
-  if ($Path) {
+  if (Test-ExplicitPathProvided -CandidatePath $Path) {
     $expanded = [Environment]::ExpandEnvironmentVariables($Path)
     $homeDir = [Environment]::GetFolderPath("UserProfile")
     if ($expanded -eq "~") {
@@ -187,8 +193,32 @@ function Save-ScreenshotBounds {
   }
 }
 
+function Initialize-DpiAwareness {
+  param(
+    [scriptblock]$SetPerMonitorV2 = { [NativeMethods]::SetProcessDpiAwarenessContext([IntPtr]::new(-4)) },
+    [scriptblock]$SetLegacyAware = { [NativeMethods]::SetProcessDPIAware() }
+  )
+
+  $perMonitorAware = $false
+  try {
+    $perMonitorAware = [bool](& $SetPerMonitorV2)
+  } catch {
+    $perMonitorAware = $false
+  }
+
+  if ($perMonitorAware) {
+    return
+  }
+
+  try {
+    & $SetLegacyAware | Out-Null
+  } catch {
+    # Best effort only; continue when APIs are unavailable.
+  }
+}
+
 $hasWindowHandle = $PSBoundParameters.ContainsKey("WindowHandle")
-$hasExplicitPath = $PSBoundParameters.ContainsKey("Path")
+$hasExplicitPath = Test-ExplicitPathProvided -CandidatePath $Path
 
 if ($Region -and $ActiveWindow) {
   throw "Choose either -Region or -ActiveWindow"
@@ -262,16 +292,7 @@ public static class NativeMethods {
 }
 "@
 
-try {
-  # DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
-  [NativeMethods]::SetProcessDpiAwarenessContext([IntPtr]::new(-4)) | Out-Null
-} catch {
-  try {
-    [NativeMethods]::SetProcessDPIAware() | Out-Null
-  } catch {
-    # Best effort only; continue when APIs are unavailable.
-  }
-}
+Initialize-DpiAwareness
 
 if ($regionValues) {
   $x = $regionValues[0]
