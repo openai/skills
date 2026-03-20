@@ -1,4 +1,0 @@
-interface:
-  display_name: "UI/UX Composition"
-  short_description: "Design visually strong landing pages, websites, apps, and UI"
-  default_prompt: "Use $ui-ux-composition to establish a visual thesis, content plan, and interaction thesis before building a visually strong landing page, website, app, prototype, demo, or game UI."
