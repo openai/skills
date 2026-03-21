@@ -1,0 +1,6 @@
+interface:
+  display_name: "hydrate_context"
+  short_description: "Load saved memory into a fresh session"
+  default_prompt: "Use $hydrate_context to load the saved project memory and produce a concise working brief."
+policy:
+  allow_implicit_invocation: false

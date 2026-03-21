@@ -1,0 +1,6 @@
+interface:
+  display_name: "summarize_context"
+  short_description: "Refresh durable project memory files"
+  default_prompt: "Use $summarize_context to scan this repository and refresh the project memory files."
+policy:
+  allow_implicit_invocation: false

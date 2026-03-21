@@ -1,0 +1,6 @@
+interface:
+  display_name: "ui"
+  short_description: "Generate docs/ui.md from UI evidence"
+  default_prompt: "Use $ui to inspect this repository and refresh docs/ui.md."
+policy:
+  allow_implicit_invocation: false
