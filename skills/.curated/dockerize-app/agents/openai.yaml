@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dockerize App"
+  short_description: "Detect stack and scaffold Docker setup"
+  default_prompt: "Inspect this repository and generate Dockerfile, .dockerignore, and docker-compose.yml for local development. Add .env.example and compose.override.yml if useful."
