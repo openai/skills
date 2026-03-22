@@ -1,0 +1,6 @@
+interface:
+  display_name: "Multi-Turn Consistency Check"
+  short_description: "Reduce factual drift across long threads"
+  default_prompt: "Use $multi-turn-consistency-check to rebuild the active facts in this corrected multi-turn thread, keep an internal fact ledger, call out conflicts, and answer only from the verified current state."
+policy:
+  allow_implicit_invocation: false
