@@ -1,0 +1,4 @@
+interface:
+  display_name: "Adversarial Testing"
+  short_description: "Stress-test failure modes before ship"
+  default_prompt: "Use $adversarial-testing to review failure modes, resilience risks, and destructive test cases before we ship this service or workflow."
