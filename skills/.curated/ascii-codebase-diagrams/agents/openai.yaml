@@ -1,0 +1,4 @@
+interface:
+  display_name: "ASCII Codebase Diagrams"
+  short_description: "Draw text-first codebase diagrams"
+  default_prompt: "Use $ascii-codebase-diagrams to scan this repository and produce clean text-based architecture diagrams with aligned box-drawing characters."
