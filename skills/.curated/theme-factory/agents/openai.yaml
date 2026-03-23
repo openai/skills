@@ -1,0 +1,4 @@
+interface:
+  display_name: "Theme Factory"
+  short_description: "Apply reusable visual themes"
+  default_prompt: "Use $theme-factory to choose or create a visual theme and apply it consistently to this slide deck, document, or static artifact."
