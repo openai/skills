@@ -1,0 +1,4 @@
+interface:
+  display_name: "Webapp Testing"
+  short_description: "Test local web apps in the repo"
+  default_prompt: "Use $webapp-testing to validate this local web app, choose the right test workflow, and coordinate with browser automation when needed."
