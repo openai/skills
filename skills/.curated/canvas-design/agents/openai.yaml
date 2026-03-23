@@ -1,0 +1,4 @@
+interface:
+  display_name: "Canvas Design"
+  short_description: "Create polished static visual design"
+  default_prompt: "Use $canvas-design to turn this brief into a polished static poster, cover, or one-page visual composition."
