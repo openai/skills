@@ -72,4 +72,4 @@ export const handlers = [
 
 - Reserve E2E coverage for critical flows such as authentication, checkout, onboarding, or cross-page workflows.
 - Keep E2E fixtures realistic but minimal.
-- If the task is exploratory browser automation rather than repository tests, use [$playwright](/Users/Kiosk/.codex/skills/playwright/SKILL.md) instead of adding test files.
+- If the task is exploratory browser automation rather than repository tests, use the `$playwright` skill instead of adding test files.
