@@ -1,0 +1,4 @@
+interface:
+  display_name: "Internal Comms"
+  short_description: "Draft internal updates and briefings"
+  default_prompt: "Use $internal-comms to draft or polish an internal update, leadership note, FAQ, or status report for the right audience and format."
