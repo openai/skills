@@ -1,0 +1,4 @@
+interface:
+  display_name: "Algorithmic Art"
+  short_description: "Build seeded generative art sketches"
+  default_prompt: "Use $algorithmic-art to design and build a seeded generative art sketch, ideally as a self-contained p5.js or canvas-based artifact."
