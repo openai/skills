@@ -1,0 +1,7 @@
+interface:
+  display_name: "Judgment Hygiene"
+  short_description: "Routes ambiguous or judgment-heavy tasks through structure, verification, and grounded response."
+  default_prompt: "Use this skill when careful layer separation, verification discipline, or grounded judgment is needed."
+
+policy:
+  allow_implicit_invocation: true
