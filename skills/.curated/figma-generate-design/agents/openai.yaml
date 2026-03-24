@@ -1,4 +1,6 @@
 interface:
   display_name: "Generate Figma Design"
   short_description: "Build or update screens from design system components"
-  default_prompt: "Build or update this screen in Figma using existing design system components and strong visual parity."
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-generate-design to build or update this screen in Figma using existing design system components and strong visual parity."

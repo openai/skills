@@ -1,259 +1,234 @@
 ---
-name: figma-implement-design
-description: Translates Figma designs into production-ready application code with 1:1 visual fidelity. Use when implementing UI code from Figma files, when user mentions "implement design", "generate code", "implement component", provides Figma URLs, or asks to build components matching Figma specs. For Figma canvas writes via `use_figma`, use `figma-use`.
+name: figma-use
+description: "**MANDATORY prerequisite** — you MUST invoke this skill BEFORE every `use_figma` tool call. NEVER call `use_figma` directly without loading this skill first. Skipping it causes common, hard-to-debug failures. Trigger whenever the user wants to perform a write action or a unique read action that requires JavaScript execution in the Figma file context — e.g. create/edit/delete nodes, set up variables or tokens, build components and variants, modify auto-layout or fills, bind variables to properties, or inspect file structure programmatically."
 disable-model-invocation: false
 ---
 
-# Implement Design
+# use_figma — Figma Plugin API Skill
 
-## Overview
+Use `use_figma` MCP to execute JavaScript in Figma files via the Plugin API. All detailed reference docs live in `references/`.
 
-This skill provides a structured workflow for translating Figma designs into production-ready code with pixel-perfect accuracy. It ensures consistent integration with the Figma MCP server, proper use of design tokens, and 1:1 visual parity with designs.
+**Always pass `skillNames: "figma-use"` when calling `use_figma`.** This is a logging parameter used to track skill usage — it does not affect execution.
 
-## Skill Boundaries
+**If the task involves building or updating a full page, screen, or multi-section layout in Figma from code**, also load [figma-generate-design](../figma-generate-design/SKILL.md). It provides the workflow for discovering design system components via `search_design_system`, importing them, and assembling screens incrementally. Both skills work together: this one for the API rules, that one for the screen-building workflow.
 
-- Use this skill when the deliverable is code in the user's repository.
-- If the user asks to create/edit/delete nodes inside Figma itself, switch to [figma-use](../figma-use/SKILL.md).
-- If the user asks to build or update a full-page screen in Figma from code or a description, switch to [figma-generate-design](../figma-generate-design/SKILL.md).
-- If the user asks only for Code Connect mappings, switch to [figma-code-connect-components](../figma-code-connect-components/SKILL.md).
-- If the user asks to author reusable agent rules (`CLAUDE.md`/`AGENTS.md`), switch to [figma-create-design-system-rules](../figma-create-design-system-rules/SKILL.md).
+Before anything, load [plugin-api-standalone.index.md](references/plugin-api-standalone.index.md) to understand what is possible. When you are asked to write plugin API code, use this context to grep [plugin-api-standalone.d.ts](references/plugin-api-standalone.d.ts) for relevant types, methods, and properties. This is the definitive source of truth for the API surface. It is a large typings file, so do not load it all at once, grep for relevant sections as needed.
 
-## Prerequisites
+IMPORTANT: Whenever you work with design systems, start with [working-with-design-systems/wwds.md](references/working-with-design-systems/wwds.md) to understand the key concepts, processes, and guidelines for working with design systems in Figma. Then load the more specific references for components, variables, text styles, and effect styles as needed.
 
-- Figma MCP server must be connected and accessible
-- User must provide a Figma URL in the format: `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
-  - `:fileKey` is the file key
-  - `1-2` is the node ID (the specific component or frame to implement)
-- **OR** when using `figma-desktop` MCP: User can select a node directly in the Figma desktop app (no URL required)
-- Project should have an established design system or component library (preferred)
+## 1. Critical Rules
 
-## Required Workflow
+1.  **Use `return` to send data back.** The return value is JSON-serialized automatically (objects, arrays, strings, numbers). Do NOT call `figma.closePlugin()` or wrap code in an async IIFE — this is handled for you.
+2.  **Write plain JavaScript with top-level `await` and `return`.** Code is automatically wrapped in an async context. Do NOT wrap in `(async () => { ... })()`.
+3.  `figma.notify()` **throws "not implemented"** — never use it
+3a. `getPluginData()` / `setPluginData()` are **not supported** in `use_figma` — do not use them. Use `getSharedPluginData()` / `setSharedPluginData()` instead (these ARE supported), or track node IDs by returning them and passing them to subsequent calls.
+4.  `console.log()` is NOT returned — use `return` for output
+5.  **Work incrementally in small steps.** Break large operations into multiple `use_figma` calls. Validate after each step. This is the single most important practice for avoiding bugs.
+6.  Colors are **0–1 range** (not 0–255): `{r: 1, g: 0, b: 0}` = red
+7.  Fills/strokes are **read-only arrays** — clone, modify, reassign
+8.  Font **MUST** be loaded before any text operation: `await figma.loadFontAsync({family, style})`
+9.  **Pages load incrementally** — use `await figma.setCurrentPageAsync(page)` to switch pages and load their content (see Page Rules below)
+10. `setBoundVariableForPaint` returns a **NEW** paint — must capture and reassign
+11. `createVariable` accepts collection **object or ID string** (object preferred)
+12. **`layoutSizingHorizontal/Vertical = 'FILL'` MUST be set AFTER `parent.appendChild(child)`** — setting before append throws. Same applies to `'HUG'` on non-auto-layout nodes.
+13. **Position new top-level nodes away from (0,0).** Nodes appended directly to the page default to (0,0). Scan `figma.currentPage.children` to find a clear position (e.g., to the right of the rightmost node). This only applies to page-level nodes — nodes nested inside other frames or auto-layout containers are positioned by their parent. See [Gotchas](references/gotchas.md).
+14. **On `use_figma` error, STOP. Do NOT immediately retry.** Failed scripts are **atomic** — if a script errors, it is not executed at all and no changes are made to the file. Read the error message carefully, fix the script, then retry. See [Error Recovery](#6-error-recovery--self-correction).
+15. **MUST `return` ALL created/mutated node IDs.** Whenever a script creates new nodes or mutates existing ones on the canvas, collect every affected node ID and return them in a structured object (e.g. `return { createdNodeIds: [...], mutatedNodeIds: [...] }`). This is essential for subsequent calls to reference, validate, or clean up those nodes.
+16. **Always set `variable.scopes` explicitly when creating variables.** The default `ALL_SCOPES` pollutes every property picker — almost never what you want. Use specific scopes like `["FRAME_FILL", "SHAPE_FILL"]` for backgrounds, `["TEXT_FILL"]` for text colors, `["GAP"]` for spacing, etc. See [variable-patterns.md](references/variable-patterns.md) for the full list.
+17. **`await` every Promise.** Never leave a Promise unawaited — unawaited async calls (e.g. `figma.loadFontAsync(...)` without `await`, or `figma.setCurrentPageAsync(page)` without `await`) will fire-and-forget, causing silent failures or race conditions. The script may return before the async operation completes, leading to missing data or half-applied changes.
 
-**Follow these steps in order. Do not skip steps.**
+> For detailed WRONG/CORRECT examples of each rule, see [Gotchas & Common Mistakes](references/gotchas.md).
 
-### Step 1: Get Node ID
+## 2. Page Rules (Critical)
 
-#### Option A: Parse from Figma URL
+**Page context resets between `use_figma` calls** — `figma.currentPage` starts on the first page each time.
 
-When the user provides a Figma URL, extract the file key and node ID to pass as arguments to MCP tools.
+### Switching pages
 
-**URL format:** `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
+Use `await figma.setCurrentPageAsync(page)` to switch pages and load their content. The sync setter `figma.currentPage = page` **throws an error** in `use_figma` runtimes.
 
-**Extract:**
+```js
+// Switch to a specific page (loads its content)
+const targetPage = figma.root.children.find((p) => p.name === "My Page");
+await figma.setCurrentPageAsync(targetPage);
+// targetPage.children is now populated
 
-- **File key:** `:fileKey` (the segment after `/design/`)
-- **Node ID:** `1-2` (the value of the `node-id` query parameter)
-
-**Note:** When using the local desktop MCP (`figma-desktop`), `fileKey` is not passed as a parameter to tool calls. The server automatically uses the currently open file, so only `nodeId` is needed.
-
-**Example:**
-
-- URL: `https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15`
-- File key: `kL9xQn2VwM8pYrTb4ZcHjF`
-- Node ID: `42-15`
-
-#### Option B: Use Current Selection from Figma Desktop App (figma-desktop MCP only)
-
-When using the `figma-desktop` MCP and the user has NOT provided a URL, the tools automatically use the currently selected node from the open Figma file in the desktop app.
-
-**Note:** Selection-based prompting only works with the `figma-desktop` MCP server. The remote server requires a link to a frame or layer to extract context. The user must have the Figma desktop app open with a node selected.
-
-### Step 2: Fetch Design Context
-
-Run `get_design_context` with the extracted file key and node ID.
-
-```
-get_design_context(fileKey=":fileKey", nodeId="1-2")
+// Iterate over all pages
+for (const page of figma.root.children) {
+  await figma.setCurrentPageAsync(page);
+  // page.children is now loaded — read or modify them here
+}
 ```
 
-This provides the structured data including:
+### Across script runs
 
-- Layout properties (Auto Layout, constraints, sizing)
-- Typography specifications
-- Color values and design tokens
-- Component structure and variants
-- Spacing and padding values
+`figma.currentPage` resets to the **first page** at the start of each `use_figma` call. If your workflow spans multiple calls and targets a non-default page, call `await figma.setCurrentPageAsync(page)` at the start of each invocation.
 
-**If the response is too large or truncated:**
+You can call `use_figma` multiple times to incrementally build on the file state, or to retrieve information before writing another script. For example, write a script to get metadata about existing nodes, `return` that data, then use it in a subsequent script to modify those nodes.
 
-1. Run `get_metadata(fileKey=":fileKey", nodeId="1-2")` to get the high-level node map
-2. Identify the specific child nodes needed from the metadata
-3. Fetch individual child nodes with `get_design_context(fileKey=":fileKey", nodeId=":childNodeId")`
+## 3. `return` Is Your Output Channel
 
-### Step 3: Capture Visual Reference
+The agent sees **ONLY** the value you `return`. Everything else is invisible.
 
-Run `get_screenshot` with the same file key and node ID for a visual reference.
+- **Returning IDs (CRITICAL)**: Every script that creates or mutates canvas nodes **MUST** return all affected node IDs — e.g. `return { createdNodeIds: [...], mutatedNodeIds: [...] }`. This is a hard requirement, not optional.
+- **Progress reporting**: `return { createdNodeIds: [...], count: 5, errors: [] }`
+- **Error info**: Thrown errors are automatically captured and returned — just let them propagate or `throw` explicitly.
+- `console.log()` output is **never** returned to the agent
+- Always return actionable data (IDs, counts, status) so subsequent calls can reference created objects
+
+## 4. Editor Mode
+
+`use_figma` works in **design mode** (editorType `"figma"`, the default). FigJam (`"figjam"`) has a different set of available node types — most design nodes are blocked there.
+
+Available in design mode: Rectangle, Frame, Component, Text, Ellipse, Star, Line, Vector, Polygon, BooleanOperation, Slice, Page, Section, TextPath.
+
+**Blocked** in design mode: Sticky, Connector, ShapeWithText, CodeBlock, Slide, SlideRow, Webpage.
+
+## 5. Incremental Workflow (How to Avoid Bugs)
+
+The most common cause of bugs is trying to do too much in a single `use_figma` call. **Work in small steps and validate after each one.**
+
+### The pattern
+
+1. **Inspect first.** Before creating anything, run a read-only `use_figma` to discover what already exists in the file — pages, components, variables, naming conventions. Match what's there.
+2. **Do one thing per call.** Create variables in one call, create components in the next, compose layouts in another. Don't try to build an entire screen in one script.
+3. **Return IDs from every call.** Always `return` created node IDs, variable IDs, collection IDs as objects (e.g. `return { createdNodeIds: [...] }`). You'll need these as inputs to subsequent calls.
+4. **Validate after each step.** Use `get_metadata` to verify structure (counts, names, hierarchy, positions). Use `get_screenshot` after major milestones to catch visual issues.
+5. **Fix before moving on.** If validation reveals a problem, fix it before proceeding to the next step. Don't build on a broken foundation.
+
+### Suggested step order for complex tasks
 
 ```
-get_screenshot(fileKey=":fileKey", nodeId="1-2")
+Step 1: Inspect file — discover existing pages, components, variables, conventions
+Step 2: Create tokens/variables (if needed)
+       → validate with get_metadata
+Step 3: Create individual components
+       → validate with get_metadata + get_screenshot
+Step 4: Compose layouts from component instances
+       → validate with get_screenshot
+Step 5: Final verification
 ```
 
-This screenshot serves as the source of truth for visual validation. Keep it accessible throughout implementation.
+### What to validate at each step
 
-### Step 4: Download Required Assets
+| After... | Check with `get_metadata` | Check with `get_screenshot` |
+|---|---|---|
+| Creating variables | Collection count, variable count, mode names | — |
+| Creating components | Child count, variant names, property definitions | Variants visible, not collapsed, grid readable |
+| Binding variables | Node properties reflect bindings | Colors/tokens resolved correctly |
+| Composing layouts | Instance nodes have mainComponent, hierarchy correct | No cropped/clipped text, no overlapping elements, correct spacing |
 
-Download any assets (images, icons, SVGs) returned by the Figma MCP server.
+## 6. Error Recovery & Self-Correction
 
-**IMPORTANT:** Follow these asset rules:
+**`use_figma` is atomic — failed scripts do not execute.** If a script errors, no changes are made to the file. The file remains in the same state as before the call. This means there are no partial nodes, no orphaned elements from the failed script, and retrying after a fix is safe.
 
-- If the Figma MCP server returns a `localhost` source for an image or SVG, use that source directly
-- DO NOT import or add new icon packages - all assets should come from the Figma payload
-- DO NOT use or create placeholders if a `localhost` source is provided
-- Assets are served through the Figma MCP server's built-in assets endpoint
+### When `use_figma` returns an error
 
-### Step 5: Translate to Project Conventions
+1. **STOP.** Do not immediately fix the code and retry.
+2. **Read the error message carefully.** Understand exactly what went wrong — wrong API usage, missing font, invalid property value, etc.
+3. **If the error is unclear**, call `get_metadata` or `get_screenshot` to understand the current file state.
+4. **Fix the script** based on the error message.
+5. **Retry** the corrected script.
 
-Translate the Figma output into this project's framework, styles, and conventions.
+### Common self-correction patterns
 
-**Key principles:**
+| Error message | Likely cause | How to fix |
+|---|---|---|
+| `"not implemented"` | Used `figma.notify()` | Remove it — use `return` for output |
+| `"node must be an auto-layout frame..."` | Set `FILL`/`HUG` before appending to auto-layout parent | Move `appendChild` before `layoutSizingX = 'FILL'` |
+| `"Setting figma.currentPage is not supported"` | Used sync page setter | Use `await figma.setCurrentPageAsync(page)` |
+| Property value out of range | Color channel > 1 (used 0–255 instead of 0–1) | Divide by 255 |
+| `"Cannot read properties of null"` | Node doesn't exist (wrong ID, wrong page) | Check page context, verify ID |
+| Script hangs / no response | Infinite loop or unresolved promise | Check for `while(true)` or missing `await`; ensure code terminates |
+| `"The node with id X does not exist"` | Parent instance was implicitly detached by a child `detachInstance()`, changing IDs | Re-discover nodes by traversal from a stable (non-instance) parent frame |
 
-- Treat the Figma MCP output (typically React + Tailwind) as a representation of design and behavior, not as final code style
-- Replace Tailwind utility classes with the project's preferred utilities or design system tokens
-- Reuse existing components (buttons, inputs, typography, icon wrappers) instead of duplicating functionality
-- Use the project's color system, typography scale, and spacing tokens consistently
-- Respect existing routing, state management, and data-fetch patterns
+### When the script succeeds but the result looks wrong
 
-### Step 6: Achieve 1:1 Visual Parity
+1. Call `get_metadata` to check structural correctness (hierarchy, counts, positions).
+2. Call `get_screenshot` to check visual correctness. Look closely for cropped/clipped text (line heights cutting off content) and overlapping elements — these are common and easy to miss.
+3. Identify the discrepancy — is it structural (wrong hierarchy, missing nodes) or visual (wrong colors, broken layout, clipped content)?
+4. Write a targeted fix script that modifies only the broken parts — don't recreate everything.
 
-Strive for pixel-perfect visual parity with the Figma design.
+> For the full validation workflow, see [Validation & Error Recovery](references/validation-and-recovery.md).
 
-**Guidelines:**
+## 7. Pre-Flight Checklist
 
-- Prioritize Figma fidelity to match designs exactly
-- Avoid hardcoded values - use design tokens from Figma where available
-- When conflicts arise between design system tokens and Figma specs, prefer design system tokens but adjust spacing or sizes minimally to match visuals
-- Follow WCAG requirements for accessibility
-- Add component documentation as needed
+Before submitting ANY `use_figma` call, verify:
 
-### Step 7: Validate Against Figma
+- [ ] Code uses `return` to send data back (NOT `figma.closePlugin()`)
+- [ ] Code is NOT wrapped in an async IIFE (auto-wrapped for you)
+- [ ] `return` value includes structured data with actionable info (IDs, counts)
+- [ ] NO usage of `figma.notify()` anywhere
+- [ ] NO usage of `console.log()` as output (use `return` instead)
+- [ ] All colors use 0–1 range (not 0–255)
+- [ ] Fills/strokes are reassigned as new arrays (not mutated in place)
+- [ ] Page switches use `await figma.setCurrentPageAsync(page)` (sync setter throws)
+- [ ] `layoutSizingVertical/Horizontal = 'FILL'` is set AFTER `parent.appendChild(child)`
+- [ ] `loadFontAsync()` called BEFORE any text property changes
+- [ ] `lineHeight`/`letterSpacing` use `{unit, value}` format (not bare numbers)
+- [ ] `resize()` is called BEFORE setting sizing modes (resize resets them to FIXED)
+- [ ] For multi-step workflows: IDs from previous calls are passed as string literals (not variables)
+- [ ] New top-level nodes are positioned away from (0,0) to avoid overlapping existing content
+- [ ] ALL created/mutated node IDs are collected and included in the `return` value
+- [ ] Every async call (`loadFontAsync`, `setCurrentPageAsync`, `importComponentByKeyAsync`, etc.) is `await`ed — no fire-and-forget Promises
 
-Before marking complete, validate the final UI against the Figma screenshot.
+## 8. Discover Conventions Before Creating
 
-**Validation checklist:**
+**Always inspect the Figma file before creating anything.** Different files use different naming conventions, variable structures, and component patterns. Your code should match what's already there, not impose new conventions.
 
-- [ ] Layout matches (spacing, alignment, sizing)
-- [ ] Typography matches (font, size, weight, line height)
-- [ ] Colors match exactly
-- [ ] Interactive states work as designed (hover, active, disabled)
-- [ ] Responsive behavior follows Figma constraints
-- [ ] Assets render correctly
-- [ ] Accessibility standards met
+When in doubt about any convention (naming, scoping, structure), check the Figma file first, then the user's codebase. Only fall back to common patterns when neither exists.
 
-## Implementation Rules
+### Quick inspection scripts
 
-### Component Organization
+**List all pages and top-level nodes:**
+```js
+const pages = figma.root.children.map(p => `${p.name} id=${p.id} children=${p.children.length}`);
+return pages.join('\n');
+```
 
-- Place UI components in the project's designated design system directory
-- Follow the project's component naming conventions
-- Avoid inline styles unless truly necessary for dynamic values
+**List existing components across all pages:**
+```js
+const results = [];
+for (const page of figma.root.children) {
+  await figma.setCurrentPageAsync(page);
+  page.findAll(n => {
+    if (n.type === 'COMPONENT' || n.type === 'COMPONENT_SET')
+      results.push(`[${page.name}] ${n.name} (${n.type}) id=${n.id}`);
+    return false;
+  });
+}
+return results.join('\n');
+```
 
-### Design System Integration
+**List existing variable collections and their conventions:**
+```js
+const collections = await figma.variables.getLocalVariableCollectionsAsync();
+const results = collections.map(c => ({
+  name: c.name, id: c.id,
+  varCount: c.variableIds.length,
+  modes: c.modes.map(m => m.name)
+}));
+return results;
+```
 
-- ALWAYS use components from the project's design system when possible
-- Map Figma design tokens to project design tokens
-- When a matching component exists, extend it rather than creating a new one
-- Document any new components added to the design system
+## 9. Reference Docs
 
-### Code Quality
+Load these as needed based on what your task involves:
 
-- Avoid hardcoded values - extract to constants or design tokens
-- Keep components composable and reusable
-- Add TypeScript types for component props
-- Include JSDoc comments for exported components
+| Doc | When to load | What it covers |
+|-----|-------------|----------------|
+| [gotchas.md](references/gotchas.md) | Before any `use_figma` | Every known pitfall with WRONG/CORRECT code examples |
+| [common-patterns.md](references/common-patterns.md) | Need working code examples | Script scaffolds: shapes, text, auto-layout, variables, components, multi-step workflows |
+| [plugin-api-patterns.md](references/plugin-api-patterns.md) | Creating/editing nodes | Fills, strokes, Auto Layout, effects, grouping, cloning, styles |
+| [api-reference.md](references/api-reference.md) | Need exact API surface | Node creation, variables API, core properties, what works and what doesn't |
+| [validation-and-recovery.md](references/validation-and-recovery.md) | Multi-step writes or error recovery | `get_metadata` vs `get_screenshot` workflow, mandatory error recovery steps |
+| [component-patterns.md](references/component-patterns.md) | Creating components/variants | combineAsVariants, component properties, INSTANCE_SWAP, variant layout, discovering existing components, metadata traversal |
+| [variable-patterns.md](references/variable-patterns.md) | Creating/binding variables | Collections, modes, scopes, aliasing, binding patterns, discovering existing variables |
+| [text-style-patterns.md](references/text-style-patterns.md) | Creating/applying text styles | Type ramps, font probing, listing styles, applying styles to nodes |
+| [effect-style-patterns.md](references/effect-style-patterns.md) | Creating/applying effect styles | Drop shadows, listing styles, applying styles to nodes |
+| [plugin-api-standalone.index.md](references/plugin-api-standalone.index.md) | Need to understand the full API surface | Index of all types, methods, and properties in the Plugin API |
+| [plugin-api-standalone.d.ts](references/plugin-api-standalone.d.ts) | Need exact type signatures | Full typings file — grep for specific symbols, don't load all at once |
 
-## Examples
+## 10. Snippet examples
 
-### Example 1: Implementing a Button Component
-
-User says: "Implement this Figma button component: https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15"
-
-**Actions:**
-
-1. Parse URL to extract fileKey=`kL9xQn2VwM8pYrTb4ZcHjF` and nodeId=`42-15`
-2. Run `get_design_context(fileKey="kL9xQn2VwM8pYrTb4ZcHjF", nodeId="42-15")`
-3. Run `get_screenshot(fileKey="kL9xQn2VwM8pYrTb4ZcHjF", nodeId="42-15")` for visual reference
-4. Download any button icons from the assets endpoint
-5. Check if project has existing button component
-6. If yes, extend it with new variant; if no, create new component using project conventions
-7. Map Figma colors to project design tokens (e.g., `primary-500`, `primary-hover`)
-8. Validate against screenshot for padding, border radius, typography
-
-**Result:** Button component matching Figma design, integrated with project design system.
-
-### Example 2: Building a Dashboard Layout
-
-User says: "Build this dashboard: https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4D/Dashboard?node-id=10-5"
-
-**Actions:**
-
-1. Parse URL to extract fileKey=`pR8mNv5KqXzGwY2JtCfL4D` and nodeId=`10-5`
-2. Run `get_metadata(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` to understand the page structure
-3. Identify main sections from metadata (header, sidebar, content area, cards) and their child node IDs
-4. Run `get_design_context(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId=":childNodeId")` for each major section
-5. Run `get_screenshot(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10-5")` for the full page
-6. Download all assets (logos, icons, charts)
-7. Build layout using project's layout primitives
-8. Implement each section using existing components where possible
-9. Validate responsive behavior against Figma constraints
-
-**Result:** Complete dashboard matching Figma design with responsive layout.
-
-## Best Practices
-
-### Always Start with Context
-
-Never implement based on assumptions. Always fetch `get_design_context` and `get_screenshot` first.
-
-### Incremental Validation
-
-Validate frequently during implementation, not just at the end. This catches issues early.
-
-### Document Deviations
-
-If you must deviate from the Figma design (e.g., for accessibility or technical constraints), document why in code comments.
-
-### Reuse Over Recreation
-
-Always check for existing components before creating new ones. Consistency across the codebase is more important than exact Figma replication.
-
-### Design System First
-
-When in doubt, prefer the project's design system patterns over literal Figma translation.
-
-## Common Issues and Solutions
-
-### Issue: Figma output is truncated
-
-**Cause:** The design is too complex or has too many nested layers to return in a single response.
-**Solution:** Use `get_metadata` to get the node structure, then fetch specific nodes individually with `get_design_context`.
-
-### Issue: Design doesn't match after implementation
-
-**Cause:** Visual discrepancies between the implemented code and the original Figma design.
-**Solution:** Compare side-by-side with the screenshot from Step 3. Check spacing, colors, and typography values in the design context data.
-
-### Issue: Assets not loading
-
-**Cause:** The Figma MCP server's assets endpoint is not accessible or the URLs are being modified.
-**Solution:** Verify the Figma MCP server's assets endpoint is accessible. The server serves assets at `localhost` URLs. Use these directly without modification.
-
-### Issue: Design token values differ from Figma
-
-**Cause:** The project's design system tokens have different values than those specified in the Figma design.
-**Solution:** When project tokens differ from Figma values, prefer project tokens for consistency but adjust spacing/sizing to maintain visual fidelity.
-
-## Understanding Design Implementation
-
-The Figma implementation workflow establishes a reliable process for translating designs to code:
-
-**For designers:** Confidence that implementations will match their designs with pixel-perfect accuracy.
-**For developers:** A structured approach that eliminates guesswork and reduces back-and-forth revisions.
-**For teams:** Consistent, high-quality implementations that maintain design system integrity.
-
-By following this workflow, you ensure that every Figma design is implemented with the same level of care and attention to detail.
-
-## Additional Resources
-
-- [Figma MCP Server Documentation](https://developers.figma.com/docs/figma-mcp-server/)
-- [Figma MCP Server Tools and Prompts](https://developers.figma.com/docs/figma-mcp-server/tools-and-prompts/)
-- [Figma Variables and Design Tokens](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma)
+You will see snippets throughout documentation here. These snippets contain useful plugin API code that can be repurposed. Use them as is, or as starter code as you go. If there are key concepts that are best documented as generic snippets, call them out and write to disk so you can reuse in the future.

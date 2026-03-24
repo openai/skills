@@ -1,4 +1,6 @@
 interface:
   display_name: "Code Connect Components"
   short_description: "Map Figma components to code with Code Connect"
-  default_prompt: "Find matching local components for these Figma nodes and propose Code Connect mappings."
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-code-connect-components to find matching local components for these Figma nodes and propose Code Connect mappings."
