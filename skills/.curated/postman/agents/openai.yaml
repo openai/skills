@@ -1,0 +1,14 @@
+interface:
+  display_name: "Postman"
+  short_description: "Work with Postman MCP and Postman CLI from Codex"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.png"
+  default_prompt: "Use Postman to set up Postman access, inspect workspaces or collections, and choose the right Postman workflow for this task."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "postman"
+      description: "Postman MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.postman.com/mcp"

@@ -1,0 +1,14 @@
+interface:
+  display_name: "Postman Validate"
+  short_description: "Test, mock, and audit Postman APIs"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.png"
+  default_prompt: "Use Postman Validate to run cloud tests, create a mock server, or audit an API for security issues."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "postman"
+      description: "Postman MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.postman.com/mcp"
