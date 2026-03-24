@@ -1,6 +1,6 @@
 # Plugin API Index
 
-> Full typings: `plugin-api-standalone.d.ts` (11,292 lines)  
+> Full typings: `plugin-api-standalone.d.ts` (11,292 lines)
 > Grep by symbol name to jump to definition. All `L#` line numbers refer to that file.
 
 ---

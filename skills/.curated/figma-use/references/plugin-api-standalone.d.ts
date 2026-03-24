@@ -1627,11 +1627,11 @@ interface PluginAPI {
         ).then(async (image: Image) => {
           // Create node
           const node = figma.createRectangle()
-  
+
           // Resize the node to match the image's width and height
           const { width, height } = await image.getSizeAsync()
           node.resize(width, height)
-  
+
           // Set the fill on the node
           node.fills = [
             {
@@ -1640,7 +1640,7 @@ interface PluginAPI {
               scaleMode: 'FILL'
             }
           ]
-  
+
           figma.closePlugin()
         }).catch((error: any) => {
           console.log(error)

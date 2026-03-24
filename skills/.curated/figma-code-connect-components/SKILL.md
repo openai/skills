@@ -1,7 +1,6 @@
 ---
 name: figma-code-connect-components
 description: Connects Figma design components to code components using Code Connect mapping tools. Use when user says "code connect", "connect this component to code", "map this component", "link component to code", "create code connect mapping", or wants to establish mappings between Figma designs and code implementations. For canvas writes via `use_figma`, use `figma-use`.
-disable-model-invocation: false
 ---
 
 # Code Connect Components
