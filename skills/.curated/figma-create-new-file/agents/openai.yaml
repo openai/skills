@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create New Figma File"
+  short_description: "Create a new blank Figma or FigJam file"
+  default_prompt: "Create a new Figma file or FigJam board, resolving the plan first if needed."

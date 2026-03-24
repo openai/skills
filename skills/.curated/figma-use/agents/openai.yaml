@@ -1,0 +1,4 @@
+interface:
+  display_name: "use_figma"
+  short_description: "Load the required rules before calling use_figma"
+  default_prompt: "Load the figma-use workflow and follow its rules before making any use_figma call."

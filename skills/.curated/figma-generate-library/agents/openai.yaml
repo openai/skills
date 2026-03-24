@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Figma Library"
+  short_description: "Build or update a design system library in Figma"
+  default_prompt: "Build or update a Figma design system library from the codebase, including tokens, components, and documentation."

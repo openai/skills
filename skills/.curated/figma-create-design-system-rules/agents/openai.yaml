@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Design System Rules"
+  short_description: "Generate design system rules for your codebase"
+  default_prompt: "Generate project-specific Figma design system rules and prepare an AGENTS.md section."

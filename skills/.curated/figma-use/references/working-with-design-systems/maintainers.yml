@@ -1,0 +1,9 @@
+wwds-components--creating.md: mcp_server
+wwds-components--using.md: mcp_server
+wwds-components.md: mcp_server
+wwds-effect-styles.md: mcp_server
+wwds-text-styles.md: mcp_server
+wwds-variables--creating.md: mcp_server
+wwds-variables--using.md: mcp_server
+wwds-variables.md: mcp_server
+wwds.md: mcp_server
