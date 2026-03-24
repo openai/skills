@@ -26,7 +26,8 @@ Load this reference when a task needs ChatGPT-only widget features, when transla
 - `window.openai.requestDisplayMode({ mode })`: request `inline`, `pip`, or `fullscreen`
 - `window.openai.requestModal({ params, template? })`: open a host-owned modal
 - `window.openai.requestClose()`: ask ChatGPT to close the widget
-- `window.openai.uploadFile(file)`: upload a file from the widget
+- `window.openai.uploadFile(file, options?)`: upload a file from the widget
+- `window.openai.selectFiles()`: open ChatGPT's file library picker and return app-authorized files
 - `window.openai.getFileDownloadUrl({ fileId })`: resolve a temporary download URL
 - `window.openai.notifyIntrinsicHeight(...)`: report dynamic height changes
 - `window.openai.setOpenInAppUrl({ href })`: override the fullscreen punch-out target
@@ -61,6 +62,14 @@ Load this reference when a task needs ChatGPT-only widget features, when transla
 - `app.getHostCapabilities()` / `app.getHostVersion()`:
   These are wrapper-level convenience APIs.
   Prefer feature detection (`if (window.openai?.requestModal)`) and the documented globals instead of teaching these as the primary public surface.
+
+## File Patterns
+
+- Use `window.openai.uploadFile(file)` when the user is adding a new local file inside the widget.
+- Use `window.openai.uploadFile(file, { library: true })` when the upload should also be saved into the user's ChatGPT file library.
+- Use `window.openai.selectFiles()` when the user should be able to reuse files that are already in their ChatGPT file library instead of uploading again.
+- Use `window.openai.getFileDownloadUrl({ fileId })` when the widget needs a temporary URL for previewing a file or forwarding it through a file-param payload.
+- Feature-detect these helpers in the widget (`if (window.openai?.selectFiles)`) and provide a fallback upload flow when a ChatGPT-only helper is unavailable.
 
 ## React Helper Extraction
 
