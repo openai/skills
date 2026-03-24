@@ -1,8 +1,7 @@
 ---
-name: create-design-system-rules
+name: figma-create-design-system-rules
 description: Generates custom design system rules for the user's codebase. Use when user says "create design system rules", "generate rules for my project", "set up design rules", "customize design system guidelines", or wants to establish project-specific conventions for Figma-to-code workflows. Requires Figma MCP server connection.
-metadata:
-  mcp-server: figma
+disable-model-invocation: false
 ---
 
 # Create Design System Rules
@@ -35,8 +34,6 @@ Once defined, these rules dramatically reduce repetitive prompting and ensure co
 ## Prerequisites
 
 - Figma MCP server must be connected and accessible
-  - Before proceeding, verify the Figma MCP server is connected by checking if Figma MCP tools (e.g., `create_design_system_rules`) are available.
-  - If the tools are not available, the Figma MCP server may not be enabled. Guide the user to enable the Figma MCP server that is included with the plugin. They may need to restart their MCP client afterward.
 - Access to the project codebase for analysis
 - Understanding of your team's component conventions (or willingness to establish them)
 

@@ -1,14 +1,14 @@
 ---
 name: figma-generate-library
 description: "Build or update a professional-grade design system in Figma from a codebase. Use when the user wants to create variables/tokens, build component libraries, set up theming (light/dark modes), document foundations, or reconcile gaps between code and Figma. This skill teaches WHAT to build and in WHAT ORDER — it complements the `figma-use` skill which teaches HOW to call the Plugin API. Both skills should be loaded together."
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Design System Builder — Figma MCP Skill
 
 Build professional-grade design systems in Figma that match code. This skill orchestrates multi-phase workflows across 20–100+ `use_figma` calls, enforcing quality patterns from real-world design systems (Material 3, Polaris, Figma UI3, Simple DS).
 
-**Prerequisites**: The `figma-use` skill MUST also be loaded for every `use_figma` call. It provides Plugin API syntax rules (closePlugin contract, page reset, ID return, font loading, color range). This skill provides design system domain knowledge and workflow orchestration.
+**Prerequisites**: The `figma-use` skill MUST also be loaded for every `use_figma` call. It provides Plugin API syntax rules (return pattern, page reset, ID return, font loading, color range). This skill provides design system domain knowledge and workflow orchestration.
 
 **Always pass `skillNames: "figma-generate-library"` when calling `use_figma` as part of this skill.** This is a logging parameter — it does not affect execution.
 
@@ -76,8 +76,8 @@ Phase 4: INTEGRATION + QA (final pass)
 ## 3. Critical Rules
 
 **Plugin API basics** (from use_figma skill — enforced here too):
-- Every script: `(async () => { try { ... figma.closePlugin(JSON.stringify({...})) } catch(e) { figma.closePluginWithFailure(e.toString()) } })()`
-- Return ALL created/mutated node IDs in every `closePlugin` call
+- Use `return` to send data back (auto-serialized). Do NOT wrap in IIFE or call closePlugin.
+- Return ALL created/mutated node IDs in every return value
 - Page context resets each call — always `await figma.setCurrentPageAsync(page)` at start
 - `figma.notify()` throws — never use it
 - Colors are 0–1 range, not 0–255
@@ -93,8 +93,8 @@ Phase 4: INTEGRATION + QA (final pass)
 7. **Alias semantics to primitives** — `{ type: 'VARIABLE_ALIAS', id: primitiveVar.id }`. Never duplicate raw values in semantic layer.
 8. **Position variants after combineAsVariants** — they stack at (0,0). Manually grid-layout + resize.
 9. **INSTANCE_SWAP for icons** — never create a variant per icon. Cap variant matrices: if Size × Style × State > 30 combinations, split into sub-component.
-10. **Deterministic naming** — use `setPluginData('dsb_key', uniqueKey)` on every created node for idempotent cleanup and resumability.
-11. **No destructive cleanup** — cleanup scripts identify nodes via `pluginData` tag, not name-prefix matching.
+10. **Deterministic naming** — use consistent, unique node names for idempotent cleanup and resumability. Track created node IDs via return values and the state ledger.
+11. **No destructive cleanup** — cleanup scripts identify nodes by name convention or returned IDs, not by guessing.
 12. **Validate before proceeding** — never build on unvalidated work. `get_metadata` after every create, `get_screenshot` after each component.
 13. **NEVER parallelize `use_figma` calls** — Figma state mutations must be strictly sequential. Even if your tool supports parallel calls, never run two use_figma calls simultaneously.
 14. **Never hallucinate Node IDs** — always read IDs from the state ledger returned by previous calls. Never reconstruct or guess an ID from memory.
@@ -105,19 +105,19 @@ Phase 4: INTEGRATION + QA (final pass)
 
 ## 4. State Management (Required for Long Workflows)
 
-**Important**: `setPluginData` works on scene nodes (pages, frames, components) only. Variables and variable collections do NOT support `setPluginData`. Use different idempotency strategies per entity type:
+> **`getPluginData()` / `setPluginData()` are NOT supported in `use_figma`.** Use `getSharedPluginData()` / `setSharedPluginData()` instead (these ARE supported), or use name-based lookups and the state ledger (returned IDs).
 
 | Entity type | Idempotency key | How to check existence |
 |-------------|----------------|----------------------|
-| Scene nodes (pages, frames, components) | `setPluginData('dsb_run_id', ...)` + `setPluginData('dsb_key', ...)` | Query by pluginData tag |
-| Variables | Name within collection | `getLocalVariables().find(v => v.name === name && v.variableCollectionId === collId)` |
+| Scene nodes (pages, frames, components) | `setSharedPluginData('dsb', 'key', value)` or unique name | `node.getSharedPluginData('dsb', 'key')` or `page.findOne(n => n.name === 'Button')` |
+| Variables | Name within collection | `(await figma.variables.getLocalVariablesAsync()).find(v => v.name === name && v.variableCollectionId === collId)` |
 | Styles | Name | `getLocalTextStyles().find(s => s.name === name)` |
 
 Tag every created **scene node** immediately after creation:
 ```javascript
-node.setPluginData('dsb_run_id', RUN_ID);        // identifies this build run
-node.setPluginData('dsb_phase', 'phase3');        // which phase created it
-node.setPluginData('dsb_key', 'component/button');// unique logical key
+node.setSharedPluginData('dsb', 'run_id', RUN_ID);        // identifies this build run
+node.setSharedPluginData('dsb', 'phase', 'phase3');        // which phase created it
+node.setSharedPluginData('dsb', 'key', 'component/button');// unique logical key
 ```
 
 **State persistence**: Do NOT rely solely on conversation context for the state ledger. Write it to disk:
@@ -143,9 +143,9 @@ Maintain a state ledger tracking:
 }
 ```
 
-**Idempotency check** before every create: query by name + pluginData key. If exists, skip or update — never duplicate.
+**Idempotency check** before every create: query by name + state ledger ID. If exists, skip or update — never duplicate.
 
-**Resume protocol**: at session start or after context truncation, run `rehydrateState.js` (see §11) to scan all nodes for `dsb_run_id` tags and reconstruct the `{key → id}` map. Then re-read the state file from disk if available.
+**Resume protocol**: at session start or after context truncation, run a read-only `use_figma` to scan all pages, components, variables, and styles by name to reconstruct the `{key → id}` map. Then re-read the state file from disk if available.
 
 **Continuation prompt** (give this to the user when resuming in a new chat):
 > "I'm continuing a design system build. Run ID: {RUN_ID}. Load the figma-generate-library skill and resume from the last completed step."
@@ -269,7 +269,7 @@ Collection: "Spacing"       modes: ["Value"]
 - ❌ Importing remote components then immediately detaching them
 
 **General anti-patterns:**
-- ❌ Retrying a failed script without cleanup first
+- ❌ Retrying a failed script without understanding the error first
 - ❌ Using name-prefix matching for cleanup (deletes user-owned nodes)
 - ❌ Building on unvalidated work from the previous step
 - ❌ Skipping user checkpoints to "save time"
@@ -294,7 +294,7 @@ Use your file reading tool to read these docs when needed. Do not assume their c
 | [component-creation.md](references/component-creation.md) | 3 | **Required** | Creating any component or variant |
 | [code-connect-setup.md](references/code-connect-setup.md) | 3–4 | Required | Setting up Code Connect or variable code syntax |
 | [naming-conventions.md](references/naming-conventions.md) | Any | Optional | Naming anything — variables, pages, variants, styles |
-| [error-recovery.md](references/error-recovery.md) | Any | **Required on error** | Script fails, partial state exists, need cleanup/retry |
+| [error-recovery.md](references/error-recovery.md) | Any | **Required on error** | Script fails, multi-step workflow recovery, cleanup of abandoned workflow state |
 
 ---
 
@@ -311,5 +311,5 @@ Reusable Plugin API helper functions. Embed in `use_figma` calls:
 | [bindVariablesToComponent.js](scripts/bindVariablesToComponent.js) | Bind design tokens to all component visual properties |
 | [createDocumentationPage.js](scripts/createDocumentationPage.js) | Create a page with title + description + section structure |
 | [validateCreation.js](scripts/validateCreation.js) | Verify created nodes match expected counts, names, structure |
-| [cleanupOrphans.js](scripts/cleanupOrphans.js) | Remove nodes tagged with a given `dsb_run_id` (pluginData-safe cleanup) |
-| [rehydrateState.js](scripts/rehydrateState.js) | Scan file for all `dsb_*` pluginData tags; returns full `{key → nodeId}` map for state reconstruction |
+| [cleanupOrphans.js](scripts/cleanupOrphans.js) | Remove orphaned nodes by name convention or state ledger IDs |
+| [rehydrateState.js](scripts/rehydrateState.js) | Scan file for all pages, components, variables by name; returns full `{key → nodeId}` map for state reconstruction |

@@ -1,8 +1,7 @@
 ---
-name: code-connect-components
-description: Connects Figma design components to code components using Code Connect. Use when user says "code connect", "connect this component to code", "connect Figma to code", "map this component", "link component to code", "create code connect mapping", "add code connect", "connect design to code", or wants to establish mappings between Figma designs and code implementations. Requires Figma MCP server connection.
-metadata:
-  mcp-server: figma
+name: figma-code-connect-components
+description: Connects Figma design components to code components using Code Connect mapping tools. Use when user says "code connect", "connect this component to code", "map this component", "link component to code", "create code connect mapping", or wants to establish mappings between Figma designs and code implementations. For canvas writes via `use_figma`, use `figma-use`.
+disable-model-invocation: false
 ---
 
 # Code Connect Components
@@ -11,13 +10,19 @@ metadata:
 
 This skill helps you connect Figma design components to their corresponding code implementations using Figma's Code Connect feature. It analyzes the Figma design structure, searches your codebase for matching components, and establishes mappings that maintain design-code consistency.
 
+## Skill Boundaries
+
+- Use this skill for `get_code_connect_suggestions` + `send_code_connect_mappings` workflows.
+- If the task requires writing to the Figma canvas with Plugin API scripts, switch to [figma-use](../figma-use/SKILL.md).
+- If the task is building or updating a full-page screen in Figma from code or a description, switch to [figma-generate-design](../figma-generate-design/SKILL.md).
+- If the task is implementing product code from Figma, switch to [figma-implement-design](../figma-implement-design/SKILL.md).
+
 ## Prerequisites
 
 - Figma MCP server must be connected and accessible
-  - Before proceeding, verify the Figma MCP server is connected by checking if Figma MCP tools (e.g., `get_code_connect_suggestions`) are available.
-  - If the tools are not available, the Figma MCP server may not be enabled. Guide the user to enable the Figma MCP server that is included with the plugin. They may need to restart their MCP client afterward.
 - User must provide a Figma URL with node ID: `https://figma.com/design/:fileKey/:fileName?node-id=1-2`
   - **IMPORTANT:** The Figma URL must include the `node-id` parameter. Code Connect mapping will fail without it.
+- **OR** when using `figma-desktop` MCP: User can select a node directly in the Figma desktop app (no URL required)
 - **IMPORTANT:** The Figma component must be published to a team library. Code Connect only works with published components or component sets.
 - **IMPORTANT:** Code Connect is only available on Organization and Enterprise plans.
 - Access to the project codebase for component scanning
@@ -34,6 +39,14 @@ Call `get_code_connect_suggestions` to identify all unmapped components in a sin
 - Identifies published components in the selection
 - Checks existing Code Connect mappings and filters out already-connected components
 - Returns component names, properties, and thumbnail images for each unmapped component
+
+#### Option A: Using `figma-desktop` MCP (no URL provided)
+
+If the `figma-desktop` MCP server is connected and the user has NOT provided a Figma URL, immediately call `get_code_connect_suggestions`. No URL parsing is needed — the desktop MCP server automatically uses the currently selected node from the open Figma file.
+
+**Note:** The user must have the Figma desktop app open with a node selected. `fileKey` is not passed as a parameter — the server uses the currently open file.
+
+#### Option B: When a Figma URL is provided
 
 Parse the URL to extract `fileKey` and `nodeId`, then call `get_code_connect_suggestions`.
 
@@ -173,10 +186,13 @@ User says: "Connect this Figma button to my code: https://figma.com/design/kL9xQ
 3. Response shows: Button component (unmapped) with `variant` (primary/secondary) and `size` (sm/md/lg) properties, plus a thumbnail image
 4. Search codebase for Button components: Find `src/components/Button.tsx`
 5. Read `Button.tsx` and confirm it has `variant` and `size` props
-6. Present to user: "I found a match:
+6. Present to user:
+   ```
+   I found a match:
    - [Button](src/components/Button.tsx): Button at nodeId [42:15](https://figma.com/design/kL9xQn2VwM8pYrTb4ZcHjF/DesignSystem?node-id=42-15)
 
-   Would you like to connect this component?"
+   Would you like to connect this component?
+   ```
 
 7. User confirms: "Yes"
 8. Detect that it's a TypeScript React component
@@ -198,13 +214,15 @@ User says: "Connect components in this frame: https://figma.com/design/pR8mNv5Kq
    - Badge: Found `src/components/Badge.tsx` (props match)
    - CustomWidget: No matching component found
 5. Present to user:
-   "The following components match the design:
+   ```
+   The following components match the design:
    - [ProductCard](src/components/ProductCard.tsx): ProductCard at nodeId [10:51](https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4D/Components?node-id=10-51)
    - [Badge](src/components/Badge.tsx): Badge at nodeId [10:52](https://figma.com/design/pR8mNv5KqXzGwY2JtCfL4D/Components?node-id=10-52)
 
    I couldn't find a match for CustomWidget (10:53).
 
-   Would you like to connect these components? You can accept all, select specific ones, or skip."
+   Would you like to connect these components? You can accept all, select specific ones, or skip.
+   ```
 
 6. User: "Just connect ProductCard, skip Badge for now"
 7. Run `send_code_connect_mappings(fileKey="pR8mNv5KqXzGwY2JtCfL4D", nodeId="10:50", mappings=[{ nodeId: "10:51", componentName: "ProductCard", source: "src/components/ProductCard.tsx", label: "React" }])`
