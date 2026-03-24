@@ -183,7 +183,7 @@ Each verification creates:
 
 Access evidence via the report or dashboard.
 
-Always end the conversational turn by sharing the dashboard link whenever you run `ranger go`:
+If the user will need to review or continue in Ranger, share the dashboard link after running `ranger go`:
 
 > Here is the link to the Feature Review in Ranger. Leave comments in the dashboard and then resume the feature review in your agent.
 > https://dashboard.ranger.net/features/{feature_id}

@@ -157,4 +157,4 @@ The new feature review is automatically set as the active feature review. You ca
 1. Start implementing the first scenario
 2. View status with `ranger show`
 
-Always end the conversational turn by sharing the dashboard link.
+If the user will need to review or continue in Ranger, share the dashboard link after creation.

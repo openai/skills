@@ -45,13 +45,13 @@ Scenario 2: "Dashboard loads" — 0 comments
 
 ### Reading Annotated Screenshots
 
-When the output includes `📷 Screenshot:` lines with a local file path, **use the `Read` tool on that file path** to see the screenshot the reviewer was commenting on. The `📍 Annotation:` line shows the normalized (0-1) coordinates where the reviewer placed their comment — this tells you exactly where on the screen the reviewer is pointing. Use both the visual screenshot and the coordinates to understand the spatial context of the feedback.
+When the output includes `📷 Screenshot:` lines with a local file path, use Codex's `view_image` tool on that path to inspect the screenshot the reviewer was commenting on. The `📍 Annotation:` line shows the normalized (0-1) coordinates where the reviewer placed their comment. Use both the visual screenshot and the coordinates to understand the spatial context of the feedback.
 
 ## Step 2: Fix the Code
 
 For each unaddressed comment:
 1. Read the comment carefully — what is the reviewer asking for?
-2. If a screenshot path is shown (`📷 Screenshot:`), **read the image file** to see what the reviewer sees. Correlate the annotation coordinates with the comment text to understand exactly which UI element the reviewer is referring to.
+2. If a screenshot path is shown (`📷 Screenshot:`), inspect it with `view_image` so you can see what the reviewer sees. Correlate the annotation coordinates with the comment text to understand exactly which UI element the reviewer is referring to.
 3. Look at the "previous version" description to understand what changed
 4. If a canonical flow is provided, that's the expected user journey to verify against
 5. Make the code changes that address each concern

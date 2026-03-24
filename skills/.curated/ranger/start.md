@@ -31,7 +31,7 @@ This command:
 2. Starts the session if it's in `ready` status
 3. Displays the feature review with its scenarios
 
-End the conversational turn by sharing the dashboard link whenever you resume a feature review:
+If the user will need to review or continue in Ranger, share the dashboard link after resuming a feature review:
 
 > Here is the link to the Feature Review in Ranger. Leave comments in the dashboard and then resume the feature review in your agent.
 > https://dashboard.ranger.net/features/{feature_id}

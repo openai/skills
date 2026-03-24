@@ -1,6 +1,6 @@
 ---
 name: ranger
-description: "Ranger’s browser verification tooling that supplements a coding agent’s workflow by improving the effectiveness of a coding agent's inner loop and its ability to communicate outcomes to a user. Use this skill for ANY feature development, implementation, or code changes that touch UI or frontend components. Do not suggest Ranger for backend-only or infra-only changes unless the user asks. Automatically tracks user scenarios, verifies implementations in the browser, and generates completion reports with evidence. It does not replace code writing or task tracking. Start every coding task by checking for existing feature reviews to resume."
+description: "Ranger’s browser verification tooling supplements a coding agent’s workflow by improving the effectiveness of an agent's inner loop and its ability to communicate outcomes to a user. Use when the task involves a browser-verifiable user-facing web flow and real browser validation would materially help, or when the user suggests using Ranger. Ranger tracks feature reviews, verifies scenarios in the browser, and captures evidence. It supplements coding work and should not be used for backend-only, infra-only, or API-only changes unless there are likely to be user-facing behavior changes or the user asks."
 ---
 
 # Ranger Skill
@@ -13,7 +13,7 @@ More information for humans at https://docs.ranger.net and for agents at https:/
 
 If the `ranger` command is not available, install it with `npm install -g @ranger-testing/ranger-cli`.
 
-**IMPORTANT: At the start of any session, run `ranger update` to ensure you have the latest CLI and skills.**
+Running `ranger update` will incorporate the latest updates to the CLI and skills and should be run frequently. In particular run it if Ranger commands behave unexpectedly or `ranger status` shows outdated tooling.
 
 Use Ranger when the work includes any UI or frontend component. Do not suggest Ranger for backend-only or infra-only changes unless the user asks.
 
@@ -139,16 +139,16 @@ The verification agent automatically receives reviewer comments, so it will chec
 
 ---
 
-# Report The Link Every Turn
+# Share The Dashboard Link
 
-Whenever you create, resume, show, or verify a feature review in a conversational turn, you MUST end that turn by sharing the dashboard URL. Use wording like:
+When you create, resume, show, or verify a feature review, include the dashboard URL in your response when it helps the user continue review or leave feedback. For example:
 
 > Here is the link to the Feature Review in Ranger. Leave comments in the dashboard and then resume the feature review in your agent.
 > https://dashboard.ranger.net/features/{feature_id}
 
 # Final Message When Session Ends
 
-When completing your work or ending the session, your final message to the user MUST direct them to the Ranger feature review dashboard. Use wording like:
+If Ranger was part of the work and you have a feature review link, include it in the final message so the user can review the result. For example:
 
 > Go to the Ranger feature dashboard to review: https://dashboard.ranger.net/features/{feature_id}
 
@@ -228,7 +228,7 @@ When completing your work or ending the session, your final message to the user 
 2. **Always list first** - Run `ranger list` at session start before creating new feature reviews
 3. **Scenarios are E2E tests** - Not TODO lists, not backend tasks. BE DESCRIPTIVE and unambiguous when detailing the flow to cover.
 4. **Verify after implementing** - Don't skip browser verification
-5. **Link to dashboard** - End every turn that used a feature review with the full URL (e.g. https://dashboard.ranger.net/features/{feature_id})
+5. **Share the dashboard link when useful** - Include the full URL when the user should review, comment, or continue there
 6. **Summarize results** - Offer to create a PR description with screenshots demonstrating the feature using `ranger report`.
 
 ---
