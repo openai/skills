@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" rx="6" fill="#1a1a2e"/>
+  <!-- Server box -->
+  <rect x="4" y="10" width="10" height="12" rx="2" fill="none" stroke="#4f9cf9" stroke-width="1.5"/>
+  <circle cx="9" cy="14" r="1" fill="#4f9cf9"/>
+  <line x1="6" y1="17" x2="12" y2="17" stroke="#4f9cf9" stroke-width="1"/>
+  <line x1="6" y1="19" x2="12" y2="19" stroke="#4f9cf9" stroke-width="1"/>
+  <!-- Arrow bridge -->
+  <line x1="14" y1="16" x2="18" y2="16" stroke="#7dd3fc" stroke-width="1.5"/>
+  <polyline points="16,13 19,16 16,19" fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Remote server box -->
+  <rect x="18" y="10" width="10" height="12" rx="2" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+  <circle cx="23" cy="14" r="1" fill="#22d3ee"/>
+  <line x1="20" y1="17" x2="26" y2="17" stroke="#22d3ee" stroke-width="1"/>
+  <line x1="20" y1="19" x2="26" y2="19" stroke="#22d3ee" stroke-width="1"/>
+</svg>
