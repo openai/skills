@@ -34,7 +34,7 @@ If the CLI is installed and authenticated, proceed silently — do not confirm p
 
 ## Run Reviews
 
-Always run `coderabbit` directly as a bash command. Do NOT wrap it in Python (`subprocess`, `Popen`, `python3 -c`, etc.). Set a 900-second (15 min) timeout on the shell command (e.g. Bash tool `timeout` parameter). Do not run reviews without a timeout.
+Always run `coderabbit` directly as a bare bash command. Do NOT wrap it in any language or tool — no Python, no Perl, no `timeout`, no `subprocess`, no `Popen`, no `alarm`, no shell wrappers of any kind. Do NOT prepend `export PATH=...` or any other setup. Just run the `coderabbit` command directly. Set the timeout using the shell tool's built-in timeout parameter (e.g. Bash tool `timeout` field), not inline in the command.
 
 Default review (all changes):
 
