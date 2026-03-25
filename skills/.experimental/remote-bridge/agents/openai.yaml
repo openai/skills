@@ -1,6 +1,6 @@
 interface:
   display_name: "remote-bridge"
-  short_description: "Sync files, run commands, and deploy to remote Linux servers over SSH and rsync."
+  short_description: "Deploy code and manage remote servers over SSH."
   icon_small: "./assets/remote-bridge-small.svg"
   icon_large: "./assets/remote-bridge-small.svg"
   default_prompt: "Deploy the current project to the remote server and show me the logs."
