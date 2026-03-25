@@ -1,0 +1,15 @@
+interface:
+  display_name: "remote-bridge"
+  short_description: "Sync files, run commands, and deploy to remote Linux servers over SSH and rsync."
+  icon_small: "./assets/remote-bridge-small.png"
+  icon_large: "./assets/remote-bridge.png"
+  default_prompt: "Deploy the current project to the remote server and show me the logs."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "remote-bridge"
+      description: "remote-bridge MCP server (install: npm install -g remote-bridge-cli)"
+      transport: "stdio"
+      command: "remote-bridge"
+      args: ["mcp"]
