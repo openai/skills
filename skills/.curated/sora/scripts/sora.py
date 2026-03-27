@@ -26,12 +26,20 @@ DEFAULT_MAX_ATTEMPTS = 3
 
 ALLOWED_MODELS = {"sora-2", "sora-2-pro"}
 ALLOWED_SIZES_SORA2 = {"1280x720", "720x1280"}
-ALLOWED_SIZES_SORA2_PRO = {"1280x720", "720x1280", "1024x1792", "1792x1024"}
-ALLOWED_SECONDS = {"4", "8", "12"}
+ALLOWED_SIZES_SORA2_PRO = {
+    "1280x720",
+    "720x1280",
+    "1024x1792",
+    "1792x1024",
+    "1080x1920",
+    "1920x1080",
+}
+ALLOWED_SECONDS = {"4", "8", "12", "16", "20"}
 ALLOWED_VARIANTS = {"video", "thumbnail", "spritesheet"}
 ALLOWED_ORDERS = {"asc", "desc"}
 ALLOWED_INPUT_EXTS = {".jpg", ".jpeg", ".png", ".webp"}
-TERMINAL_STATUSES = {"completed", "failed", "canceled"}
+ALLOWED_VIDEO_EXTS = {".mp4"}
+TERMINAL_STATUSES = {"completed", "failed", "canceled", "expired"}
 
 VARIANT_EXTENSIONS = {"video": ".mp4", "thumbnail": ".webp", "spritesheet": ".jpg"}
 
@@ -95,7 +103,7 @@ def _normalize_seconds(seconds: Optional[Union[int, str]]) -> str:
     else:
         value = str(seconds).strip()
     if value not in ALLOWED_SECONDS:
-        _die("seconds must be one of: 4, 8, 12")
+        _die("seconds must be one of: 4, 8, 12, 16, 20")
     return value
 
 
@@ -165,6 +173,89 @@ def _normalize_json_out(out: Optional[str], default_name: str) -> Optional[Path]
     return path
 
 
+def _normalize_input_reference_object(value: Any) -> Dict[str, str]:
+    if not isinstance(value, dict):
+        _die("input_reference object must be a JSON object with file_id or image_url.")
+
+    file_id = str(value.get("file_id", "")).strip()
+    image_url = str(value.get("image_url", "")).strip()
+
+    if bool(file_id) == bool(image_url):
+        _die("input_reference object must include exactly one of file_id or image_url.")
+
+    if file_id:
+        return {"file_id": file_id}
+    return {"image_url": image_url}
+
+
+def _normalize_input_reference(
+    *,
+    value: Any = None,
+    path: Optional[str] = None,
+    file_id: Optional[str] = None,
+    image_url: Optional[str] = None,
+) -> Tuple[Optional[str], Optional[Dict[str, str]]]:
+    if value is not None:
+        if any(item is not None for item in (path, file_id, image_url)):
+            _die(
+                "Use either input_reference or explicit input-reference path/file-id/url fields, not both."
+            )
+        if isinstance(value, str):
+            path = value
+        elif isinstance(value, dict):
+            return None, _normalize_input_reference_object(value)
+        else:
+            _die("input_reference must be a file path string or a JSON object.")
+
+    provided = [bool(path), bool(file_id), bool(image_url)]
+    if sum(provided) > 1:
+        _die("Use only one of --input-reference, --input-reference-file-id, or --input-reference-url.")
+
+    if path:
+        return str(path), None
+    if file_id:
+        return None, {"file_id": str(file_id).strip()}
+    if image_url:
+        return None, {"image_url": str(image_url).strip()}
+    return None, None
+
+
+def _normalize_characters(raw: Any) -> Optional[List[Dict[str, str]]]:
+    if raw is None:
+        return None
+
+    items: List[Any]
+    if isinstance(raw, str):
+        items = [part.strip() for part in raw.split(",") if part.strip()]
+    elif isinstance(raw, (list, tuple)):
+        items = list(raw)
+    else:
+        _die("characters must be a list of IDs, a comma-separated string, or objects with an id field.")
+        return None
+
+    if not items:
+        return None
+
+    normalized: List[Dict[str, str]] = []
+    for item in items:
+        if isinstance(item, str):
+            char_id = item.strip()
+        elif isinstance(item, dict):
+            char_id = str(item.get("id", "")).strip()
+        else:
+            _die("Each character must be a string ID or an object with an id field.")
+            return None
+
+        if not char_id:
+            _die("Character IDs must be non-empty.")
+        normalized.append({"id": char_id})
+
+    if len(normalized) > 2:
+        _die("A single video can include at most 2 characters.")
+
+    return normalized
+
+
 def _open_input_reference(path: Optional[str]):
     if not path:
         return _NullContext()
@@ -173,6 +264,17 @@ def _open_input_reference(path: Optional[str]):
         _die(f"Input reference not found: {p}")
     if p.suffix.lower() not in ALLOWED_INPUT_EXTS:
         _warn("Input reference should be jpeg, png, or webp.")
+    return _SingleFile(p)
+
+
+def _open_video_upload(path: Optional[str], *, label: str) -> Any:
+    if not path:
+        return _NullContext()
+    p = Path(path)
+    if not p.exists():
+        _die(f"{label} not found: {p}")
+    if p.suffix.lower() not in ALLOWED_VIDEO_EXTS:
+        _warn(f"{label} should usually be an MP4 file.")
     return _SingleFile(p)
 
 
@@ -196,6 +298,45 @@ def _create_async_client():
             "AsyncOpenAI not available in this openai SDK version. Upgrade with `uv pip install -U openai`."
         )
     return AsyncOpenAI()
+
+
+def _make_request_options(*, multipart: bool) -> Dict[str, Any]:
+    from openai.resources.videos import make_request_options
+
+    headers = {"Content-Type": "multipart/form-data"} if multipart else None
+    return make_request_options(extra_headers=headers)
+
+
+def _video_post(
+    client: Any,
+    path: str,
+    payload: Dict[str, Any],
+    *,
+    files: Optional[List[Tuple[str, Any]]] = None,
+) -> Any:
+    return client.post(
+        path,
+        cast_to=dict,
+        body=payload,
+        files=files,
+        options=_make_request_options(multipart=bool(files)),
+    )
+
+
+async def _async_video_post(
+    client: Any,
+    path: str,
+    payload: Dict[str, Any],
+    *,
+    files: Optional[List[Tuple[str, Any]]] = None,
+) -> Any:
+    return await client.post(
+        path,
+        cast_to=dict,
+        body=payload,
+        files=files,
+        options=_make_request_options(multipart=bool(files)),
+    )
 
 
 def _to_dict(obj: Any) -> Any:
@@ -464,12 +605,25 @@ def _build_create_payload(args: argparse.Namespace, prompt: str) -> Dict[str, An
     model = _normalize_model(args.model)
     size = _normalize_size(args.size, model)
     seconds = _normalize_seconds(args.seconds)
-    return {
+    payload: Dict[str, Any] = {
         "model": model,
         "prompt": prompt,
         "size": size,
         "seconds": seconds,
     }
+    characters = _normalize_characters(getattr(args, "character_id", None))
+    if characters:
+        payload["characters"] = characters
+
+    _, input_reference_json = _normalize_input_reference(
+        path=getattr(args, "input_reference", None),
+        file_id=getattr(args, "input_reference_file_id", None),
+        image_url=getattr(args, "input_reference_url", None),
+    )
+    if input_reference_json is not None:
+        payload["input_reference"] = input_reference_json
+
+    return payload
 
 
 def _prepare_job_payload(
@@ -496,13 +650,49 @@ def _prepare_job_payload(
     payload["size"] = size
     payload["seconds"] = seconds
 
-    input_ref = (
-        job.get("input_reference")
-        or job.get("input_reference_path")
-        or job.get("input_reference_file")
-    )
+    raw_characters: Any = payload.get("characters")
+    if "characters" in job:
+        raw_characters = job.get("characters")
+    elif "character_ids" in job:
+        raw_characters = job.get("character_ids")
 
-    return payload, input_ref, prompt
+    characters = _normalize_characters(raw_characters)
+    if characters:
+        payload["characters"] = characters
+    else:
+        payload.pop("characters", None)
+
+    default_input_ref_path, default_input_ref_json = _normalize_input_reference(
+        path=getattr(args, "input_reference", None),
+        file_id=getattr(args, "input_reference_file_id", None),
+        image_url=getattr(args, "input_reference_url", None),
+    )
+    input_ref_path = default_input_ref_path
+    input_ref_json = dict(default_input_ref_json) if default_input_ref_json else None
+
+    if any(
+        key in job
+        for key in (
+            "input_reference",
+            "input_reference_path",
+            "input_reference_file",
+            "input_reference_file_id",
+            "input_reference_url",
+        )
+    ):
+        input_ref_path, input_ref_json = _normalize_input_reference(
+            value=job.get("input_reference"),
+            path=job.get("input_reference_path") or job.get("input_reference_file"),
+            file_id=job.get("input_reference_file_id"),
+            image_url=job.get("input_reference_url"),
+        )
+
+    if input_ref_json is not None:
+        payload["input_reference"] = input_ref_json
+    else:
+        payload.pop("input_reference", None)
+
+    return payload, input_ref_path, prompt
 
 
 def _write_json(path: Path, obj: Any) -> None:
@@ -521,13 +711,14 @@ async def _create_one_with_retries(
     client: Any,
     payload: Dict[str, Any],
     *,
+    files: Optional[List[Tuple[str, Any]]] = None,
     attempts: int,
     job_label: str,
 ) -> Any:
     last_exc: Optional[Exception] = None
     for attempt in range(1, attempts + 1):
         try:
-            return await client.videos.create(**payload)
+            return await _async_video_post(client, "/videos", payload, files=files)
         except Exception as exc:
             last_exc = exc
             if not _is_transient_error(exc):
@@ -554,6 +745,7 @@ async def _run_create_batch(args: argparse.Namespace) -> int:
         "model": args.model,
         "size": args.size,
         "seconds": args.seconds,
+        "characters": _normalize_characters(getattr(args, "character_id", None)),
     }
 
     if args.dry_run:
@@ -588,12 +780,11 @@ async def _run_create_batch(args: argparse.Namespace) -> int:
                 print(f"{job_label} starting", file=sys.stderr)
                 started = time.time()
                 with _open_input_reference(input_ref) as ref:
-                    request = dict(payload)
-                    if ref is not None:
-                        request["input_reference"] = ref
+                    files = [("input_reference", ref)] if ref is not None else None
                     result = await _create_one_with_retries(
                         client,
-                        request,
+                        payload,
+                        files=files,
                         attempts=args.max_attempts,
                         job_label=job_label,
                     )
@@ -632,21 +823,25 @@ def _cmd_create(args: argparse.Namespace) -> int:
     prompt = _augment_prompt(args, prompt)
 
     payload = _build_create_payload(args, prompt)
+    input_reference_path, _ = _normalize_input_reference(
+        path=args.input_reference,
+        file_id=args.input_reference_file_id,
+        image_url=args.input_reference_url,
+    )
     json_out = _normalize_json_out(args.json_out, "create.json")
 
     if args.dry_run:
         preview = dict(payload)
-        if args.input_reference:
-            preview["input_reference"] = args.input_reference
+        if input_reference_path:
+            preview["input_reference"] = input_reference_path
         _print_request({"endpoint": "/v1/videos", **preview})
         _write_json_out(json_out, {"dry_run": True, "request": {"endpoint": "/v1/videos", **preview}})
         return 0
 
     client = _create_client()
-    with _open_input_reference(args.input_reference) as input_ref:
-        if input_ref is not None:
-            payload["input_reference"] = input_ref
-        video = client.videos.create(**payload)
+    with _open_input_reference(input_reference_path) as input_ref:
+        files = [("input_reference", input_ref)] if input_ref is not None else None
+        video = _video_post(client, "/videos", payload, files=files)
     _print_json(video)
     _write_json_out(json_out, video)
     return 0
@@ -657,12 +852,17 @@ def _cmd_create_and_poll(args: argparse.Namespace) -> int:
     prompt = _augment_prompt(args, prompt)
 
     payload = _build_create_payload(args, prompt)
+    input_reference_path, _ = _normalize_input_reference(
+        path=args.input_reference,
+        file_id=args.input_reference_file_id,
+        image_url=args.input_reference_url,
+    )
     json_out = _normalize_json_out(args.json_out, "create-and-poll.json")
 
     if args.dry_run:
         preview = dict(payload)
-        if args.input_reference:
-            preview["input_reference"] = args.input_reference
+        if input_reference_path:
+            preview["input_reference"] = input_reference_path
         _print_request({"endpoint": "/v1/videos", **preview})
         print("Would poll for completion.")
         if args.download:
@@ -684,10 +884,9 @@ def _cmd_create_and_poll(args: argparse.Namespace) -> int:
         return 0
 
     client = _create_client()
-    with _open_input_reference(args.input_reference) as input_ref:
-        if input_ref is not None:
-            payload["input_reference"] = input_ref
-        video = client.videos.create(**payload)
+    with _open_input_reference(input_reference_path) as input_ref:
+        files = [("input_reference", input_ref)] if input_ref is not None else None
+        video = _video_post(client, "/videos", payload, files=files)
     _print_json(video)
 
     video_id = _get_video_id(video)
@@ -759,11 +958,13 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 
 def _cmd_list(args: argparse.Namespace) -> int:
+    if getattr(args, "before", None):
+        _die("--before is no longer supported by the Videos API docs. Use --after for pagination.")
+
     params: Dict[str, Any] = {
         "limit": args.limit,
         "order": _normalize_order(args.order),
         "after": args.after,
-        "before": args.before,
     }
     params = {k: v for k, v in params.items() if v is not None}
     json_out = _normalize_json_out(args.json_out, "list.json")
@@ -787,6 +988,7 @@ def _cmd_remix(args: argparse.Namespace) -> int:
     prompt = _read_prompt(args.prompt, args.prompt_file)
     prompt = _augment_prompt(args, prompt)
     json_out = _normalize_json_out(args.json_out, "remix.json")
+    _warn("The remix endpoint is deprecated in the latest Sora docs. Prefer the `edit` command for new workflows.")
 
     if args.dry_run:
         preview = {"endpoint": f"/v1/videos/{args.id}/remix", "prompt": prompt}
@@ -808,6 +1010,81 @@ def _cmd_download(args: argparse.Namespace) -> int:
     client = _create_client()
     data = _download_content(client, args.id, variant)
     _write_download(data, out_path, force=args.force)
+    return 0
+
+
+def _cmd_create_character(args: argparse.Namespace) -> int:
+    json_out = _normalize_json_out(args.json_out, "create-character.json")
+
+    if args.dry_run:
+        preview = {
+            "endpoint": "/v1/videos/characters",
+            "name": args.name,
+            "video": args.video_file,
+        }
+        _print_request(preview)
+        _write_json_out(json_out, {"dry_run": True, "request": preview})
+        return 0
+
+    client = _create_client()
+    with _open_video_upload(args.video_file, label="Character video") as video_file:
+        result = _video_post(
+            client,
+            "/videos/characters",
+            {"name": args.name},
+            files=[("video", video_file)],
+        )
+    _print_json(result)
+    _write_json_out(json_out, result)
+    return 0
+
+
+def _cmd_extend(args: argparse.Namespace) -> int:
+    prompt = _read_prompt(args.prompt, args.prompt_file)
+    prompt = _augment_prompt(args, prompt)
+    seconds = _normalize_seconds(args.seconds)
+    json_out = _normalize_json_out(args.json_out, "extend.json")
+
+    payload = {
+        "video": {"id": args.id},
+        "prompt": prompt,
+        "seconds": seconds,
+    }
+
+    if args.dry_run:
+        _print_request({"endpoint": "/v1/videos/extensions", **payload})
+        _write_json_out(
+            json_out,
+            {"dry_run": True, "request": {"endpoint": "/v1/videos/extensions", **payload}},
+        )
+        return 0
+
+    client = _create_client()
+    result = _video_post(client, "/videos/extensions", payload)
+    _print_json(result)
+    _write_json_out(json_out, result)
+    return 0
+
+
+def _cmd_edit(args: argparse.Namespace) -> int:
+    prompt = _read_prompt(args.prompt, args.prompt_file)
+    prompt = _augment_prompt(args, prompt)
+    json_out = _normalize_json_out(args.json_out, "edit.json")
+
+    payload: Dict[str, Any] = {"prompt": prompt, "video": {"id": args.id}}
+
+    if args.dry_run:
+        _print_request({"endpoint": "/v1/videos/edits", **payload})
+        _write_json_out(
+            json_out,
+            {"dry_run": True, "request": {"endpoint": "/v1/videos/edits", **payload}},
+        )
+        return 0
+
+    client = _create_client()
+    result = _video_post(client, "/videos/edits", payload)
+    _print_json(result)
+    _write_json_out(json_out, result)
     return 0
 
 
@@ -865,6 +1142,9 @@ def _add_create_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--size", default=DEFAULT_SIZE)
     parser.add_argument("--seconds", default=DEFAULT_SECONDS)
     parser.add_argument("--input-reference")
+    parser.add_argument("--input-reference-file-id")
+    parser.add_argument("--input-reference-url")
+    parser.add_argument("--character-id", action="append", default=[])
     parser.add_argument("--dry-run", action="store_true")
     _add_prompt_args(parser)
 
@@ -920,7 +1200,6 @@ def main() -> int:
     list_parser.add_argument("--limit", type=int)
     list_parser.add_argument("--order")
     list_parser.add_argument("--after")
-    list_parser.add_argument("--before")
     _add_json_out(list_parser)
     list_parser.set_defaults(func=_cmd_list)
 
@@ -929,7 +1208,7 @@ def main() -> int:
     _add_json_out(delete_parser)
     delete_parser.set_defaults(func=_cmd_delete)
 
-    remix_parser = subparsers.add_parser("remix", help="Remix a completed video job")
+    remix_parser = subparsers.add_parser("remix", help="Legacy remix of a completed video job")
     remix_parser.add_argument("--id", required=True)
     remix_parser.add_argument("--dry-run", action="store_true")
     _add_prompt_args(remix_parser)
@@ -943,7 +1222,10 @@ def main() -> int:
     download_parser.add_argument("--force", action="store_true")
     download_parser.set_defaults(func=_cmd_download)
 
-    batch_parser = subparsers.add_parser("create-batch", help="Create multiple video jobs (JSONL input)")
+    batch_parser = subparsers.add_parser(
+        "create-batch",
+        help="Create multiple video jobs locally from JSONL input (not the Batch API)",
+    )
     _add_create_args(batch_parser)
     batch_parser.add_argument("--input", required=True, help="Path to JSONL file (one job per line)")
     batch_parser.add_argument("--out-dir", required=True)
@@ -951,6 +1233,28 @@ def main() -> int:
     batch_parser.add_argument("--max-attempts", type=int, default=DEFAULT_MAX_ATTEMPTS)
     batch_parser.add_argument("--fail-fast", action="store_true")
     batch_parser.set_defaults(func=_create_batch)
+
+    character_parser = subparsers.add_parser("create-character", help="Create a reusable non-human character from a video")
+    character_parser.add_argument("--name", required=True)
+    character_parser.add_argument("--video-file", required=True)
+    character_parser.add_argument("--dry-run", action="store_true")
+    _add_json_out(character_parser)
+    character_parser.set_defaults(func=_cmd_create_character)
+
+    extend_parser = subparsers.add_parser("extend", help="Extend a completed video")
+    extend_parser.add_argument("--id", required=True)
+    extend_parser.add_argument("--seconds", default=DEFAULT_SECONDS)
+    extend_parser.add_argument("--dry-run", action="store_true")
+    _add_prompt_args(extend_parser)
+    _add_json_out(extend_parser)
+    extend_parser.set_defaults(func=_cmd_extend)
+
+    edit_parser = subparsers.add_parser("edit", help="Edit an existing generated video by ID")
+    edit_parser.add_argument("--id", required=True, help="Existing generated video ID to edit")
+    edit_parser.add_argument("--dry-run", action="store_true")
+    _add_prompt_args(edit_parser)
+    _add_json_out(edit_parser)
+    edit_parser.set_defaults(func=_cmd_edit)
 
     args = parser.parse_args()
 

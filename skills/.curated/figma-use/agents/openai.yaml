@@ -1,0 +1,14 @@
+interface:
+  display_name: "use_figma"
+  short_description: "Load the required rules before calling use_figma"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-use and follow its rules before making any use_figma call."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"

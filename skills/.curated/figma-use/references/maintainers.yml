@@ -1,0 +1,12 @@
+api-reference.md: mcp_server
+common-patterns.md: mcp_server
+component-patterns.md: mcp_server
+effect-style-patterns.md: mcp_server
+gotchas.md: mcp_server
+plugin-api-patterns.md: mcp_server
+plugin-api-standalone.d.ts: mcp_server
+plugin-api-standalone.index.md: mcp_server
+text-style-patterns.md: mcp_server
+validation-and-recovery.md: mcp_server
+variable-patterns.md: mcp_server
+working-with-design-systems: mcp_server

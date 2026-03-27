@@ -1,0 +1,14 @@
+interface:
+  display_name: "Create Design System Rules"
+  short_description: "Generate design system rules for your codebase"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-create-design-system-rules to generate project-specific Figma design system rules and prepare an AGENTS.md section."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"

@@ -1,0 +1,14 @@
+interface:
+  display_name: "Generate Figma Design"
+  short_description: "Build or update screens from design system components"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-generate-design to build or update this screen in Figma using existing design system components and strong visual parity."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"

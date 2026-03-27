@@ -1,58 +1,71 @@
 # CLI reference (`scripts/sora.py`)
 
-This file contains the command catalog for the bundled video generation CLI. Keep `SKILL.md` overview-first; put verbose CLI details here.
+This file contains the command catalog for the bundled Sora CLI. Keep `SKILL.md` overview-first; put verbose CLI details here.
 
 ## What this CLI does
-- `create`: create a new video job (async)
+- `create`: create a new video job
 - `create-and-poll`: create a job, poll until complete, optionally download
+- `create-character`: upload a reusable non-human character reference clip
+- `edit`: edit an existing generated video by ID
+- `extend`: continue a completed video
 - `poll`: wait for an existing job to finish
 - `status`: retrieve job status/details
 - `download`: download video/thumbnail/spritesheet
 - `list`: list recent jobs
 - `delete`: delete a job
-- `remix`: remix a completed video
-- `create-batch`: create multiple jobs from a JSONL file
+- `remix`: legacy remix endpoint
+- `create-batch`: create multiple video jobs locally from JSONL input
 
-Real API calls require **network access** + `OPENAI_API_KEY`. `--dry-run` does not.
+Real API calls require network access and `OPENAI_API_KEY`. `--dry-run` does not.
 
-## Quick start (works from any repo)
+## Important distinction
+- `create-batch` is a local concurrent fan-out helper.
+- It is not the official Batch API.
+- For the official Batch API, prepare a JSONL file for `POST /v1/videos`, upload it with `purpose=batch`, then create a batch via the Files and Batches APIs.
+
+## Quick start
 Set a stable path to the skill CLI (default `CODEX_HOME` is `~/.codex`):
 
-```
+```bash
 export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 export SORA_CLI="$CODEX_HOME/skills/sora/scripts/sora.py"
 ```
 
-If you're in this repo, you can set the path directly:
+If you're in this repo, set the path directly:
 
-```
-# Use repo root (tests run from output/* so $PWD is not the root)
+```bash
 export SORA_CLI="$(git rev-parse --show-toplevel)/<path-to-skill>/scripts/sora.py"
 ```
 
-If `git` isn't available, set `SORA_CLI` to the absolute path to `<path-to-skill>/scripts/sora.py`.
+If uv cache fails with permission errors:
 
-If uv cache fails with permission errors, set a writable cache:
-
-```
+```bash
 export UV_CACHE_DIR="/tmp/uv-cache"
 ```
 
-Dry-run (no API call; no network required; does not require the `openai` package):
+Dry-run without calling the API:
 
-```
+```bash
 python "$SORA_CLI" create --prompt "Test" --dry-run
 ```
 
-Preflight a full prompt without running the API:
+## Defaults
+- Model: `sora-2`
+- Size: `1280x720`
+- Seconds: `4`
+- Variant: `video`
+- Poll interval: `10` seconds
 
-```
-python "$SORA_CLI" create --prompt-file prompt.txt --dry-run --json-out out/request.json
-```
+Allowed seconds: `4`, `8`, `12`, `16`, `20`
 
-Create a job (requires `OPENAI_API_KEY` + network):
+Allowed sizes:
+- `sora-2`: `1280x720`, `720x1280`
+- `sora-2-pro`: `1280x720`, `720x1280`, `1024x1792`, `1792x1024`, `1920x1080`, `1080x1920`
 
-```
+## Create
+Create a job:
+
+```bash
 uv run --with openai python "$SORA_CLI" create \
   --model sora-2 \
   --prompt "Wide tracking shot of a teal coupe on a desert highway" \
@@ -60,189 +73,163 @@ uv run --with openai python "$SORA_CLI" create \
   --seconds 8
 ```
 
-Create from a prompt file (avoids shell-escaping issues for multi-line prompts):
+Create with a file-based first-frame reference:
 
-```
-cat > prompt.txt << 'EOF'
-Use case: landing page hero
-Primary request: a matte black camera on a pedestal
-Action: slow 30-degree orbit over 4 seconds
-Camera: 85mm, shallow depth of field
-Lighting/mood: soft key light, subtle rim
-Constraints: no logos, no text
-EOF
-
+```bash
 uv run --with openai python "$SORA_CLI" create \
-  --prompt-file prompt.txt \
+  --model sora-2-pro \
+  --prompt "She turns around and smiles, then slowly walks out of frame." \
   --size 1280x720 \
-  --seconds 4
+  --seconds 8 \
+  --input-reference sample_720p.jpeg
 ```
 
-If your prompt file is already structured (Use case/Scene/Camera/etc), disable tool augmentation:
+Create with a stored/remote JSON reference object:
 
+```bash
+uv run --with openai python "$SORA_CLI" create \
+  --prompt "Slow reveal of a mossy mascot in a lantern-lit market" \
+  --input-reference-file-id file_abc123
 ```
+
+Create with characters:
+
+```bash
+uv run --with openai python "$SORA_CLI" create \
+  --model sora-2 \
+  --prompt "Mossy, a moss-covered teapot mascot, rushes through a lantern-lit market at dusk." \
+  --character-id char_123 \
+  --seconds 8
+```
+
+If the prompt is already structured, disable augmentation:
+
+```bash
 uv run --with openai python "$SORA_CLI" create \
   --prompt-file prompt.txt \
   --no-augment \
-  --size 1280x720 \
-  --seconds 4
+  --seconds 16
 ```
 
-Create + poll + download:
+## Create and poll
 
-```
+```bash
 uv run --with openai python "$SORA_CLI" create-and-poll \
   --model sora-2-pro \
   --prompt "Close-up of a steaming coffee cup on a wooden table" \
-  --size 1280x720 \
-  --seconds 8 \
+  --size 1920x1080 \
+  --seconds 16 \
   --download \
   --variant video \
   --out coffee.mp4
 ```
 
-Create + poll + write JSON bundle:
+## Create a character
 
-```
-uv run --with openai python "$SORA_CLI" create-and-poll \
-  --prompt "Minimal product teaser of a matte black camera" \
-  --json-out out/coffee-job.json
+```bash
+uv run --with openai python "$SORA_CLI" create-character \
+  --name Mossy \
+  --video-file character.mp4
 ```
 
-Remix a completed video:
+Use short non-human MP4 source clips and mention the character name verbatim in later prompts.
 
-```
-uv run --with openai python "$SORA_CLI" remix \
+## Edit
+Edit an existing generated video by ID:
+
+```bash
+uv run --with openai python "$SORA_CLI" edit \
   --id video_abc123 \
-  --prompt "Same shot, shift palette to teal/sand/rust with warm backlight."
+  --prompt "Same shot and camera move; shift the palette to teal, sand, and rust."
 ```
 
-Download a thumbnail or spritesheet:
+## Extend
 
+```bash
+uv run --with openai python "$SORA_CLI" extend \
+  --id video_abc123 \
+  --seconds 8 \
+  --prompt "Continue the scene as the camera rises above the rooftops and reveals sunrise."
 ```
+
+## Poll / status / download
+
+```bash
+uv run --with openai python "$SORA_CLI" poll --id video_abc123 --download --out out.mp4
+uv run --with openai python "$SORA_CLI" status --id video_abc123
 uv run --with openai python "$SORA_CLI" download --id video_abc123 --variant thumbnail --out thumb.webp
 uv run --with openai python "$SORA_CLI" download --id video_abc123 --variant spritesheet --out sheet.jpg
 ```
 
-## Guardrails (important)
-- Use `python "$SORA_CLI" ...` (or equivalent full path) for all video work.
-- For API calls, prefer `uv run --with openai ...` to avoid missing SDK errors.
-- Do **not** create one-off runners unless the user explicitly asks.
-- **Never modify** `scripts/sora.py` unless the user asks.
+## List / delete
 
-## Defaults (unless overridden by flags)
-- Model: `sora-2`
-- Size: `1280x720`
-- Seconds: `4` (API expects a string enum: "4", "8", "12")
-- Variant: `video`
-- Poll interval: `10` seconds
-
-## JSON output (`--json-out`)
-- For `create`, `status`, `list`, `delete`, `poll`, and `remix`, `--json-out` writes the JSON response to a file.
-- For `create-and-poll`, `--json-out` writes a bundle: `{ "create": ..., "final": ... }`.
-- If the path has no extension, `.json` is added automatically.
-- In `--dry-run`, `--json-out` writes the request preview instead of a response.
-
-## Input reference images
-- Must be jpg/png/webp; they should match the target size.
-- Provide the path with `--input-reference`.
-
-## Optional deps
-Prefer `uv run --with ...` for an out-of-the-box run without changing the current project env; otherwise install into your active env:
-
-```
-uv pip install openai
+```bash
+uv run --with openai python "$SORA_CLI" list --limit 20 --after video_123 --order asc
+uv run --with openai python "$SORA_CLI" delete --id video_abc123
 ```
 
-## JSONL schema for `create-batch`
-Each line is a JSON object (or a raw prompt string). Required key: `prompt`.
+## Legacy remix
 
-Top-level override keys:
-- `model`, `size`, `seconds`
-- `input_reference` (path)
-- `out` (optional output filename for the job JSON)
-
-Prompt augmentation keys (top-level or under `fields`):
-- `use_case`, `scene`, `subject`, `action`, `camera`, `style`, `lighting`, `palette`, `audio`, `dialogue`, `text`, `timing`, `constraints`, `negative`
-
-Notes:
-- `fields` merges into the prompt augmentation inputs.
-- Top-level keys override CLI defaults.
-- `seconds` must be one of: "4", "8", "12".
-
-## Common recipes
-
-Create with prompt augmentation fields:
-
-```
-uv run --with openai python "$SORA_CLI" create \
-  --prompt "A minimal product teaser shot of a matte black camera" \
-  --use-case "landing page hero" \
-  --camera "85mm, slow orbit" \
-  --lighting "soft key, subtle rim" \
-  --constraints "no logos, no text"
-```
-
-Two-variant workflow (base + remix):
-
-```
-# 1) Base clip
-uv run --with openai python "$SORA_CLI" create-and-poll \
-  --prompt "Ceramic mug on a sunlit wooden table in a cozy cafe" \
-  --size 1280x720 --seconds 4 --download --out output.mp4
-
-# 2) Remix with invariant (same shot, change only the drink)
+```bash
 uv run --with openai python "$SORA_CLI" remix \
   --id video_abc123 \
-  --prompt "Same shot and framing; replace the mug with an iced americano in a glass, visible ice and condensation."
-
-# 3) Poll and download the remix
-uv run --with openai python "$SORA_CLI" poll \
-  --id video_def456 --download --out remix.mp4
+  --prompt "Same shot and framing; change only the palette to teal and sand."
 ```
 
-Poll and download after a job finishes:
+Use `edit` for new workflows. `remix` is retained only for legacy compatibility.
 
-```
-uv run --with openai python "$SORA_CLI" poll --id video_abc123 --download --variant video --out out.mp4
-```
+## JSON output (`--json-out`)
+- `create`, `status`, `list`, `delete`, `poll`, `remix`, `edit`, `extend`, and `create-character` write the response to a file.
+- `create-and-poll` writes `{ "create": ..., "final": ... }`.
+- In `--dry-run`, `--json-out` writes the request preview.
+- If the path has no extension, `.json` is added automatically.
 
-Write JSON response to a file:
+## Local batch JSONL schema (`create-batch`)
+Each line is a JSON object (or a raw prompt string). Required key: `prompt`.
 
-```
-uv run --with openai python "$SORA_CLI" status --id video_abc123 --json-out out/status.json
-```
+Common top-level keys:
+- `model`, `size`, `seconds`
+- `characters`: list like `[{"id":"char_123"}]` or `["char_123"]`
+- `character_ids`: alternate list form such as `["char_123"]`
+- `input_reference`: either a file path string or a JSON object with `file_id` or `image_url`
+- `input_reference_path` / `input_reference_file`: file path aliases
+- `input_reference_file_id`
+- `input_reference_url`
+- `out`: optional output filename for the job JSON
 
-Batch create (JSONL input):
+Prompt augmentation keys:
+- `use_case`, `scene`, `subject`, `action`, `camera`, `style`, `lighting`, `palette`, `audio`, `dialogue`, `text`, `timing`, `constraints`, `negative`
 
-```
+Example:
+
+```bash
 mkdir -p tmp/sora
 cat > tmp/sora/prompts.jsonl << 'EOB'
-{"prompt":"A neon-lit rainy alley, slow dolly-in","seconds":"4"}
-{"prompt":"A warm sunrise over a misty lake, gentle pan","seconds":"8",
- "fields":{"camera":"35mm, slow pan","lighting":"soft dawn light"}}
+{"prompt":"A neon-lit rainy alley, slow dolly-in","seconds":"8"}
+{"prompt":"Mossy, a moss-covered teapot mascot, jogs through a lantern-lit alley","seconds":"16","character_ids":["char_123"]}
+{"prompt":"A warm sunrise over a misty lake, gentle pan","input_reference":{"file_id":"file_abc123"}}
 EOB
 
-uv run --with openai python "$SORA_CLI" create-batch --input tmp/sora/prompts.jsonl --out-dir out --concurrency 3
-
-# Cleanup (recommended)
-rm -f tmp/sora/prompts.jsonl
+uv run --with openai python "$SORA_CLI" create-batch \
+  --input tmp/sora/prompts.jsonl \
+  --out-dir out \
+  --concurrency 3
 ```
 
 Notes:
 - `create-batch` writes one JSON response per job under `--out-dir`.
 - Output names default to `NNN-<prompt-slug>.json`.
-- Use `--concurrency` to control parallelism (default `3`). Higher concurrency can hit rate limits.
-- Treat the JSONL file as temporary: write it under `tmp/` and delete it after the run (do not commit it). If `rm` is blocked in your sandbox, skip cleanup or truncate the file.
+- Higher concurrency can hit rate limits.
+- Treat the JSONL file as temporary and clean it up after use.
 
-## CLI notes
-- Supported sizes depend on model (see `references/video-api.md`).
-- Seconds are limited to 4, 8, or 12.
-- Download URLs expire after about 1 hour; copy assets to your own storage.
-- In CI/sandboxes where long-running commands time out, prefer `create` + `poll` (or add `--timeout`).
+## Guardrails
+- Use `python "$SORA_CLI" ...` or `uv run --with openai python "$SORA_CLI" ...`.
+- For live API calls, prefer `uv run --with openai ...`.
+- Do not create one-off runners unless the user explicitly asks.
+- `edit` replaces `remix` for new integrations.
 
 ## See also
 - API parameter quick reference: `references/video-api.md`
-- Prompt structure and examples: `references/prompting.md`
+- Prompt structure and iteration: `references/prompting.md`
 - Sample prompts: `references/sample-prompts.md`
 - Troubleshooting: `references/troubleshooting.md`

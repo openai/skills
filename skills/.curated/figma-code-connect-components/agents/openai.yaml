@@ -1,0 +1,14 @@
+interface:
+  display_name: "Code Connect Components"
+  short_description: "Map Figma components to code with Code Connect"
+  icon_small: "./assets/figma-small.svg"
+  icon_large: "./assets/figma.png"
+  default_prompt: "Use $figma-code-connect-components to find matching local components for these Figma nodes and propose Code Connect mappings."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "figma"
+      description: "Figma MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.figma.com/mcp"
