@@ -24,6 +24,12 @@ Human-polish skill for Codex that helps teams remove "AI-looking" UI output and 
 4. Score with `references/eval-rubric.md`.
 5. Append the result in `references/eval-results.md`.
 
+### Install In Codex
+
+Use the GitHub folder URL directly with `$skill-installer`:
+
+`$skill-installer install https://github.com/openai/skills/tree/main/skills/.experimental/ivan-human-ui`
+
 ## Included Resources
 
 - `SKILL.md`: Core workflow and guardrails.
