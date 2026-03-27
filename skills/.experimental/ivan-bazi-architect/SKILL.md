@@ -1,6 +1,6 @@
 ---
 name: ivan-bazi-architect
-description: Ivan's Bazi decision-architecture skill for structured diagnosis and strategy planning from classical BaZi references. Use when users ask for 八字分析、调候优先级、格局判断、冲合克害压力测试、或基于命理语料做审计/摘要/策略建议，并需要可追溯的引用与边界约束。
+description: Use when users explicitly ask for 八字/命理 style analysis, SW-1/SW-2/SW-3 structured diagnosis, or citation-backed summaries from classical BaZi references. Do not trigger for general scientific, legal, medical, or deterministic certainty requests.
 ---
 
 # Ivan Bazi Architect
@@ -9,11 +9,13 @@ Convert classical BaZi references into a structured, auditable decision workflow
 
 ## Workflow
 
-1. Load source knowledge.
+1. Load source knowledge and setup.
    - Use `references/core-books.md` to map canonical books and filename variants.
-   - Default source path: `/Users/ivan/Desktop/电子书/ddddddd/`.
+   - Use `config.example.json` as the setup template (`source_dir`, output preferences).
+   - Prefer a local, user-managed `config.json` that is not committed.
 2. Build or refresh index.
    - Run `scripts/build_pdf_index.py` to extract searchable PDF metadata and snippets.
+   - CLI argument `--source-dir` overrides config.
    - Keep output under local skill workspace (do not overwrite source PDFs).
 3. Run layered diagnosis.
    - SW-1 (调候层): identify first-priority environmental resource.
@@ -25,6 +27,8 @@ Convert classical BaZi references into a structured, auditable decision workflow
 5. Publish output with boundaries.
    - Provide concise recommendations with references and confidence levels.
    - Keep ethical boundary: advisory for reflection/decision support, not deterministic fate claims.
+6. Apply gotchas checks before final answer.
+   - Use `references/gotchas.md` to avoid overclaiming, weak citations, and unsupported certainty language.
 
 ## Output Contract
 

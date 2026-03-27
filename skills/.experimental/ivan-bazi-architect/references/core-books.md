@@ -1,8 +1,9 @@
 # Core Books Map
 
-Default source path:
+Source path:
 
-`/Users/ivan/Desktop/电子书/ddddddd/`
+- Read from `config.json` (`source_dir`) or pass `--source-dir` to the index script.
+- Keep user-specific local paths out of committed files.
 
 Use keyword matching because filenames may include suffixes like `(Z-Library)`, `_compressed`, uppercase `.PDF`, or author notes.
 
