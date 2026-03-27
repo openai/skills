@@ -1,6 +1,6 @@
 ---
 name: ivan-human-ui
-description: Ivan's human-UI polish skill for removing AI-looking web/slides patterns and shipping clearer, more intentional pages. Use when users ask to remove "AI vibe/AI taste", make output less template-generated, tighten visual craft, or enforce explicit layout/typography/color/component constraints for landing pages, dashboards, and presentation-like pages.
+description: Ivan's human-UI polish skill for removing AI-looking web/slides patterns and shipping clearer, more intentional pages. Use when users ask to remove "AI vibe/AI taste", improve visual hierarchy, refine component polish, fix UI media visibility regressions, or enforce explicit layout/typography/color constraints for landing pages, dashboards, and presentation-style sections. Do not trigger for backend-only, data-only, or non-visual refactors.
 ---
 
 # Ivan Human UI
@@ -16,6 +16,7 @@ Apply concrete constraints that make generated UI feel intentional instead of ge
    - Let the user react to concrete options instead of abstract adjectives.
 3. Apply hard constraints.
    - Use `references/human-ui-constraints.md` as non-negotiable implementation guardrails.
+   - Read `references/gotchas.md` before finalizing edits.
    - Implement from structure -> typography -> color -> components -> spacing polish.
 4. Enforce concrete edits only.
    - Specify explicit class/token/value changes.
