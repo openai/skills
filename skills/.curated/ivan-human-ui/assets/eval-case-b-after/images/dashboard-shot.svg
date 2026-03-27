@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5f5f4" />
+      <stop offset="100%" stop-color="#e7e5e4" />
+    </linearGradient>
+  </defs>
+  <rect width="960" height="560" fill="url(#bg)" />
+  <rect x="36" y="36" width="888" height="488" rx="16" fill="#ffffff" />
+  <rect x="68" y="84" width="320" height="180" rx="12" fill="#d6d3d1" />
+  <rect x="408" y="84" width="484" height="48" rx="8" fill="#a8a29e" />
+  <rect x="408" y="152" width="420" height="24" rx="8" fill="#d6d3d1" />
+  <rect x="68" y="286" width="824" height="180" rx="12" fill="#e7e5e4" />
+  <path d="M96 426 C170 370, 260 430, 334 380 S500 430, 574 382 S730 430, 856 360"
+    fill="none" stroke="#57534e" stroke-width="6" stroke-linecap="round" />
+  <text x="68" y="70" font-size="24" fill="#44403c" font-family="Arial, sans-serif">dashboard-shot</text>
+</svg>

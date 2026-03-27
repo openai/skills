@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Case C After</title>
+    <style>
+      :root {
+        --surface: #fafaf9;
+        --ink: #0a0a0a;
+        --ring: rgb(10 10 10 / 10%);
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", Arial, sans-serif;
+        background: var(--surface);
+        color: var(--ink);
+      }
+      .grid {
+        display: grid;
+        gap: 8px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 32px;
+      }
+      .testimonial-card {
+        position: relative;
+        min-height: 240px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 12px 30px rgb(0 0 0 / 10%);
+      }
+      .testimonial-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgb(0 0 0 / 62%), rgb(0 0 0 / 8%));
+      }
+      .testimonial-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 1px var(--ring);
+      }
+      .media {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .quote {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+        margin: 0;
+        color: #fff;
+        line-height: 1.4;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="grid">
+      <article class="testimonial-card" data-track="animal" data-bg="./images/animal.svg">
+        <img class="media" alt="Animal portrait" src="./images/animal.svg" />
+        <p class="quote">Animal track visible.</p>
+      </article>
+      <article class="testimonial-card" data-track="abstract" data-bg="./images/abstract.svg">
+        <img class="media" alt="Abstract portrait" src="./images/abstract.svg" />
+        <p class="quote">Abstract track visible.</p>
+      </article>
+      <article class="testimonial-card" data-track="business" data-bg="./images/business.svg">
+        <img class="media" alt="Business portrait" src="./images/business.svg" />
+        <p class="quote">Business track visible.</p>
+      </article>
+    </main>
+  </body>
+</html>
