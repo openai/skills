@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d1fae5" />
+      <stop offset="100%" stop-color="#99f6e4" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#g1)" />
+  <circle cx="220" cy="180" r="72" fill="#065f46" opacity="0.2" />
+  <circle cx="290" cy="170" r="72" fill="#065f46" opacity="0.3" />
+  <text x="36" y="360" font-size="28" fill="#064e3b" font-family="Arial, sans-serif">animal</text>
+</svg>
