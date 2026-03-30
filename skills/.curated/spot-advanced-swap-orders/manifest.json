@@ -1,0 +1,63 @@
+{
+  "name": "spot-advanced-swap-orders",
+  "title": "Spot Advanced Swap Orders",
+  "description": "Create and manage gasless, decentralized, non-custodial, oracle-protected market, limit, TWAP, stop-loss, take-profit, and delayed-start swap orders on supported EVM chains with immutable, audited, battle-tested contracts.",
+  "entrypoint": "SKILL.md",
+  "references": [
+    "skill/references/01-quickstart.md",
+    "skill/references/02-params.md",
+    "skill/references/03-sign.md",
+    "skill/references/04-patterns.md"
+  ],
+  "scripts": [
+    "skill/scripts/order.js"
+  ],
+  "assets": [
+    "skill/assets/token-addressbook.md",
+    "skill/assets/repermit.skeleton.json",
+    "skill/assets/web3-sign-and-submit.example.js"
+  ],
+  "runtime": {
+    "url": "https://agents-sink.orbs.network",
+    "contracts": {
+      "zero": "0x0000000000000000000000000000000000000000",
+      "repermit": "0x00002a9C4D9497df5Bd31768eC5d30eEf5405000",
+      "reactor": "0x000000b33fE4fB9d999Dd684F79b110731c3d000",
+      "executor": "0x000642A0966d9bd49870D9519f76b5cf823f3000"
+    },
+    "chains": {
+      "1": {
+        "name": "Ethereum",
+        "adapter": "0xC1bB4d5071Fe7109ae2D67AE05826A3fe9116cfc"
+      },
+      "56": {
+        "name": "BNB Chain",
+        "adapter": "0x67Feba015c968c76cCB2EEabf197b4578640BE2C"
+      },
+      "137": {
+        "name": "Polygon",
+        "adapter": "0x75A3d70Fa6d054d31C896b9Cf8AB06b1c1B829B8"
+      },
+      "146": {
+        "name": "Sonic",
+        "adapter": "0x58fD209C81D84739BaD9c72C082350d67E713EEa"
+      },
+      "8453": {
+        "name": "Base",
+        "adapter": "0x5906C4dD71D5afFe1a8f0215409E912eB5d593AD"
+      },
+      "42161": {
+        "name": "Arbitrum One",
+        "adapter": "0x026B8977319F67078e932a08feAcB59182B5380f"
+      },
+      "43114": {
+        "name": "Avalanche",
+        "adapter": "0x4F48041842827823D3750399eCa2832fC2E29201"
+      },
+      "59144": {
+        "name": "Linea",
+        "adapter": "0x55E4da2cd634729064bEb294EC682Dc94f5c3f24"
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "domain": {
+    "name": "RePermit",
+    "version": "1",
+    "chainId": "<CHAINID>",
+    "verifyingContract": "<REPERMIT>"
+  },
+  "primaryType": "RePermitWitnessTransferFrom",
+  "types": {
+    "RePermitWitnessTransferFrom": [
+      {
+        "name": "permitted",
+        "type": "TokenPermissions"
+      },
+      {
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256"
+      },
+      {
+        "name": "witness",
+        "type": "Order"
+      }
+    ],
+    "Exchange": [
+      {
+        "name": "adapter",
+        "type": "address"
+      },
+      {
+        "name": "ref",
+        "type": "address"
+      },
+      {
+        "name": "share",
+        "type": "uint32"
+      },
+      {
+        "name": "data",
+        "type": "bytes"
+      }
+    ],
+    "Input": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "name": "maxAmount",
+        "type": "uint256"
+      }
+    ],
+    "Order": [
+      {
+        "name": "reactor",
+        "type": "address"
+      },
+      {
+        "name": "executor",
+        "type": "address"
+      },
+      {
+        "name": "exchange",
+        "type": "Exchange"
+      },
+      {
+        "name": "swapper",
+        "type": "address"
+      },
+      {
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "name": "deadline",
+        "type": "uint256"
+      },
+      {
+        "name": "chainid",
+        "type": "uint256"
+      },
+      {
+        "name": "exclusivity",
+        "type": "uint32"
+      },
+      {
+        "name": "epoch",
+        "type": "uint32"
+      },
+      {
+        "name": "slippage",
+        "type": "uint32"
+      },
+      {
+        "name": "freshness",
+        "type": "uint32"
+      },
+      {
+        "name": "input",
+        "type": "Input"
+      },
+      {
+        "name": "output",
+        "type": "Output"
+      }
+    ],
+    "Output": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "limit",
+        "type": "uint256"
+      },
+      {
+        "name": "triggerLower",
+        "type": "uint256"
+      },
+      {
+        "name": "triggerUpper",
+        "type": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address"
+      }
+    ],
+    "TokenPermissions": [
+      {
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      }
+    ]
+  },
+  "message": {
+    "permitted": {
+      "token": "<INTOKEN>",
+      "amount": "<INTOTALAMOUNT>"
+    },
+    "spender": "<REACTOR>",
+    "nonce": "<NONCE>",
+    "deadline": "<DEADLINE>",
+    "witness": {
+      "reactor": "<REACTOR>",
+      "executor": "<EXECUTOR>",
+      "exchange": {
+        "adapter": "<ADAPTER>",
+        "ref": "<REFERRER>",
+        "share": "<REFSHAREBPS>",
+        "data": "<ADAPTER_USER_DATA>"
+      },
+      "swapper": "<SWAPPER>",
+      "nonce": "<NONCE>",
+      "start": "<START>",
+      "deadline": "<DEADLINE>",
+      "chainid": "<CHAINID>",
+      "exclusivity": "<EXCLUSIVITYBPS>",
+      "epoch": "<EPOCHSECONDS>",
+      "slippage": "<SLIPPAGEBPS>",
+      "freshness": "<FRESHNESSSECONDS>",
+      "input": {
+        "token": "<INTOKEN>",
+        "amount": "<INCHUNKAMOUNT>",
+        "maxAmount": "<INTOTALAMOUNT>"
+      },
+      "output": {
+        "token": "<OUTTOKEN>",
+        "limit": "<OUTAMOUNTMIN>",
+        "triggerLower": "<OUTAMOUNTTRIGGERLOWER>",
+        "triggerUpper": "<OUTAMOUNTTRIGGERUPPER>",
+        "recipient": "<RECIPIENT>"
+      }
+    }
+  }
+}
