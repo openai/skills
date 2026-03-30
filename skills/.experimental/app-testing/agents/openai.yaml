@@ -1,0 +1,6 @@
+interface:
+  display_name: "App Testing"
+  short_description: "Create test checklists and run deep app testing"
+  icon_small: "./assets/favicon.svg"
+  icon_large: "./assets/favicon.png"
+  default_prompt: "Use $app-testing to build a checklist and test this app thoroughly."
