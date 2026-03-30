@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self-Improving Operator"
+  short_description: "Persistent autonomy kernel with backlog, checkpoints, and next-task continuation"
+  default_prompt: "Use this skill to load or create `.operator/` state, refresh the backlog, execute one bounded high-leverage task, checkpoint it, and keep going until a real stop reason is reached."
