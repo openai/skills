@@ -1,100 +1,97 @@
 ---
 name: "self-improving-operator"
-description: "Use when the user wants Codex to take initiative, keep iterating on a project, verify real progress, and raise the operating standard instead of stopping after one narrow change."
+description: "Use when the user wants Codex to keep iterating on a project, maintain `.operator/` state, keep finding the next safe task, and stop only on a real stop reason."
 ---
 
-Use this skill when the user wants Codex to keep pushing a project forward instead of stopping after the first narrow fix.
+Use this skill when the user wants Codex to keep driving a project forward without stopping after one narrow edit.
 
 Typical triggers:
 
 - `continue pushing this project forward`
 - `keep improving this until it feels production-ready`
 - `take ownership and keep iterating`
-- `don't stop after the first fix`
+- `do not stop after the first fix`
 - `proactively improve this repository`
 - `bring this closer to enterprise standard`
+- `keep finding the next safe high-leverage task`
 
-## Core loop
+## Mission
 
-1. Inspect the real current state first.
-2. Identify the highest-leverage unfinished gap.
-3. Make one bounded improvement that materially raises the bar.
-4. Run tests, smoke checks, or runtime probes.
-5. Update docs so the next thread inherits the truth.
-6. Repeat the loop while there is still obvious value to unlock.
+Operate a repository as an actively improving system that can keep finding safe, high-leverage work until it reaches a real stop reason.
+
+The operator must use persistent repo-local state under `.operator/` so a new thread can resume without rediscovering the whole situation.
+
+## Required loop
+
+1. Infer or load the mission from `.operator/mission.md`.
+2. Refresh repo and GitHub signals into `.operator/backlog.json`.
+3. Pick the next safe, high-leverage work item.
+4. Implement one bounded improvement.
+5. Verify with direct evidence.
+6. Write a checkpoint into `.operator/checkpoints/` and update `.operator/state.json`.
+7. Re-scan and continue until a real stop reason exists.
+
+Planning is not a stopping point. If a broad plan is needed, decompose it into backlog items and keep going.
+
+## Persistent files
+
+- `.operator/mission.md`: mission, scope, work sources, stop reasons, and publish mode.
+- `.operator/backlog.json`: prioritized work items discovered from repo and GitHub signals.
+- `.operator/state.json`: current item, verification state, last stop reason, and `next_action`.
+- `.operator/checkpoints/*.md`: durable checkpoints written after verified work.
+
+## Work sources
+
+- `local_tests`
+- `ci_failures`
+- `runtime_failures`
+- `todo_fixme`
+- `docs_handoff_gaps`
+- `github_issues`
+- `github_pr_reviews`
+- `github_discussions`
+
+Only actionable signals should become backlog items. Ignore explanatory prose, string literals, generated outputs, and any stale scan-derived item that no longer appears in the current refresh.
 
 ## Priority order
 
-Prefer improvements that reduce future drag:
+1. broken runtime or ci
+2. github blockers
+3. existing backlog commitments
+4. tests diagnostics onboarding docs
+5. cleanup and polish
 
-- fix a broken path
-- productize a manual workflow
-- add diagnostics after confusing failures
-- improve onboarding or handoff quality
-- strengthen tests around core flows
-- make the system easier to operate, verify, or evolve
+## Stop reasons
 
-Avoid vanity work while larger product or reliability gaps are still open.
+- `needs_user_decision`
+- `external_blocker`
+- `risk_budget_exceeded`
+- `no_safe_work`
+- `mission_complete`
 
-## Codex-specific behavior
+Return to the user only when one of the stop reasons is true, and always write the stop reason into `.operator/state.json`.
 
-- If another local skill is clearly better for the immediate subtask, use it, then return to this operating loop.
-- Prefer direct inspection of the repository, runtime, docs, and test surface over planning from memory.
-- Leave behind a better baseline for the next thread, not just a local patch.
+## Runtime commands
 
-## Stop only when
+Use the bundled script `scripts/operator_runtime.py` for deterministic state updates.
 
-Do not stop at:
+- `python3 scripts/operator_runtime.py bootstrap --repo /path/to/repo --goal "Ship onboarding reliably"`
+- `python3 scripts/operator_runtime.py scan --repo /path/to/repo`
+- `python3 scripts/operator_runtime.py next --repo /path/to/repo`
+- `python3 scripts/operator_runtime.py ingest-plan --repo /path/to/repo --plan-file /path/to/plan.md`
+- `python3 scripts/operator_runtime.py checkpoint --repo /path/to/repo --item-id <id> --summary "..." --verification-status passed --verification-summary "..." --publish-checkpoint`
+- `python3 scripts/operator_runtime.py status --repo /path/to/repo`
 
-- `the file is edited`
-- `the plan exists`
-- `the repo looks better`
+## Guardrails
 
-Stop only when one of these is true:
-
-- the requested outcome is actually working
-- the next meaningful improvement requires a user decision
-- a real external blocker remains after at least one reasonable fallback
-
-## Verification rule
-
-Prefer real checks over assumptions:
-
-- tests over confidence
-- local run over static reasoning
-- API probe over guessed compatibility
-- repository status over memory
-
-If something cannot be verified, say so explicitly and name what is still uncertain.
-
-## Learning loop
-
-When a repeated issue or missing capability appears:
-
-- fix the immediate problem if possible
-- then reduce the chance of repeat
-
-Examples:
-
-- add a runtime probe after an integration failure
-- add docs after a handoff gap
-- add a test after a regression
-- add a checklist after an operational mistake
-
-## Scope discipline
-
-This skill is proactive, but not reckless.
-
-- prefer the smallest upgrade that changes the trajectory
-- do not invent product requirements without evidence
-- do not silently introduce major irreversible architecture changes
-- pause only when the next move has non-obvious consequences
+- Continue automatically only on safe, in-scope, bounded work.
+- Do not invent new product lines, marketing tracks, or unrelated missions unless the mission explicitly includes them.
+- Default publish mode is checkpoint branch/commit, not auto-PR.
+- If a task needs a different skill for one step, use it, then return to this operator loop.
+- Prefer tests over confidence, runtime probes over guesses, and backlog updates over memory.
 
 ## Handoff discipline
 
-If the project may continue in another thread or by another operator:
-
-- leave the repo in a runnable state
-- update docs to reflect current truth
-- record known blockers, known wins, and recommended next steps
-- make the next operator faster, not more dependent
+- Always save `next_action` before stopping.
+- Always record what changed, what was verified, and what remains blocked.
+- Make the next thread faster by leaving a clean `.operator` state, not just prose in chat.
