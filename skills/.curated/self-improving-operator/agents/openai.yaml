@@ -1,0 +1,5 @@
+interface:
+  display_name: "Self-Improving Operator"
+  short_description: "Proactively improve a project through diagnose-build-verify loops"
+  default_prompt: "Take initiative on this project: inspect the real current state, make the highest-leverage improvement, verify it, document the new baseline, and keep iterating until the next meaningful bar is reached."
+
