@@ -27,50 +27,11 @@ InsideOut uses a remote MCP server at `https://app.luthersystems.com/v1/insideou
 
 Before proceeding with any InsideOut workflow, check if the `insideout` MCP tools (like `convoopen`, `convoreply`) are available. If they are not, the MCP server needs to be added.
 
-**Codex:** Run this command in the shell, then type `$insideout` in the Codex prompt to finish the install:
+Run this command in the shell, then type `$insideout` in the Codex prompt to finish the install:
 
 ```bash
 codex mcp add insideout --url https://app.luthersystems.com/v1/insideout-mcp
 ```
-
-**Antigravity:** Open the "..." menu → MCP Servers → Manage MCP Servers → View raw config → add the following (note: Antigravity uses `serverUrl`, not `url`):
-
-```json
-{
-  "mcpServers": {
-    "insideout": {
-      "serverUrl": "https://app.luthersystems.com/v1/insideout-mcp"
-    }
-  }
-}
-```
-
-**Cursor:** Open Settings → MCP → Add new MCP server → paste this config:
-
-```json
-{
-  "mcpServers": {
-    "insideout": {
-      "url": "https://app.luthersystems.com/v1/insideout-mcp"
-    }
-  }
-}
-```
-
-**Other agents:** Add this to your MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "insideout": {
-      "type": "http",
-      "url": "https://app.luthersystems.com/v1/insideout-mcp"
-    }
-  }
-}
-```
-
-> **Note:** Different IDEs use different key names for the server URL. Antigravity uses `serverUrl`, while most others (Cursor, Claude Code, etc.) use `url`. The `type` field is optional in most clients.
 
 After adding the MCP server, the InsideOut tools will be available immediately.
 
@@ -152,7 +113,7 @@ Use InsideOut when the user's request involves:
 |---|---|---|
 | Project context summary (language, framework, cloud provider -- no secrets, no source code) | `convoopen` | **Yes** -- user MUST review and approve the summary before it is sent |
 | User's messages to Riley | `convoreply` | **Yes** -- user explicitly types each message |
-| Source identifier (e.g. `"claude-code"`) | `convoopen` | No -- non-sensitive platform identifier only |
+| Source identifier (`"codex"`) | `convoopen` | No -- non-sensitive platform identifier only |
 
 ### What Is NEVER Sent
 
@@ -225,7 +186,7 @@ Only include lines where you have information. Keep it general and anonymized.
 1. Build a project context summary from what you know about the user's project (see Project Context above). You MUST show the summary to the user and receive explicit approval before sending it. If you don't have enough context or the user declines, skip `project_context` -- Riley will ask discovery questions instead.
 2. Once the user confirms (or declines context), call `convoopen`:
    - `project_context`: The user-approved summary (omit if the user declined or you skipped it). Must not contain credentials, secrets, PII, source code, or internal URLs.
-   - `source`: Set this to the IDE/agent platform you are running in. This controls the "Open {IDE}" button on the credential connect screen. Accepted values: `"claude-code"`, `"codex"`, `"antigravity"`, `"kiro"`, `"cursor"`, `"vscode"`, `"windsurf"`, `"web"`, `"mcp"`. Use `"web"` only for browser-based interfaces. If your platform isn't listed, use its lowercase name. Defaults to `"mcp"` if omitted.
+   - `source`: Set this to `"codex"`.
 3. Display Riley's message to the user. The tool response contains delimiters like `=== Riley ===`, `== Message ==`, `== End ==`, `=== End ===`. **Strip all of these delimiters** -- only show the actual message content between them. Keep your own commentary minimal.
 
 ### Your role: user-mediated conversation
