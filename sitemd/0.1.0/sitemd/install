@@ -1,0 +1,117 @@
+#!/bin/sh
+# sitemd install — downloads the sitemd binary for your platform.
+# No Node.js required. Run: ./sitemd/install
+#
+# This script detects your OS and architecture, downloads the correct
+# binary from GitHub Releases, and places it at sitemd/sitemd.
+
+set -e
+
+REPO="sitemd-cc/sitemd"
+BINARY_NAME="sitemd"
+
+# Detect platform
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+
+case "$OS" in
+  darwin) PLATFORM="darwin" ;;
+  linux)  PLATFORM="linux" ;;
+  mingw*|msys*|cygwin*) PLATFORM="win" ;;
+  *) echo "Unsupported OS: $OS" >&2; exit 1 ;;
+esac
+
+case "$ARCH" in
+  x86_64|amd64) ARCH="x64" ;;
+  arm64|aarch64) ARCH="arm64" ;;
+  *) echo "Unsupported architecture: $ARCH" >&2; exit 1 ;;
+esac
+
+if [ "$PLATFORM" = "win" ]; then
+  ASSET="sitemd-${PLATFORM}-${ARCH}.zip"
+  BINARY_NAME="sitemd.exe"
+else
+  ASSET="sitemd-*-${PLATFORM}-${ARCH}.tar.gz"
+fi
+
+# Find the sitemd directory (where this script lives)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Check if binary already exists
+if [ -f "$SCRIPT_DIR/$BINARY_NAME" ]; then
+  echo "  sitemd binary already installed at $SCRIPT_DIR/$BINARY_NAME"
+  echo "  To reinstall, delete the binary and run this script again."
+  exit 0
+fi
+
+echo "  sitemd install"
+echo "  Platform: ${PLATFORM}-${ARCH}"
+echo ""
+
+# Get latest release tag
+echo "  Finding latest release..."
+if command -v curl >/dev/null 2>&1; then
+  LATEST=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": *"//;s/".*//')
+elif command -v wget >/dev/null 2>&1; then
+  LATEST=$(wget -qO- "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name"' | head -1 | sed 's/.*"tag_name": *"//;s/".*//')
+else
+  echo "  Error: curl or wget required" >&2
+  exit 1
+fi
+
+if [ -z "$LATEST" ]; then
+  echo "  Error: could not determine latest release" >&2
+  exit 1
+fi
+
+VERSION="${LATEST#v}"
+echo "  Version: $VERSION"
+
+# Build download URL
+ARCHIVE="sitemd-${VERSION}-${PLATFORM}-${ARCH}"
+if [ "$PLATFORM" = "win" ]; then
+  ARCHIVE="${ARCHIVE}.zip"
+else
+  ARCHIVE="${ARCHIVE}.tar.gz"
+fi
+URL="https://github.com/$REPO/releases/download/$LATEST/$ARCHIVE"
+
+# Download
+TMPDIR=$(mktemp -d)
+TMPFILE="$TMPDIR/$ARCHIVE"
+
+echo "  Downloading $ARCHIVE..."
+if command -v curl >/dev/null 2>&1; then
+  curl -fsSL -o "$TMPFILE" "$URL"
+else
+  wget -q -O "$TMPFILE" "$URL"
+fi
+
+# Extract binary
+echo "  Extracting..."
+if [ "$PLATFORM" = "win" ]; then
+  unzip -qo "$TMPFILE" -d "$TMPDIR/extracted"
+else
+  mkdir -p "$TMPDIR/extracted"
+  tar -xzf "$TMPFILE" -C "$TMPDIR/extracted"
+fi
+
+# Find the binary inside the archive (it's at sitemd/sitemd inside the archive)
+EXTRACTED_BIN=$(find "$TMPDIR/extracted" -name "$BINARY_NAME" -type f | head -1)
+if [ -z "$EXTRACTED_BIN" ]; then
+  echo "  Error: binary not found in archive" >&2
+  rm -rf "$TMPDIR"
+  exit 1
+fi
+
+# Install
+cp "$EXTRACTED_BIN" "$SCRIPT_DIR/$BINARY_NAME"
+chmod +x "$SCRIPT_DIR/$BINARY_NAME"
+
+# Clean up
+rm -rf "$TMPDIR"
+
+echo ""
+echo "  Installed: $SCRIPT_DIR/$BINARY_NAME"
+echo "  Run: ./sitemd/sitemd launch"
+echo ""
