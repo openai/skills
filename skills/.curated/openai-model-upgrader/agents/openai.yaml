@@ -1,0 +1,14 @@
+interface:
+  display_name: "OpenAI Model Upgrader"
+  short_description: "Upgrade stale OpenAI model references safely"
+  icon_small: "./assets/openai-small.svg"
+  icon_large: "./assets/openai.png"
+  default_prompt: "Use $openai-model-upgrader to audit this repo's OpenAI model usage, check official model/deprecation docs, run a dependency/reference sweep for docs and guides tied to changed examples, apply the justified safe upgrades in this run unless a stop condition is hit, and then summarize what changed."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "openaiDeveloperDocs"
+      description: "OpenAI Developer Docs MCP server"
+      transport: "streamable_http"
+      url: "https://developers.openai.com/mcp"
