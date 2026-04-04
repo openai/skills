@@ -1,0 +1,12 @@
+interface:
+  display_name: "Sanity Best Practices"
+  short_description: "Sanity development best practices"
+  default_prompt: "Review this Sanity project for best practices and suggest improvements."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "sanity"
+      description: "Sanity MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.sanity.io"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Modeling Best Practices"
+  short_description: "Structured content modeling principles"
+  default_prompt: "Help me design a structured content model for this project."

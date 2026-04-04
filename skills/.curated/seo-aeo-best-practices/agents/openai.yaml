@@ -1,0 +1,4 @@
+interface:
+  display_name: "SEO & AEO Best Practices"
+  short_description: "SEO and AEO best practices"
+  default_prompt: "Review this project for SEO and AEO best practices and suggest improvements."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Experimentation Best Practices"
+  short_description: "A/B testing and experimentation methodology"
+  default_prompt: "Help me design and implement a content experiment for this project."
