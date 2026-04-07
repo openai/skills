@@ -1,6 +1,6 @@
 ---
 name: "sentry"
-description: "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry API; perform read-only queries with the bundled script and require `SENTRY_AUTH_TOKEN`."
+description: "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull Sentry health data; uses the Sentry CLI for read-only queries with auto-detected org/project."
 ---
 
 
@@ -8,102 +8,127 @@ description: "Use when the user asks to inspect Sentry issues or events, summari
 
 ## Quick start
 
-- If not already authenticated, ask the user to provide a valid `SENTRY_AUTH_TOKEN` (read-only scopes such as `project:read`, `event:read`) or to log in and create one before running commands.
-- Set `SENTRY_AUTH_TOKEN` as an env var.
-- Optional defaults: `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_BASE_URL`.
-- Defaults: org/project `{your-org}`/`{your-project}`, time range `24h`, environment `prod`, limit 20 (max 50).
-- Always call the Sentry API (no heuristics, no caching).
+- **Just run the command** — the CLI handles authentication and org/project detection automatically. Don't pre-authenticate or look up org/project before running commands.
+- If auth is missing, the CLI prompts interactively. You can also run `sentry auth login` to authenticate.
+- The CLI auto-detects org/project from DSNs in `.env` files, source code, config defaults, and directory names. Only specify `<org>/<project>` if auto-detection fails or picks the wrong target.
+- Always use `--json` when processing output programmatically. Use `--json --fields` to select specific fields and reduce output size.
 
-If the token is missing, give the user these steps:
-1. Create a Sentry auth token: https://sentry.io/settings/account/api/auth-tokens/
-2. Create a token with read-only scopes such as `project:read`, `event:read`, and `org:read`.
-3. Set `SENTRY_AUTH_TOKEN` as an environment variable in their system.
-4. Offer to guide them through setting the environment variable for their OS/shell if needed.
-- Never ask the user to paste the full token in chat. Ask them to set it locally and confirm when ready.
-
-## Core tasks (use bundled script)
-
-Use `scripts/sentry_api.py` for deterministic API calls. It handles pagination and retries once on transient errors.
-
-## Skill path (set once)
-
+If the CLI is not installed, guide the user:
 ```bash
-export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-export SENTRY_API="$CODEX_HOME/skills/sentry/scripts/sentry_api.py"
+curl https://cli.sentry.dev/install -fsS | bash
 ```
 
-User-scoped skills install under `$CODEX_HOME/skills` (default: `~/.codex/skills`).
+If not authenticated:
+```bash
+sentry auth login
+```
+- Never ask the user to paste auth tokens in chat.
+
+## Core tasks
 
 ### 1) List issues (ordered by most recent)
 
 ```bash
-python3 "$SENTRY_API" \
-  list-issues \
-  --org {your-org} \
-  --project {your-project} \
-  --environment prod \
-  --time-range 24h \
+sentry issue list \
+  --query "is:unresolved" \
   --limit 20 \
-  --query "is:unresolved"
+  --json --fields shortId,title,priority,level,status,count,firstSeen,lastSeen
 ```
 
-### 2) Resolve an issue short ID to issue ID
+Add `<org>/<project>` as a positional arg only if auto-detection doesn't work:
+```bash
+sentry issue list my-org/my-project --query "is:unresolved" --limit 20 --json
+```
+
+### 2) Resolve an issue short ID
 
 ```bash
-python3 "$SENTRY_API" \
-  list-issues \
-  --org {your-org} \
-  --project {your-project} \
-  --query "ABC-123" \
-  --limit 1
+sentry issue view PROJECT-123 --json
 ```
 
-Use the returned `id` for issue detail or events.
+Use the short ID format (e.g., `ABC-123`), not the numeric ID.
 
 ### 3) Issue detail
 
 ```bash
-python3 "$SENTRY_API" \
-  issue-detail \
-  1234567890
+sentry issue view PROJECT-123
+```
+
+For machine-readable output:
+```bash
+sentry issue view PROJECT-123 --json
 ```
 
 ### 4) Issue events
 
 ```bash
-python3 "$SENTRY_API" \
-  issue-events \
-  1234567890 \
-  --limit 20
+sentry issue events PROJECT-123 --limit 20 --json
 ```
 
-### 5) Event detail (no stack traces by default)
+### 5) Event detail
 
 ```bash
-python3 "$SENTRY_API" \
-  event-detail \
-  --org {your-org} \
-  --project {your-project} \
-  abcdef1234567890
+sentry event view my-org/my-project/EVENT_ID --json
 ```
 
-## API requirements
+### 6) AI-powered analysis
 
-Always use these endpoints (GET only):
+```bash
+# Get AI root cause analysis
+sentry issue explain PROJECT-123
 
-- List issues: `/api/0/projects/{org_slug}/{project_slug}/issues/`
-- Issue detail: `/api/0/issues/{issue_id}/`
-- Events for issue: `/api/0/issues/{issue_id}/events/`
-- Event detail: `/api/0/projects/{org_slug}/{project_slug}/events/{event_id}/`
+# Get a fix plan
+sentry issue plan PROJECT-123
+```
+
+### 7) Explore traces and performance
+
+```bash
+# List recent traces
+sentry trace list --limit 5
+
+# View a specific trace with span tree
+sentry trace view TRACE_ID
+
+# View spans for a trace
+sentry span list TRACE_ID
+
+# View logs associated with a trace
+sentry trace logs TRACE_ID
+```
+
+### 8) Stream logs
+
+```bash
+# Stream logs in real-time
+sentry log list --follow
+
+# Filter logs by severity
+sentry log list --query "severity:error"
+```
+
+### 9) Arbitrary API access (fallback)
+
+For endpoints not covered by dedicated commands, use `sentry api`:
+```bash
+# GET request (default)
+sentry api /api/0/organizations/my-org/
+
+# POST request with data
+sentry api /api/0/organizations/my-org/projects/ --method POST --data '{"name":"new-project","platform":"python"}'
+```
+
+Use `sentry schema` to discover API endpoints:
+```bash
+sentry schema issues
+```
 
 ## Inputs and defaults
 
-- `org_slug`, `project_slug`: default to `{your-org}`/`{your-project}` (avoid non-prod orgs).
-- `time_range`: default `24h` (pass as `statsPeriod`).
-- `environment`: default `prod`.
-- `limit`: default 20, max 50 (paginate until limit reached).
-- `search_query`: optional `query` parameter.
-- `issue_short_id`: resolve via list-issues query first.
+- `org_slug`, `project_slug`: auto-detected by the CLI. Override with positional `<org>/<project>` if needed.
+- Time filtering: use `--period` (alias `-t`) e.g., `--period 24h`, `--period 7d`.
+- `--limit`: cap number of results (defaults vary by command, typically 10–100).
+- `--query`: uses Sentry search syntax (e.g., `is:unresolved`, `assigned:me`), not free text.
 
 ## Output formatting rules
 
@@ -112,12 +137,19 @@ Always use these endpoints (GET only):
 - If no results, state explicitly.
 - Redact PII in output (emails, IPs). Do not print raw stack traces.
 - Never echo auth tokens.
+- Use `-w`/`--web` to open resources in the browser when sharing links is useful.
+
+## Common mistakes to avoid
+
+- **Wrong issue ID format**: Use `PROJECT-123` (short ID), not the numeric ID.
+- **Pre-authenticating unnecessarily**: Don't run `sentry auth login` before every command.
+- **Missing `--json` for piping**: Human-readable output includes formatting. Use `--json` when parsing output.
+- **Specifying org/project when not needed**: Let auto-detection work first.
+- **Confusing `--query` syntax**: Uses Sentry search syntax, not free text.
 
 ## Golden test inputs
 
-- Org: `{your-org}`
-- Project: `{your-project}`
 - Issue short ID: `{ABC-123}`
 
-Example prompt: “List the top 10 open issues for prod in the last 24h.”
+Example prompt: "List the top 10 open issues for prod in the last 24h."
 Expected: ordered list with titles, short IDs, counts, last seen.
