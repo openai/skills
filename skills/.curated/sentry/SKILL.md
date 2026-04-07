@@ -10,7 +10,7 @@ description: "Use when the user asks to inspect Sentry issues or events, summari
 
 - If not already authenticated, ask the user to run `sentry auth login` or set `SENTRY_AUTH_TOKEN` as an env var.
 - The CLI auto-detects org/project from DSNs in `.env` files, source code, config defaults, and directory names. Only specify `<org>/<project>` if auto-detection fails or picks the wrong target.
-- Defaults: time range `24h`, environment `prod`, limit 20.
+- Defaults: time range `24h`, environment `production`, limit 20.
 - Always use `--json` when processing output programmatically. Use `--json --fields` to select specific fields and reduce output size.
 - Use `sentry schema <resource>` to discover API endpoints quickly.
 
@@ -28,7 +28,7 @@ Use the `sentry` CLI for all queries. It handles authentication, org/project det
 
 ```bash
 sentry issue list \
-  --query "is:unresolved environment:prod" \
+  --query "is:unresolved environment:production" \
   --period 24h \
   --limit 20 \
   --json --fields shortId,title,priority,level,status
@@ -37,7 +37,7 @@ sentry issue list \
 If auto-detection doesn't resolve org/project, pass them explicitly:
 ```bash
 sentry issue list {your-org}/{your-project} \
-  --query "is:unresolved environment:prod" \
+  --query "is:unresolved environment:production" \
   --period 24h \
   --limit 20 \
   --json
@@ -97,7 +97,7 @@ sentry schema issues
 
 - `org_slug`, `project_slug`: auto-detected by the CLI from DSNs, env vars, and directory names. Override with positional `{your-org}/{your-project}` if auto-detection fails.
 - `time_range`: default `24h` (pass as `--period 24h`).
-- `environment`: default `prod` (pass as part of `--query`, e.g., `environment:prod`).
+- `environment`: default `prod` (pass as part of `--query`, e.g., `environment:production`).
 - `limit`: default 20 (pass as `--limit`).
 - `search_query`: optional `--query` parameter, uses Sentry search syntax (e.g., `is:unresolved`, `assigned:me`).
 - `issue_short_id`: use directly with `sentry issue view`.
