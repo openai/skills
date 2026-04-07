@@ -12,6 +12,7 @@ description: "Use when the user asks to inspect Sentry issues or events, summari
 - If auth is missing, the CLI prompts interactively. You can also run `sentry auth login` to authenticate.
 - The CLI auto-detects org/project from DSNs in `.env` files, source code, config defaults, and directory names. Only specify `<org>/<project>` if auto-detection fails or picks the wrong target.
 - Always use `--json` when processing output programmatically. Use `--json --fields` to select specific fields and reduce output size.
+- Use `sentry schema <resource>` to discover API endpoints quickly.
 
 If the CLI is not installed, guide the user:
 ```bash
@@ -30,9 +31,10 @@ sentry auth login
 
 ```bash
 sentry issue list \
-  --query "is:unresolved" \
+  --query "is:unresolved environment:prod" \
+  --period 24h \
   --limit 20 \
-  --json --fields shortId,title,priority,level,status,count,firstSeen,lastSeen
+  --json --fields shortId,title,priority,level,status
 ```
 
 Add `<org>/<project>` as a positional arg only if auto-detection doesn't work:
@@ -114,7 +116,7 @@ For endpoints not covered by dedicated commands, use `sentry api`:
 # GET request (default)
 sentry api /api/0/organizations/my-org/
 
-# POST request with data
+# For write operations (POST/PUT/DELETE), always confirm with the user first
 sentry api /api/0/organizations/my-org/projects/ --method POST --data '{"name":"new-project","platform":"python"}'
 ```
 
@@ -128,7 +130,8 @@ sentry schema issues
 - `org_slug`, `project_slug`: auto-detected by the CLI. Override with positional `<org>/<project>` if needed.
 - Time filtering: use `--period` (alias `-t`) e.g., `--period 24h`, `--period 7d`.
 - `--limit`: cap number of results (defaults vary by command, typically 10–100).
-- `--query`: uses Sentry search syntax (e.g., `is:unresolved`, `assigned:me`), not free text.
+- `--query`: uses Sentry search syntax (e.g., `is:unresolved`, `assigned:me`, `environment:prod`), not free text.
+- Environment filtering: pass as part of the query, e.g., `--query "is:unresolved environment:prod"`.
 
 ## Output formatting rules
 
@@ -150,6 +153,7 @@ sentry schema issues
 ## Golden test inputs
 
 - Issue short ID: `{ABC-123}`
+- Org and project are auto-detected; no configuration needed.
 
 Example prompt: "List the top 10 open issues for prod in the last 24h."
 Expected: ordered list with titles, short IDs, counts, last seen.
