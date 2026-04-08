@@ -1,0 +1,4 @@
+interface:
+  display_name: "Relicta Release Governance"
+  short_description: "Run governed Relicta release workflows"
+  default_prompt: "Use $relicta-release-governance to plan, approve, and publish a Relicta release safely."
