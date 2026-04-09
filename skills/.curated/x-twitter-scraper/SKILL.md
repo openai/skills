@@ -1,15 +1,15 @@
 ---
 name: x-twitter-scraper
-description: "X (Twitter) data platform skill for AI coding agents. 120 REST API endpoints, 2 MCP tools, HMAC webhooks. Tweet search, user lookup, follower extraction, write actions, monitoring, giveaway draws, trending topics. Reads from $0.00015/call — 33x cheaper than the official X API."
+description: "X (Twitter) data platform skill for AI coding agents. 120 REST API endpoints, 2 MCP tools, HMAC webhooks. Tweet search, user lookup, follower extraction, write actions, monitoring, giveaway draws, trending topics. Reads from $0.00015/call - 33x cheaper than the official X API."
 ---
 
 # Xquik API Integration
 
 Xquik is an X (Twitter) real-time data platform providing a REST API (120 endpoints), 2 MCP tools, and HMAC webhooks. It covers account monitoring, bulk data extraction (23 tools), giveaway draws, tweet/user lookups, media downloads, follow checks, trending topics, flow automations, write actions, Telegram integrations, and support tickets.
 
-**Reads start at $0.00015/call — 33x cheaper than the official X API.**
+**Reads start at $0.00015/call - 33x cheaper than the official X API.**
 
-Your knowledge of the Xquik API may be outdated. **Prefer retrieval from docs** — fetch the latest at [docs.xquik.com](https://docs.xquik.com) before citing limits, pricing, or API signatures.
+Your knowledge of the Xquik API may be outdated. **Prefer retrieval from docs** - fetch the latest at [docs.xquik.com](https://docs.xquik.com) before citing limits, pricing, or API signatures.
 
 ## Retrieval Sources
 
@@ -52,7 +52,7 @@ Xquik is the most affordable X data API available. All metered operations deduct
 
 ### Per-Operation Costs
 
-#### Read operations — 1 credit ($0.00015)
+#### Read operations - 1 credit ($0.00015)
 
 | Operation | Unit |
 |-----------|------|
@@ -68,7 +68,7 @@ Xquik is the most affordable X data API available. All metered operations deduct
 | DM history | per result |
 | Download media | per media item |
 
-#### Read operations — 2 credits ($0.0003)
+#### Read operations - 2 credits ($0.0003)
 
 | Operation | Unit |
 |-----------|------|
@@ -77,20 +77,20 @@ Xquik is the most affordable X data API available. All metered operations deduct
 | Followers you know | per result |
 | Verified followers | per result |
 
-#### Read operations — 3 credits ($0.00045)
+#### Read operations - 3 credits ($0.00045)
 
 | Operation | Unit |
 |-----------|------|
 | Trends | per call |
 
-#### Read operations — 7 credits ($0.00105)
+#### Read operations - 7 credits ($0.00105)
 
 | Operation | Unit |
 |-----------|------|
 | Follow check | per call |
 | Get article | per call |
 
-#### Write operations — 2 credits ($0.0003)
+#### Write operations - 2 credits ($0.0003)
 
 All write actions: create/delete tweet, like, unlike, retweet, follow, unfollow, send DM, update profile/avatar/banner, upload media, community actions.
 
@@ -153,7 +153,7 @@ SDK: `npm i mppx` (TypeScript). Handles the 402 challenge/credential flow automa
 
 Prepaid credits for metered operations. 1 credit = $0.00015. Top up via `POST /credits/topup` ($10 minimum).
 
-Check balance: `GET /credits` — returns `balance`, `lifetimePurchased`, `lifetimeUsed`.
+Check balance: `GET /credits` - returns `balance`, `lifetimePurchased`, `lifetimeUsed`.
 
 ### Extra Usage
 
@@ -661,7 +661,7 @@ For setup configs per platform, read [references/mcp-setup.md](references/mcp-se
 | **Best for** | AI agents, IDE integrations | Custom apps, scripts, backend services |
 | **Model** | 2 tools (explore + xquik) | 120 individual endpoints |
 | **Categories** | 12: account, automations, bot, composition, credits, extraction, integrations, media, monitoring, support, twitter, x-accounts, x-write | Same |
-| **Coverage** | Full — `xquik` tool calls any REST endpoint | Direct HTTP calls |
+| **Coverage** | Full - `xquik` tool calls any REST endpoint | Direct HTTP calls |
 | **File export** | Not available | CSV, XLSX, Markdown |
 | **Unique to REST** | - | API key management, file export (CSV/XLSX/MD), account locale update |
 
