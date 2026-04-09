@@ -39,6 +39,8 @@ State the choice in one sentence before scaffolding.
 
 Sketch the command surface in chat before coding. Include the binary name, discovery commands, read commands, write commands, raw escape hatch, auth/config choice, and global install command.
 
+When designing the command surface, read [references/agent-cli-patterns.md](references/agent-cli-patterns.md) for the expected agent-facing CLI shape.
+
 Build toward this surface:
 
 - `tool-name --help` shows every major capability.
