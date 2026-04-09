@@ -37,7 +37,7 @@ State the choice in one sentence before scaffolding.
 
 ## Command Contract
 
-Sketch the command surface in chat before coding. Include the binary name, discovery commands, read commands, write commands, raw escape hatch, auth/config choice, and global install command.
+Sketch the command surface in chat before coding. Include the binary name, discovery commands, resolve or ID-lookup commands, read commands, write commands, raw escape hatch, auth/config choice, and global install command.
 
 When designing the command surface, read [references/agent-cli-patterns.md](references/agent-cli-patterns.md) for the expected agent-facing CLI shape.
 
@@ -47,8 +47,9 @@ Build toward this surface:
 - `tool-name --json doctor` verifies config, auth, version, endpoint reachability, and missing setup.
 - `tool-name init ...` stores local config when env-only auth is painful.
 - Discovery commands find accounts, projects, workspaces, teams, queues, channels, repos, dashboards, or other top-level containers.
+- Resolve commands turn names, URLs, slugs, permalinks, customer input, or build links into stable IDs so future commands do not repeat broad searches.
 - Read commands fetch exact objects and list/search collections. Paginated lists support a bounded `--limit`, cursor, offset, or clearly documented default.
-- Write commands do one named action each: create, update, delete, upload, schedule, retry, comment, draft. They accept the narrowest stable resource ID and do not hide writes inside broad commands such as `fix`, `debug`, or `auto`.
+- Write commands do one named action each: create, update, delete, upload, schedule, retry, comment, draft. They accept the narrowest stable resource ID, support `--dry-run`, `draft`, or `preview` first when the service allows it, and do not hide writes inside broad commands such as `fix`, `debug`, or `auto`.
 - `--json` returns stable machine-readable output.
 - A raw escape hatch exists: `request`, `tool-call`, `api`, or the nearest honest name.
 
@@ -74,15 +75,17 @@ Use screenshots to infer workflow, UI vocabulary, fields, and confirmation point
 
 ## Build Workflow
 
-1. Read the source docs just enough to inventory resources, auth, pagination, IDs, media/file flows, rate limits, and dangerous write actions. If the docs expose OpenAPI, download or inspect it before naming commands.
+1. Read the source just enough to inventory resources, auth, pagination, IDs, media/file flows, rate limits, and dangerous write actions. If the docs expose OpenAPI, download or inspect it before naming commands.
 2. Sketch the command list in chat. Keep names short and shell-friendly.
 3. Scaffold the CLI with a README or equivalent repo-facing instructions.
-4. Implement `doctor`, discovery, read commands, one narrow write path if requested, and the raw escape hatch.
+4. Implement `doctor`, discovery, resolve, read commands, one narrow draft or dry-run write path if requested, and the raw escape hatch.
 5. Install the CLI globally so `tool-name ...` works outside the source folder.
 6. Smoke test from another repo or `/tmp`, not only with `cargo run` or package-manager wrappers. Run `command -v <tool-name>`, `<tool-name> --help`, and `<tool-name> --json doctor`.
 7. Run format, typecheck/build, unit tests for request builders, pagination/request-body builders, no-auth `doctor`, help output, and at least one fixture, dry-run, or live read-only API call.
 
 If a live write is needed for confidence, ask first and make it reversible or draft-only.
+
+When the source is an existing script or shell history, split the working invocation into real phases: setup, discovery, download/export, transform/index, draft, upload, poll, live write. Preserve the flags, paths, and environment variables the user already relies on, then wrap the repeatable phases with stable IDs, bounded JSON, and file outputs.
 
 For raw escape hatches, support read-only calls first. Do not run raw non-GET/HEAD requests against a live service unless the user asked for that specific write.
 
