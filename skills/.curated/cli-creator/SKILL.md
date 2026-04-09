@@ -9,8 +9,6 @@ Create a real CLI that future Codex threads can run by command name from any wor
 
 This skill is for durable tools, not one-off scripts. If a short script in the current repo solves the task, write the script there instead.
 
-If the user needs a connector inside one MCP-aware app, consider an MCP server. Build a CLI when the useful thing is a terminal command that Codex can run from any repo, pipe in shell scripts, smoke-test in CI, wrap in a skill, or call later from an MCP server.
-
 ## Start
 
 Name the target tool, its source, and the first real jobs it should do:
