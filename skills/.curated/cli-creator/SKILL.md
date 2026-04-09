@@ -66,6 +66,8 @@ Support the boring paths first, in this precedence order:
 
 Never print full tokens. `doctor --json` should say whether a token is available, the auth source category (`flag`, `env`, `config`, provider default, or missing), and what setup step is missing.
 
+If the CLI can run without network or auth, make that explicit in `doctor --json`: report fixture/offline mode, whether fixture data was found, and whether auth is not required for that mode.
+
 For internal web apps sourced from DevTools curls, create sanitized endpoint notes before implementing: resource name, method/path, required headers, auth mechanism, CSRF behavior, request body, response ID fields, pagination, errors, and one redacted sample response. Never commit copied cookies, bearer tokens, customer secrets, or full production payloads.
 
 Use screenshots to infer workflow, UI vocabulary, fields, and confirmation points. Do not treat screenshots as API evidence unless they are paired with a network request, export, docs page, or fixture.
@@ -86,6 +88,8 @@ For raw escape hatches, support read-only calls first. Do not run raw non-GET/HE
 
 For media, artifact, or presigned upload flows, test each phase separately: create upload, transfer bytes, poll/read processing status, then attach or reference the resulting ID.
 
+For fixture-backed prototypes, keep fixtures in a predictable project path and make the CLI locate them after installation. Smoke-test from `/tmp` to catch binaries that only work inside the source folder.
+
 For log-oriented CLIs, keep deterministic snippet extraction separate from model interpretation. Prefer a command that emits filenames, line numbers or byte ranges, matched rules, and short excerpts.
 
 ## Rust Defaults
@@ -104,7 +108,7 @@ Add a `Makefile` target such as `make install-local` that builds release and ins
 
 After the CLI works, create or update a small skill for it. Use `$CODEX_HOME/skills/<tool-name>/SKILL.md` for a personal/global companion skill unless the user names a repo-local `.codex/skills/...` path or another skill repo.
 
-The companion skill should explain:
+Write the companion skill in the order a future Codex thread should use the CLI, not as a tour of every feature. Explain:
 
 - How to verify the installed command exists.
 - Which command to run first.
