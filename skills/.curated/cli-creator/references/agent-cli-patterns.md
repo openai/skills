@@ -8,6 +8,12 @@ The CLI is the agent's command layer. It should turn a service, app, API, log so
 
 Good agent CLIs expose composable primitives. Avoid a single command that tries to "do the whole investigation" when smaller discover, read, resolve, download, inspect, draft, and upload commands would compose better.
 
+## CLI or MCP?
+
+Use the CLI shape when the agent needs a command it can install, run from any repo, pipe to local tools, smoke-test in CI, or teach through a small skill.
+
+Use MCP when the goal is a connector that appears as tools/resources/prompts inside an MCP-aware host. A good CLI can still become the implementation behind an MCP server later.
+
 ## Help is interface
 
 Write `--help` for a future Codex thread that only has the binary and a vague task. Each command should have a short description and flags with literal names from the product or API.
@@ -46,6 +52,27 @@ tool-name --json request get /v2/me
 ```
 
 The important rule is consistency. Do not mix many styles unless the product vocabulary demands it.
+
+## Useful shapes from mature CLIs
+
+Prefer these patterns over clever agent-only abstractions:
+
+```bash
+# Field-selected structured output: make common reads scriptable.
+tool-name issues list --json number,title,url,state
+tool-name issues list --json number,title --jq '.[] | select(.state == "open")'
+
+# Human text by default, full API object when requested.
+tool-name pods get <name>
+tool-name pods get <name> -o json
+
+# Product workflow commands, not just REST nouns.
+tool-name logs tail
+tool-name webhooks listen --forward-to localhost:4242/webhooks
+tool-name webhooks trigger checkout.completed
+```
+
+Only implement filtering or templating if the user will actually need it. Stable JSON plus narrow read commands are the baseline.
 
 ## Discovery, resolve, read, context
 
