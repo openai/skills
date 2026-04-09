@@ -1,0 +1,4 @@
+interface:
+  display_name: "CLI Creator"
+  short_description: "Build global CLIs for Codex"
+  default_prompt: "Create an agent-friendly CLI from these API docs, install it globally, verify it against the real service, and create a companion skill that teaches Codex when to use it."
