@@ -1,12 +1,12 @@
-# Agent CLI Patterns
+# Codex CLI Patterns
 
-Use this reference when designing the command surface for a new agent-facing CLI.
+Use this reference when designing the command surface for a new CLI Codex should run.
 
 ## Mental model
 
-The CLI is the agent's command layer. It should turn a service, app, API, log source, or database into shell commands Codex can run repeatedly from any repo.
+The CLI is Codex's command layer. It should turn a service, app, API, log source, or database into shell commands Codex can run repeatedly from any repo.
 
-Good agent CLIs expose composable primitives. Avoid a single command that tries to "do the whole investigation" when smaller discover, read, resolve, download, inspect, draft, and upload commands would compose better.
+Good CLIs for Codex expose composable primitives. Avoid a single command that tries to "do the whole investigation" when smaller discover, read, resolve, download, inspect, draft, and upload commands would compose better.
 
 ## Help is interface
 

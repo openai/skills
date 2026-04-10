@@ -1,6 +1,6 @@
 ---
 name: cli-creator
-description: Build an agent-friendly CLI from API docs, an OpenAPI spec, existing curl examples, an SDK, a web app, an admin tool, or a local script. Use when the user wants Codex to create a global command-line tool that can be run from any repo, expose composable read/write commands, return stable JSON, manage auth, and pair with a companion skill.
+description: Build a composable CLI for Codex from API docs, an OpenAPI spec, existing curl examples, an SDK, a web app, an admin tool, or a local script. Use when the user wants Codex to create a command-line tool that can run from any repo, expose composable read/write commands, return stable JSON, manage auth, and pair with a companion skill.
 ---
 
 # CLI Creator
@@ -15,9 +15,9 @@ Name the target tool, its source, and the first real jobs it should do:
 
 - Source: API docs, OpenAPI JSON, SDK docs, curl examples, browser app, existing internal script, article, or working shell history.
 - Jobs: literal reads/writes such as `list drafts`, `download failed job logs`, `search messages`, `upload media`, `read queue schedule`.
-- Install name: a short binary name such as `typefully-cli`, `slack-cli`, `sentry-cli`, or `buildkite-logs`.
+- Install name: a short binary name such as `ci-logs`, `slack-cli`, `sentry-cli`, or `buildkite-logs`.
 
-Prefer a new folder under `~/code/clis/<tool-name>` when the user wants a personal/global tool and has not named a repo.
+Prefer a new folder under `~/code/clis/<tool-name>` when the user wants a personal tool and has not named a repo.
 
 Before scaffolding, check whether the proposed command already exists:
 
@@ -29,17 +29,17 @@ If it exists, choose a clearer install name or ask the user.
 
 ## Choose the Runtime
 
-- Prefer **Rust** for a global agent CLI: one fast binary, strong argument parsing, good JSON handling, easy copy/install into `~/.local/bin`.
+- Prefer **Rust** for a CLI Codex should run from any repo: one fast binary, strong argument parsing, good JSON handling, easy copy/install into `~/.local/bin`.
 - Prefer **TypeScript/Node** when the official SDK, auth helper, or browser automation ecosystem is the reason the CLI can be good.
-- Prefer **Python** for data science, local file transforms, notebooks, or thin admin scripts that do not need a durable install.
+- Prefer **Python** for data science, local file transforms, notebooks, or Python-heavy admin tooling that can still be installed as a durable command.
 
 State the choice in one sentence before scaffolding.
 
 ## Command Contract
 
-Sketch the command surface in chat before coding. Include the binary name, discovery commands, resolve or ID-lookup commands, read commands, write commands, raw escape hatch, auth/config choice, and global install command.
+Sketch the command surface in chat before coding. Include the binary name, discovery commands, resolve or ID-lookup commands, read commands, write commands, raw escape hatch, auth/config choice, and PATH/install command.
 
-When designing the command surface, read [references/agent-cli-patterns.md](references/agent-cli-patterns.md) for the expected agent-facing CLI shape.
+When designing the command surface, read [references/agent-cli-patterns.md](references/agent-cli-patterns.md) for the expected composable CLI shape.
 
 Build toward this surface:
 
@@ -61,9 +61,9 @@ Document the JSON policy in the CLI README or equivalent: API pass-through versu
 
 Support the boring paths first, in this precedence order:
 
-1. `--api-key` or tool-specific token flag, when useful.
-2. Environment variable such as `TYPEFULLY_API_KEY`.
-3. User config under `~/.<tool-name>/config.toml` or another simple documented path.
+1. Environment variable using the service's standard name, such as `GITHUB_TOKEN`.
+2. User config under `~/.<tool-name>/config.toml` or another simple documented path.
+3. `--api-key` or a tool-specific token flag only for explicit one-off tests. Prefer env/config for normal use because flags can leak into shell history or process listings.
 
 Never print full tokens. `doctor --json` should say whether a token is available, the auth source category (`flag`, `env`, `config`, provider default, or missing), and what setup step is missing.
 
@@ -79,7 +79,7 @@ Use screenshots to infer workflow, UI vocabulary, fields, and confirmation point
 2. Sketch the command list in chat. Keep names short and shell-friendly.
 3. Scaffold the CLI with a README or equivalent repo-facing instructions.
 4. Implement `doctor`, discovery, resolve, read commands, one narrow draft or dry-run write path if requested, and the raw escape hatch.
-5. Install the CLI globally so `tool-name ...` works outside the source folder.
+5. Install the CLI on PATH so `tool-name ...` works outside the source folder.
 6. Smoke test from another repo or `/tmp`, not only with `cargo run` or package-manager wrappers. Run `command -v <tool-name>`, `<tool-name> --help`, and `<tool-name> --json doctor`.
 7. Run format, typecheck/build, unit tests for request builders, pagination/request-body builders, no-auth `doctor`, help output, and at least one fixture, dry-run, or live read-only API call.
 
@@ -109,7 +109,7 @@ Add a `Makefile` target such as `make install-local` that builds release and ins
 
 ## Companion Skill
 
-After the CLI works, create or update a small skill for it. Use `$CODEX_HOME/skills/<tool-name>/SKILL.md` for a personal/global companion skill unless the user names a repo-local `.codex/skills/...` path or another skill repo.
+After the CLI works, create or update a small skill for it. Use `$skill-creator` when it is available. Use `$CODEX_HOME/skills/<tool-name>/SKILL.md` for a personal companion skill unless the user names a repo-local `.codex/skills/...` path or another skill repo.
 
 Write the companion skill in the order a future Codex thread should use the CLI, not as a tour of every feature. Explain:
 
