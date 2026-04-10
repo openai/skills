@@ -29,11 +29,21 @@ If it exists, choose a clearer install name or ask the user.
 
 ## Choose the Runtime
 
-- Prefer **Rust** for a CLI Codex should run from any repo: one fast binary, strong argument parsing, good JSON handling, easy copy/install into `~/.local/bin`.
-- Prefer **TypeScript/Node** when the official SDK, auth helper, or browser automation ecosystem is the reason the CLI can be good.
-- Prefer **Python** for data science, local file transforms, notebooks, or Python-heavy admin tooling that can still be installed as a durable command.
+Before choosing, inspect the user's machine and source material:
 
-State the choice in one sentence before scaffolding.
+```bash
+command -v cargo rustc node pnpm npm python3 uv || true
+```
+
+Then choose the least surprising toolchain:
+
+- Default to **Rust** for a durable CLI Codex should run from any repo: one fast binary, strong argument parsing, good JSON handling, easy copy/install into `~/.local/bin`.
+- Use **TypeScript/Node** when the official SDK, auth helper, browser automation library, or existing repo tooling is the reason the CLI can be better.
+- Use **Python** when the source is data science, local file transforms, notebooks, SQLite/CSV/JSON analysis, or Python-heavy admin tooling that can still be installed as a durable command.
+
+Do not pick a language that adds setup friction unless it materially improves the CLI. If the best language is not installed, either install the missing toolchain with the user's approval or choose the next-best installed option.
+
+State the choice in one sentence before scaffolding, including the reason and the installed toolchain you found.
 
 ## Command Contract
 
