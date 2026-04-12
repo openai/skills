@@ -1,6 +1,6 @@
 ---
 name: "research-summarizer"
-description: "Structured research summarization agent skill for non-dev users. Handles academic papers, web articles, reports, and documentation. Extracts key findings, generates comparative analyses, and produces properly formatted citations. Use when: user wants to summarize a research paper, compare multiple sources, extract citations from documents, or create structured research briefs. Plugin for Claude Code, Codex, Gemini CLI, and OpenClaw."
+description: "Structured summarization skill for source material already in hand. Handles papers, articles, reports, and documentation; extracts key findings, compares sources, and formats citations. Use this for synthesis and citation work after documents have been collected. Do not use it as an autonomous research-orchestration skill."
 license: MIT
 metadata:
   version: 1.0.0
@@ -18,6 +18,13 @@ Structured research summarization workflow that turns dense source material into
 Not a generic "summarize this" — a repeatable framework that extracts what matters, compares across sources, and formats citations properly.
 
 ---
+
+## Scope
+
+- Input: one or more documents, articles, reports, PDFs, or notes that the user already has
+- Output: structured briefs, comparison matrices, extracted citations, and summary templates
+- Use when: the material is already available and the job is to synthesize, compare, or cite it
+- Do not use when: the main task is to search broadly, gather new sources autonomously, or orchestrate a multi-step research crawl
 
 ## Slash Commands
 

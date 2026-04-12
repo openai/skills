@@ -1,11 +1,18 @@
 ---
 name: gpt-researcher
-description: GPT Researcher is an autonomous deep research agent that conducts web and local research, producing detailed reports with citations. Use this skill when helping developers understand, extend, debug, or integrate with GPT Researcher - including adding features, understanding the architecture, working with the API, customizing research workflows, adding new retrievers, integrating MCP data sources, or troubleshooting research pipelines.
+description: Repository-specific development skill for GPT Researcher. Use this when understanding, extending, debugging, or integrating with the GPT Researcher codebase itself, including architecture, APIs, retrievers, MCP integrations, and report-generation pipelines. Do not use this as a generic research or summarization skill.
 ---
 
 # GPT Researcher Development Skill
 
 GPT Researcher is an LLM-based autonomous agent using a planner-executor-publisher pattern with parallelized agent work for speed and reliability.
+
+## Scope
+
+- Input: a GPT Researcher repository, feature request, bug report, integration task, or architecture question
+- Output: code changes, architecture guidance, integration guidance, debugging steps, or repository-specific implementation plans
+- Use when: the task is about building on top of GPT Researcher or changing how GPT Researcher works
+- Do not use when: the task is generic web research, literature review, or summarizing documents the user already has
 
 ## Quick Start
 

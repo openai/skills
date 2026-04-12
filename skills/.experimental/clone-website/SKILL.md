@@ -9,6 +9,13 @@ user-invocable: true
 
 You are about to reverse-engineer and rebuild **$ARGUMENTS** as pixel-perfect clones.
 
+## Scope
+
+- Input: one or more publicly reachable page URLs plus optional fidelity or customization instructions
+- Output: implementation-ready frontend specs, extracted assets, and reconstructed UI code
+- Use when: the task is layout recreation, design analysis, component extraction, or frontend prototyping
+- Do not use when: the task is copying backend behavior, reproducing private systems, bypassing access controls, or bulk content scraping without a rebuild goal
+
 When multiple URLs are provided, process them independently and in parallel where possible, while keeping each site's extraction artifacts isolated in dedicated folders (for example, `docs/research/<hostname>/`).
 
 This is not a two-phase process (inspect then build). You are a **foreman walking the job site** — as you inspect each section of the page, you write a detailed specification to a file, then hand that file to a specialist builder agent with everything they need. Extraction and construction happen in parallel, but extraction is meticulous and produces auditable artifacts.
