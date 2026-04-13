@@ -1,0 +1,10 @@
+interface:
+  display_name: "Odoo MRP Inspect"
+  short_description: "Inspect Odoo manufacturing orders, BoMs, and production status (read-only)"
+  default_prompt: "Inspect the Odoo manufacturing data and report on production orders, bills of materials, or component availability."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "odoo"
+      description: "Odoo MCP server (odoo-simple-mcp) for read-only manufacturing inspection"

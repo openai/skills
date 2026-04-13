@@ -1,0 +1,10 @@
+interface:
+  display_name: "Odoo Stock Inspect"
+  short_description: "Inspect Odoo inventory levels, stock moves, and warehouse transfers (read-only)"
+  default_prompt: "Inspect the Odoo inventory data and report on stock levels, transfers, or reordering rules."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "odoo"
+      description: "Odoo MCP server (odoo-simple-mcp) for read-only inventory inspection"

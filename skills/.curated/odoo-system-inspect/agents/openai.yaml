@@ -1,0 +1,10 @@
+interface:
+  display_name: "Odoo System Inspect"
+  short_description: "Inspect Odoo system health, modules, cron jobs, and error logs (read-only)"
+  default_prompt: "Inspect the Odoo system and report on module status, cron health, error logs, or user activity."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "odoo"
+      description: "Odoo MCP server (odoo-simple-mcp) for read-only system inspection"
