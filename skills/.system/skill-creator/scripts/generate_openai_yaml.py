@@ -54,6 +54,77 @@ def yaml_quote(value):
     return f'"{escaped}"'
 
 
+def yaml_scalar(value):
+    if isinstance(value, str):
+        return yaml_quote(value)
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    if value is None:
+        return "null"
+    return str(value)
+
+
+def render_yaml_node(node, indent=0):
+    lines = []
+    prefix = " " * indent
+
+    if isinstance(node, dict):
+        for key, value in node.items():
+            key_prefix = f"{prefix}{key}:"
+            if isinstance(value, dict):
+                if value:
+                    lines.append(key_prefix)
+                    lines.extend(render_yaml_node(value, indent + 2))
+                else:
+                    lines.append(f"{key_prefix} {{}}")
+            elif isinstance(value, list):
+                if value:
+                    lines.append(key_prefix)
+                    lines.extend(render_yaml_node(value, indent + 2))
+                else:
+                    lines.append(f"{key_prefix} []")
+            else:
+                lines.append(f"{key_prefix} {yaml_scalar(value)}")
+        return lines
+
+    if isinstance(node, list):
+        for item in node:
+            item_prefix = f"{prefix}-"
+            if isinstance(item, dict):
+                if not item:
+                    lines.append(f"{item_prefix} {{}}")
+                    continue
+                first_key = next(iter(item))
+                first_value = item[first_key]
+                if isinstance(first_value, (dict, list)):
+                    lines.append(f"{item_prefix} {first_key}:")
+                    lines.extend(render_yaml_node(first_value, indent + 4))
+                else:
+                    lines.append(f"{item_prefix} {first_key}: {yaml_scalar(first_value)}")
+                remaining = dict(item)
+                del remaining[first_key]
+                if remaining:
+                    lines.extend(render_yaml_node(remaining, indent + 2))
+            elif isinstance(item, list):
+                if item:
+                    lines.append(item_prefix)
+                    lines.extend(render_yaml_node(item, indent + 2))
+                else:
+                    lines.append(f"{item_prefix} []")
+            else:
+                lines.append(f"{item_prefix} {yaml_scalar(item)}")
+        return lines
+
+    lines.append(f"{prefix}{yaml_scalar(node)}")
+    return lines
+
+
+def dump_yaml(data):
+    return "\n".join(render_yaml_node(data)) + "\n"
+
+
 def format_display_name(skill_name):
     words = [word for word in skill_name.split("-") if word]
     formatted = []
@@ -152,11 +223,71 @@ def parse_interface_overrides(raw_overrides):
     return overrides, optional_order
 
 
+def load_existing_openai_yaml(output_path):
+    if not output_path.exists():
+        return {}
+
+    content = output_path.read_text()
+    if not content.strip():
+        return {}
+
+    try:
+        data = yaml.safe_load(content)
+    except yaml.YAMLError as exc:
+        print(f"[ERROR] Existing agents/openai.yaml is invalid YAML: {exc}")
+        return None
+
+    if data is None:
+        return {}
+    if not isinstance(data, dict):
+        print("[ERROR] Existing agents/openai.yaml must be a YAML dictionary.")
+        return None
+
+    if "interface" in data and not isinstance(data["interface"], dict):
+        print("[ERROR] Existing agents/openai.yaml field 'interface' must be a YAML dictionary.")
+        return None
+
+    return data
+
+
+def build_interface(existing_interface, display_name, short_description, overrides, optional_order):
+    updated_interface = dict(existing_interface)
+    updated_interface["display_name"] = display_name
+    updated_interface["short_description"] = short_description
+
+    for key, value in overrides.items():
+        if key not in ("display_name", "short_description"):
+            updated_interface[key] = value
+
+    ordered_interface = {
+        "display_name": updated_interface.pop("display_name"),
+        "short_description": updated_interface.pop("short_description"),
+    }
+
+    for key in optional_order:
+        if key in updated_interface:
+            ordered_interface[key] = updated_interface.pop(key)
+
+    for key, value in updated_interface.items():
+        ordered_interface[key] = value
+
+    return ordered_interface
+
+
 def write_openai_yaml(skill_dir, skill_name, raw_overrides):
     overrides, optional_order = parse_interface_overrides(raw_overrides)
     if overrides is None:
         return None
 
+    agents_dir = Path(skill_dir) / "agents"
+    agents_dir.mkdir(parents=True, exist_ok=True)
+    output_path = agents_dir / "openai.yaml"
+
+    existing_data = load_existing_openai_yaml(output_path)
+    if existing_data is None:
+        return None
+
+    existing_interface = existing_data.get("interface", {})
     display_name = overrides.get("display_name") or format_display_name(skill_name)
     short_description = overrides.get("short_description") or generate_short_description(display_name)
 
@@ -167,21 +298,21 @@ def write_openai_yaml(skill_dir, skill_name, raw_overrides):
         )
         return None
 
-    interface_lines = [
-        "interface:",
-        f"  display_name: {yaml_quote(display_name)}",
-        f"  short_description: {yaml_quote(short_description)}",
-    ]
+    output_data = {
+        "interface": build_interface(
+            existing_interface,
+            display_name,
+            short_description,
+            overrides,
+            optional_order,
+        )
+    }
 
-    for key in optional_order:
-        value = overrides.get(key)
-        if value is not None:
-            interface_lines.append(f"  {key}: {yaml_quote(value)}")
+    for key, value in existing_data.items():
+        if key != "interface":
+            output_data[key] = value
 
-    agents_dir = Path(skill_dir) / "agents"
-    agents_dir.mkdir(parents=True, exist_ok=True)
-    output_path = agents_dir / "openai.yaml"
-    output_path.write_text("\n".join(interface_lines) + "\n")
+    output_path.write_text(dump_yaml(output_data))
     print(f"[OK] Created agents/openai.yaml")
     return output_path
 
