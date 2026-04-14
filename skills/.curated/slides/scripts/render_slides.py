@@ -1,19 +1,79 @@
 #!/usr/bin/env python3
 # Copyright (c) OpenAI. All rights reserved.
 import argparse
+import contextlib
+import glob
 import os
+import platform
 import re
+import shutil
 import subprocess
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 from os import makedirs, replace
 from os.path import abspath, basename, exists, expanduser, join, splitext
-from typing import Sequence, cast
+from typing import cast
 from zipfile import ZipFile
 
 from pdf2image import convert_from_path, pdfinfo_from_path
 
 EMU_PER_INCH: int = 914_400
+
+def resolve_soffice() -> str:
+    env_value = os.environ.get("SOFFICE_PATH")
+    if env_value and exists(env_value):
+        return abspath(env_value)
+
+    if os.name == "nt":
+        for candidate in [
+            r"C:\Program Files\LibreOffice\program\soffice.exe",
+            r"C:\Program Files (x86)\LibreOffice\program\soffice.exe",
+        ]:
+            if exists(candidate):
+                return abspath(candidate)
+
+    soffice = shutil.which("soffice.exe") or shutil.which("soffice") or shutil.which("libreoffice")
+    if not soffice:
+        raise FileNotFoundError(
+            "Could not locate 'soffice'. Set SOFFICE_PATH or add LibreOffice to PATH."
+        )
+    return abspath(soffice)
+
+
+def resolve_poppler_bin() -> str | None:
+    env_value = os.environ.get("POPPLER_BIN")
+    if env_value and exists(env_value):
+        return abspath(env_value)
+
+    if os.name == "nt":
+        local_app_data = os.environ.get("LOCALAPPDATA", "")
+        pattern = join(
+            local_app_data,
+            "Microsoft",
+            "WinGet",
+            "Packages",
+            "oschwartz10612.Poppler_*",
+            "poppler-*",
+            "Library",
+            "bin",
+        )
+        matches = sorted(glob.glob(pattern))
+        for match in reversed(matches):
+            if exists(join(match, "pdfinfo.exe")) and exists(join(match, "pdftoppm.exe")):
+                return abspath(match)
+
+    pdfinfo = shutil.which("pdfinfo")
+    if pdfinfo:
+        return abspath(os.path.dirname(pdfinfo))
+    return None
+
+
+def disable_temp_soffice_profile() -> bool:
+    value = os.environ.get("LIBREOFFICE_DISABLE_TEMP_PROFILE", "")
+    if value.strip().lower() in {"1", "true", "yes", "on"}:
+        return True
+    return os.name == "nt" and platform.machine().lower() in {"arm64", "aarch64"}
 
 
 def calc_dpi_via_ooxml(input_path: str, max_w_px: int, max_h_px: int) -> int:
@@ -41,18 +101,24 @@ def calc_dpi_via_pdf(input_path: str, max_w_px: int, max_h_px: int) -> int:
     For PDFs, use the PDF directly (avoids unnecessary conversion and failures).
     """
     is_pdf = input_path.lower().endswith(".pdf")
-    with tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile:
+    use_temp_profile = not disable_temp_soffice_profile()
+    with contextlib.ExitStack() as stack:
+        user_profile_path = None
+        if use_temp_profile:
+            user_profile_path = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="soffice_profile_")
+            )
         with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
             stem = splitext(basename(input_path))[0]
             pdf_path = (
                 input_path
                 if is_pdf
-                else convert_to_pdf(input_path, user_profile, convert_tmp_dir, stem)
+                else convert_to_pdf(input_path, user_profile_path, convert_tmp_dir, stem)
             )
             if not (pdf_path and exists(pdf_path)):
                 raise RuntimeError("Failed to produce/read PDF for DPI computation.")
 
-            info = pdfinfo_from_path(pdf_path)
+            info = pdfinfo_from_path(pdf_path, poppler_path=resolve_poppler_bin())
             size_val = info.get("Page size")
             if not size_val:
                 for k, v in info.items():
@@ -105,16 +171,36 @@ def run_cmd_no_check(cmd: list[str]) -> None:
     )
 
 
-def convert_to_pdf(
+def wait_for_file(path: str, timeout_s: float = 20.0) -> bool:
+    deadline = time.monotonic() + timeout_s
+    previous_size = -1
+    stable_hits = 0
+    while time.monotonic() < deadline:
+        if exists(path):
+            size = os.path.getsize(path)
+            if size > 0 and size == previous_size:
+                stable_hits += 1
+                if stable_hits >= 2:
+                    return True
+            else:
+                stable_hits = 0
+            previous_size = size
+        time.sleep(0.25)
+    return exists(path) and os.path.getsize(path) > 0
+
+
+def _convert_to_pdf_once(
     pptx_path: str,
-    user_profile: str,
+    user_profile: str | None,
     convert_tmp_dir: str,
     stem: str,
 ) -> str:
+    soffice = resolve_soffice()
+    cmd_prefix = [soffice]
+    if user_profile:
+        cmd_prefix.append("-env:UserInstallation=file://" + user_profile)
     # Try direct PPTX -> PDF
-    cmd_pdf = [
-        "soffice",
-        "-env:UserInstallation=file://" + user_profile,
+    cmd_pdf = cmd_prefix + [
         "--invisible",
         "--headless",
         "--norestore",
@@ -127,15 +213,13 @@ def convert_to_pdf(
     run_cmd_no_check(cmd_pdf)
 
     pdf_path = join(convert_tmp_dir, f"{stem}.pdf")
-    if exists(pdf_path):
+    if wait_for_file(pdf_path):
         return pdf_path
 
     # Fallback: PPTX -> ODP, then ODP -> PDF
     # Rationale: Saving as ODP normalizes PPTX-specific constructs via the ODF serializer,
     # which often bypasses Impress PDF export issues on problematic decks.
-    cmd_odp = [
-        "soffice",
-        "-env:UserInstallation=file://" + user_profile,
+    cmd_odp = cmd_prefix + [
         "--invisible",
         "--headless",
         "--norestore",
@@ -149,11 +233,9 @@ def convert_to_pdf(
 
     odp_path = join(convert_tmp_dir, f"{stem}.odp")
 
-    if exists(odp_path):
+    if wait_for_file(odp_path):
         # ODP -> PDF
-        cmd_odp_pdf = [
-            "soffice",
-            "-env:UserInstallation=file://" + user_profile,
+        cmd_odp_pdf = cmd_prefix + [
             "--invisible",
             "--headless",
             "--norestore",
@@ -164,9 +246,23 @@ def convert_to_pdf(
             odp_path,
         ]
         run_cmd_no_check(cmd_odp_pdf)
-        if exists(pdf_path):
+        if wait_for_file(pdf_path):
             return pdf_path
 
+    return ""
+
+
+def convert_to_pdf(
+    pptx_path: str,
+    user_profile: str | None,
+    convert_tmp_dir: str,
+    stem: str,
+) -> str:
+    pdf_path = _convert_to_pdf_once(pptx_path, user_profile, convert_tmp_dir, stem)
+    if pdf_path:
+        return pdf_path
+    if os.name == "nt" and user_profile:
+        return _convert_to_pdf_once(pptx_path, None, convert_tmp_dir, stem)
     return ""
 
 
@@ -180,15 +276,25 @@ def rasterize(
     input_path = abspath(input_path)
     stem = splitext(basename(input_path))[0]
 
-    # Use a unique user profile to avoid LibreOffice profile lock when running concurrently
-    with tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile:
+    # Isolated temporary profiles remain the default because they avoid lock
+    # contention when multiple LibreOffice conversions run concurrently. On
+    # Windows, convert_to_pdf() can retry without a temporary profile if the
+    # isolated-profile attempt fails, and callers may explicitly opt out by
+    # setting LIBREOFFICE_DISABLE_TEMP_PROFILE=1.
+    use_temp_profile = not disable_temp_soffice_profile()
+    with contextlib.ExitStack() as stack:
+        user_profile_path = None
+        if use_temp_profile:
+            user_profile_path = stack.enter_context(
+                tempfile.TemporaryDirectory(prefix="soffice_profile_")
+            )
         # Write conversion outputs into a temp directory to avoid any IO oddities
         with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
             is_pdf = input_path.lower().endswith(".pdf")
             pdf_path = (
                 input_path
                 if is_pdf
-                else convert_to_pdf(input_path, user_profile, convert_tmp_dir, stem)
+                else convert_to_pdf(input_path, user_profile_path, convert_tmp_dir, stem)
             )
 
             if not pdf_path or not exists(pdf_path):
@@ -207,6 +313,7 @@ def rasterize(
                     output_folder=out_dir,
                     paths_only=True,
                     output_file="slide",
+                    poppler_path=resolve_poppler_bin(),
                 ),
             )
     # Rename convert_from_path's output format f'slide{thread_id:04d}-{page_num:02d}.png'
