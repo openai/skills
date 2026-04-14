@@ -216,8 +216,8 @@ function parseSvgSize(buf) {
     if (parts.length === 4) {
       const vbw = parts[2];
       const vbh = parts[3];
-      if (!widthPx && vbh) widthPx = vbw;
-      if (!heightPx && vbw) heightPx = vbh;
+      if (!widthPx && vbw) widthPx = vbw;
+      if (!heightPx && vbh) heightPx = vbh;
     }
   }
   if (!widthPx || !heightPx) {

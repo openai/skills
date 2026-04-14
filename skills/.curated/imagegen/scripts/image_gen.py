@@ -449,7 +449,7 @@ def _extract_retry_after_seconds(exc: Exception) -> Optional[float]:
         if isinstance(val, (int, float)) and val >= 0:
             return float(val)
     msg = str(exc)
-    m = re.search(r"retry[- ]after[:= ]+([0-9]+(?:\\.[0-9]+)?)", msg, re.IGNORECASE)
+    m = re.search(r"retry[- ]after[:= ]+([0-9]+(?:\.[0-9]+)?)", msg, re.IGNORECASE)
     if m:
         try:
             return float(m.group(1))
