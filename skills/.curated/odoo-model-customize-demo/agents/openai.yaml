@@ -1,0 +1,10 @@
+interface:
+  display_name: "Odoo Model Customize (Demo)"
+  short_description: "Sandboxed Odoo customization for learning and prototyping — all artifacts tagged for cleanup"
+  default_prompt: "Demonstrate Odoo customization in demo mode — all artifacts will be tagged for easy cleanup."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "odoo"
+      description: "Odoo MCP server (odoo-simple-mcp) for sandboxed model customization"

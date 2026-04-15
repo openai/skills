@@ -1,0 +1,10 @@
+interface:
+  display_name: "Odoo Model Customize"
+  short_description: "Customize Odoo models at runtime — fields, views, defaults, filters, automations"
+  default_prompt: "Customize the specified Odoo model using runtime-safe operations (no custom module required)."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "odoo"
+      description: "Odoo MCP server (odoo-simple-mcp) for model customization"
