@@ -16,7 +16,7 @@ Set a stable path to the skill CLI (default `CODEX_HOME` is `~/.codex`):
 
 ```
 export CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-export IMAGE_GEN="$CODEX_HOME/skills/imagegen/scripts/image_gen.py"
+export IMAGE_GEN="$CODEX_HOME/skills/.system/imagegen/scripts/image_gen.py"
 ```
 
 Install dependencies into that environment with its package manager. In uv-managed environments, `uv pip install ...` remains the preferred path.
