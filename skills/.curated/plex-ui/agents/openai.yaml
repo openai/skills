@@ -1,0 +1,13 @@
+# Codex UI metadata for the Plex UI skill.
+# Spec: https://developers.openai.com/codex/skills/create-skill
+interface:
+  display_name: "Plex UI"
+  short_description: "Install, compose, and style UI with @plexui/ui — correct imports, unified size scale, semantic colors, dark mode, and 460+ icons."
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.png"
+  brand_color: "#000000"
+  default_prompt: "Use Plex UI components. Import from @plexui/ui/components/<Name>, use the unified size prop (3xs–3xl), semantic color props (primary, danger, success, warning, etc.), variant props (solid, soft, outline, ghost, surface), and Plex UI utility classes (text-primary, bg-surface, border-default). Dark mode is automatic via CSS light-dark()."
+
+policy:
+  # Auto-invoke when user works with @plexui/ui imports or Plex UI components.
+  allow_implicit_invocation: true
