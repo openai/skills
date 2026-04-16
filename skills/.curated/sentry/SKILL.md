@@ -1,10 +1,20 @@
 ---
 name: "sentry"
-description: "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry CLI; perform read-only queries using the `sentry` command."
+description: "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry data via the Sentry CLI; perform queries using the `sentry` command."
 ---
 
 
-# Sentry (Read-only Observability)
+# Sentry
+
+## Canonical Reference
+
+This is a quick-start guide. For the complete CLI documentation maintained by Sentry, fetch the upstream skill:
+
+```bash
+curl -sL https://raw.githubusercontent.com/getsentry/cli/main/plugins/sentry-cli/skills/sentry-cli/SKILL.md
+```
+
+Fetch the upstream when you need: release management, sourcemap uploads, dashboard widget configuration, or detailed command reference beyond what's covered here.
 
 ## Quick start
 
@@ -16,8 +26,10 @@ description: "Use when the user asks to inspect Sentry issues or events, summari
 
 If the CLI is not installed, give the user these steps:
 1. Install the Sentry CLI: `curl https://cli.sentry.dev/install -fsS | bash`
-2. Authenticate: `sentry auth login`
-3. Confirm authentication: `sentry auth status`
+2. Or via npm: `npm install -g @sentry/cli`
+3. Or zero-install: `npx -y @sentry/cli@latest <command>`
+4. Authenticate: `sentry auth login`
+5. Confirm authentication: `sentry auth status`
 - Never ask the user to paste the full token in chat. Ask them to set it locally and confirm when ready.
 
 ## Core tasks (use Sentry CLI)
@@ -79,6 +91,40 @@ sentry issue explain {ABC-123}
 
 ```bash
 sentry issue plan {ABC-123}
+```
+
+### 8) Explore traces and performance
+
+```bash
+sentry trace list --limit 5
+sentry trace view <trace-id>
+sentry span list <trace-id>
+sentry trace logs <trace-id>
+```
+
+### 9) Inspect logs
+
+```bash
+sentry log list --limit 20
+sentry log list --query "severity:error" --limit 20
+sentry log list --follow    # Stream logs in real-time
+```
+
+## Large JSON handling
+
+Sentry JSON can be very large. Do not paste raw `--json` output into context.
+
+Use temp files and `jq`:
+
+```bash
+sentry trace view <trace-id> --json > /tmp/sentry-trace.json
+jq '.spans[] | {op, description, duration}' /tmp/sentry-trace.json
+```
+
+Or use `--fields` to limit output:
+
+```bash
+sentry issue list --json --fields shortId,title,priority,level,status --limit 10
 ```
 
 ## Fallback: arbitrary API access
