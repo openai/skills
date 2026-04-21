@@ -6,9 +6,9 @@ Use this guide when the user explicitly asks to upgrade an existing integration 
 
 Before applying this bundled guide, run `node scripts/resolve-latest-model-info.js` from the OpenAI Docs skill directory.
 
-- If the command returns `modelSlug: "gpt-5p4"`, continue with this bundled guide.
-- If the command returns a different `modelSlug`, fetch and use the returned `migrationGuideUrl` and `promptingGuideUrl` as the current source of truth instead of this bundled guide.
-- If the command fails, the metadata is missing, or either remote guide cannot be fetched, continue with this bundled guide and say the remote freshness check was unavailable.
+- If the command returns `modelSlug: "gpt-5p4"`, continue with this bundled guide and use `references/gpt-5p4-prompting-guide.md` when prompt updates are needed.
+- If the command returns a different `modelSlug`, fetch both the returned `migrationGuideUrl` and `promptingGuideUrl` and use them as the current source of truth instead of the bundled references.
+- If the command fails, the metadata is missing, or either remote guide cannot be fetched, continue with the bundled GPT-5.4 references and say the remote freshness check was unavailable.
 
 ## Upgrade posture
 
