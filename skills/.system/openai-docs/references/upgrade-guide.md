@@ -6,9 +6,9 @@ Use this guide when the user explicitly asks to upgrade an existing integration 
 
 Before applying this bundled guide, run `node scripts/resolve-latest-model-info.js` from the OpenAI Docs skill directory.
 
-- If the command returns `modelSlug: "gpt-5p4"`, continue with this bundled guide and use `references/gpt-5p4-prompting-guide.md` when prompt updates are needed.
+- If the command returns `modelSlug: "gpt-5p4"`, continue with this bundled guide and use `references/prompting-guide.md` when prompt updates are needed.
 - If the command returns a different `modelSlug`, fetch both the returned `migrationGuideUrl` and `promptingGuideUrl` and use them as the current source of truth instead of the bundled references.
-- If the command fails, the metadata is missing, or either remote guide cannot be fetched, continue with the bundled GPT-5.4 references and say the remote freshness check was unavailable.
+- If the command fails, the metadata is missing, or either remote guide cannot be fetched, continue with the bundled fallback references and say the remote freshness check was unavailable.
 
 ## Upgrade posture
 
@@ -88,9 +88,9 @@ Default action:
 
 - replace the model string with `gpt-5.4`
 - add one or two targeted prompt blocks
-- read `references/gpt-5p4-prompting-guide.md` to choose the smallest prompt changes that recover the old behavior
+- read `references/prompting-guide.md` to choose the smallest prompt changes that recover the old behavior
 - avoid broad prompt cleanup unrelated to the upgrade
-- for research workflows, default to `research_mode` + `citation_rules` + `empty_result_handling`; add `tool_persistence_rules` when the host already uses retrieval tools
+- for research workflows, default to `research_mode` + `citation_rules` + `empty_result_recovery`; add `tool_persistence_rules` when the host already uses retrieval tools
 - for dependency-aware or tool-heavy workflows, default to `tool_persistence_rules` + `dependency_checks` + `verification_loop`; add `parallel_tool_calling` only when retrieval steps are truly independent
 - for coding or terminal workflows, default to `terminal_tool_hygiene` + `verification_loop`
 - for multi-agent support or triage workflows, default to at least one of `tool_persistence_rules`, `completeness_contract`, or `verification_loop`
