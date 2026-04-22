@@ -88,7 +88,7 @@ Default action:
 
 - replace the model string with `gpt-5.4`
 - add one or two targeted prompt blocks
-- read `references/prompting-guide.md` to choose the smallest prompt changes that recover the old behavior
+- read `references/prompting-guide.md` to choose the smallest prompt changes that preserve the intended behavior and take advantage of relevant model-specific guidance
 - avoid broad prompt cleanup unrelated to the upgrade
 - for research workflows, default to `research_mode` + `citation_rules` + `empty_result_recovery`; add `tool_persistence_rules` when the host already uses retrieval tools
 - for dependency-aware or tool-heavy workflows, default to `tool_persistence_rules` + `dependency_checks` + `verification_loop`; add `parallel_tool_calling` only when retrieval steps are truly independent
