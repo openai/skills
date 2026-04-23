@@ -1,4 +1,0 @@
-interface:
-  display_name: "Frontend Skill"
-  short_description: "Design visually strong landing pages, websites, apps, and UI"
-  default_prompt: "Use $frontend-skill to establish a visual thesis, content plan, and interaction thesis before building a visually strong landing page, website, app, prototype, demo, or game UI."
