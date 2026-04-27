@@ -10,6 +10,7 @@ from pathlib import Path
 import yaml
 
 MAX_SKILL_NAME_LENGTH = 64
+MAX_COMPATIBILITY_LENGTH = 500
 
 
 def validate_skill(skill_path):
@@ -37,7 +38,7 @@ def validate_skill(skill_path):
     except yaml.YAMLError as e:
         return False, f"Invalid YAML in frontmatter: {e}"
 
-    allowed_properties = {"name", "description", "license", "allowed-tools", "metadata"}
+    allowed_properties = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 
     unexpected_keys = set(frontmatter.keys()) - allowed_properties
     if unexpected_keys:
@@ -86,6 +87,23 @@ def validate_skill(skill_path):
             return (
                 False,
                 f"Description is too long ({len(description)} characters). Maximum is 1024 characters.",
+            )
+
+    if "compatibility" in frontmatter:
+        compatibility = frontmatter.get("compatibility", "")
+        if not isinstance(compatibility, str):
+            return (
+                False,
+                f"Compatibility must be a string, got {type(compatibility).__name__}",
+            )
+        compatibility = compatibility.strip()
+        if not compatibility:
+            return False, "Compatibility cannot be empty"
+        if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
+            return (
+                False,
+                f"Compatibility is too long ({len(compatibility)} characters). "
+                f"Maximum is {MAX_COMPATIBILITY_LENGTH} characters.",
             )
 
     return True, "Skill is valid!"
