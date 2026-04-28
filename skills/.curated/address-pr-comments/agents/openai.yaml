@@ -1,0 +1,4 @@
+interface:
+  display_name: "Address PR Comments"
+  short_description: "Resolve actionable PR review comments"
+  default_prompt: "Use $address-pr-comments to address unresolved review comments on the current GitHub pull request."
