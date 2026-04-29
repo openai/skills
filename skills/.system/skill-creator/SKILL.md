@@ -79,6 +79,7 @@ Every SKILL.md consists of:
 - Generate deterministically by passing the values as `--interface key=value` to `scripts/generate_openai_yaml.py` or `scripts/init_skill.py`
 - On updates: validate `agents/openai.yaml` still matches SKILL.md; regenerate if stale
 - Only include other optional interface fields (icons, brand color) if explicitly provided
+- If icons are requested, follow `references/icon-workflow.md` for the SVG/PNG workflow and sizing conventions
 - See references/openai_yaml.md for field definitions and examples
 
 #### Bundled Resources (optional)
