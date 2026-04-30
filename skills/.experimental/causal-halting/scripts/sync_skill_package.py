@@ -13,12 +13,15 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PORTABLE_SKILL = ROOT / "skills" / "causal-halting"
+PORTABLE_SKILL = ROOT if (ROOT / "SKILL.md").is_file() else ROOT / "skills" / "causal-halting"
 DEFAULT_LOCAL_SKILL = Path.home() / ".codex" / "skills" / "causal-halting"
 
 
 def plugin_version() -> str:
-    data = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+    manifest = ROOT / ".codex-plugin" / "plugin.json"
+    if not manifest.is_file():
+        return "unknown"
+    data = json.loads(manifest.read_text(encoding="utf-8"))
     return str(data.get("version", "unknown"))
 
 
