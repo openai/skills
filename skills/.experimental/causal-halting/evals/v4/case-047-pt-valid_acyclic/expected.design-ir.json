@@ -1,0 +1,19 @@
+{
+  "controls": [],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-47",
+      "input": "task-47",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [],
+  "semantic_evidence": [
+    {
+      "claim": "Ordinary local loop or progress counter; no halting prediction result is modeled.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": []
+}

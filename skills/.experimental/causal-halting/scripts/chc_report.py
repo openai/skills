@@ -54,11 +54,19 @@ def render_markdown(data: dict[str, Any]) -> str:
     graph, repair_graph = extract_edges(data)
     classification = data.get("classification", data.get("verification", "unknown"))
     validity_scope = data.get("validity_scope", "no_modeled_prediction_feedback_only")
+    human_summary = {
+        "causal_paradox": "A modeled prediction or observation result can control the execution it observes.",
+        "valid_acyclic": "No modeled prediction-feedback cycle was detected in the supplied artifact.",
+        "insufficient_info": "The artifact does not identify enough execution/result/control identity to decide the causal boundary.",
+        "parse_error": "The artifact could not be parsed.",
+    }.get(str(classification), "The artifact was analyzed within the modeled CHC boundary.")
     lines = [
         "# Causal Halting Report",
         "",
         f"**Classification:** `{classification}`",
         f"**Validity scope:** `{validity_scope}`",
+        "",
+        f"**Human summary:** {human_summary}",
         "",
         (
             "CHC does not solve classical halting. `valid_acyclic` only means no modeled "
@@ -87,6 +95,21 @@ def render_markdown(data: dict[str, Any]) -> str:
             lines.append(
                 f"- `{path.get('target_exec_id')}` -> `{path.get('result_id')}` -> `{path.get('consumer_exec_id')}`"
             )
+    if data.get("reachable_e_pairs"):
+        lines.extend(["", "## Feedback Paths"])
+        for path in data["reachable_e_pairs"]:
+            labels = path.get("path", [])
+            lines.append(f"- {' -> '.join(f'`{item}`' for item in labels)}")
+    if data.get("uncertain_paths") or data.get("uncertain_edges") or data.get("missing") or data.get("ask"):
+        lines.extend(["", "## Uncertainty"])
+        for item in data.get("missing", []):
+            lines.append(f"- Missing: `{item}`")
+        for item in data.get("ask", []):
+            lines.append(f"- Ask: {item}")
+        for item in data.get("uncertain_edges", []):
+            lines.append(f"- Edge: `{item.get('edge', item.get('field', 'unknown'))}` - {item.get('reason', 'unspecified')}")
+        for item in data.get("uncertain_paths", []):
+            lines.append(f"- Path: `{item.get('relation', 'unknown')}` - {item.get('reason', 'unspecified')}")
     if repair_graph:
         lines.extend(["", "## Repair Graph", "", "```mermaid", graph_to_mermaid(repair_graph), "```"])
     obligations = data.get("proof_obligations") or []

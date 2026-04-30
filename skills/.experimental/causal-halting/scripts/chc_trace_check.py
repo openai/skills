@@ -450,6 +450,11 @@ def analyze_events(events: list[dict[str, Any]]) -> dict[str, Any]:
             "feedback_paths": [],
             "valid_paths": valid_paths,
             "uncertain_paths": uncertain_paths,
+            "missing": sorted({str(item.get("relation", "execution_identity")) for item in uncertain_paths}),
+            "ask": [
+                "Which execution consumes each result?",
+                "Is the consumer the same execution, a future execution, a post-run auditor, or an external controller?",
+            ],
             "semantic_status": "not_analyzed",
             "explanation": "The trace contains ambiguous execution, result, or controller identity, so causal validity cannot be determined.",
         })

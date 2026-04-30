@@ -1,0 +1,100 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "valid_acyclic",
+  "design_ir": {
+    "controls": [
+      {
+        "action": "schedule_retry",
+        "id": "ctrl-60",
+        "result": "r-60",
+        "target_exec": "run-60-next",
+        "timing": "future_execution"
+      }
+    ],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-60",
+        "input": "task-60",
+        "program": "AgentRun"
+      },
+      {
+        "id": "run-60-next",
+        "input": "task-60-retry",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [
+      {
+        "id": "obs-60",
+        "observer": "Supervisor",
+        "result": "r-60",
+        "target_exec": "run-60"
+      }
+    ],
+    "semantic_evidence": [
+      {
+        "claim": "Structured fixture; prose is context only.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": []
+  },
+  "explanation": "No DesignIR control edge routes an observation result back into its observed execution.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": [
+      {
+        "kind": "observation_target",
+        "observation_id": "obs-60",
+        "result": "r-60",
+        "target_exec": "run-60"
+      },
+      {
+        "control_id": "ctrl-60",
+        "kind": "control_target",
+        "result": "r-60",
+        "target_exec": "run-60-next",
+        "timing": "future_execution"
+      }
+    ]
+  },
+  "inferred_graph": [
+    "E(AgentRun,task_60) -> R(AgentRun,task_60)",
+    "R(AgentRun,task_60) -> E(AgentRun,task_60_retry)"
+  ],
+  "proof_obligations": [],
+  "repair": [],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_60)",
+      "AgentRun(task_60_retry)"
+    ],
+    "H": [
+      "Supervisor"
+    ],
+    "HaltResult": [
+      "r-60"
+    ]
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

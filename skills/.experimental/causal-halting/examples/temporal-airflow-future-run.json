@@ -1,0 +1,45 @@
+{
+  "controls": [
+    {
+      "consumer": "Orchestrator",
+      "purpose": "schedule_retry",
+      "result": "result-1",
+      "target_run": "task-run-2",
+      "timestamp": "3000"
+    }
+  ],
+  "observations": [
+    {
+      "observer": "SupervisorTask",
+      "result": "result-1",
+      "target_run": "task-run-1",
+      "timestamp": "1500"
+    }
+  ],
+  "runs": [
+    {
+      "ended": true,
+      "id": "task-run-1",
+      "input": "task-a",
+      "status": "halted",
+      "timestamp": "1000",
+      "workflow": "AgentWorkflow"
+    },
+    {
+      "ended": true,
+      "id": "task-orchestrator",
+      "input": "review-result",
+      "status": "halted",
+      "timestamp": "2000",
+      "workflow": "Orchestrator"
+    },
+    {
+      "ended": false,
+      "id": "task-run-2",
+      "input": "task-a-retry",
+      "timestamp": "3000",
+      "workflow": "AgentWorkflow"
+    }
+  ],
+  "workflow_id": "wf-agent-review"
+}

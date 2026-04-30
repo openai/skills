@@ -1,3 +1,8 @@
+---
+layout: page
+title: Causal Halting Calculus
+---
+
 # Causal Halting: Diagonalization as Forbidden Prediction Feedback
 
 ## Abstract
@@ -8,7 +13,7 @@ This note isolates the information-flow assumption used by that construction. Cl
 
 This is not a solution to the classical Halting Problem. Ordinary semantic undecidability remains, as shown by standard H-free object-language programs. The contribution is a separation: causal paradox and semantic unprovability are distinct failure modes. The former is a decidable structural property of a causal dependency graph. The latter is relative to the strength of the proof system used to reason about program behavior.
 
-Implementation status, v3.1: the CHC-0 core described here is implemented by the checker. The repository also includes operational, conservative extensions for CHC-1 through CHC-5: recursive effect summaries, higher-order effect annotations, process/session non-interference, temporal trace analysis, and probabilistic prediction feedback. Those extensions are practical verifiers over structured artifacts, not claims to decide arbitrary termination.
+Implementation status, v4.0: the CHC-0 core described here is implemented by the checker. The repository also includes operational, conservative extensions for CHC-1 through CHC-5: recursive effect summaries, higher-order effect annotations, process/session non-interference, temporal trace analysis, and probabilistic prediction feedback. Those extensions are practical verifiers over structured artifacts, not claims to decide arbitrary termination.
 
 ## 1. Introduction
 
@@ -436,7 +441,7 @@ Semantic undecidability remains in causally valid programs.
 
 **Quantum measurement protocols** (Ozawa, 1998): separate a measured process, a measurement event, and a classical outcome. CHC-0 uses a computational analogue: observation results may control later computation, but not the execution being observed.
 
-## 14. Implementation Status v3.1
+## 14. Implementation Status v4.0
 
 The implemented package contains six operational layers.
 

@@ -1,0 +1,125 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "ask": [
+    "Who consumes each observation result?",
+    "Does the result control the same execution, a future execution, a post-run audit, or an external controller?"
+  ],
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "insufficient_info",
+  "design_ir": {
+    "controls": [
+      {
+        "action": "change_strategy",
+        "id": "ctrl-91",
+        "result": "r-91",
+        "target_exec": "run-91",
+        "timing": "unknown"
+      }
+    ],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-91",
+        "input": "task-91",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [
+      {
+        "id": "obs-91",
+        "observer": "Supervisor",
+        "result": "r-91",
+        "target_exec": "run-91"
+      }
+    ],
+    "semantic_evidence": [
+      {
+        "claim": "Structured fixture; prose is context only.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": [
+      {
+        "field": "controls[0].timing",
+        "reason": "Consumer timing is not specified."
+      }
+    ]
+  },
+  "explanation": "The DesignIR leaves at least one result consumer unspecified.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [
+      {
+        "control_id": "ctrl-91",
+        "kind": "control_timing",
+        "result": "r-91"
+      }
+    ],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": [
+      {
+        "kind": "observation_target",
+        "observation_id": "obs-91",
+        "result": "r-91",
+        "target_exec": "run-91"
+      },
+      {
+        "control_id": "ctrl-91",
+        "kind": "control_target",
+        "result": "r-91",
+        "target_exec": "run-91",
+        "timing": "unknown"
+      }
+    ]
+  },
+  "inferred_graph": [
+    "E(AgentRun,task_91) -> R(AgentRun,task_91)",
+    "R(AgentRun,task_91) -> E(AgentRun,task_91)"
+  ],
+  "missing": [
+    "R(AgentRun,task_91) -> E(AgentRun,task_91)",
+    "controls[0].timing"
+  ],
+  "proof_obligations": [],
+  "repair": [
+    "Specify the consumer execution or external boundary for each observation result."
+  ],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_91)"
+    ],
+    "H": [
+      "Supervisor"
+    ],
+    "HaltResult": [
+      "r-91"
+    ]
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [
+    {
+      "field": "controls[0].timing",
+      "reason": "Consumer timing is not specified."
+    },
+    {
+      "confidence": 0.5,
+      "edge": "R(AgentRun,task_91) -> E(AgentRun,task_91)",
+      "reason": "Control timing is unknown."
+    }
+  ],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

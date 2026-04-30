@@ -1,0 +1,34 @@
+{
+  "controls": [
+    {
+      "action": "decide_next",
+      "consumer": "Orchestrator",
+      "id": "ctrl-77",
+      "result": "r-77",
+      "timing": "external_controller"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-77",
+      "input": "task-77",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-77",
+      "observer": "Supervisor",
+      "result": "r-77",
+      "target_exec": "run-77"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured fixture; prose is context only.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": []
+}

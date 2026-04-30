@@ -72,6 +72,8 @@ def span_metadata(carrier: dict[str, Any] | None) -> dict[str, Any]:
         metadata["span_id"] = carrier["spanId"]
     if isinstance(carrier.get("parentSpanId"), str):
         metadata["parent_id"] = carrier["parentSpanId"]
+    if isinstance(carrier.get("traceId"), str):
+        metadata["trace_id"] = carrier["traceId"]
     timestamp = carrier.get("timeUnixNano", carrier.get("startTimeUnixNano"))
     if timestamp is not None:
         metadata["timestamp"] = str(timestamp)
@@ -85,6 +87,8 @@ def add_metadata(event: dict[str, Any], attrs: dict[str, Any], carrier: dict[str
         "chc.timestamp": "timestamp",
         "chc.span.id": "span_id",
         "chc.parent.id": "parent_id",
+        "chc.trace.id": "trace_id",
+        "chc.service.name": "service_name",
         "chc.confidence": "confidence",
     }
     for source_key, target_key in attr_map.items():

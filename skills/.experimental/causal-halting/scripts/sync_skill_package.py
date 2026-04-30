@@ -27,7 +27,7 @@ def skill_version(path: Path) -> str:
     if not readme.exists():
         return "missing"
     text = readme.read_text(encoding="utf-8", errors="ignore")
-    for marker in ("v3.1", "3.1.0", "v3.0", "3.0.0", "v2.0", "2.0.0"):
+    for marker in ("v4.0", "4.0.0", "v3.1", "3.1.0", "v3.0", "3.0.0", "v2.0", "2.0.0"):
         if marker in text:
             return marker.strip("v")
     return "unknown"

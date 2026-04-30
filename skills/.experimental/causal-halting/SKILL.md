@@ -69,7 +69,7 @@ To use the CHC-0 lens for every relevant question in the current session, the us
    - Missing or incomplete higher-order effects are `insufficient_info`, not `valid_acyclic`.
    - `HaltResult` still cannot be passed into callbacks.
 
-9. For V3 structured analyzers, use the correct artifact.
+9. For V4 structured analyzers, use the correct artifact.
    - CHC-3: `ProcessIR` for process/session non-interference.
    - CHC-4: temporal JSONL traces with happens-before/span metadata.
    - CHC-5: `PredictionIR` for probabilistic/scored predictions.
@@ -136,6 +136,8 @@ CHC-0 does not decide all halting questions.
 ## Bundled Checker
 
 Use `scripts/chc_check.py` for explicit graph DSL or Mini-CHC v2 artifacts. The checker uses Python standard library only and supports CHC-0/1/2 operational analysis.
+
+In the full repository, `pip install -e .` exposes the unified `chc` CLI. In this portable skill package, use the bundled `scripts/*.py` entrypoints directly so the skill remains self-contained.
 
 Use `scripts/chc_design_analyze.py` for explicit `DesignIR`, `scripts/chc_trace_check.py` for JSONL traces, `scripts/chc_process_check.py` for CHC-3 ProcessIR, `scripts/chc_temporal_check.py` for CHC-4 temporal traces, `scripts/chc_prediction_check.py` for CHC-5 PredictionIR, `scripts/chc_identity_check.py` for identity-resolution metadata, `scripts/chc_theory_coverage.py` for Lean/theory coverage, `scripts/chc_workflow_adapter.py` for generic workflow JSON, `scripts/chc_otel_adapter.py` for explicitly annotated OpenTelemetry JSON, `scripts/chc_langgraph_adapter.py` for structured LangGraph-style JSON, `scripts/chc_temporal_airflow_adapter.py` for structured Temporal/Airflow-style JSON, `scripts/chc_eval_design_ir.py` and `scripts/chc_eval_suite.py` for corpus fixture evaluation, `scripts/chc_repair.py` for causal repair reports, `scripts/chc_verify_repair.py` and `scripts/chc_certificate.py` for before/after trace verification and certificates, and `scripts/chc_report.py` for Markdown/Mermaid reports.
 

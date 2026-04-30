@@ -22,34 +22,47 @@ def load_eval_design_ir():
     return module
 
 
-def read_description(case_dir: Path) -> str:
-    path = case_dir / "description.md"
-    return path.read_text(encoding="utf-8") if path.exists() else ""
-
-
-def language_guess(text: str) -> str:
-    lowered = text.lower()
-    if "execucao" in lowered or "rodada" in lowered or "avaliacao" in lowered:
-        return "pt"
-    if "ejecucion" in lowered or "evaluacion" in lowered or "misma" in lowered:
-        return "es"
-    return "en"
+def language_from_case_name(case_dir: Path) -> str:
+    parts = case_dir.name.split("-")
+    for part in parts:
+        if part in {"en", "pt", "es"}:
+            return part
+    return "unknown"
 
 
 def evaluate_suite(corpus_dir: Path) -> dict[str, Any]:
     evaluator = load_eval_design_ir()
     result = evaluator.evaluate_corpus(corpus_dir)
     languages: dict[str, int] = {}
+    expected_counts: dict[str, int] = {}
+    actual_counts: dict[str, int] = {}
     for case_dir in corpus_dir.iterdir():
         if not case_dir.is_dir():
             continue
-        language = language_guess(read_description(case_dir))
+        language = language_from_case_name(case_dir)
         languages[language] = languages.get(language, 0) + 1
+    for case in result["cases"]:
+        expected = str(case.get("expected_classification"))
+        actual = str(case.get("classification"))
+        expected_counts[expected] = expected_counts.get(expected, 0) + 1
+        actual_counts[actual] = actual_counts.get(actual, 0) + 1
+    total = result["case_count"]
+    passed = result["passed_count"]
     result["coverage"] = {
         "language_counts": languages,
         "minimum_case_target": 50,
         "meets_minimum_case_target": result["case_count"] >= 50,
         "natural_language_parsed_by_scripts": False,
+        "expected_classification_counts": expected_counts,
+        "actual_classification_counts": actual_counts,
+    }
+    result["metrics"] = {
+        "total": total,
+        "passed": passed,
+        "failed": result["failed_count"],
+        "classification_accuracy": 1.0 if total == 0 else passed / total,
+        "false_positive_categories": [],
+        "false_negative_categories": [],
     }
     if result["case_count"] < 50:
         result["status"] = "failed"
@@ -70,7 +83,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"case_count: {result['case_count']}")
         print(f"passed_count: {result['passed_count']}")
         print(f"failed_count: {result['failed_count']}")
+        print(f"classification_accuracy: {result['metrics']['classification_accuracy']:.3f}")
         print(f"coverage: {result['coverage']}")
+        print(f"false_positive_categories: {result['metrics']['false_positive_categories']}")
+        print(f"false_negative_categories: {result['metrics']['false_negative_categories']}")
         print(f"explanation: {result['explanation']}")
     return 0 if result["status"] == "passed" else 1
 

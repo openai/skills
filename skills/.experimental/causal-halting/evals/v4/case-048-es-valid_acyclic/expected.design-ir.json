@@ -1,0 +1,39 @@
+{
+  "controls": [
+    {
+      "action": "schedule_retry",
+      "id": "ctrl-48",
+      "result": "r-48",
+      "target_exec": "run-48-next",
+      "timing": "future_execution"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-48",
+      "input": "task-48",
+      "program": "AgentRun"
+    },
+    {
+      "id": "run-48-next",
+      "input": "task-48-retry",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-48",
+      "observer": "Supervisor",
+      "result": "r-48",
+      "target_exec": "run-48"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured fixture; prose is context only.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": []
+}

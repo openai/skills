@@ -5,47 +5,150 @@
         {
           "spans": [
             {
+              "attributes": [
+                {
+                  "key": "chc.event.type",
+                  "value": {
+                    "stringValue": "exec_start"
+                  }
+                },
+                {
+                  "key": "chc.exec.id",
+                  "value": {
+                    "stringValue": "run-1"
+                  }
+                },
+                {
+                  "key": "chc.program",
+                  "value": {
+                    "stringValue": "AgentRun"
+                  }
+                },
+                {
+                  "key": "chc.input",
+                  "value": {
+                    "stringValue": "task-a"
+                  }
+                },
+                {
+                  "key": "chc.service.name",
+                  "value": {
+                    "stringValue": "agent-runtime"
+                  }
+                }
+              ],
               "name": "agent-run-start",
               "spanId": "span-run-start",
               "startTimeUnixNano": "1000",
-              "attributes": [
-                {"key": "chc.event.type", "value": {"stringValue": "exec_start"}},
-                {"key": "chc.exec.id", "value": {"stringValue": "run-1"}},
-                {"key": "chc.program", "value": {"stringValue": "AgentRun"}},
-                {"key": "chc.input", "value": {"stringValue": "task-a"}}
-              ]
+              "traceId": "trace-agent-001"
             },
             {
+              "attributes": [
+                {
+                  "key": "chc.event.type",
+                  "value": {
+                    "stringValue": "observe"
+                  }
+                },
+                {
+                  "key": "chc.observer",
+                  "value": {
+                    "stringValue": "Supervisor"
+                  }
+                },
+                {
+                  "key": "chc.target_exec.id",
+                  "value": {
+                    "stringValue": "run-1"
+                  }
+                },
+                {
+                  "key": "chc.result.id",
+                  "value": {
+                    "stringValue": "r-1"
+                  }
+                },
+                {
+                  "key": "chc.service.name",
+                  "value": {
+                    "stringValue": "agent-runtime"
+                  }
+                }
+              ],
               "name": "supervisor-observe",
-              "spanId": "span-observe",
               "parentSpanId": "span-run-start",
+              "spanId": "span-observe",
               "startTimeUnixNano": "2000",
-              "attributes": [
-                {"key": "chc.event.type", "value": {"stringValue": "observe"}},
-                {"key": "chc.observer", "value": {"stringValue": "Supervisor"}},
-                {"key": "chc.target_exec.id", "value": {"stringValue": "run-1"}},
-                {"key": "chc.result.id", "value": {"stringValue": "r-1"}}
-              ]
+              "traceId": "trace-agent-001"
             },
             {
+              "attributes": [
+                {
+                  "key": "chc.event.type",
+                  "value": {
+                    "stringValue": "consume"
+                  }
+                },
+                {
+                  "key": "chc.result.id",
+                  "value": {
+                    "stringValue": "r-1"
+                  }
+                },
+                {
+                  "key": "chc.consumer_exec.id",
+                  "value": {
+                    "stringValue": "run-1"
+                  }
+                },
+                {
+                  "key": "chc.purpose",
+                  "value": {
+                    "stringValue": "strategy_change"
+                  }
+                },
+                {
+                  "key": "chc.service.name",
+                  "value": {
+                    "stringValue": "agent-runtime"
+                  }
+                }
+              ],
               "name": "agent-consume",
-              "spanId": "span-consume",
               "parentSpanId": "span-observe",
+              "spanId": "span-consume",
               "startTimeUnixNano": "3000",
-              "attributes": [
-                {"key": "chc.event.type", "value": {"stringValue": "consume"}},
-                {"key": "chc.result.id", "value": {"stringValue": "r-1"}},
-                {"key": "chc.consumer_exec.id", "value": {"stringValue": "run-1"}},
-                {"key": "chc.purpose", "value": {"stringValue": "strategy_change"}}
-              ]
+              "traceId": "trace-agent-001"
             },
             {
-              "name": "agent-run-end",
               "attributes": [
-                {"key": "chc.event.type", "value": {"stringValue": "exec_end"}},
-                {"key": "chc.exec.id", "value": {"stringValue": "run-1"}},
-                {"key": "chc.status", "value": {"stringValue": "halted"}}
-              ]
+                {
+                  "key": "chc.event.type",
+                  "value": {
+                    "stringValue": "exec_end"
+                  }
+                },
+                {
+                  "key": "chc.exec.id",
+                  "value": {
+                    "stringValue": "run-1"
+                  }
+                },
+                {
+                  "key": "chc.status",
+                  "value": {
+                    "stringValue": "halted"
+                  }
+                },
+                {
+                  "key": "chc.service.name",
+                  "value": {
+                    "stringValue": "agent-runtime"
+                  }
+                }
+              ],
+              "name": "agent-run-end",
+              "traceId": "trace-agent-001"
             }
           ]
         }

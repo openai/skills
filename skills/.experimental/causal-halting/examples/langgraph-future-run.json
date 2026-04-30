@@ -1,30 +1,44 @@
 {
-  "runs": [
+  "controls": [
     {
-      "id": "run-1",
-      "node": "Agent",
-      "input": "task-a",
-      "ended": true,
-      "status": "halted"
-    },
-    {
-      "id": "run-2",
-      "node": "Agent",
-      "input": "task-a-retry"
+      "consumer_node": "Orchestrator",
+      "purpose": "schedule_retry",
+      "result": "eval-r-1",
+      "target_run": "worker-run-2",
+      "timestamp": "3000"
     }
   ],
   "observations": [
     {
       "observer_node": "Supervisor",
-      "target_run": "run-1",
-      "result": "r-1"
+      "result": "eval-r-1",
+      "target_run": "worker-run-1",
+      "timestamp": "1600"
     }
   ],
-  "controls": [
+  "runs": [
     {
-      "result": "r-1",
-      "target_run": "run-2",
-      "purpose": "schedule_retry"
+      "ended": true,
+      "id": "worker-run-1",
+      "input": "task-a",
+      "node": "WorkerAgent",
+      "status": "halted",
+      "timestamp": "1000"
+    },
+    {
+      "ended": true,
+      "id": "supervisor-run-1",
+      "input": "monitor-worker",
+      "node": "Supervisor",
+      "status": "halted",
+      "timestamp": "1500"
+    },
+    {
+      "ended": false,
+      "id": "worker-run-2",
+      "input": "task-a-retry",
+      "node": "WorkerAgent",
+      "timestamp": "3000"
     }
   ]
 }

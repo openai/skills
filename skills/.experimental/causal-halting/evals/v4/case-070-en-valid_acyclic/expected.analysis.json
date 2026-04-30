@@ -1,0 +1,94 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "valid_acyclic",
+  "design_ir": {
+    "controls": [
+      {
+        "action": "audit",
+        "id": "ctrl-70",
+        "result": "r-70",
+        "target_exec": "run-70",
+        "timing": "after_observed_execution"
+      }
+    ],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-70",
+        "input": "task-70",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [
+      {
+        "id": "obs-70",
+        "observer": "Supervisor",
+        "result": "r-70",
+        "target_exec": "run-70"
+      }
+    ],
+    "semantic_evidence": [
+      {
+        "claim": "Structured fixture; prose is context only.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": []
+  },
+  "explanation": "No DesignIR control edge routes an observation result back into its observed execution.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": [
+      {
+        "kind": "observation_target",
+        "observation_id": "obs-70",
+        "result": "r-70",
+        "target_exec": "run-70"
+      },
+      {
+        "control_id": "ctrl-70",
+        "kind": "control_target",
+        "result": "r-70",
+        "target_exec": "run-70",
+        "timing": "after_observed_execution"
+      }
+    ]
+  },
+  "inferred_graph": [
+    "E(AgentRun,task_70) -> R(AgentRun,task_70)",
+    "R(AgentRun,task_70) -> E(AgentRun,task_70)"
+  ],
+  "proof_obligations": [],
+  "repair": [],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_70)"
+    ],
+    "H": [
+      "Supervisor"
+    ],
+    "HaltResult": [
+      "r-70"
+    ]
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

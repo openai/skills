@@ -35,6 +35,12 @@ causal-halting/
     chc-1-2-operational.md
     chc-3-4-5-operational.md
     design-ir-extraction.md
+    v4-quick-start.md
+    v4-cli.md
+    v4-adapters.md
+    v4-gallery.md
+    v4-viewer.md
+    v4-technical-note.md
   scripts/
     chc_check.py
     chc_design_analyze.py
@@ -53,6 +59,8 @@ causal-halting/
     chc_temporal_check.py
     chc_prediction_check.py
     chc_eval_suite.py
+    chc_session_guard.py
+    evaluate_responses.py
     sync_skill_package.py
   schemas/
     design-ir.schema.json
@@ -78,7 +86,11 @@ causal-halting/
     self-prediction.analysis.json
     self-prediction.design-ir.json
     self-prediction.trace.jsonl
+    demo/
+    not-a-problem/
     design-ir-corpus/
+  evals/
+    v4/
 ```
 
 ## Install
@@ -216,9 +228,9 @@ classification: valid_acyclic
 
 The supervisor observes a separate worker. The result does not feed back into the observed worker execution.
 
-## Design, Trace, And Repair Workflows
+## Design, Trace, Repair, And Evaluation Workflows
 
-The portable skill also includes the v3.1 analysis scripts:
+The portable skill also includes the v4.0 analysis scripts:
 
 ```text
 chc_design_analyze.py  analyze explicit DesignIR JSON
@@ -270,6 +282,26 @@ See `references/design-ir-extraction.md` for the semantic extraction contract.
 DesignIR v1.0 requires `design_ir_version`, stable IDs, explicit observation results, explicit control timing, `semantic_evidence`, and `uncertain` entries when the consumer is unclear.
 
 The `examples/design-ir-corpus/` fixtures separate natural-language descriptions from expected `DesignIR`. `chc_eval_design_ir.py` validates the expected JSON artifacts and expected classifications only; it does not classify prose.
+
+## V4.0 Quick Start
+
+The full repository exposes the unified `chc` CLI through `pip install -e .`.
+The portable skill stays self-contained, so it uses the script entrypoints directly:
+
+```powershell
+python scripts/chc_check.py examples/diagonal.graph --format json
+python scripts/chc_design_analyze.py examples/demo/input.design-ir.json --format json
+python scripts/chc_trace_check.py examples/demo/before.trace.jsonl --format json
+python scripts/chc_repair.py examples/demo/expected.analysis.json --format json
+python scripts/chc_verify_repair.py examples/demo/before.trace.jsonl examples/demo/after.trace.jsonl --repair examples/demo/repair.json --format json
+python scripts/chc_report.py examples/demo/expected.analysis.json --format markdown
+python scripts/chc_eval_suite.py evals/v4 --format json
+```
+
+For the package CLI, see `references/v4-cli.md`.
+For visual examples, see `references/v4-gallery.md`.
+For adapter contracts, see `references/v4-adapters.md`.
+For the static GitHub Pages viewer, see `references/v4-viewer.md`.
 
 ## Limits
 

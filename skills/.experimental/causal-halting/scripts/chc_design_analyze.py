@@ -323,6 +323,13 @@ def analyze_design_ir(data: dict[str, Any]) -> dict[str, Any]:
         })
 
     if uncertain_edges:
+        missing = sorted(
+            {
+                str(item.get("field") or item.get("edge") or item.get("kind") or "consumer_exec_id")
+                for item in uncertain_edges
+                if isinstance(item, dict)
+            }
+        ) or ["consumer_exec_id"]
         return add_boundary({
             "classification": "insufficient_info",
             "design_ir": data,
@@ -331,6 +338,11 @@ def analyze_design_ir(data: dict[str, Any]) -> dict[str, Any]:
             "uncertain_edges": uncertain_edges,
             "repair": ["Specify the consumer execution or external boundary for each observation result."],
             "proof_obligations": [],
+            "missing": missing,
+            "ask": [
+                "Who consumes each observation result?",
+                "Does the result control the same execution, a future execution, a post-run audit, or an external controller?",
+            ],
             "identity_resolution": identity_resolution,
             "explanation": "The DesignIR leaves at least one result consumer unspecified.",
         })
