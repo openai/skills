@@ -1,0 +1,30 @@
+{
+  "runs": [
+    {
+      "id": "run-1",
+      "node": "Agent",
+      "input": "task-a",
+      "ended": true,
+      "status": "halted"
+    },
+    {
+      "id": "run-2",
+      "node": "Agent",
+      "input": "task-a-retry"
+    }
+  ],
+  "observations": [
+    {
+      "observer_node": "Supervisor",
+      "target_run": "run-1",
+      "result": "r-1"
+    }
+  ],
+  "controls": [
+    {
+      "result": "r-1",
+      "target_run": "run-2",
+      "purpose": "schedule_retry"
+    }
+  ]
+}

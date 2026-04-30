@@ -1,0 +1,31 @@
+{
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "program": "ActiveProcess",
+      "input": "task"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Evaluator",
+      "target_exec": "run-1",
+      "result": "r-1"
+    }
+  ],
+  "controls": [],
+  "semantic_evidence": [
+    {
+      "source": "description",
+      "claim": "The consumer of the evaluation result is not specified."
+    }
+  ],
+  "uncertain": [
+    {
+      "field": "controls",
+      "reason": "The design does not say which execution or controller consumes r-1."
+    }
+  ]
+}

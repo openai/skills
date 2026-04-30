@@ -1,0 +1,2 @@
+D(y) = if H(y,y) then loop else halt
+run D(D)

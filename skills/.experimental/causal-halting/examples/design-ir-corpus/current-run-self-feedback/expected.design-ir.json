@@ -1,0 +1,34 @@
+{
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "program": "Worker",
+      "input": "task"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Evaluator",
+      "target_exec": "run-1",
+      "result": "r-1"
+    }
+  ],
+  "controls": [
+    {
+      "id": "ctrl-1",
+      "result": "r-1",
+      "target_exec": "run-1",
+      "timing": "during_observed_execution",
+      "action": "revise_route"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "source": "description",
+      "claim": "The assessment targets the active attempt and changes that same attempt."
+    }
+  ],
+  "uncertain": []
+}

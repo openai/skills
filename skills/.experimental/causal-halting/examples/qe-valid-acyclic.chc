@@ -1,0 +1,2 @@
+Q_e() = simulate e(e); if e(e) halts then halt else diverge
+run Q_e()

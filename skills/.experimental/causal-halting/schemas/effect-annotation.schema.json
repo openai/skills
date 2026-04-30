@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CHC EffectAnnotation",
+  "type": "object",
+  "required": ["parameter", "effect"],
+  "properties": {
+    "parameter": {"type": "string"},
+    "effect": {"type": "string"},
+    "callee": {"type": "string"},
+    "status": {"enum": ["composed", "missing", "incomplete"]}
+  }
+}

@@ -1,0 +1,6 @@
+{"type":"exec_start","exec_id":"run-1","program":"AgentRun","input":"task-a"}
+{"type":"observe","observer":"Supervisor","target_exec_id":"run-1","result_id":"r-1"}
+{"type":"exec_end","exec_id":"run-1","status":"halted"}
+{"type":"exec_start","exec_id":"run-2","program":"AgentRun","input":"task-a-retry"}
+{"type":"consume","result_id":"r-1","consumer_exec_id":"run-2","purpose":"schedule_retry"}
+{"type":"exec_end","exec_id":"run-2","status":"halted"}

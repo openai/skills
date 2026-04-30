@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CHC Repair Certificate",
+  "type": "object",
+  "required": ["certificate_version", "claim", "before_classification", "after_classification", "obligations_checked", "evidence_paths", "result"],
+  "properties": {
+    "certificate_version": {"const": "1.0"},
+    "claim": {"const": "prediction_feedback_removed"},
+    "before_classification": {"type": "string"},
+    "after_classification": {"type": "string"},
+    "obligations_checked": {"type": "array"},
+    "evidence_paths": {},
+    "result": {"enum": ["passed", "failed"]}
+  }
+}

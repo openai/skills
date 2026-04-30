@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Causal Halting IdentityResolutionReport",
+  "type": "object",
+  "required": ["resolved", "ambiguous", "missing", "conflicts", "assumptions"],
+  "properties": {
+    "resolved": {"type": "array"},
+    "ambiguous": {"type": "array"},
+    "missing": {"type": "array"},
+    "conflicts": {"type": "array"},
+    "assumptions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": false
+}

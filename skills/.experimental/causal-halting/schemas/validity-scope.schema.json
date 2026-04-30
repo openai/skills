@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Causal Halting Validity Scope",
+  "type": "object",
+  "required": ["validity_scope"],
+  "properties": {
+    "validity_scope": {
+      "const": "no_modeled_prediction_feedback_only"
+    }
+  },
+  "additionalProperties": true
+}

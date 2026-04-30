@@ -1,0 +1,31 @@
+{
+  "controls": [],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "input": "task-42",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Evaluator",
+      "result": "r-1",
+      "target_exec": "run-1"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured expected DesignIR, not script-parsed prose.",
+      "source": "fixture"
+    }
+  ],
+  "uncertain": [
+    {
+      "field": "controls",
+      "reason": "The consumer of r-1 is not specified."
+    }
+  ]
+}

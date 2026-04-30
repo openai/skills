@@ -1,0 +1,55 @@
+{
+  "resourceSpans": [
+    {
+      "scopeSpans": [
+        {
+          "spans": [
+            {
+              "name": "agent-run-start",
+              "spanId": "span-run-start",
+              "startTimeUnixNano": "1000",
+              "attributes": [
+                {"key": "chc.event.type", "value": {"stringValue": "exec_start"}},
+                {"key": "chc.exec.id", "value": {"stringValue": "run-1"}},
+                {"key": "chc.program", "value": {"stringValue": "AgentRun"}},
+                {"key": "chc.input", "value": {"stringValue": "task-a"}}
+              ]
+            },
+            {
+              "name": "supervisor-observe",
+              "spanId": "span-observe",
+              "parentSpanId": "span-run-start",
+              "startTimeUnixNano": "2000",
+              "attributes": [
+                {"key": "chc.event.type", "value": {"stringValue": "observe"}},
+                {"key": "chc.observer", "value": {"stringValue": "Supervisor"}},
+                {"key": "chc.target_exec.id", "value": {"stringValue": "run-1"}},
+                {"key": "chc.result.id", "value": {"stringValue": "r-1"}}
+              ]
+            },
+            {
+              "name": "agent-consume",
+              "spanId": "span-consume",
+              "parentSpanId": "span-observe",
+              "startTimeUnixNano": "3000",
+              "attributes": [
+                {"key": "chc.event.type", "value": {"stringValue": "consume"}},
+                {"key": "chc.result.id", "value": {"stringValue": "r-1"}},
+                {"key": "chc.consumer_exec.id", "value": {"stringValue": "run-1"}},
+                {"key": "chc.purpose", "value": {"stringValue": "strategy_change"}}
+              ]
+            },
+            {
+              "name": "agent-run-end",
+              "attributes": [
+                {"key": "chc.event.type", "value": {"stringValue": "exec_end"}},
+                {"key": "chc.exec.id", "value": {"stringValue": "run-1"}},
+                {"key": "chc.status", "value": {"stringValue": "halted"}}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

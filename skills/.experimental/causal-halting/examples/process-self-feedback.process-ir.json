@@ -1,0 +1,21 @@
+{
+  "processes": [{"id": "agent", "role": "worker"}, {"id": "supervisor", "role": "monitor_controller"}],
+  "sessions": [{"id": "s-1"}],
+  "channels": [{"id": "control-current"}],
+  "executions": [
+    {"id": "run-1", "process_id": "agent", "session_id": "s-1", "program": "AgentRun", "input": "task"}
+  ],
+  "observations": [
+    {"id": "obs-1", "observer_process_id": "supervisor", "target_exec": "run-1", "result": "r-1"}
+  ],
+  "controls": [
+    {
+      "id": "ctrl-1",
+      "result": "r-1",
+      "target_exec": "run-1",
+      "timing": "during_observed_execution",
+      "channel_id": "control-current",
+      "action": "change_strategy"
+    }
+  ]
+}
