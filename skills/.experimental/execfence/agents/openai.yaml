@@ -1,0 +1,4 @@
+interface:
+  display_name: "ExecFence"
+  short_description: "Local guardrails before dev, build, test, CI, agent, and package execution"
+  default_prompt: "Add ExecFence guardrails to this project before running build, test, dev, CI, package, or agent workflows."
