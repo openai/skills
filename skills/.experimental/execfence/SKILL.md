@@ -7,6 +7,8 @@ description: "Add local execution guardrails for persistent projects that run bu
 
 Use ExecFence to place a local guardrail around code execution in software projects. The goal is to stop suspicious repository code before normal developer actions activate it through tests, builds, package hooks, IDE tasks, CI, or agent tooling.
 
+The CLI is published as the `execfence` npm package. Run it with `npx --yes execfence ...`; do not copy scanner code into the user's project.
+
 ExecFence is especially relevant when:
 
 - the project is persistent, not a throwaway snippet
@@ -141,5 +143,6 @@ Do not baseline new `critical` or `high` findings just to make a build pass. Pre
 
 Project documentation and CLI source are available at:
 
+- https://chrystyan96.github.io/ExecFence/
 - https://github.com/chrystyan96/ExecFence
 - https://www.npmjs.com/package/execfence
