@@ -7,6 +7,7 @@ import argparse
 import importlib.util
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -46,6 +47,25 @@ def event_ref(event: dict[str, Any]) -> str:
     return str(event.get("id") or event.get("span_id") or event.get("_index"))
 
 
+def normalized_order_value(value: Any) -> tuple[int, float | str]:
+    if isinstance(value, bool):
+        return (0, float(int(value)))
+    if isinstance(value, (int, float)):
+        return (0, float(value))
+    if isinstance(value, str):
+        stripped = value.strip()
+        try:
+            return (0, float(stripped))
+        except ValueError:
+            pass
+        try:
+            parsed = datetime.fromisoformat(stripped.replace("Z", "+00:00"))
+            return (1, parsed.timestamp())
+        except ValueError:
+            return (2, stripped)
+    return (3, repr(value))
+
+
 def build_happens_before(events: list[dict[str, Any]]) -> tuple[set[tuple[str, str]], list[dict[str, Any]], str]:
     refs = {event_ref(event): event for event in events}
     edges: set[tuple[str, str]] = set()
@@ -64,7 +84,14 @@ def build_happens_before(events: list[dict[str, Any]]) -> tuple[set[tuple[str, s
 
     logical_events = [event for event in events if "logical_clock" in event]
     if logical_events and len(logical_events) == len(events):
-        ordered = sorted(events, key=lambda item: (str(item.get("trace_id", "")), item.get("logical_clock"), int(item.get("_index", 0))))
+        ordered = sorted(
+            events,
+            key=lambda item: (
+                str(item.get("trace_id", "")),
+                normalized_order_value(item.get("logical_clock")),
+                int(item.get("_index", 0)),
+            ),
+        )
         for left, right in zip(ordered, ordered[1:]):
             if left.get("trace_id") == right.get("trace_id"):
                 edges.add((event_ref(left), event_ref(right)))
@@ -74,7 +101,13 @@ def build_happens_before(events: list[dict[str, Any]]) -> tuple[set[tuple[str, s
     if timestamp_events and len(timestamp_events) == len(events):
         traces = {event.get("trace_id", "default") for event in events}
         if len(traces) == 1:
-            ordered = sorted(events, key=lambda item: (str(item.get("timestamp")), int(item.get("_index", 0))))
+            ordered = sorted(
+                events,
+                key=lambda item: (
+                    normalized_order_value(item.get("timestamp")),
+                    int(item.get("_index", 0)),
+                ),
+            )
             for left, right in zip(ordered, ordered[1:]):
                 edges.add((event_ref(left), event_ref(right)))
                 evidence.append({"source": event_ref(left), "target": event_ref(right), "reason": "timestamp_order"})
