@@ -9,6 +9,8 @@ Use ExecFence to place a local guardrail around code execution in software proje
 
 The CLI is published as the `execfence` npm package. Run it with `npx --yes execfence ...`; do not copy scanner code into the user's project.
 
+Current recommended adoption path: use ExecFence Automatic Guard Mode. `guard enable` plans project-local protection without writing files, `guard enable --apply` applies reversible wrappers/rules, and `guard status` shows what remains unprotected. Global guard mode is intentionally non-invasive: it installs skill/defaults and agent rules only, without changing PATH, aliases, shell profiles, or intercepting `npm`, `go`, `python`, `cargo`, or `make`.
+
 ExecFence is especially relevant when:
 
 - the project is persistent, not a throwaway snippet
