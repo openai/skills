@@ -61,6 +61,8 @@ def copy_skill(target: Path) -> None:
         return
     if source in destination.parents:
         raise ValueError(f"refusing to copy portable skill into its own tree: {destination}")
+    if destination in source.parents:
+        raise ValueError(f"refusing to delete an ancestor of the portable skill source: {destination}")
     if destination.exists():
         shutil.rmtree(destination)
     shutil.copytree(source, destination)
