@@ -53,9 +53,17 @@ def compare_dirs(left: Path, right: Path) -> list[str]:
 
 
 def copy_skill(target: Path) -> None:
-    if target.exists():
-        shutil.rmtree(target)
-    shutil.copytree(PORTABLE_SKILL, target)
+    source = PORTABLE_SKILL.resolve()
+    destination = target.expanduser().resolve()
+    if not source.is_dir():
+        raise FileNotFoundError(f"portable skill source does not exist: {source}")
+    if source == destination:
+        return
+    if source in destination.parents:
+        raise ValueError(f"refusing to copy portable skill into its own tree: {destination}")
+    if destination.exists():
+        shutil.rmtree(destination)
+    shutil.copytree(source, destination)
 
 
 def status(targets: list[Path]) -> dict[str, Any]:
