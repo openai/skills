@@ -22,19 +22,29 @@ Skip only for one-off static files, pure documentation, or when the user explici
 ## Default Workflow
 
 1. Inspect the project stack and execution surfaces.
-2. Initialize ExecFence if it is not already configured:
+2. Prefer automatic project guard setup when the user wants protection applied broadly:
+
+   ```sh
+   npx --yes execfence guard enable
+   npx --yes execfence guard enable --apply
+   npx --yes execfence guard status
+   ```
+
+   `guard enable` is dry-run by default. Use `--apply` only when project-local config, wrappers, CI setup, and agent rules should be written.
+
+3. Initialize ExecFence directly if a narrower setup is needed:
 
    ```sh
    npx --yes execfence init --preset auto
    ```
 
-3. Scan before running project code:
+4. Scan before running project code:
 
    ```sh
    npx --yes execfence scan
    ```
 
-4. Prefer the runtime gate for commands that execute repository code:
+5. Prefer the runtime gate for commands that execute repository code:
 
    ```sh
    npx --yes execfence run -- npm test
@@ -44,7 +54,7 @@ Skip only for one-off static files, pure documentation, or when the user explici
    npx --yes execfence run -- cargo test
    ```
 
-5. For higher-risk local execution, use sandbox audit mode first:
+6. For higher-risk local execution, use sandbox audit mode first:
 
    ```sh
    npx --yes execfence sandbox doctor
@@ -52,7 +62,7 @@ Skip only for one-off static files, pure documentation, or when the user explici
    npx --yes execfence run --sandbox-mode audit -- npm test
    ```
 
-6. Use hard sandbox enforcement only when capabilities are available:
+7. Use hard sandbox enforcement only when capabilities are available:
 
    ```sh
    npx --yes execfence run --sandbox -- npm test
@@ -66,6 +76,12 @@ Use these commands according to the project surface:
 
 ```sh
 npx --yes execfence init --preset auto
+npx --yes execfence guard enable
+npx --yes execfence guard enable --apply
+npx --yes execfence guard status
+npx --yes execfence guard disable
+npx --yes execfence guard global-status
+npx --yes execfence guard global-enable
 npx --yes execfence scan
 npx --yes execfence scan --changed-only --ci --format json
 npx --yes execfence run -- <command>
