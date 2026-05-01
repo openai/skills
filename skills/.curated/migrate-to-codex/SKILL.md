@@ -13,7 +13,7 @@ Keep going until the selected migration is completely done: run the migrator, in
 
 Run the migration in this order for each selected global or project source:
 
-1. Start by using Codex's built-in TODO/task list tool. Do not create `MIGRATION_TODOS.md` or any TODO file unless the user explicitly asks. The TODO list input has a `plan` array whose items each have `step` and `status`; use statuses `pending`, `in_progress`, and `completed`. Make the TODOs specific to the selected artifacts. Use literal source → Codex target labels, for example:
+1. Start by using Codex's built-in TODO/task list tool. Do not create `MIGRATION_TODOS.md` or any TODO file unless the user explicitly asks. The TODO list input has a `plan` array whose items each have `step` and `status`; use statuses `pending`, `in_progress`, and `completed`. Make the TODOs specific to the selected artifacts. Before finishing, update the TODO list so every finished step is marked `completed` and no step remains `in_progress`. Use literal source → Codex target labels, for example:
    - Inspect `.claude/commands` → Codex skills/prompts
    - Inspect `.claude/agents` → `.codex/agents`
    - Inspect `.mcp.json` → `.codex/config.toml` MCP servers
