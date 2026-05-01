@@ -9,7 +9,7 @@ Use ExecFence to place a local guardrail around code execution in software proje
 
 The CLI is published as the `execfence` npm package. Run it with `npx --yes execfence ...`; do not copy scanner code into the user's project.
 
-Current recommended adoption path: use ExecFence Automatic Guard Mode. `guard enable` plans project-local protection without writing files, `guard enable --apply` applies reversible wrappers/rules, and `guard status` shows what remains unprotected. Global guard mode is intentionally non-invasive: it installs skill/defaults and agent rules only, without changing PATH, aliases, shell profiles, or intercepting `npm`, `go`, `python`, `cargo`, or `make`.
+For ExecFence v3.1.0 and newer, prefer Automatic Guard Mode. `guard enable` plans project-local protection without writing files, `guard enable --apply` applies reversible wrappers/rules, and `guard status` shows what remains unprotected. Global guard mode is intentionally non-invasive: it installs skill/defaults and agent rules only, without changing PATH, aliases, shell profiles, or intercepting `npm`, `go`, `python`, `cargo`, or `make`. If the installed CLI does not support `guard`, fall back to `init`, `scan`, `run`, `coverage`, and `wire`.
 
 ExecFence is especially relevant when:
 
@@ -24,7 +24,7 @@ Skip only for one-off static files, pure documentation, or when the user explici
 ## Default Workflow
 
 1. Inspect the project stack and execution surfaces.
-2. Prefer automatic project guard setup when the user wants protection applied broadly:
+2. Prefer automatic project guard setup when the installed ExecFence CLI supports `guard` and the user wants protection applied broadly:
 
    ```sh
    npx --yes execfence guard enable
@@ -32,7 +32,7 @@ Skip only for one-off static files, pure documentation, or when the user explici
    npx --yes execfence guard status
    ```
 
-   `guard enable` is dry-run by default. Use `--apply` only when project-local config, wrappers, CI setup, and agent rules should be written.
+   `guard enable` is dry-run by default. Use `--apply` only when project-local config, wrappers, CI setup, and agent rules should be written. If `guard` is unavailable, continue with the narrower setup below.
 
 3. Initialize ExecFence directly if a narrower setup is needed:
 
