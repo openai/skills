@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -14,15 +13,40 @@ from typing import Any
 DEFAULT_ALLOWED_CONSUMERS = ["orchestrator", "future_run", "post_run_auditor"]
 
 
+def is_er_node(text: str) -> bool:
+    node = text.strip()
+    if len(node) < 4 or node[0] not in {"E", "R"} or node[1] != "(" or node[-1] != ")":
+        return False
+    depth = 0
+    for index, char in enumerate(node[1:], start=1):
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0 and index != len(node) - 1:
+                return False
+            if depth < 0:
+                return False
+    return depth == 0
+
+
+def parse_edge(edge: str) -> tuple[str, str] | None:
+    if "->" not in edge:
+        return None
+    source, target = (part.strip() for part in edge.split("->", 1))
+    if not is_er_node(source) or not is_er_node(target):
+        return None
+    return source, target
+
+
 def parse_self_feedback(graph: list[str]) -> tuple[str, str, str] | None:
     e_to_r: dict[str, str] = {}
     r_to_e: dict[str, str] = {}
-    edge_re = re.compile(r"^(E\([^)]*\)|R\([^)]*\))\s*->\s*(E\([^)]*\)|R\([^)]*\))$")
     for edge in graph:
-        match = edge_re.match(edge.strip())
-        if not match:
+        parsed = parse_edge(edge)
+        if parsed is None:
             continue
-        source, target = match.groups()
+        source, target = parsed
         if source.startswith("E(") and target.startswith("R("):
             e_to_r[source] = target
         elif source.startswith("R(") and target.startswith("E("):

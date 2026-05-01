@@ -476,6 +476,8 @@ class MiniCHCAnalyzer:
         if name in self.l0_names:
             return EffectResult(value=TypeValue("Comp"), semantic_status="unproved")
         definition = self.definitions[name]
+        if len(args) != len(definition.params):
+            raise ParseError(f"{definition.name} expects {len(definition.params)} argument(s), got {len(args)}.")
         converted_args: list[Term | FunctionValue] = []
         for param, arg in zip(definition.params, args):
             if param.is_function and not arg.args and arg.name in self.definitions:
