@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/space.iss-location.v1.json",
+  "title": "ISS Location",
+  "type": "object",
+  "required": ["latitude", "longitude", "timestamp"],
+  "properties": {
+    "latitude": { "type": "number" },
+    "longitude": { "type": "number" },
+    "timestamp": { "type": "integer" }
+  }
+}
