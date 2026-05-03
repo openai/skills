@@ -1,0 +1,41 @@
+id: dev/github-releases
+title: GitHub repository releases
+description: Latest release events for a public GitHub repository.
+type: github.release
+mode: event
+schema_url: https://agentfeeds.dev/schemas/github.release.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: owner
+    type: string
+    description: GitHub repository owner
+    required: true
+  - name: repo
+    type: string
+    description: GitHub repository name
+    required: true
+source_uri_template: "feed://api.github.com/repos/{owner}/{repo}/releases"
+adapter:
+  kind: paginated_json_http
+  url: "https://api.github.com/repos/{owner}/{repo}/releases"
+  method: GET
+  headers:
+    Accept: application/vnd.github+json
+  transform:
+    language: jmespath
+    expression: |
+      [].{
+        tag_name: tag_name,
+        name: name,
+        published_at: published_at,
+        html_url: html_url,
+        body: body
+      }
+  id_from: tag_name
+recommended_poll_interval_seconds: 3600
+auth: none
+tags: [dev, github, releases, free, no-auth]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 80
+contributed_by: agentfeeds
