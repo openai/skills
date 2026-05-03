@@ -1,0 +1,46 @@
+id: mac/calendar-upcoming
+title: Upcoming Calendar.app events
+description: Next 7 days from every calendar configured in Calendar.app.
+type: ical.event
+mode: event
+schema_url: https://agentfeeds.dev/schemas/ical-event.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.calendar/upcoming?days=7"
+adapter:
+  kind: apple_automation
+  tcc_permission: Calendar
+  script: |
+    set startDate to current date
+    set hours of startDate to 0
+    set minutes of startDate to 0
+    set seconds of startDate to 0
+    set endDate to startDate + (7 * days)
+    set rows to {}
+    tell application "Calendar"
+      repeat with cal in calendars
+        set calName to name of cal
+        set matches to every event of cal whose start date is greater than or equal to startDate and start date is less than endDate
+        repeat with ev in matches
+          set evLocation to ""
+          try
+            set evLocation to location of ev
+          end try
+          set end of rows to (uid of ev) & tab & (summary of ev) & tab & ((start date of ev) as string) & tab & ((end date of ev) as string) & tab & evLocation & tab & calName
+        end repeat
+      end repeat
+    end tell
+    set AppleScript's text item delimiters to linefeed
+    return rows as text
+  columns: [uid, summary, starts_at, ends_at, location, calendar_name]
+  id_column: uid
+  time_column: starts_at
+recommended_poll_interval_seconds: 3600
+auth: none
+tags: [mac, calendar, upcoming, eventkit, tcc, no-auth]
+quality_tier: experimental
+catalog_tier: 1
+catalog_order: 20
+platforms: [macos]
+requires: [calendar_tcc]
+contributed_by: agentfeeds
