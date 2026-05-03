@@ -1,0 +1,6 @@
+"""Shared runtime constants for Agent Feeds."""
+
+AGENTFEEDS_VERSION = "agentfeeds/0.3"
+REQUEST_TIMEOUT_SECONDS = 20
+COMMAND_TIMEOUT_SECONDS = 20
+COMMAND_MAX_OUTPUT_BYTES = 1024 * 1024
