@@ -1,0 +1,38 @@
+[project]
+name = "agentfeeds-skill"
+version = "0.1.1"
+description = "Local-first ambient context streams for compatible personal agents"
+readme = "SKILL.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+  "feedparser>=6.0.11",
+  "icalendar>=5.0.13",
+  "jmespath>=1.0.1",
+  "jsonschema>=4.22.0",
+  "PyYAML>=6.0.1",
+  "requests>=2.32.3",
+]
+
+[project.scripts]
+agentfeeds = "agentfeeds_runtime.commands:main"
+agentfeeds-fetch = "agentfeeds_runtime.fetcher:main"
+agentfeeds-install-poll = "agentfeeds_runtime.polling.install:main"
+agentfeeds-uninstall-poll = "agentfeeds_runtime.polling.uninstall:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["scripts/lib"]
+include = ["agentfeeds_runtime*"]
+
+[dependency-groups]
+dev = [
+  "pillow>=10.0.0",
+  "pytest>=8.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
