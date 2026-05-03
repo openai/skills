@@ -1,0 +1,23 @@
+id: news/rss-generic
+title: Generic RSS feed
+description: Subscribe to any public RSS or Atom URL.
+type: rss.item
+mode: event
+schema_url: https://agentfeeds.dev/schemas/rss-item.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: url
+    type: string
+    description: Public RSS or Atom feed URL
+    required: true
+source_uri_template: "feed://rss.local/generic?url={url}"
+adapter:
+  kind: rss
+  url: "{url}"
+recommended_poll_interval_seconds: 900
+auth: none
+tags: [news, rss, atom, free, no-auth]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 10
+contributed_by: agentfeeds
