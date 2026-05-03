@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/envelope.v0.3.json",
+  "title": "Agent Feeds Event Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specversion",
+    "id",
+    "source",
+    "type",
+    "time",
+    "schema_url",
+    "schema_version",
+    "mode",
+    "data"
+  ],
+  "properties": {
+    "specversion": {
+      "const": "agentfeeds/0.3"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "pattern": "^feed://"
+    },
+    "type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "schema_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "mode": {
+      "enum": ["snapshot", "event", "delta"]
+    },
+    "data": {
+      "type": "object"
+    }
+  }
+}
