@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/github.release.v1.json",
+  "title": "GitHub Release",
+  "type": "object",
+  "required": ["tag_name", "name", "published_at", "html_url"],
+  "properties": {
+    "tag_name": { "type": "string" },
+    "name": { "type": ["string", "null"] },
+    "published_at": { "type": "string" },
+    "html_url": { "type": "string" },
+    "body": { "type": ["string", "null"] }
+  }
+}
