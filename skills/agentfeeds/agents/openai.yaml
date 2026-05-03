@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agent Feeds"
+  short_description: "Use warm local feeds for ambient personal context"
+  default_prompt: "Use $agentfeeds to check background refresh, insert my stream brief, and help subscribe local or Mac personal sources."
+
+policy:
+  allow_implicit_invocation: true
