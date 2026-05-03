@@ -1,0 +1,23 @@
+id: calendar/ics
+title: iCalendar feed
+description: Events from a public iCalendar URL.
+type: ical.event
+mode: event
+schema_url: https://agentfeeds.dev/schemas/ical-event.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: url
+    type: string
+    description: Public iCalendar URL
+    required: true
+source_uri_template: "feed://calendar.local/ics?url={url}"
+adapter:
+  kind: ical
+  url: "{url}"
+recommended_poll_interval_seconds: 1800
+auth: none
+tags: [calendar, ics, ical, events, free, no-auth]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 20
+contributed_by: agentfeeds
