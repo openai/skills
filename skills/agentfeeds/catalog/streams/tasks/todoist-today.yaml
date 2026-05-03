@@ -1,0 +1,35 @@
+id: tasks/todoist-today
+title: Today's Todoist tasks
+description: Todoist tasks due today for the authenticated user.
+type: todoist.task
+mode: event
+schema_url: https://agentfeeds.dev/schemas/todoist.task.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://api.todoist.com/tasks/today"
+adapter:
+  kind: json_http
+  url: "https://api.todoist.com/rest/v2/tasks?filter=today"
+  method: GET
+  auth_service: todoist
+  transform:
+    language: jmespath
+    expression: |
+      [].{
+        id: id,
+        content: content,
+        description: description,
+        url: url,
+        priority: priority,
+        project_id: project_id,
+        due: due
+      }
+  id_from: id
+recommended_poll_interval_seconds: 600
+auth: bearer_token
+tags: [tasks, todoist, today, keychain, auth]
+quality_tier: experimental
+catalog_tier: 3
+catalog_order: 40
+requires: [keychain_bearer_token]
+contributed_by: agentfeeds
