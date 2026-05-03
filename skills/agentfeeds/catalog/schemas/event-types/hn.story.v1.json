@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/hn.story.v1.json",
+  "title": "Hacker News Story",
+  "type": "object",
+  "required": ["id", "title"],
+  "properties": {
+    "id": { "type": "integer" },
+    "title": { "type": "string" },
+    "url": { "type": ["string", "null"] },
+    "score": { "type": ["integer", "null"] },
+    "by": { "type": ["string", "null"] }
+  }
+}
