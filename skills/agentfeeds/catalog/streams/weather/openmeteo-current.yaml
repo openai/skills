@@ -1,0 +1,40 @@
+id: weather/openmeteo-current
+title: Current weather conditions (Open-Meteo)
+description: Free, no-API-key weather observations for any latitude and longitude.
+type: weather.observation
+mode: snapshot
+schema_url: https://agentfeeds.dev/schemas/weather.observation.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: lat
+    type: number
+    description: Latitude (-90 to 90)
+    required: true
+  - name: lon
+    type: number
+    description: Longitude (-180 to 180)
+    required: true
+source_uri_template: "feed://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}"
+adapter:
+  kind: json_http
+  url: "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code"
+  method: GET
+  headers: {}
+  transform:
+    language: jmespath
+    expression: |
+      {
+        temperature_c: current.temperature_2m,
+        humidity_pct: current.relative_humidity_2m,
+        wind_kph: current.wind_speed_10m,
+        conditions_code: current.weather_code,
+        observed_at: current.time
+      }
+  id_from: "join('-', [current.time, to_string(latitude), to_string(longitude)])"
+recommended_poll_interval_seconds: 600
+auth: none
+tags: [weather, free, no-auth, global]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 30
+contributed_by: agentfeeds
