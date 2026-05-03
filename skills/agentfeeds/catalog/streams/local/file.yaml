@@ -1,0 +1,23 @@
+id: local/file
+title: Local file
+description: Read-only snapshot of one local text, Markdown, or JSON file.
+type: local.file
+mode: snapshot
+schema_url: https://agentfeeds.dev/schemas/local.file.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: path
+    type: string
+    description: Absolute or home-relative file path
+    required: true
+source_uri_template: "feed://local.file/file?path={path}"
+adapter:
+  kind: local_file
+  path: "{path}"
+recommended_poll_interval_seconds: 300
+auth: none
+tags: [local, file, markdown, text, json, no-auth]
+quality_tier: verified
+catalog_tier: 2
+catalog_order: 10
+contributed_by: agentfeeds
