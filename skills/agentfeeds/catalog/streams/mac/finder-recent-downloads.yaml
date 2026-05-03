@@ -1,0 +1,22 @@
+id: mac/finder-recent-downloads
+title: Recent Downloads
+description: Last modified items in the local Downloads folder.
+type: local.directory-entry
+mode: event
+schema_url: https://agentfeeds.dev/schemas/local.directory-entry.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.finder/recent-downloads"
+adapter:
+  kind: filesystem_scan
+  path: "~/Downloads"
+  order_by: modified_at
+  limit: 25
+recommended_poll_interval_seconds: 300
+auth: none
+tags: [mac, finder, downloads, files, recent, no-auth]
+quality_tier: experimental
+catalog_tier: 2
+catalog_order: 60
+platforms: [macos]
+contributed_by: agentfeeds
