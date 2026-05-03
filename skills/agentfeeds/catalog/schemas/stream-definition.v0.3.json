@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/stream-definition.v0.3.json",
+  "title": "Agent Feeds Stream Definition",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "id",
+    "title",
+    "description",
+    "type",
+    "mode",
+    "schema_url",
+    "schema_version",
+    "source_uri_template",
+    "adapter",
+    "recommended_poll_interval_seconds",
+    "auth",
+    "tags",
+    "quality_tier"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": ["snapshot", "event", "delta"]
+    },
+    "schema_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "description", "required"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "enum": ["string", "number", "integer", "boolean"] },
+          "description": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      },
+      "default": []
+    },
+    "source_uri_template": {
+      "type": "string",
+      "pattern": "^feed://"
+    },
+    "adapter": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "json_http",
+            "paginated_json_http",
+            "rss",
+            "ical",
+            "local_file",
+            "filesystem_scan",
+            "markdown_scan",
+            "git_status",
+            "local_command",
+            "apple_automation",
+            "sqlite_query",
+            "plist_reading_list"
+          ]
+        }
+      }
+    },
+    "recommended_poll_interval_seconds": {
+      "type": "integer",
+      "minimum": 60
+    },
+    "auth": {
+      "enum": ["none", "bearer_token"]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "catalog_tier": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "catalog_order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "platforms": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requires": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "quality_tier": {
+      "enum": ["verified", "community", "experimental"]
+    }
+  }
+}
