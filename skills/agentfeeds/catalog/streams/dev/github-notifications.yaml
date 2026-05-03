@@ -1,0 +1,38 @@
+id: dev/github-notifications
+title: My GitHub notifications
+description: Authenticated GitHub notifications for the current user.
+type: github.notification
+mode: event
+schema_url: https://agentfeeds.dev/schemas/github.notification.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://api.github.com/notifications"
+adapter:
+  kind: paginated_json_http
+  url: "https://api.github.com/notifications?per_page=50"
+  method: GET
+  auth_service: github
+  headers:
+    Accept: application/vnd.github+json
+  transform:
+    language: jmespath
+    expression: |
+      [].{
+        id: id,
+        reason: reason,
+        unread: unread,
+        updated_at: updated_at,
+        repository: repository.full_name,
+        subject_title: subject.title,
+        subject_type: subject.type,
+        url: subject.url
+      }
+  id_from: id
+recommended_poll_interval_seconds: 300
+auth: bearer_token
+tags: [dev, github, notifications, keychain, auth]
+quality_tier: experimental
+catalog_tier: 3
+catalog_order: 10
+requires: [keychain_bearer_token]
+contributed_by: agentfeeds
