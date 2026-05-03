@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/github.issue.v1.json",
+  "title": "GitHub Issue",
+  "type": "object",
+  "required": ["number", "title", "state", "html_url", "created_at", "updated_at"],
+  "properties": {
+    "number": { "type": "integer" },
+    "title": { "type": "string" },
+    "state": { "type": "string" },
+    "html_url": { "type": "string" },
+    "user": { "type": ["string", "null"] },
+    "labels": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "closed_at": { "type": ["string", "null"] },
+    "body": { "type": ["string", "null"] }
+  }
+}
