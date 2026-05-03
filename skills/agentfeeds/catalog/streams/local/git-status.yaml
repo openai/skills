@@ -1,0 +1,23 @@
+id: local/git-status
+title: Local Git status
+description: Current branch, dirty files, and ahead or behind counts for a watched repo.
+type: local.git-status
+mode: snapshot
+schema_url: https://agentfeeds.dev/schemas/local.git-status.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: path
+    type: string
+    description: Absolute or home-relative Git repository path
+    required: true
+source_uri_template: "feed://local.git/status?path={path}"
+adapter:
+  kind: git_status
+  path: "{path}"
+recommended_poll_interval_seconds: 300
+auth: none
+tags: [local, git, dev, repo, status, no-auth]
+quality_tier: experimental
+catalog_tier: 2
+catalog_order: 40
+contributed_by: agentfeeds
