@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/mac.mail-message.v1.json",
+  "title": "macOS Mail Message",
+  "type": "object",
+  "required": ["id", "subject", "sender", "received_at", "unread"],
+  "properties": {
+    "id": { "type": "string" },
+    "subject": { "type": "string" },
+    "sender": { "type": "string" },
+    "from_email": { "type": ["string", "null"] },
+    "received_at": { "type": "string" },
+    "unread": { "type": "boolean" },
+    "mailbox": { "type": ["string", "null"] },
+    "account": { "type": ["string", "null"] },
+    "snippet": { "type": ["string", "null"] }
+  }
+}
