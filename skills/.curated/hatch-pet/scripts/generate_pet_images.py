@@ -121,6 +121,12 @@ def run_image_generation(
     api_key: str,
 ) -> dict[str, object]:
     output_json.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "model": model,
+        "prompt": prompt_file.read_text(encoding="utf-8"),
+        "size": size,
+        "output_format": "png",
+    }
     command = [
         "curl",
         "-sS",
@@ -129,14 +135,11 @@ def run_image_generation(
         "https://api.openai.com/v1/images/generations",
         "-H",
         f"Authorization: Bearer {api_key}",
-        "-F",
-        f"model={model}",
-        "-F",
-        f"prompt=<{prompt_file}",
-        "-F",
-        f"size={size}",
-        "-F",
-        "output_format=png",
+        # Generations accept JSON bodies; edits use multipart form data for uploads.
+        "-H",
+        "Content-Type: application/json",
+        "--data-binary",
+        json.dumps(payload),
         "-o",
         str(output_json),
     ]
