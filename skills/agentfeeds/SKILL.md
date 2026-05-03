@@ -125,13 +125,7 @@ For `local_command` templates, use argv arrays only. Only create command templat
 
 After scaffolding or installing a `local_command` template, tell the user to run `python3 scripts/agentfeeds.py admin templates approve-command <template-id> [key=value ...]` themselves in an interactive terminal. Do not approve on the user's behalf, even if asked. Explain that approval is tied to the exact template and command digest, and edits revoke it.
 
-For macOS personal context, install local templates with:
-
-```bash
-python3 scripts/agentfeeds.py admin macos install-templates
-```
-
-This installs pending read-only templates for Calendar, Reminders, and Mail. The operator must approve each one before subscribing or refreshing.
+For macOS personal context, prefer the built-in `mac/*` templates from the bundled catalog. They do not require local-command approval, but macOS may ask the user to grant Calendar, Reminders, Automation, or Full Disk Access permissions on first refresh.
 
 ## Safety Rules
 

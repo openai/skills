@@ -1,43 +1,36 @@
 # macOS Personal Sources
 
-Use this reference when the user wants local personal context from macOS apps such as Calendar, Reminders, or Mail.
+Use this reference when the user wants local personal context from macOS apps such as Calendar, Reminders, Notes, Mail, Messages, Safari, Finder, or local folders.
 
-These sources are local `local_command` templates. They read from macOS apps through AppleScript, may trigger macOS Automation or app-data permission prompts on first refresh, and are pending until the operator approves each command.
+The public catalog includes built-in `mac/*` templates. Prefer these before creating operator-local templates.
 
-## Install Templates
+## Discover
 
-Install the local templates:
-
-```bash
-python3 scripts/agentfeeds.py admin macos install-templates --json
-```
-
-This creates:
-
-- `macos/calendar-today`: today's local Calendar events
-- `macos/reminders-open`: incomplete Reminders items
-- `macos/mail-inbox-recent`: recent Mail inbox messages
-
-## Approval
-
-For each source the user wants, tell the user to run the approval command in an interactive terminal:
+Find available Mac templates:
 
 ```bash
-python3 scripts/agentfeeds.py admin templates approve-command macos/calendar-today
-python3 scripts/agentfeeds.py admin templates approve-command macos/reminders-open
-python3 scripts/agentfeeds.py admin templates approve-command macos/mail-inbox-recent
+python3 scripts/agentfeeds.py templates find mac
 ```
 
-Do not approve on the user's behalf. Approval prints the exact command and requires typing `APPROVE`.
+Useful built-ins include:
+
+- `mac/calendar-today`: today's Calendar.app agenda
+- `mac/calendar-upcoming`: next 7 days of Calendar.app events
+- `mac/reminders-pending`: pending Reminders.app items
+- `mac/notes-recent`: recently modified Notes.app notes
+- `mac/mail-unread`: unread Mail.app messages
+- `mac/imessage-unread`: unread iMessage conversations
+- `mac/safari-reading-list`: Safari Reading List items
+- `mac/finder-recent-downloads`: recent items in Downloads
 
 ## Subscribe
 
-After approval, subscribe only the sources the user chose:
+Subscribe only the sources the user asks for:
 
 ```bash
-python3 scripts/agentfeeds.py subscribe macos/calendar-today --title "Calendar today"
-python3 scripts/agentfeeds.py subscribe macos/reminders-open --title "Open reminders"
-python3 scripts/agentfeeds.py subscribe macos/mail-inbox-recent --title "Recent inbox mail"
+python3 scripts/agentfeeds.py subscribe mac/calendar-today
+python3 scripts/agentfeeds.py subscribe mac/reminders-pending
+python3 scripts/agentfeeds.py subscribe mac/mail-unread
 ```
 
 Then check health:
@@ -46,7 +39,18 @@ Then check health:
 python3 scripts/agentfeeds.py streams health --json
 ```
 
-If a source fails with a macOS permission error, tell the user to grant the requested Automation/app permission in System Settings, then refresh that one stream:
+## Permissions
+
+Mac templates are read-only, but the host process may need user-granted macOS permissions:
+
+- Calendar templates may require Calendar permission.
+- Reminders templates may require Reminders permission.
+- Notes and Mail templates may require Automation permission for the relevant app.
+- iMessage reads `~/Library/Messages/chat.db` and may require Full Disk Access.
+- Safari Reading List reads `~/Library/Safari/Bookmarks.plist`.
+- Finder Downloads reads `~/Downloads`.
+
+If a source fails with a macOS permission error, tell the user which permission is needed, then refresh that one stream:
 
 ```bash
 python3 scripts/agentfeeds.py refresh --stream <subscription-id>
