@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/mac.note.v1.json",
+  "title": "macOS Note",
+  "type": "object",
+  "required": ["id", "title", "snippet", "modified_at"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "snippet": { "type": "string" },
+    "modified_at": { "type": "string" },
+    "folder": { "type": ["string", "null"] },
+    "account": { "type": ["string", "null"] }
+  }
+}
