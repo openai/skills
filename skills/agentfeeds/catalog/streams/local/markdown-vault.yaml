@@ -1,0 +1,26 @@
+id: local/markdown-vault
+title: Markdown vault
+description: Recently modified Markdown notes from a local vault directory.
+type: local.markdown-document
+mode: event
+schema_url: https://agentfeeds.dev/schemas/local.markdown-document.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: path
+    type: string
+    description: Absolute or home-relative vault directory path
+    required: true
+source_uri_template: "feed://local.markdown/vault?path={path}"
+adapter:
+  kind: markdown_scan
+  path: "{path}"
+  parse_frontmatter: true
+  order_by: modified_at
+  limit: 25
+recommended_poll_interval_seconds: 300
+auth: none
+tags: [local, markdown, obsidian, notes, vault, no-auth]
+quality_tier: experimental
+catalog_tier: 2
+catalog_order: 30
+contributed_by: agentfeeds
