@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/local.command.v1.json",
+  "title": "Local Command Snapshot",
+  "type": "object",
+  "required": ["command", "exit_code", "stdout", "ran_at"],
+  "properties": {
+    "command": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "cwd": { "type": ["string", "null"] },
+    "exit_code": { "type": "integer" },
+    "stdout": { "type": "string" },
+    "stderr": { "type": "string" },
+    "stdout_truncated": { "type": "boolean" },
+    "stderr_truncated": { "type": "boolean" },
+    "parsed_json": {},
+    "transformed": {},
+    "started_at": { "type": "string" },
+    "ran_at": { "type": "string" }
+  }
+}
