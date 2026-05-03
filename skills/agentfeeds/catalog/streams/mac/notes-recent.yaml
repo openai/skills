@@ -1,0 +1,45 @@
+id: mac/notes-recent
+title: Recent Notes.app notes
+description: Recently modified Notes.app notes with titles and snippets.
+type: mac.note
+mode: event
+schema_url: https://agentfeeds.dev/schemas/mac.note.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.notes/recent?limit=20"
+adapter:
+  kind: apple_automation
+  tcc_permission: Automation
+  script: |
+    set rows to {}
+    tell application "Notes"
+      set allNotes to notes
+      set maxItems to count of allNotes
+      if maxItems > 20 then set maxItems to 20
+      repeat with i from 1 to maxItems
+        set n to item i of allNotes
+        set bodyText to plaintext of n
+        if length of bodyText > 300 then set bodyText to text 1 thru 300 of bodyText
+        set folderName to ""
+        try
+          set folderName to name of container of n
+        end try
+        set end of rows to (id of n) & tab & (name of n) & tab & bodyText & tab & ((modification date of n) as string) & tab & folderName
+      end repeat
+    end tell
+    set AppleScript's text item delimiters to linefeed
+    return rows as text
+  columns: [id, title, snippet, modified_at, folder]
+  static:
+    account: null
+  id_column: id
+  time_column: modified_at
+recommended_poll_interval_seconds: 900
+auth: none
+tags: [mac, notes, recent, automation, tcc, no-auth]
+quality_tier: experimental
+catalog_tier: 1
+catalog_order: 40
+platforms: [macos]
+requires: [notes_automation_tcc]
+contributed_by: agentfeeds
