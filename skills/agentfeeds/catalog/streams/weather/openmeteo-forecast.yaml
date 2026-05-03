@@ -1,0 +1,37 @@
+id: weather/openmeteo-forecast
+title: 7-day weather forecast (Open-Meteo)
+description: Free, no-API-key 7-day forecast for any latitude and longitude.
+type: weather.forecast
+mode: snapshot
+schema_url: https://agentfeeds.dev/schemas/weather.forecast.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: lat
+    type: number
+    description: Latitude (-90 to 90)
+    required: true
+  - name: lon
+    type: number
+    description: Longitude (-180 to 180)
+    required: true
+source_uri_template: "feed://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,weather_code"
+adapter:
+  kind: json_http
+  url: "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min,weather_code&forecast_days=7"
+  method: GET
+  headers: {}
+  transform:
+    language: jmespath
+    expression: |
+      {
+        generated_at: timezone,
+        daily: daily
+      }
+  id_from: "join('-', ['forecast', to_string(latitude), to_string(longitude)])"
+recommended_poll_interval_seconds: 3600
+auth: none
+tags: [weather, forecast, free, no-auth, global]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 40
+contributed_by: agentfeeds
