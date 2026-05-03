@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/mac.reading-list-item.v1.json",
+  "title": "Safari Reading List Item",
+  "type": "object",
+  "required": ["title", "url"],
+  "properties": {
+    "title": { "type": "string" },
+    "url": { "type": "string" },
+    "added_at": { "type": ["string", "null"] },
+    "preview_text": { "type": ["string", "null"] }
+  }
+}
