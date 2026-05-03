@@ -1,0 +1,60 @@
+id: mac/reminders-pending
+title: Pending Reminders.app items
+description: Open reminders with due dates and list grouping from Reminders.app.
+type: mac.reminder
+mode: event
+schema_url: https://agentfeeds.dev/schemas/mac.reminder.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.reminders/pending"
+adapter:
+  kind: apple_automation
+  tcc_permission: Reminders
+  script: |
+    set rows to {}
+    tell application "Reminders"
+      repeat with listRef in lists
+        set listName to name of listRef
+        set matches to every reminder of listRef whose completed is false
+        repeat with remRef in matches
+          set bodyText to ""
+          set dueText to ""
+          set priorityValue to 0
+          try
+            set bodyText to body of remRef
+          end try
+          try
+            set dueText to (due date of remRef) as string
+          end try
+          try
+            set priorityValue to priority of remRef
+          end try
+          set end of rows to (id of remRef) & tab & (name of remRef) & tab & ((completed of remRef) as string) & tab & listName & tab & dueText & tab & (priorityValue as string) & tab & bodyText
+        end repeat
+      end repeat
+    end tell
+    set AppleScript's text item delimiters to linefeed
+    return rows as text
+  columns:
+    - id
+    - title
+    - name: completed
+      type: boolean
+    - list_name
+    - due_at
+    - name: priority
+      type: integer
+    - notes_snippet
+  static:
+    url: null
+  id_column: id
+  time_column: due_at
+recommended_poll_interval_seconds: 900
+auth: none
+tags: [mac, reminders, tasks, tcc, no-auth]
+quality_tier: experimental
+catalog_tier: 1
+catalog_order: 30
+platforms: [macos]
+requires: [reminders_tcc]
+contributed_by: agentfeeds
