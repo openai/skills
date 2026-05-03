@@ -1,0 +1,34 @@
+id: finance/exchangerate
+title: Current exchange rates
+description: Current currency exchange rates for a base currency via a no-auth public API.
+type: finance.exchange-rate
+mode: snapshot
+schema_url: https://agentfeeds.dev/schemas/finance.exchange-rate.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: base
+    type: string
+    description: Base currency code such as USD or EUR
+    required: true
+source_uri_template: "feed://open.er-api.com/v6/latest/{base}"
+adapter:
+  kind: json_http
+  url: "https://open.er-api.com/v6/latest/{base}"
+  method: GET
+  headers: {}
+  transform:
+    language: jmespath
+    expression: |
+      {
+        base: base_code,
+        date: time_last_update_utc,
+        rates: rates
+      }
+  id_from: "join('-', [base_code, to_string(time_last_update_unix)])"
+recommended_poll_interval_seconds: 3600
+auth: none
+tags: [finance, currency, exchange-rate, free, no-auth]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 50
+contributed_by: agentfeeds
