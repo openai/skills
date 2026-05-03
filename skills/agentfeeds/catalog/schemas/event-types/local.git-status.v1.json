@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/local.git-status.v1.json",
+  "title": "Local Git Status",
+  "type": "object",
+  "required": ["path", "branch", "clean", "dirty_files", "ahead", "behind"],
+  "properties": {
+    "path": { "type": "string" },
+    "branch": { "type": "string" },
+    "clean": { "type": "boolean" },
+    "dirty_files": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ahead": { "type": "integer" },
+    "behind": { "type": "integer" }
+  }
+}
