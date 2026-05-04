@@ -1,6 +1,6 @@
 ---
 name: phasekeeper
-description: Use when setting up or operating a Phasekeeper workflow for Codex projects with active phase boards, approved specs, session start gates, issue tracking, verification logs, progress archives, and clean handoffs.
+description: Use when installing, starting, resuming, or closing a Phasekeeper-managed Codex project that uses board-first phase tracking, verification logs, and explicit handoffs.
 metadata:
   short-description: Board-first workflow for long-running Codex projects
 ---
