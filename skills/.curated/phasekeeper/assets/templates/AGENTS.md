@@ -47,7 +47,7 @@ Before ending a session:
 4. Update Tests with exact commands and results.
 5. Update `PROGRESS.md` for the session or accepted phase.
 6. Run `git status --short` and `git log --oneline -10`.
-7. Commit completed board steps unless the operator explicitly says not to.
+7. Commit completed board steps only when repo policy or the operator has already authorized commits; otherwise hand back the completed uncommitted work explicitly.
 8. Tell the operator where the next session picks up.
 
 If a board marks a step DONE, a matching commit must exist or the uncommitted state must be handed back explicitly.

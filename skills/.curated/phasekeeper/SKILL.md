@@ -104,7 +104,7 @@ For each active step:
 5. Run relevant verification.
 6. Update board References, Tests, Issues, and Work Log.
 7. Update `PROGRESS.md` after the session or accepted phase.
-8. Commit completed board steps unless the operator says not to.
+8. Commit completed board steps only when repo policy or the operator has already authorized commits; otherwise hand back the completed uncommitted work explicitly.
 
 Do not mix unrelated cleanup into a phase step.
 
@@ -121,10 +121,10 @@ Before final response:
 5. Update `PROGRESS.md`.
 6. Run `git status --short`.
 7. Run `git log --oneline -10`.
-8. Commit completed board steps unless the operator says not to.
+8. Commit completed board steps only when repo policy or the operator has already authorized commits; otherwise hand back the completed uncommitted work explicitly.
 9. Tell the operator exactly where the next session picks up.
 
-If a board marks a step DONE but no matching commit exists, say so explicitly.
+If a board marks a step DONE but no matching commit exists, document the explicit uncommitted handoff.
 
 ## Hard Stops
 

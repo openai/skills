@@ -37,7 +37,7 @@ active board exists?
               update board and PROGRESS.md
                     |
                     v
-              commit completed step
+              commit or hand off completed step
                     |
                     v
               stop at phase gate or wait for continue
@@ -134,7 +134,7 @@ For each step:
 6. Update board tests with commands and results.
 7. Update the board work log.
 8. Update `PROGRESS.md` after the session or accepted phase.
-9. Commit the completed step unless the operator says not to.
+9. Commit the completed step only when repo policy or the operator has already authorized commits; otherwise hand back the completed uncommitted work explicitly.
 
 Do not merge unrelated cleanup into a phase step.
 
@@ -175,7 +175,7 @@ Before ending a session:
 4. Update Tests with exact commands and results.
 5. Update `PROGRESS.md` for the session or accepted phase.
 6. Run `git status --short` and `git log --oneline -10`.
-7. Commit completed board steps unless the operator explicitly says not to.
+7. Commit completed board steps only when repo policy or the operator has already authorized commits; otherwise hand back the completed uncommitted work explicitly.
 8. Tell the operator the next board step.
 
 If a board marks a step DONE, a matching commit must exist or the work must be explicitly handed back as uncommitted.
