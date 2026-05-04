@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0066ff"/>
+      <stop offset="100%" style="stop-color:#00d4ff"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#141414"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="256" height="256" rx="52" fill="url(#g2)"/>
+
+  <!-- 3x3 gate grid, centered -->
+  <!-- Cell size: 52px, gap: 14px, total: 3*52 + 2*14 = 184, offset: (256-184)/2 = 36 -->
+
+  <!-- Row 1 -->
+  <rect x="36"  y="36"  width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <rect x="102" y="36"  width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <rect x="168" y="36"  width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+
+  <!-- Row 2 -->
+  <rect x="36"  y="102" width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <rect x="102" y="102" width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <rect x="168" y="102" width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+
+  <!-- Row 3 — first two normal, last one glowing -->
+  <rect x="36"  y="168" width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <rect x="102" y="168" width="52" height="52" rx="10" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1.5"/>
+  <!-- Gate 9: gradient glow -->
+  <rect x="168" y="168" width="52" height="52" rx="10" fill="url(#g1)"/>
+
+  <!-- Green checkmarks rows 1-2 and first two of row 3 -->
+  <!-- Row 1 checks -->
+  <polyline points="48,62 57,71 76,50"  fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="114,62 123,71 142,50" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="180,62 189,71 208,50" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Row 2 checks -->
+  <polyline points="48,128 57,137 76,116"  fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="114,128 123,137 142,116" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="180,128 189,137 208,116" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Row 3 first two checks -->
+  <polyline points="48,194 57,203 76,182"  fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="114,194 123,203 142,182" fill="none" stroke="#00e676" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Gate 9: bold white check -->
+  <polyline points="180,194 189,203 208,182" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

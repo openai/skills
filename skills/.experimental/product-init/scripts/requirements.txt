@@ -1,0 +1,4 @@
+pyyaml
+jsonschema
+python-frontmatter
+requests
