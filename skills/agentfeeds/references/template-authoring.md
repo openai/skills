@@ -68,10 +68,4 @@ python3 scripts/agentfeeds.py admin secrets set github_token
 
 On macOS this uses Keychain when available; other platforms fall back to a local 0600 secret file under the Agent Feeds root.
 
-macOS local templates can be installed with:
-
-```bash
-python3 scripts/agentfeeds.py admin macos install-templates
-```
-
-This writes pending Calendar, Reminders, and Mail templates. Approve only the ones the user wants enabled.
+macOS personal sources are built-in catalog templates under `mac/*`. Prefer those before creating operator-local templates.
