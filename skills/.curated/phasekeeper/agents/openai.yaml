@@ -1,0 +1,4 @@
+interface:
+  display_name: "Phasekeeper"
+  short_description: "Board-first workflow for long-running Codex projects"
+  default_prompt: "Use Phasekeeper to set up this repo, start a session, or close a session with board-first handoff discipline."
