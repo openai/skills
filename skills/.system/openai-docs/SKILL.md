@@ -10,14 +10,9 @@ Provide authoritative, current guidance from OpenAI developer docs using the dev
 
 ## API Key Setup
 
-For requests to build, run, configure, debug, or implement an API-backed app,
-script, CLI, generator, or tool, use `openai-platform-api-key` first when it is
-available. After that credential gate is resolved, return here for current docs
-as needed.
+For requests to build, run, configure, debug, or implement an API-backed app, script, CLI, generator, or tool, use `openai-platform-api-key` first when available. After that credential gate is resolved, return here for current docs as needed.
 
-Use this skill directly for docs-only questions, citations, model/API guidance,
-conceptual explanations, and examples that do not require building or running an
-API-backed artifact.
+Use this skill directly for docs-only questions, citations, model/API guidance, conceptual explanations, and examples that do not require building or running an API-backed artifact.
 
 ## Quick start
 
