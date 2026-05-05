@@ -68,7 +68,8 @@ State-specific guidance:
 - `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.
 - `review`: show focus through lean, blink, eyes, head tilt, or paw position. Do not add magnifying glasses, papers, code, UI, punctuation, or symbols unless that prop already exists in the base pet identity.
-- `running-right`, `running-left`, and `running`: show locomotion through body, limb, and prop movement only. Do not draw speed lines, dust clouds, floor shadows, or motion trails.
+- `running-right` and `running-left`: show directional locomotion through body, limb, and prop movement only. Do not draw speed lines, dust clouds, floor shadows, or motion trails.
+- `running`: show an active working/in-progress loop, as if the pet is busy running a task. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.
 
 ## Pet Naming
 
@@ -228,7 +229,7 @@ Subagent handoff contract:
 
 - Give each subagent exactly one row job unless you are intentionally batching adjacent simple rows.
 - Include the row id, the absolute prompt file path, the full prompt text or an instruction to read that exact prompt file, and every input image path with its role label from `imagegen-jobs.json`.
-- Explicitly remind the subagent that the prompt's transparency and effects rules are mandatory: no detached effects, no wave marks for `waving`, no speed lines or dust for running rows, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt.
+- Explicitly remind the subagent that the prompt's transparency and effects rules are mandatory: no detached effects, no wave marks for `waving`, no speed lines or dust for directional running rows, no literal foot-running for the non-directional `running` row, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt.
 - Tell the subagent to inspect the generated candidate for frame count, identity consistency, clean flat chroma-key background, safe spacing, and forbidden detached effects before returning it.
 - Tell the subagent to return only the selected original `$CODEX_HOME/generated_images/.../ig_*.png` source path plus a one-sentence QA note. The parent decides whether to record or repair it.
 

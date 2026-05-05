@@ -26,7 +26,7 @@ ROWS = [
     ("jumping", 4, 5, "anticipation, lift, peak, descent, settle"),
     ("failed", 5, 8, "sad, failed, or deflated reaction"),
     ("waiting", 6, 6, "patient waiting loop with small motion"),
-    ("running", 7, 6, "generic in-place running loop"),
+    ("running", 7, 6, "active working/in-progress loop"),
     ("review", 8, 6, "focused inspecting or review loop"),
 ]
 
@@ -69,8 +69,8 @@ STATE_REQUIREMENTS = {
         "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
     ],
     "running": [
-        "Show in-place running through body, limb, and prop movement only.",
-        "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
+        "Show the pet actively working or processing, as if running a task: focused posture, busy hands or paws, purposeful bobbing, thinking motion, tool/prop motion only if already part of the pet identity, or other non-locomotion activity.",
+        "Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, directional travel, speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
     ],
 }
 
