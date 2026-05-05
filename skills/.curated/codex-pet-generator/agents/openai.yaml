@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Pet Generator"
+  short_description: "Build Codex pets with safe row workflows"
+  default_prompt: "Use $codex-pet-generator to turn these character refs into a validated Codex desktop pet."
