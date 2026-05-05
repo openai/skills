@@ -1,6 +1,6 @@
 ---
 name: "openai-docs"
-description: "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citations, help choosing the latest model for a use case, or model upgrade and prompt-upgrade guidance. For requests to build, run, configure, debug, or implement an API-backed app, script, CLI, generator, or tool, prefer the openai-platform-api-key skill first when it is available; use this docs skill after that credential gate is resolved or when the user is only asking for documentation. Prioritize OpenAI docs MCP tools, use bundled references only as helper context, and restrict any fallback browsing to official OpenAI domains."
+description: "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citations, help choosing the latest model for a use case, or model upgrade and prompt-upgrade guidance. For API-backed implementation tasks, defer to openai-platform-api-key first when available. Prioritize OpenAI docs MCP tools, use bundled references only as helper context, and restrict any fallback browsing to official OpenAI domains."
 ---
 
 
@@ -8,19 +8,16 @@ description: "Use when the user asks how to build with OpenAI products or APIs a
 
 Provide authoritative, current guidance from OpenAI developer docs using the developers.openai.com MCP server. Always prioritize the developer docs MCP tools over web.run for OpenAI-related questions. This skill also owns model selection, API model migration, and prompt-upgrade guidance. Only if the MCP server is installed and returns no meaningful results should you fall back to web search.
 
-## Coordination With API Key Setup
+## API Key Setup
 
-Before using this skill for an implementation task, check whether the
-`openai-platform-api-key` skill is available in the current session. If the user
-is asking Codex to build, run, configure, debug, or implement an app, script,
-CLI, generator, or tool that uses AI or calls the OpenAI API, prefer
-`openai-platform-api-key` first and follow its credential gate before searching
-docs, inspecting API examples, drafting code, or writing files.
+For requests to build, run, configure, debug, or implement an API-backed app,
+script, CLI, generator, or tool, use `openai-platform-api-key` first when it is
+available. After that credential gate is resolved, return here for current docs
+as needed.
 
-Use this skill directly when the user only wants documentation, citations, model
-or API guidance, conceptual explanation, or code examples without asking Codex
-to build/run an API-backed artifact. After the credential gate is resolved,
-return to this skill when current official docs are needed for implementation.
+Use this skill directly for docs-only questions, citations, model/API guidance,
+conceptual explanations, and examples that do not require building or running an
+API-backed artifact.
 
 ## Quick start
 
