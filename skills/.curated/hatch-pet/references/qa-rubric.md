@@ -37,6 +37,7 @@ Do not accept an atlas until all checks pass.
 ## App Fitness
 
 - First idle frame works as a static reduced-motion pet.
+- The `idle` row should be calm and low-distraction; reject it if it reads as waving, walking, running, jumping, talking, working, reviewing, reacting dramatically, changing props, or making large pose/silhouette changes.
 - No important detail is too small to read.
 - No frame is clipped by the cell.
 - Failed/review/waiting states are distinct from ordinary idle.

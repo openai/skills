@@ -64,6 +64,7 @@ Avoid these by default because they usually break transparent-background cleanup
 
 State-specific guidance:
 
+- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head/body bob, a very small material sway, or another quiet persona-preserving motion. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
 - `waving`: show the wave through paw pose only. Do not draw wave marks, motion arcs, lines, sparkles, or symbols around the paw.
 - `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.

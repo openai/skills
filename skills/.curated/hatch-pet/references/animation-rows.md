@@ -18,7 +18,7 @@ Unused cells after each row's final used column must be fully transparent.
 
 ## Row Purposes
 
-- `idle`: neutral breathing/blinking loop; use as the reduced-motion first frame.
+- `idle`: calm, low-distraction breathing/blinking loop; use as the reduced-motion first frame. Keep motion subtle and persona-preserving.
 - `running-right`: locomotion to the right; 8-frame loop should read directionally.
 - `running-left`: mirrored or redrawn locomotion to the left; do not simply reuse right-facing frames unless the design is symmetric.
 - `waving`: greeting or attention gesture; clear start, raised gesture, return.
