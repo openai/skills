@@ -1,0 +1,8 @@
+interface:
+  display_name: "Fast Codex Workflow"
+  short_description: "Fast triage, focused edits, lean verification"
+  default_prompt: "Apply the fast operating loop: classify depth, find the entry point with the cheapest reliable signal, read only the narrow source of truth needed, make the smallest correct change, and run only the verification that proves the result."
+policy:
+  allow_implicit_invocation: true
+metadata:
+  version: "0.2.1"
