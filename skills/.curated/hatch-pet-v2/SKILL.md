@@ -47,9 +47,12 @@ Skip discovery when the user already provides a concrete mascot/avatar descripti
 Discovery worker responsibilities:
 
 - search the web for 2-4 relevant sources, preferring official pages
-- identify broad mascot-safe cues: palette, product/domain motifs, tone, audience, and visual personality
+- write an adaptive markdown brief rather than a rigid field dump
+- cover identity/category, audience/use context, visual system, personality/tone, product/domain motifs, mascot translation cues, avoidances, and evidence/confidence
+- mark mascot guidance that is inferred from sources as inference
 - avoid copying logos, readable marks, UI screenshots, slogans, or text
-- return a compact result only; do not generate images, prepare run folders, or edit files
+- end with a compact `Generation handoff` section containing only `brand_name`, `brand_brief`, `avatar_seed`, `avoid`, and `brand_sources`
+- do not generate images, prepare run folders, or edit unrelated files
 
 Use this discovery worker prompt:
 
@@ -58,18 +61,37 @@ Research a brand for hatch-pet-v2 mascot creation.
 
 Brand/product/prospect: <brand name>
 User context: <short user request>
+Output file: <absolute path to brand-discovery.md>
 
-Use web search. Prefer official brand, product, docs, about, press, or brand pages. Use reputable secondary sources only if official sources are too thin. Extract broad visual/personality cues that can inspire a small Codex pet without copying logos, readable marks, UI screenshots, slogans, or text.
+Use web search. Prefer official brand, product, docs, about, press, or brand pages. Use reputable secondary sources only if official sources are too thin. Write an adaptive markdown brief to the output file. Headings may flex by brand, but the brief must cover:
+- identity/category: canonical name, product type, what it does
+- audience/use context: who it serves and where it appears
+- visual system: palette, shapes, line quality, materials, typography feel, iconography, patterns
+- personality/tone: emotional traits, energy, formality, playfulness
+- product/domain motifs: objects, workflows, verbs, metaphors, environments
+- mascot translation cues: candidate forms, signature traits, props, what must read at pet size
+- avoidances: logos/text, trademark-sensitive elements, misleading cues, competitor confusion, poor mascot fits
+- evidence/confidence: source URLs plus notes where evidence is weak or inferred
+
+Do not copy logos, readable marks, UI screenshots, slogans, or text. Clearly label mascot guidance that is inferred rather than directly sourced.
+
+End the brief with a `Generation handoff` section containing exactly:
+- brand_name=<canonical brand/product name>
+- brand_brief=<one sentence, max 45 words, covering palette/tone/domain motifs/personality>
+- avatar_seed=<short mascot-safe visual idea, no logo copying>
+- avoid=<short comma-separated list>
+- brand_sources=<comma-separated source URLs>
 
 Return exactly:
+brand_discovery_file=<absolute output file path>
 brand_name=<canonical brand/product name>
-brand_brief=<one sentence, max 45 words, covering palette/tone/domain motifs/personality>
-brand_sources=<comma-separated source URLs>
-avatar_seed=<short mascot-safe visual idea, no logo copying>
-avoid=<short comma-separated list>
+brand_brief=<same compact sentence from Generation handoff>
+avatar_seed=<same short seed from Generation handoff>
+avoid=<same short avoid list from Generation handoff>
+brand_sources=<same comma-separated URLs from Generation handoff>
 ```
 
-The parent should pass the discovery output into `prepare_pet_run.py` as `--brand-name`, `--brand-brief`, repeated `--brand-source`, and a concise `--pet-notes` value based on `avatar_seed` when the user did not provide a better avatar description. If web search is unavailable and the user gave only a bare brand name, ask for brand cues before generating.
+The parent should save the markdown brief before preparing the run, then pass it to `prepare_pet_run.py` as `--brand-discovery-file` together with `--brand-name`, `--brand-brief`, repeated `--brand-source`, and a concise `--pet-notes` value based on `avatar_seed` when the user did not provide a better avatar description. Keep the full brief for review; only the compact handoff fields should shape prompts. If web search is unavailable and the user gave only a bare brand name, ask for brand cues before generating.
 
 For a normal pet run, expect up to 10 visual generation jobs: 1 base pet plus 9 row-strip jobs. The Codex app contract currently uses all 9 states: `idle`, `running-right`, `running-left`, `waving`, `jumping`, `failed`, `waiting`, `running`, and `review`. The only deterministic visual derivation is `running-left`, which may be produced by mirroring `running-right` only after `running-right` has been generated, visually inspected, and explicitly approved as safe to mirror. If mirroring is not appropriate, generate `running-left` as a normal grounded `$imagegen` row.
 
@@ -154,6 +176,7 @@ python "$SKILL_DIR/scripts/prepare_pet_run.py" \
   --reference /absolute/path/to/reference.png \
   --output-dir /absolute/path/to/run \
   --pet-notes "<stable pet description>" \
+  --brand-discovery-file /absolute/path/to/brand-discovery.md \
   --brand-name "<optional researched brand name>" \
   --brand-brief "<optional compact researched brand cue sentence>" \
   --brand-source "https://example.com/source" \
@@ -163,7 +186,7 @@ python "$SKILL_DIR/scripts/prepare_pet_run.py" \
 ```
 
 All arguments above are optional except any flags needed to express user constraints. For text-only requests, pass the concept through `--pet-notes` and omit `--reference`; `prepare_pet_run.py` will infer a name, description, chroma key, and output directory as needed.
-For brand-only requests, run the discovery worker first, then pass `avatar_seed` through `--pet-notes`, `brand_name` through `--brand-name`, `brand_brief` through `--brand-brief`, and each source URL through repeated `--brand-source`.
+For brand-only requests, run the discovery worker first, save the markdown brief, then pass the brief path through `--brand-discovery-file`, `avatar_seed` through `--pet-notes`, `brand_name` through `--brand-name`, `brand_brief` through `--brand-brief`, and each source URL through repeated `--brand-source`.
 
 2. Inspect `imagegen-jobs.json` for the next ready `$imagegen` jobs. A job is ready when its `status` is not `complete` and every id in `depends_on` is already complete. Prefer reading the manifest directly with `jq` or the editor instead of adding helper scripts for status display:
 

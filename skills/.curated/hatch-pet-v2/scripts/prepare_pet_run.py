@@ -108,6 +108,7 @@ CHROMA_KEY_CANDIDATES = [
 
 DEFAULT_PET_NAME = "Sprout"
 CANONICAL_BASE_PATH = "references/canonical-base.png"
+BRAND_DISCOVERY_PATH = "references/brand-discovery.md"
 LAYOUT_GUIDE_DIR = "references/layout-guides"
 LAYOUT_GUIDE_SAFE_MARGIN_X = 18
 LAYOUT_GUIDE_SAFE_MARGIN_Y = 16
@@ -603,6 +604,11 @@ def main() -> None:
         help="Source URL used to produce the brand brief. May be passed multiple times.",
     )
     parser.add_argument(
+        "--brand-discovery-file",
+        default="",
+        help="Optional markdown discovery brief to copy into the run for review.",
+    )
+    parser.add_argument(
         "--style-preset",
         default="auto",
         choices=sorted(STYLE_PRESETS),
@@ -620,6 +626,11 @@ def main() -> None:
     raw_reference_paths = [
         Path(raw_path).expanduser().resolve() for raw_path in args.reference
     ]
+    raw_brand_discovery_path = (
+        Path(args.brand_discovery_file).expanduser().resolve()
+        if args.brand_discovery_file.strip()
+        else None
+    )
 
     args.display_name = infer_name(args, raw_reference_paths)
     args.pet_name = (args.pet_name or args.display_name).strip()
@@ -675,6 +686,14 @@ def main() -> None:
         copied_refs.append(meta)
         copied_ref_paths.append(copied)
 
+    brand_discovery_path = ""
+    if raw_brand_discovery_path is not None:
+        if not raw_brand_discovery_path.is_file():
+            raise SystemExit(f"brand discovery file not found: {raw_brand_discovery_path}")
+        copied_discovery = run_dir / BRAND_DISCOVERY_PATH
+        shutil.copy2(raw_brand_discovery_path, copied_discovery)
+        brand_discovery_path = rel(copied_discovery, run_dir)
+
     args.chroma_key = choose_chroma_key(copied_ref_paths, args.chroma_key)
     layout_guides = create_layout_guides(run_dir)
 
@@ -704,6 +723,8 @@ def main() -> None:
         "pet_safe_style": PET_SAFE_STYLE,
         "primary_generation_skill": "$imagegen",
     }
+    if brand_discovery_path:
+        request["brand_discovery_path"] = brand_discovery_path
     (run_dir / "pet_request.json").write_text(
         json.dumps(request, indent=2) + "\n", encoding="utf-8"
     )
