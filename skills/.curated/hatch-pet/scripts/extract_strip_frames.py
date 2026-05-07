@@ -74,7 +74,10 @@ def remove_chroma_background(
         for x in range(rgba.width):
             red, green, blue, alpha = pixels[x, y]
             if color_distance(red, green, blue, chroma_key) <= threshold:
-                pixels[x, y] = (red, green, blue, 0)
+                # Zero RGB along with alpha so the LANCZOS resize in
+                # fit_to_cell does not pull chroma-key color into edge
+                # pixels and produce a tinted halo around the sprite.
+                pixels[x, y] = (0, 0, 0, 0)
     return rgba
 
 
