@@ -57,6 +57,17 @@ def manifest_relative(path: Path, run_dir: Path) -> str:
     return str(path.resolve().relative_to(run_dir.resolve()))
 
 
+def mirror_strip_preserve_frame_order(source: Image.Image, frame_count: int = 8) -> Image.Image:
+    rgba = source.convert("RGBA")
+    output = Image.new("RGBA", rgba.size, (0, 0, 0, 0))
+    slot_width = rgba.width / frame_count
+    for index in range(frame_count):
+        left = round(index * slot_width)
+        right = round((index + 1) * slot_width)
+        output.alpha_composite(ImageOps.mirror(rgba.crop((left, 0, right, rgba.height))), (left, 0))
+    return output
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", required=True)
@@ -99,7 +110,7 @@ def main() -> None:
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as image:
-        mirrored = ImageOps.mirror(image.convert("RGBA"))
+        mirrored = mirror_strip_preserve_frame_order(image)
         mirrored.save(output)
 
     left_job["status"] = "complete"

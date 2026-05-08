@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -112,11 +113,20 @@ def validate_mirror_hash(job: dict[str, object], *, source: Path, output: Path, 
             "rerun derive_running_left_from_running_right.py"
         )
     with Image.open(source) as source_image, Image.open(output) as output_image:
-        expected = ImageOps.mirror(source_image.convert("RGBA"))
+        source_rgba = source_image.convert("RGBA")
+        expected = Image.new("RGBA", source_rgba.size, (0, 0, 0, 0))
+        slot_width = source_rgba.width / 8
+        for index in range(8):
+            left = round(index * slot_width)
+            right = round((index + 1) * slot_width)
+            expected.alpha_composite(
+                ImageOps.mirror(source_rgba.crop((left, 0, right, source_rgba.height))),
+                (left, 0),
+            )
         actual = output_image.convert("RGBA")
         if expected.size != actual.size or expected.tobytes() != actual.tobytes():
             raise SystemExit(
-                "running-left mirrored output is not an exact horizontal mirror of running-right"
+                "running-left mirrored output is not an exact per-frame horizontal mirror of running-right"
             )
 
 
@@ -217,10 +227,49 @@ def review_failures(review: dict[str, object]) -> list[str]:
     return failures
 
 
+def should_derive_running_left_frames(run_dir: Path) -> bool:
+    manifest = load_json(run_dir / "imagegen-jobs.json")
+    jobs = manifest.get("jobs")
+    if not isinstance(jobs, list):
+        return False
+    for job in jobs:
+        if (
+            isinstance(job, dict)
+            and job.get("id") == "running-left"
+            and job.get("source_provenance") == "deterministic-mirror"
+            and job.get("derived_from") == "running-right"
+        ):
+            return True
+    return False
+
+
+def derive_running_left_frames_from_right(run_dir: Path) -> None:
+    right_dir = run_dir / "frames" / "running-right"
+    left_dir = run_dir / "frames" / "running-left"
+    if not right_dir.is_dir():
+        raise SystemExit(f"cannot derive running-left frames; missing {right_dir}")
+    files = sorted(right_dir.glob("*.png"))
+    if len(files) != 8:
+        raise SystemExit(f"cannot derive running-left frames; expected 8 right frames, found {len(files)}")
+
+    if left_dir.exists():
+        shutil.rmtree(left_dir)
+    left_dir.mkdir(parents=True, exist_ok=True)
+    for frame_path in files:
+        with Image.open(frame_path) as frame:
+            ImageOps.mirror(frame.convert("RGBA")).save(left_dir / frame_path.name)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-dir", required=True)
     parser.add_argument("--allow-slot-extraction", action="store_true")
+    parser.add_argument(
+        "--extract-method",
+        choices=("auto", "components", "slots", "fixed-slots"),
+        default="auto",
+        help="Frame extraction strategy for decoded row strips.",
+    )
     parser.add_argument("--skip-videos", action="store_true")
     parser.add_argument("--skip-package", action="store_true")
     parser.add_argument(
@@ -262,9 +311,11 @@ def main() -> None:
             "--states",
             "all",
             "--method",
-            "auto",
+            args.extract_method,
         ]
     )
+    if should_derive_running_left_frames(run_dir):
+        derive_running_left_frames_from_right(run_dir)
 
     review_path = qa_dir / "review.json"
     inspect_command = [

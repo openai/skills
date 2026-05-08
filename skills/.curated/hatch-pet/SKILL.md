@@ -62,14 +62,22 @@ Avoid these by default because they usually break transparent-background cleanup
 - chroma-key-adjacent colors in the pet, prop, effects, highlights, or shadows
 - stray pixels, disconnected outline bits, speckle/noise, cropped body parts, overlapping poses, or any pose that crosses into a neighboring frame slot
 
+### Frame Extraction And Playback Stability
+
+Generated row strips may intentionally keep the pet at a constant apparent scale while a pose moves within the slot. Do not accept a final atlas that re-crops each frame to make the character fill the 192x208 cell when the row strip already has stable scale and baseline. This causes visible size popping in preview videos, especially for sitting, crying, crouching, jumping, split poses, or any action that intentionally shifts lower in the slot.
+
+Prefer normal component extraction when it preserves scale and separates frames cleanly. If the contact sheet or preview videos show per-frame size changes caused by cropping, re-finalize with `--extract-method fixed-slots --allow-slot-extraction` so each frame uses shared row-level slot geometry. Fixed-slot extraction must still use mask/component cleanup and shared placement; reject crude slot crops that clip wide limbs, include neighboring-slot fragments, or leave colored residue in transparent areas.
+
+Wide poses must be QAed against the contact sheet at native cell size. If a split jump, raised arm, prop, or long accessory touches a cell edge or is cut off, repair the row or enlarge the row-level safe padding before accepting it. Hidden RGB in fully transparent pixels must be cleared by the deterministic atlas composer; reject WebP/PNG outputs that show colored blocks, stripes, or remnants in external viewers.
+
 State-specific guidance:
 
-- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head/body bob, a very small material sway, or another quiet persona-preserving motion. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
+- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head/body bob, a very small material sway, or another quiet persona-preserving motion. Idle frames may be subtle, but they must not be near-identical copies; plan visible micro-variation across the loop, such as open eyes, blink, softer smile, tiny head tilt, breathing up/down, and return-to-neutral. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
 - `waving`: show the wave through paw pose only. Do not draw wave marks, motion arcs, lines, sparkles, or symbols around the paw.
 - `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.
 - `review`: show focus through lean, blink, eyes, head tilt, or paw position. Do not add magnifying glasses, papers, code, UI, punctuation, or symbols unless that prop already exists in the base pet identity.
-- `running-right` and `running-left`: show directional locomotion through body, limb, and prop movement only. Do not draw speed lines, dust clouds, floor shadows, or motion trails.
+- `running-right` and `running-left`: show directional locomotion through body, limb, and prop movement only. `running-right` must face and travel right; `running-left` must face and travel left. The leg cycle must alternate clearly across frames, not repeat one static stride with small offsets. When deriving a mirrored row, mirror each frame in place and preserve temporal frame order. Do not draw speed lines, dust clouds, floor shadows, or motion trails.
 - `running`: show an active working/in-progress loop, as if the pet is busy running a task. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.
 
 ## Pet Naming
@@ -104,7 +112,7 @@ What each step means:
 
 - `Getting <Pet> ready.` Choose or confirm the pet name, description, source images, and working folder.
 - `Imagining <Pet>'s main look.` Generate the pet's main reference image. This is required for new pets, even when the user does not provide an image, because it becomes the visual source of truth.
-- `Picturing <Pet>'s poses.` Create the pose rows, starting with `idle` and `running-right` to confirm the pet still looks consistent. Only mirror `running-left` if `running-right` clearly works when flipped.
+- `Picturing <Pet>'s poses.` Create the pose rows, starting with `idle` and `running-right` to confirm the pet still looks consistent. Confirm idle frames have visible micro-variation, and confirm the directional running row faces right with clear alternating legs. Only mirror `running-left` if `running-right` clearly works when flipped.
 - `Hatching <Pet>.` Turn the approved poses into the final pet files, review the contact sheet, previews, and validation results, fix any broken parts, save `pet.json` and `spritesheet.webp` into the pet folder, then tell the user where the pet and QA files were saved.
 
 Only mark a step complete when the real file, image, or decision exists. If this is just a repair run, start from the first relevant step instead of restarting the whole checklist.
@@ -145,7 +153,7 @@ The base job must complete first. If user references exist, the base job uses th
 
 When generating row strips, keep the identity lock in the row prompt authoritative: do not redesign the pet, and preserve the same head shape, face, markings, palette, prop, outline weight, body proportions, and silhouette. A row that looks like a related but different pet is failed even if the deterministic geometry QA passes.
 
-Generate and record `running-right` before deciding how to complete `running-left`. Inspect `running-right` against the base and references. If the pet is visually symmetric enough that a horizontal mirror preserves identity, prop placement, handedness, markings, lighting, text-free details, and direction semantics, derive `running-left` with:
+Generate and record `running-right` before deciding how to complete `running-left`. Inspect `running-right` against the base and references. The row must actually face right and show a readable alternating gait; a row that faces left or repeats one static stride is a failed `running-right` even if geometry validation passes. If the pet is visually symmetric enough that a horizontal mirror preserves identity, prop placement, handedness, markings, lighting, text-free details, and direction semantics, derive `running-left` with:
 
 ```bash
 python "$SKILL_DIR/scripts/derive_running_left_from_running_right.py" \
@@ -155,6 +163,8 @@ python "$SKILL_DIR/scripts/derive_running_left_from_running_right.py" \
 ```
 
 If there is any asymmetric side-specific marking, readable text, non-mirrored logo, handed prop, one-sided accessory, lighting cue, or direction-specific pose that would become wrong when flipped, do not mirror. Generate `running-left` with `$imagegen` using its row prompt and all listed grounding images, including `decoded/running-right.png` as a gait reference.
+
+Mirroring must preserve animation timing. Use `derive_running_left_from_running_right.py`, which mirrors each frame slot in place; do not mirror the whole strip in a way that reverses frame order.
 
 For the built-in path, record the selected source image from `$CODEX_HOME/generated_images/.../ig_*.png`. Do not record files from the run directory, `tmp/`, hand-made fixtures, deterministic row folders, or post-processed copies as visual job sources.
 
@@ -175,6 +185,17 @@ This copies the image to the exact decoded path expected by the deterministic pi
 python "$SKILL_DIR/scripts/finalize_pet_run.py" \
   --run-dir /absolute/path/to/run
 ```
+
+Use the default extraction first for a normal clean row strip. If the generated row strip has stable character scale but the final atlas or preview videos show size popping because each frame was individually fit to the cell, re-finalize with fixed-slot extraction:
+
+```bash
+python "$SKILL_DIR/scripts/finalize_pet_run.py" \
+  --run-dir /absolute/path/to/run \
+  --extract-method fixed-slots \
+  --allow-slot-extraction
+```
+
+After using fixed-slot extraction, inspect for the opposite failure mode: wide poses, raised arms, props, hoops, ribbons, or split jumps clipped by the fixed frame. If that happens, repair only the affected row or regenerate it with more safe padding; do not accept a clipped atlas just because playback scale is stable.
 
 Expected output:
 
@@ -205,6 +226,8 @@ ${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/
 Review `qa/contact-sheet.png`, `qa/review.json`, `final/validation.json`, and `qa/videos/` before accepting the pet.
 
 Deterministic validation is necessary but not sufficient. Before calling the pet done, visually inspect the contact sheet for identity consistency. Block acceptance if any row changes species/body type, face, markings, palette, prop design, prop side unexpectedly, or overall silhouette.
+
+Preview videos are required for playback-specific QA. Block acceptance if videos show unintended character size popping, sudden vertical jumps caused by cropping, wrong facing direction, reversed or non-alternating gait, idle frames that are effectively identical, or transparent-color blocks that were hidden in the contact sheet.
 
 ## Subagent Row Generation
 
@@ -253,6 +276,8 @@ Before returning, visually check:
 - clean flat chroma-key background
 - complete, separated, unclipped poses
 - no forbidden detached effects or slot-crossing artifacts
+- for `idle`, visible subtle expression or posture variation across the loop
+- for `running-right` and `running-left`, correct facing direction and clear alternating legs
 
 Do not edit manifests, copy into decoded, record results, mirror rows, finalize, repair, or package. Return only:
 selected_source=/absolute/path/to/$CODEX_HOME/generated_images/.../ig_*.png
@@ -273,6 +298,10 @@ python "$SKILL_DIR/scripts/queue_pet_repairs.py" \
 Then repeat the `$imagegen` generation and `record_imagegen_result.py` ingest loop for each reopened row job. Regenerate the smallest failing scope: the failed row, not the whole sheet.
 
 For identity repairs, use the canonical base image, original references, contact sheet, and exact row failure note as grounding context. Repair only the failed row while preserving the canonical pet identity.
+
+For playback-size popping where the generated horizontal strip itself has correct relative scale, do not regenerate images first. Re-run finalization with `--extract-method fixed-slots --allow-slot-extraction`, then re-check `qa/contact-sheet.png` and `qa/videos/`. If fixed slots clip a wide pose, repair only that row with more safe padding or a clearer row prompt.
+
+For directional running repairs, regenerate `running-right` if it faces the wrong way or lacks alternating legs. If the repaired `running-right` is safe to mirror, derive `running-left` from it with `derive_running_left_from_running_right.py` so the left row is a per-frame mirror with the same timing order.
 
 ## Secondary Image Generation Fallback
 
@@ -300,14 +329,21 @@ The secondary fallback requires `OPENAI_API_KEY`.
 - Generate every normal visual job with `$imagegen`: base plus all row strips that are not explicitly approved `running-left` mirror derivations.
 - Treat only the base job as eligible for prompt-only generation; every row job must attach its listed grounding images.
 - Delegate `running-right` first, then mirror `running-left` only when visual inspection confirms a mirror preserves identity and semantics; otherwise delegate `running-left` as a normal grounded `$imagegen` row.
+- Treat a `running-right` row that faces left as failed. Treat a `running-left` row that faces right as failed.
+- Treat directional walking/running rows as failed if the legs do not visibly alternate across the cycle.
+- When mirroring `running-left`, mirror each frame in place and preserve frame order; never reverse the temporal sequence by mirroring the whole strip incorrectly.
 - Never substitute locally drawn, tiled, transformed, or code-generated row strips for missing `$imagegen` outputs.
 - Never manually mutate `imagegen-jobs.json` to claim a visual job completed.
 - Do not rely on generated images for exact atlas geometry; use this skill's deterministic scripts.
+- Do not accept per-frame fit-to-cell extraction when it creates playback size popping. Use fixed-slot extraction for rows whose generated strips already preserve stable scale and placement.
 - Use the chroma key stored in `pet_request.json`; do not force a fixed green screen.
 - Keep the pet's silhouette, face, materials, palette, and props consistent across all rows.
 - Enforce the transparency and effects rules above in every base, row, and repair prompt.
 - Treat visual identity drift as a blocker even when `qa/review.json` and `final/validation.json` have no errors.
+- Treat idle rows with near-identical frames as failed; the loop must have visible but calm micro-variation.
 - Treat a contact sheet that shows cropped references, repeated tiles, white cell backgrounds, or non-sprite fragments as failed.
+- Treat clipped wide poses, raised limbs, long accessories, or prop/extremity cutoffs as failed, even if fixed-slot extraction solved scale stability.
+- Treat hidden transparent-pixel color residue that appears as colored blocks, stripes, or smears in preview/export as failed.
 - Treat forbidden detached effects, chroma-key-adjacent artifacts, shadows, glows, smears, dust, landing marks, wave marks, speed lines, or motion trails as failed rows.
 - Treat `qa/review.json` errors as blockers. Warnings require visual review.
 
@@ -319,4 +355,8 @@ The secondary fallback requires `OPENAI_API_KEY`.
 - Contact sheet and preview videos have been produced unless explicitly skipped.
 - `qa/review.json` has no errors.
 - Row-by-row review confirms the animation cycles are complete enough for the Codex app.
+- Preview videos show stable intended character scale and placement, with no unintended size popping from per-frame cropping.
+- Directional rows face the correct way and use readable alternating gait frames.
+- Idle has visible calm expression or posture variation rather than repeated copies.
+- Wide poses and props are not clipped, and transparent areas render cleanly without hidden color blocks.
 - `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/pet.json` and `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/spritesheet.webp` are staged together for custom pets.
