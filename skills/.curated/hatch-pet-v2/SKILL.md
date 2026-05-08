@@ -1,6 +1,6 @@
 ---
 name: hatch-pet-v2
-description: Create, repair, validate, visually QA, and package Codex-compatible animated pet spritesheets from character art, generated images, company or prospect brand cues, or visual references. Use when a user wants a lightweight-worker Codex pet workflow, a non-pixel custom pet style, a prospect or company mascot pet, or a full 8x9 animated pet atlas with transparent unused cells, QA contact sheets, and pet.json packaging. This skill composes the installed $imagegen system skill for visual generation and uses bundled scripts for deterministic spritesheet assembly.
+description: Create, repair, validate, visually QA, and package Codex-compatible animated pets and pet spritesheets from character art, generated images, company or prospect brand cues, or visual references. Use when a user wants a lightweight-worker Codex pet workflow, a non-pixel custom pet style, a prospect or company mascot pet, or a full 8x9 animated pet atlas with transparent unused cells, QA contact sheets, and pet.json packaging. This skill composes the installed $imagegen system skill for visual generation and uses bundled scripts for deterministic spritesheet assembly.
 ---
 
 # Hatch Pet V2
@@ -136,11 +136,12 @@ Avoid these by default because they usually break transparent-background cleanup
 
 State-specific guidance:
 
+- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet persona-preserving motion. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
 - `waving`: show the wave through paw, hand, wing, or limb pose only.
 - `jumping`: show vertical motion through body position only.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules.
 - `waiting`: show that Codex needs approval, help, or user input through an expectant asking pose.
-- `running`: show active task work, processing, thinking, scanning, typing, or focused effort.
+- `running`: show active task work, processing, thinking, scanning, typing, or focused effort. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.
 - `review`: show focus through lean, blink, eyes, head tilt, or paw/hand position.
 - `running-right` and `running-left`: show directional drag movement through body, limb, and prop movement only.
 

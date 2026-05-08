@@ -31,14 +31,14 @@ ROWS = [
 ]
 
 STATE_PROMPTS = {
-    "idle": "Calm resting loop: subtle breathing, blink, and tiny relaxed posture changes.",
+    "idle": "Calm low-distraction resting loop: subtle breathing, tiny blink, slight head/body bob, and only quiet persona-preserving motion.",
     "running-right": "Dragging-right loop: show directional movement to the right through body and limb poses only.",
     "running-left": "Dragging-left loop: show directional movement to the left through body and limb poses only.",
     "waving": "Greeting loop: paw or limb down, raised, tilted, and returning in a friendly attention gesture.",
     "jumping": "Hover jump loop: anticipation, lift, airborne peak, descent, and settle through body height.",
     "failed": "Blocked/failed loop: slumped or deflated reaction with sad or closed eyes.",
     "waiting": "Needs-input loop: expectant asking pose for approval, help, or user input.",
-    "running": "Working loop: focused active-task processing, thinking, typing, scanning, or effortful concentration.",
+    "running": "Working loop: focused active-task processing, thinking, typing, scanning, or effortful concentration; not literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.",
     "review": "Ready-review loop: focused inspection of completed output with lean, blink, narrowed eyes, head tilt, or paw pose.",
 }
 
