@@ -1,0 +1,13 @@
+interface:
+  display_name: "Higgsfield Soul Character"
+  short_description: "Train reusable face identity references"
+  brand_color: "#D1FE17"
+  default_prompt: "Use $higgsfield-soul-id to train a reusable Soul Character from these face photos."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "higgsfield"
+      description: "Higgsfield AI MCP server for Soul Characters, media upload, and generation"
+      transport: "streamable_http"
+      url: "https://mcp.higgsfield.ai/mcp"
