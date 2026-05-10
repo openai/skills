@@ -39,7 +39,7 @@ After installing a skill, restart Codex to pick up new skills.
 
 Some curated GitHub skills can optionally load repo-specific instructions while remaining useful as standalone vendor skills:
 
-| Skill | User hook | Project hook |
+| Skill | User hooks | Project hooks |
 | --- | --- | --- |
 | `yeet` | `${CODEX_HOME:-$HOME/.codex}/PULL_REQUESTS.md`, then `${CODEX_HOME:-$HOME/.codex}/qa-and-ship.md` | `<repo-root>/PULL_REQUESTS.md`, then `<repo-root>/qa-and-ship.md` |
 | `gh-fix-ci` | `${CODEX_HOME:-$HOME/.codex}/gh-ci.md` | `<repo-root>/gh-ci.md` |
