@@ -19,6 +19,7 @@ import json
 import subprocess
 import sys
 from typing import Any
+from urllib.parse import urlparse
 
 QUERY = """\
 query(
@@ -116,19 +117,31 @@ def _ensure_gh_authenticated() -> None:
 
 
 def gh_pr_view_json(fields: str) -> dict[str, Any]:
-    # fields is a comma-separated list like: "number,headRepositoryOwner,headRepository"
+    # fields is a comma-separated list like: "number,url"
     return _run_json(["gh", "pr", "view", "--json", fields])
+
+
+def parse_pr_url(pr_url: str) -> tuple[str, str, int]:
+    """Extract the base repository owner, repository name, and PR number from a PR URL."""
+    parsed = urlparse(pr_url)
+    path_parts = parsed.path.strip("/").split("/")
+    if len(path_parts) < 4 or path_parts[2] != "pull":
+        raise RuntimeError(f"Unexpected pull request URL format: {pr_url}")
+    owner, repo, number = path_parts[0], path_parts[1], path_parts[3]
+    if not owner or not repo or not number.isdigit():
+        raise RuntimeError(f"Unexpected pull request URL format: {pr_url}")
+    return owner, repo, int(number)
 
 
 def get_current_pr_ref() -> tuple[str, str, int]:
     """
     Resolve the PR for the current branch (whatever gh considers associated).
-    Works for cross-repo PRs too, by reading head repository owner/name.
+    Works for cross-repo PRs too, by reading the base repository from the PR URL.
     """
-    pr = gh_pr_view_json("number,headRepositoryOwner,headRepository")
-    owner = pr["headRepositoryOwner"]["login"]
-    repo = pr["headRepository"]["name"]
-    number = int(pr["number"])
+    pr = gh_pr_view_json("number,url")
+    owner, repo, number = parse_pr_url(str(pr["url"]))
+    if int(pr["number"]) != number:
+        raise RuntimeError(f"PR number mismatch in GitHub response: {pr}")
     return owner, repo, number
 
 

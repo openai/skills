@@ -24,6 +24,7 @@ Apply instructions in this order: vendor skill, then user hook, then project hoo
 
 ## 1) Inspect comments needing attention
 - Run scripts/fetch_comments.py which will print out all the comments and review threads on the PR
+- The fetcher resolves comments against the PR's base repository, so fork-backed PRs work when `gh pr view` can resolve the current branch PR.
 
 ## 2) Ask the user for clarification
 - Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
