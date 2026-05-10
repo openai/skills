@@ -41,11 +41,11 @@ Some curated GitHub skills can optionally load repo-specific instructions while 
 
 | Skill | User hook | Project hook |
 | --- | --- | --- |
-| `yeet` | `${CODEX_HOME:-$HOME/.codex}/PULL_REQUESTS.md` | `<repo-root>/PULL_REQUESTS.md` |
+| `yeet` | `${CODEX_HOME:-$HOME/.codex}/PULL_REQUESTS.md`, then `${CODEX_HOME:-$HOME/.codex}/qa-and-ship.md` | `<repo-root>/PULL_REQUESTS.md`, then `<repo-root>/qa-and-ship.md` |
 | `gh-fix-ci` | `${CODEX_HOME:-$HOME/.codex}/gh-ci.md` | `<repo-root>/gh-ci.md` |
 | `gh-address-comments` | `${CODEX_HOME:-$HOME/.codex}/gh-comments.md` | `<repo-root>/gh-comments.md` |
 
-When a hook file exists, the skill reads the user hook first and the project hook second. Project instructions override user instructions for conflicts, user instructions override vendor instructions, and non-conflicting instructions all apply. Missing hook files are ignored; unreadable hook files are reported as blockers.
+When hook files exist, the skill reads user hooks first and project hooks second, using the order listed in the table. Project instructions override user instructions for conflicts, user instructions override vendor instructions, and non-conflicting instructions all apply. Missing hook files are ignored; unreadable hook files are reported as blockers.
 
 ## License
 
