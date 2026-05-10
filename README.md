@@ -35,6 +35,18 @@ $skill-installer install https://github.com/openai/skills/tree/main/skills/.expe
 
 After installing a skill, restart Codex to pick up new skills.
 
+## Skill instruction hooks
+
+Some curated GitHub skills can optionally load repo-specific instructions while remaining useful as standalone vendor skills:
+
+| Skill | User hook | Project hook |
+| --- | --- | --- |
+| `yeet` | `${CODEX_HOME:-$HOME/.codex}/PULL_REQUESTS.md` | `<repo-root>/PULL_REQUESTS.md` |
+| `gh-fix-ci` | `${CODEX_HOME:-$HOME/.codex}/gh-ci.md` | `<repo-root>/gh-ci.md` |
+| `gh-address-comments` | `${CODEX_HOME:-$HOME/.codex}/gh-comments.md` | `<repo-root>/gh-comments.md` |
+
+When a hook file exists, the skill reads the user hook first and the project hook second. Project instructions override user instructions for conflicts, user instructions override vendor instructions, and non-conflicting instructions all apply. Missing hook files are ignored; unreadable hook files are reported as blockers.
+
 ## License
 
 The license of an individual skill can be found directly inside the skill's directory inside the `LICENSE.txt` file.

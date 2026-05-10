@@ -13,6 +13,17 @@ Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable fai
 
 Prereq: authenticate with the standard GitHub CLI once (for example, run `gh auth login`), then confirm with `gh auth status` (repo + workflow scopes are typically required).
 
+## Instruction Hooks
+
+Before running the workflow, build the effective instructions from the vendor skill plus optional hook files:
+
+- User hook: `${CODEX_HOME:-$HOME/.codex}/gh-ci.md`
+- Project hook: `<repo-root>/gh-ci.md`
+
+Resolve `<repo-root>` from an explicit repo/cwd input when one is provided; otherwise use `git rev-parse --show-toplevel` from the current checkout. Read each hook file only when that exact path exists. Do not scan parent directories, nested directories, or alternate filenames.
+
+Apply instructions in this order: vendor skill, then user hook, then project hook. Later instructions override earlier ones only when they conflict; non-conflicting instructions all apply. Current system, developer, and user messages still outrank all hook files. If a hook file exists but cannot be read, stop and report the unreadable path instead of silently skipping it. If no hook exists, run this vendor skill as written.
+
 ## Inputs
 
 - `repo`: path inside the repo (default `.`)

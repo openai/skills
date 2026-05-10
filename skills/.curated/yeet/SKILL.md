@@ -8,6 +8,17 @@ description: "Use only when the user explicitly asks to stage, commit, push, and
 - Require GitHub CLI `gh`. Check `gh --version`. If missing, ask the user to install `gh` and stop.
 - Require authenticated `gh` session. Run `gh auth status`. If not authenticated, ask the user to run `gh auth login` (and re-run `gh auth status`) before continuing.
 
+## Instruction Hooks
+
+Before running the workflow, build the effective instructions from the vendor skill plus optional hook files:
+
+- User hook: `${CODEX_HOME:-$HOME/.codex}/PULL_REQUESTS.md`
+- Project hook: `<repo-root>/PULL_REQUESTS.md`
+
+Resolve `<repo-root>` from an explicit repo/cwd input when one is provided; otherwise use `git rev-parse --show-toplevel` from the current checkout. Read each hook file only when that exact path exists. Do not scan parent directories, nested directories, or alternate filenames.
+
+Apply instructions in this order: vendor skill, then user hook, then project hook. Later instructions override earlier ones only when they conflict; non-conflicting instructions all apply. Current system, developer, and user messages still outrank all hook files. If a hook file exists but cannot be read, stop and report the unreadable path instead of silently skipping it. If no hook exists, run this vendor skill as written.
+
 ## Naming conventions
 
 - Branch: `{description}` when starting from main/master/default.
