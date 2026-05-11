@@ -1,4 +1,0 @@
-interface:
-  display_name: "Hatch Pet V2"
-  short_description: "Hatch style-flexible Codex pets"
-  default_prompt: "Use $hatch-pet-v2 to create a Codex-compatible animated pet in any pet-safe style from a concept, company brand, or reference image."

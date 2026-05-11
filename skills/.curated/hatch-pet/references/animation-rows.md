@@ -18,12 +18,12 @@ Unused cells after each row's final used column must be fully transparent.
 
 ## Row Purposes
 
-- `idle`: neutral breathing/blinking loop; use as the reduced-motion first frame.
+- `idle`: calm, low-distraction breathing/blinking loop; use as the reduced-motion first frame. Keep motion subtle and persona-preserving.
 - `running-right`: locomotion to the right; 8-frame loop should read directionally.
 - `running-left`: mirrored or redrawn locomotion to the left; do not simply reuse right-facing frames unless the design is symmetric.
 - `waving`: greeting or attention gesture; clear start, raised gesture, return.
 - `jumping`: anticipation, lift, peak, descent, settle.
 - `failed`: error/sad/deflated reaction; readable but not visually noisy.
-- `waiting`: patient idle variant; glance, small bounce, or prop motion.
-- `running`: generic/front-facing or in-place run loop.
+- `waiting`: blocked-on-user-input state; expectant asking pose for approval, help, or user input.
+- `running`: active task work state; focused processing, thinking, scanning, typing, or effortful concentration. This row is not foot-running; avoid jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.
 - `review`: focused/inspecting/thinking loop suitable for review state.

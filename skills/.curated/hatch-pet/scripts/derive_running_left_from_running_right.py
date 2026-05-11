@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,14 +30,6 @@ def find_job(manifest: dict[str, object], job_id: str) -> dict[str, object]:
         if job.get("id") == job_id:
             return job
     raise SystemExit(f"unknown job id: {job_id}")
-
-
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as file:
-        for chunk in iter(lambda: file.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def image_metadata(path: Path) -> dict[str, object]:
@@ -104,10 +95,7 @@ def main() -> None:
 
     left_job["status"] = "complete"
     left_job["source_path"] = manifest_relative(source, run_dir)
-    left_job["source_provenance"] = "deterministic-mirror"
     left_job["derived_from"] = "running-right"
-    left_job["source_sha256"] = file_sha256(source)
-    left_job["output_sha256"] = file_sha256(output)
     left_job["completed_at"] = datetime.now(timezone.utc).isoformat()
     left_job["metadata"] = image_metadata(output)
     left_job["mirror_decision"] = {
@@ -117,8 +105,6 @@ def main() -> None:
     }
     for key in [
         "last_error",
-        "secondary_fallback",
-        "synthetic_test_source",
         "repair_reason",
         "queued_at",
     ]:

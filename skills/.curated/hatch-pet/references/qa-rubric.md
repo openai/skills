@@ -15,16 +15,16 @@ Do not accept an atlas until all checks pass.
 
 - Same silhouette and proportions across every row.
 - Same face and expression language.
-- Same material, palette, lighting, and prop design.
+- Same style, material, palette, lighting, and prop design.
 - No frame introduces a new unintended character or object.
 
-## Sprite Style
+## Pet-Safe Style
 
-- Art reads as a Codex digital pet sprite, not a polished illustration or glossy app icon.
-- Silhouette is compact and chunky enough to read inside a `192x208` cell.
-- Outlines are dark and simple, with visible stepped/pixel-style edges.
-- Palette is limited, with flat cel shading and minimal highlights or shadow steps.
-- No painterly texture, realistic fur/material detail, soft gradients, high-detail antialiasing, or tiny accessories that disappear at pet size.
+- Art reads as a Codex app pet, not a scene, app icon, logo sheet, or standalone illustration.
+- Silhouette is compact and clear enough to read inside a `192x208` cell.
+- The chosen style is consistent across every row, including edge treatment, material, lighting, and palette.
+- Pixel, plush, clay, sticker, flat vector, 3D toy, painterly mascot, ink, and brand-inspired styles are all acceptable when readable at pet size.
+- No tiny accessories, texture detail, logo detail, or text that disappears or becomes noisy at pet size.
 
 ## Animation Completeness
 
@@ -37,6 +37,7 @@ Do not accept an atlas until all checks pass.
 ## App Fitness
 
 - First idle frame works as a static reduced-motion pet.
+- The `idle` row should be calm and low-distraction; reject it if it reads as waving, walking, running, jumping, talking, working, reviewing, reacting dramatically, changing props, or making large pose/silhouette changes.
 - No important detail is too small to read.
 - No frame is clipped by the cell.
 - Failed/review/waiting states are distinct from ordinary idle.
@@ -57,4 +58,4 @@ Repair the smallest failing scope first:
 2. One row.
 3. Full atlas regeneration only when identity or layout is broadly broken.
 
-The normal production path should queue targeted repair jobs for failing rows. Manual repair should preserve the same run directory and regenerate only the affected row prompt/image unless the base character is wrong.
+The normal production path should regenerate only the affected row and copy the selected replacement into the same decoded output path unless the base character is wrong.
