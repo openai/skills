@@ -245,6 +245,51 @@ def _name_phase(illum_pct: float, waxing: bool) -> tuple[str, str]:
     return ("Waning Gibbous", "🌖") if illum_pct > 50 else ("Waning Crescent", "🌘")
 
 
+def render_moon_ascii(illum_pct: float, waxing: bool, rows: int = 9) -> str:
+    """Return an ASCII moon disk with the correct terminator for this phase.
+
+    Uses unicode block fills for lit pixels and light shade for the dark
+    portion of the visible disk; spaces for outside the disk. Character
+    cells are taller than wide so we paint 2 columns per disk radius unit
+    to keep the disk looking circular.
+
+    Geometry: the visible disk is a circle radius R; the terminator is a
+    half-ellipse with horizontal semi-axis |cos i| · R. A pixel at (x, y)
+    on a given y-row is lit when:
+        waxing:  x > -cos(i) · sqrt(R² - y²)
+        waning:  x < +cos(i) · sqrt(R² - y²)
+    where cos(i) = 2·(illum/100) - 1.
+    """
+    rows = max(5, rows | 1)  # force odd so center row is symmetric
+    R = (rows - 1) / 2.0
+    cos_i = 2.0 * max(0.0, min(1.0, illum_pct / 100.0)) - 1.0
+
+    lit_glyph = "█"
+    dark_glyph = "░"
+    out: list[str] = []
+    cols = rows * 2  # 2 chars wide per row of vertical for ~1:1 disk look
+    for r in range(rows):
+        y = R - r
+        if abs(y) > R:
+            out.append(" " * cols)
+            continue
+        edge = math.sqrt(R * R - y * y)
+        line = []
+        for c in range(cols):
+            # Map column c into x in [-R, +R]; 2 cols per radius unit.
+            x = (c - (cols - 1) / 2.0) / 2.0
+            if abs(x) > edge + 1e-9:
+                line.append(" ")
+                continue
+            if waxing:
+                is_lit = x > -cos_i * edge
+            else:
+                is_lit = x < cos_i * edge
+            line.append(lit_glyph if is_lit else dark_glyph)
+        out.append("".join(line))
+    return "\n".join(out)
+
+
 def _bracket_new_moons(jd: float) -> tuple[float, float, int]:
     """Return (prev_new_jde, next_new_jde, k_prev) bracketing jd."""
     year_approx = 2000 + (jd - 2451545.0) / 365.25

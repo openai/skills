@@ -26,6 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from moon_phase import moon_phase as compute_moon_phase  # noqa: E402
+from moon_phase import render_moon_ascii  # noqa: E402
 
 SALT = "hatch-me-2026"
 
@@ -166,6 +167,8 @@ def render_card(soul: dict) -> str:
     shimmer = "  ✨ SHINY ✨\n" if soul["shiny"] else ""
     m = soul["moon"]
     z = soul["zodiac"]
+    moon_art = render_moon_ascii(m["illumination_pct"], m.get("waxing", True), rows=9)
+    moon_art_indented = "\n".join("    " + ln for ln in moon_art.splitlines())
     return (
         "\n"
         "  ╔══════════════════════════════════════════════╗\n"
@@ -174,7 +177,8 @@ def render_card(soul: dict) -> str:
         f"\n   {soul['glyph']}  {soul['name']}\n"
         f"   {soul['vibe']}\n"
         f"{shimmer}"
-        f"\n  sky on your birthday:\n"
+        f"\n  sky on your birthday:\n\n"
+        f"{moon_art_indented}\n\n"
         f"    {m['phase_glyph']}  {m['phase_name']:<18} {m['illumination_pct']:>5.1f}% illuminated\n"
         f"    {z['glyph']}  {z['name']}\n"
         "\n  bones:\n"
