@@ -74,7 +74,7 @@ def remove_chroma_background(
         for x in range(rgba.width):
             red, green, blue, alpha = pixels[x, y]
             if color_distance(red, green, blue, chroma_key) <= threshold:
-                pixels[x, y] = (red, green, blue, 0)
+                pixels[x, y] = (0, 0, 0, 0)
     return rgba
 
 
@@ -96,6 +96,26 @@ def fit_to_cell(image: Image.Image) -> Image.Image:
     left = (CELL_WIDTH - sprite.width) // 2
     top = (CELL_HEIGHT - sprite.height) // 2
     target.alpha_composite(sprite, (left, top))
+    return target
+
+
+def fit_viewport_to_cell(image: Image.Image) -> Image.Image:
+    target = Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT), (0, 0, 0, 0))
+    if image.getbbox() is None:
+        return target
+
+    viewport = image.copy()
+    max_width = CELL_WIDTH - 10
+    max_height = CELL_HEIGHT - 10
+    scale = min(max_width / viewport.width, max_height / viewport.height, 1.0)
+    if scale != 1.0:
+        viewport = viewport.resize(
+            (max(1, round(viewport.width * scale)), max(1, round(viewport.height * scale))),
+            Image.Resampling.LANCZOS,
+        )
+    left = (CELL_WIDTH - viewport.width) // 2
+    top = (CELL_HEIGHT - viewport.height) // 2
+    target.alpha_composite(viewport, (left, top))
     return target
 
 
@@ -183,7 +203,10 @@ def component_group_image(
     return output
 
 
-def extract_component_frames(strip: Image.Image, frame_count: int) -> list[Image.Image] | None:
+def component_frame_groups(
+    strip: Image.Image,
+    frame_count: int,
+) -> list[list[dict[str, object]]] | None:
     components = connected_components(strip)
     if not components:
         return None
@@ -215,7 +238,23 @@ def extract_component_frames(strip: Image.Image, frame_count: int) -> list[Image
         )
         groups[nearest_index].append(component)
 
+    return groups
+
+
+def extract_component_frames(strip: Image.Image, frame_count: int) -> list[Image.Image] | None:
+    groups = component_frame_groups(strip, frame_count)
+    if groups is None:
+        return None
     return [fit_to_cell(component_group_image(strip, group)) for group in groups]
+
+
+def component_bounds(components: list[dict[str, object]]) -> tuple[int, int, int, int]:
+    return (
+        min(component["bbox"][0] for component in components),
+        min(component["bbox"][1] for component in components),
+        max(component["bbox"][2] for component in components),
+        max(component["bbox"][3] for component in components),
+    )
 
 
 def extract_slot_frames(strip: Image.Image, frame_count: int) -> list[Image.Image]:
@@ -226,6 +265,48 @@ def extract_slot_frames(strip: Image.Image, frame_count: int) -> list[Image.Imag
         right = round((index + 1) * slot_width)
         crop = strip.crop((left, 0, right, strip.height))
         frames.append(fit_to_cell(crop))
+    return frames
+
+
+def extract_stable_slot_frames(strip: Image.Image, frame_count: int) -> list[Image.Image]:
+    groups = component_frame_groups(strip, frame_count)
+    padding = 4
+    if groups is not None:
+        bboxes = [component_bounds(group) for group in groups]
+        shared_top = max(0, min(bbox[1] for bbox in bboxes) - padding)
+        shared_bottom = min(strip.height, max(bbox[3] for bbox in bboxes) + padding)
+        viewport_width = max(bbox[2] - bbox[0] for bbox in bboxes) + padding * 2
+        viewport_height = max(1, shared_bottom - shared_top)
+        frames = []
+        for group, bbox in zip(groups, bboxes):
+            grouped = component_group_image(strip, group, padding=padding)
+            grouped_top = max(0, bbox[1] - padding)
+            viewport = Image.new(
+                "RGBA",
+                (viewport_width, viewport_height),
+                (0, 0, 0, 0),
+            )
+            left = (viewport_width - grouped.width) // 2
+            viewport.alpha_composite(grouped, (left, grouped_top - shared_top))
+            frames.append(fit_viewport_to_cell(viewport))
+        return frames
+
+    bbox = strip.getbbox()
+    if bbox is None:
+        return [
+            Image.new("RGBA", (CELL_WIDTH, CELL_HEIGHT), (0, 0, 0, 0))
+            for _ in range(frame_count)
+        ]
+
+    shared_top = max(0, bbox[1] - padding)
+    shared_bottom = min(strip.height, bbox[3] + padding)
+    slot_width = strip.width / frame_count
+    frames = []
+    for index in range(frame_count):
+        left = round(index * slot_width)
+        right = round((index + 1) * slot_width)
+        crop = strip.crop((left, shared_top, right, shared_bottom))
+        frames.append(fit_viewport_to_cell(crop))
     return frames
 
 
@@ -254,8 +335,12 @@ def extract_state(
             used_method = "components"
 
     if frames is None:
-        frames = extract_slot_frames(strip, frame_count)
-        used_method = "slots"
+        if method == "stable-slots":
+            frames = extract_stable_slot_frames(strip, frame_count)
+            used_method = "stable-slots"
+        else:
+            frames = extract_slot_frames(strip, frame_count)
+            used_method = "slots"
 
     outputs = []
     for index, frame in enumerate(frames):
@@ -274,9 +359,9 @@ def main() -> None:
     parser.add_argument("--key-threshold", type=float, default=96.0)
     parser.add_argument(
         "--method",
-        choices=("auto", "components", "slots"),
+        choices=("auto", "components", "slots", "stable-slots"),
         default="auto",
-        help="Use connected sprite components when possible, or fixed equal slots.",
+        help="Use connected sprite components when possible, raw equal slots, or row-stable slot viewports.",
     )
     args = parser.parse_args()
 

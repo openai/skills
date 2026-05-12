@@ -8,8 +8,9 @@ Do not accept an atlas until all checks pass.
 - 8 columns x 9 rows.
 - Each frame fits inside its `192x208` cell.
 - Unused cells are transparent.
+- Fully transparent atlas pixels do not retain non-zero RGB residue after export.
 - `qa/review.json` has no errors.
-- `frames/frames-manifest.json` records component extraction for production rows, unless slot extraction was intentionally accepted after visual inspection.
+- `frames/frames-manifest.json` records component extraction for production rows unless `stable-slots` was intentionally chosen to preserve row-level playback stability after visual inspection.
 
 ## Character Consistency
 
@@ -31,8 +32,10 @@ Do not accept an atlas until all checks pass.
 - Each row uses the exact expected number of frames.
 - The first and last frames can loop without an obvious pop.
 - Directional rows read as the intended direction.
+- Mirrored directional rows preserve temporal frame order rather than reversing the cadence.
 - State-specific actions are recognizable at pet size.
 - Poses are generated animation variants, not repeated copies of the same source image.
+- Preview GIFs do not show unintended size popping, extraction-induced baseline jumps, or wrong directional facing.
 
 ## App Fitness
 
@@ -49,6 +52,8 @@ Do not accept an atlas until all checks pass.
 - Contact sheets must not show darker/lighter versions of the chroma key as shadows, dust, smears, glows, landing marks, or motion effects. These are background extraction failures and should trigger row repair.
 - If `qa/review.json` reports edge pixels, sparse frames, size outliers, or slot-extraction fallback, inspect the row visually and repair it when the issue is visible.
 - If `qa/review.json` reports chroma-adjacent non-transparent pixels, repair the row unless those pixels are an intentional character color and the selected key was manually accepted.
+- If preview GIFs show size popping even though the generated strip itself had stable scale and placement, rerun extraction with `stable-slots` before regenerating the row.
+- If previews show wrong facing direction, reversed cadence, non-alternating gait, or an effectively static idle loop, repair or regenerate the affected row.
 
 ## Repair Policy
 

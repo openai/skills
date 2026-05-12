@@ -25,14 +25,13 @@ Do not call the Image API, image CLI, or any other image-generation path directl
 
 When invoking `$imagegen`, pass the generated pet prompt as the authoritative visual spec. Pet prompts should stay concise, state-specific, sprite-production oriented, and grounded in the listed input images. Keep longer policy and QA rules in this skill and the deterministic review scripts rather than expanding them into every image prompt. Do not wrap prompts in the generic `$imagegen` shared prompt schema.
 
-Use this skill's scripts for deterministic image work only: preparing layout guides and prompts, mirroring approved `running-left`, extracting frames, validating rows, composing the final atlas, and creating QA media. Parent-owned shell/`jq` steps handle manifest updates, packaging, and cleanup.
+Use this skill's scripts for deterministic image work only: preparing layout guides and prompts, mirroring approved `running-left`, extracting frames, validating rows, composing the final atlas, and creating contact-sheet plus motion-preview QA media. Parent-owned shell/`jq` steps handle manifest updates, packaging, and cleanup.
 
 ## Storage Controls
 
 The built-in `$imagegen` path stores generated PNG bytes in the rollout that invokes it, even when it also writes a file under `${CODEX_HOME:-$HOME/.codex}/generated_images`. Deleting files later reduces filesystem use, but it does not shrink an already-written rollout. Keep image generation isolated and bounded:
 
 - Use one lightweight generation worker per visual job. Do not batch multiple base/row jobs into the same worker.
-- If subagents are unavailable, ask before continuing because generating all rows in the parent rollout can embed 9-10 PNGs in one transcript.
 - Workers must return only `selected_source=...` and `qa_note=...`; they must not include Markdown image previews, base64, or extra visual attachments in their final response.
 - The parent must not open every generated PNG visually. Use worker QA for each job and inspect only the final contact sheet.
 - After copying the selected generated output into `decoded/`, remove the selected original from `${CODEX_HOME:-$HOME/.codex}/generated_images` when it lives there, then remove its now-empty generation directory if possible.
@@ -117,6 +116,8 @@ Non-pixel styles are first-class. Plush, clay, sticker, vector, 3D toy, painterl
 
 Pet rows are processed into transparent `192x208` cells, so every generated pixel must either belong to the pet sprite or be cleanly removable chroma-key background. Prefer pose, expression, and silhouette changes over decorative effects.
 
+The deterministic raster pipeline owns the transparency invariant: pixels that become fully transparent are normalized so they do not retain hidden RGB residue, and atlas validation should fail if exported files violate that invariant. Do not paper over colored halos or transparent-pixel residue by accepting visually inconsistent outputs.
+
 Allowed effects must satisfy all of these conditions:
 
 - The effect is state-relevant and helps explain the animation.
@@ -136,14 +137,14 @@ Avoid these by default because they usually break transparent-background cleanup
 
 State-specific guidance:
 
-- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet persona-preserving motion. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
+- `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet persona-preserving motion. The loop must still contain visible micro-variation; do not accept six effectively identical copies. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
 - `waving`: show the wave through paw, hand, wing, or limb pose only. Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.
 - `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.
 - `waiting`: show that Codex needs approval, help, or user input through an expectant asking pose. Keep it distinct from ordinary idle and review.
 - `running`: show active task work, processing, thinking, scanning, typing, or focused effort. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, directional travel, speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.
 - `review`: show focus through lean, blink, eyes, head tilt, or paw/hand position. Do not add magnifying glasses, papers, code, UI, punctuation, symbols, or other new props unless they already exist in the base pet identity.
-- `running-right` and `running-left`: show directional drag movement through body, limb, and prop movement only. Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.
+- `running-right` and `running-left`: show directional drag movement through body, limb, and prop movement only. `running-right` must face and travel right; `running-left` must face and travel left. Their cadence must visibly alternate across the loop rather than repeating one nearly static stride. Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.
 
 ## Visible Progress Plan
 
@@ -254,6 +255,8 @@ python "$SKILL_DIR/scripts/derive_running_left_from_running_right.py" \
   --decision-note "<why mirroring preserves this pet's identity>"
 ```
 
+That script mirrors each generated frame slot in place so the leftward row preserves the rightward row's temporal order. Do not replace it with a whole-strip mirror that reverses animation timing.
+
 6. When all jobs are complete, run the image-processing scripts directly:
 
 ```bash
@@ -295,6 +298,32 @@ python "$SKILL_DIR/scripts/make_contact_sheet.py" \
   --output "$RUN_DIR/qa/contact-sheet.png"
 ```
 
+```bash
+python "$SKILL_DIR/scripts/render_animation_previews.py" \
+  --frames-root "$RUN_DIR/frames" \
+  --output-dir "$RUN_DIR/qa/previews"
+```
+
+If the preview GIFs show size popping or baseline jumps caused by per-frame fit-to-cell extraction, and the original row strip itself had stable scale and placement, rerun frame extraction with the explicit row-stability mode and then re-run inspection, atlas composition, validation, contact sheet generation, and previews:
+
+```bash
+python "$SKILL_DIR/scripts/extract_strip_frames.py" \
+  --decoded-dir "$RUN_DIR/decoded" \
+  --output-dir "$RUN_DIR/frames" \
+  --states all \
+  --method stable-slots
+```
+
+```bash
+python "$SKILL_DIR/scripts/inspect_frames.py" \
+  --frames-root "$RUN_DIR/frames" \
+  --json-out "$RUN_DIR/qa/review.json" \
+  --require-components \
+  --allow-stable-slots
+```
+
+Use `stable-slots` as a deliberate QA-driven correction, not the default. It should reduce extraction-induced motion pops without hiding clipped wide poses or bad source strips.
+
 Expected output before cleanup:
 
 ```text
@@ -307,6 +336,7 @@ run/
   final/spritesheet.webp
   final/validation.json
   qa/contact-sheet.png
+  qa/previews/*.gif
   qa/review.json
   qa/run-summary.json
 ```
@@ -338,15 +368,19 @@ Write `qa/run-summary.json` after packaging:
 jq -n --arg run_dir "$RUN_DIR" --arg spritesheet "$RUN_DIR/final/spritesheet.webp" --arg validation "$RUN_DIR/final/validation.json" --arg contact_sheet "$RUN_DIR/qa/contact-sheet.png" --arg review "$RUN_DIR/qa/review.json" --arg package "$PET_DIR" '{ok: true, run_dir: $run_dir, spritesheet: $spritesheet, validation: $validation, contact_sheet: $contact_sheet, review: $review, package: $package}' > "$RUN_DIR/qa/run-summary.json"
 ```
 
-After deterministic image processing, inspect `qa/contact-sheet.png` with a lightweight visual QA worker before accepting the pet. Deterministic validation is necessary but not sufficient. Block acceptance if any row changes species/body type, face, markings, palette, material, prop design, style, prop side unexpectedly, or overall silhouette.
+After deterministic image processing, inspect `qa/contact-sheet.png` and `qa/previews/*.gif` with a lightweight visual QA worker before accepting the pet. Deterministic validation is necessary but not sufficient. Block acceptance if any row changes species/body type, face, markings, palette, material, prop design, style, prop side unexpectedly, or overall silhouette. Motion previews must also reject unintended size popping, reversed or stagnant directional cadence, wrong facing direction, and idle loops that are technically different but visually inert.
 
 After model visual QA accepts the contact sheet, remove intermediate run artifacts:
 
-Keep `pet_request.json`, `final/spritesheet.webp`, `final/validation.json`, `qa/contact-sheet.png`, `qa/review.json`, and `qa/run-summary.json`. Remove generated prompt files, layout guides, decoded row strips, extracted frames, `final/spritesheet.png`, and the imagegen job manifest. Skip cleanup when the user wants debug artifacts or the run still needs repair.
+Keep `pet_request.json`, `final/spritesheet.webp`, `final/validation.json`, `qa/contact-sheet.png`, `qa/previews/`, `qa/review.json`, and `qa/run-summary.json`. Remove generated prompt files, layout guides, decoded row strips, extracted frames, `final/spritesheet.png`, and the imagegen job manifest. Skip cleanup when the user wants debug artifacts or the run still needs repair.
 
 ## Lightweight Visual Workers
 
 Use lightweight subagents for image-heavy work by default. This bounds each `$imagegen` rollout to one selected image, keeps contact-sheet vision payloads out of the parent thread, and reduces cost while preserving the full 9-state app contract.
+
+## Subagent Delegation
+
+Unless explicitly forbidden by the user, use subagents for this run. If the user has not allowed the use of subagents, or the intent on subagent use is vague, then ask the user for permission to spawn subagents for parallel lanes of work.
 
 Parent responsibilities:
 
@@ -377,7 +411,7 @@ Row worker responsibilities:
 
 Final visual QA worker responsibilities:
 
-- inspect only `qa/contact-sheet.png`, with `qa/review.json` and `final/validation.json` as text context when useful
+- inspect `qa/contact-sheet.png` plus the row GIFs under `qa/previews/`, with `qa/review.json` and `final/validation.json` as text context when useful
 - verify all 9 rows match the Codex app state contract and the same pet identity
 - return a compact result: `visual_qa=pass` or `visual_qa=fail`, plus row-specific repair notes when failing
 - do not edit files, queue repairs, package, or clean up
@@ -442,13 +476,14 @@ Visually QA one finalized hatch-pet contact sheet.
 
 Run dir: <absolute run dir>
 Contact sheet: <absolute run dir>/qa/contact-sheet.png
+Preview dir: <absolute run dir>/qa/previews
 Review JSON: <absolute run dir>/qa/review.json
 Validation JSON: <absolute run dir>/final/validation.json
 
-Inspect the contact sheet visually. Confirm the same pet identity, style, palette, silhouette, face, proportions, and props across all rows:
+Inspect the contact sheet and the preview GIFs visually. Confirm the same pet identity, style, palette, silhouette, face, proportions, and props across all rows:
 0 idle, 1 running-right, 2 running-left, 3 waving, 4 jumping, 5 failed, 6 waiting, 7 running, 8 review.
 
-Fail rows with identity drift, missing/blank frames, copied guide marks, white/nontransparent backgrounds, cropped bodies, slot overlap, detached effects, shadows/glows/smears/dust, chroma-key artifacts, or motion that does not match the row state.
+Fail rows with identity drift, missing/blank frames, copied guide marks, white/nontransparent backgrounds, cropped bodies, slot overlap, detached effects, shadows/glows/smears/dust, chroma-key artifacts, motion that does not match the row state, unintended size popping, wrong facing direction, reversed or non-alternating gait, or idle loops that are effectively static.
 
 Do not edit files, queue repairs, package, clean up, or inspect unrelated files.
 
@@ -465,6 +500,8 @@ If frame inspection or final visual QA fails, read `qa/review.json`, regenerate 
 
 For identity repairs, use the canonical base image, original references, contact sheet, and exact row failure note as grounding context. Give the row worker the existing row prompt plus a compact repair note from `qa/review.json`; preserve the canonical pet identity and chosen style.
 
+For extraction-induced motion popping, do not regenerate imagery first. If the source strip already preserves row-level scale and baseline, rerun the deterministic pipeline with `--method stable-slots`, inspect with `--allow-stable-slots`, then re-check the preview GIFs. Regenerate the row only when the original strip itself is clipped, unstable, or semantically wrong.
+
 ## Rules
 
 - Keep `$imagegen` as the primary generation layer.
@@ -476,6 +513,7 @@ For identity repairs, use the canonical base image, original references, contact
 - Generate every normal visual job with `$imagegen`: base plus all row strips that are not explicitly approved `running-left` mirror derivations.
 - Treat only the base job as eligible for prompt-only generation; every row job must attach its listed grounding images.
 - Generate `running-right` before deciding whether `running-left` can be mirrored.
+- When `running-left` is mirrored, preserve frame order and timing semantics; derive it through the deterministic script instead of mirroring an entire strip wholesale.
 - Do not derive or reuse `waiting`, `running`, `failed`, `review`, `jumping`, or `waving` from another state; each has distinct app semantics and must be generated as its own row.
 - Never substitute locally drawn, tiled, transformed, or code-generated row strips for missing `$imagegen` outputs.
 - Only mark a visual job complete after its selected output has been copied into the decoded output path.
@@ -484,6 +522,7 @@ For identity repairs, use the canonical base image, original references, contact
 - Keep the pet's silhouette, face, materials, palette, style, and props consistent across all rows.
 - Treat visual identity or style drift as a blocker even when `qa/review.json` and `final/validation.json` have no errors.
 - Treat a contact sheet that shows cropped references, repeated tiles, white cell backgrounds, or non-sprite fragments as failed.
+- Treat preview GIFs that show extraction-induced size popping, reversed directional timing, wrong facing direction, or inert idle loops as failed.
 - Treat forbidden detached effects, chroma-key-adjacent artifacts, shadows, glows, smears, dust, landing marks, wave marks, speed lines, or motion trails as failed rows.
 - Treat `qa/review.json` errors as blockers. Warnings require visual review.
 
@@ -492,8 +531,9 @@ For identity repairs, use the canonical base image, original references, contact
 - Final atlas is PNG or WebP, `1536x1872`, transparent-capable, and based on `192x208` cells.
 - Used cells are non-empty and unused cells are fully transparent.
 - Atlas follows the row/frame counts in `references/animation-rows.md`.
-- Contact sheet has been produced and inspected by a lightweight visual QA worker.
+- Contact sheet and per-row motion previews have been produced and inspected by a lightweight visual QA worker.
 - `qa/review.json` has no errors.
 - Row-by-row review confirms the animation cycles are complete enough for the Codex app.
+- Motion previews do not show unintended size popping, reversed directional cadence, or wrong row semantics.
 - Non-pixel styles are accepted when readable at pet size and consistent across rows.
 - `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/pet.json` and `${CODEX_HOME:-$HOME/.codex}/pets/<pet-name>/spritesheet.webp` are staged together for custom pets.

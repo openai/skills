@@ -47,6 +47,7 @@ STATE_REQUIREMENTS = {
         "CRITICAL: idle is the low-distraction baseline state and the first frame is also used as the reduced-motion static pet.",
         "Use only subtle idle motion: gentle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet motion that fits the pet persona.",
         "Keep the pet essentially in the same pose, facing direction, silhouette, markings, palette, and prop state across all 6 frames.",
+        "Idle variation must stay calm but still read as animation; do not repeat effectively identical copies across the loop.",
         "Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.",
         "Feet, base, body, or object anchor should remain planted or nearly planted.",
         "The first and last frames should be very close visually so the loop feels calm and does not pop.",
@@ -78,11 +79,15 @@ STATE_REQUIREMENTS = {
         "Do not add magnifying glasses, papers, code, UI, punctuation, symbols, or other new props unless they already exist in the base pet identity.",
     ],
     "running-right": [
-        "Show directional drag movement through body, limb, and prop movement only.",
+        "Show directional drag movement to the right through body, limb, and prop movement only.",
+        "The row must unmistakably face and travel right.",
+        "The movement cadence must alternate visibly across the 8 frames instead of repeating one nearly static stride.",
         "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
     ],
     "running-left": [
-        "Show directional drag movement through body, limb, and prop movement only.",
+        "Show directional drag movement to the left through body, limb, and prop movement only.",
+        "The row must unmistakably face and travel left.",
+        "The movement cadence must alternate visibly across the 8 frames instead of repeating one nearly static stride.",
         "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
     ],
 }
@@ -511,6 +516,7 @@ Output exactly {frames} full-body frames in one left-to-right row on flat pure {
 
 Identity: same pet in every frame: {pet_notes}. Preserve silhouette, face, proportions, markings, palette, material, style, and props.
 Style: {style_contract}
+Animation continuity: keep apparent pet scale and baseline stable within the row unless the state itself intentionally changes vertical position, such as `jumping`. Move the pose within the slot instead of redrawing the pet larger or smaller frame to frame.
 
 State action: {state_prompt}
 
@@ -531,6 +537,8 @@ def retry_row_prompt(
     return f"""Create Codex pet row `{state}` for `{args.pet_id}`: exactly {frames} full-body frames in one horizontal strip on flat pure {chroma_name} {chroma_key}.
 
 Use the attached canonical base for identity and the layout guide only for spacing. Same pet in every frame: {pet_notes}. Preserve silhouette, face, palette, material, proportions, markings, and props.
+
+Keep apparent pet scale and baseline stable within the row unless the state itself intentionally changes vertical position, such as `jumping`.
 
 Action: {state_prompt}
 
@@ -580,7 +588,7 @@ def make_jobs(
             derivation_policy = {
                 "may_derive": True,
                 "may_derive_from": "running-right",
-                "derivation": "horizontal-mirror",
+                "derivation": "framewise-horizontal-mirror-preserving-order",
                 "requires_explicit_approval": True,
                 "fallback_generation_skill": "$imagegen",
             }

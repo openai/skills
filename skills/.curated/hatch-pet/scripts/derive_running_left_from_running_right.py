@@ -10,6 +10,8 @@ from pathlib import Path
 
 from PIL import Image, ImageOps
 
+RUNNING_FRAME_COUNT = 8
+
 
 def load_manifest(run_dir: Path) -> dict[str, object]:
     path = run_dir / "imagegen-jobs.json"
@@ -46,6 +48,23 @@ def image_metadata(path: Path) -> dict[str, object]:
 
 def manifest_relative(path: Path, run_dir: Path) -> str:
     return str(path.resolve().relative_to(run_dir.resolve()))
+
+
+def mirror_strip_preserving_frame_order(
+    source: Image.Image,
+    frame_count: int = RUNNING_FRAME_COUNT,
+) -> Image.Image:
+    rgba = source.convert("RGBA")
+    mirrored = Image.new("RGBA", rgba.size, (0, 0, 0, 0))
+    slot_width = rgba.width / frame_count
+    for index in range(frame_count):
+        left = round(index * slot_width)
+        right = round((index + 1) * slot_width)
+        mirrored.alpha_composite(
+            ImageOps.mirror(rgba.crop((left, 0, right, rgba.height))),
+            (left, 0),
+        )
+    return mirrored
 
 
 def main() -> None:
@@ -90,7 +109,7 @@ def main() -> None:
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as image:
-        mirrored = ImageOps.mirror(image.convert("RGBA"))
+        mirrored = mirror_strip_preserving_frame_order(image)
         mirrored.save(output)
 
     left_job["status"] = "complete"
@@ -102,6 +121,7 @@ def main() -> None:
         "approved": True,
         "approved_at": left_job["completed_at"],
         "note": args.decision_note.strip(),
+        "transform": "framewise-horizontal-mirror-preserving-order",
     }
     for key in [
         "last_error",
@@ -119,6 +139,7 @@ def main() -> None:
                 "derived_from": "running-right",
                 "output": str(output),
                 "decision_note": args.decision_note.strip(),
+                "transform": "framewise-horizontal-mirror-preserving-order",
             },
             indent=2,
         )

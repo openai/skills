@@ -34,6 +34,17 @@ def alpha_nonzero_count(image: Image.Image) -> int:
     return sum(alpha.histogram()[1:])
 
 
+def transparent_rgb_residue_count(image: Image.Image) -> int:
+    rgba = image.convert("RGBA")
+    data = rgba.tobytes()
+    count = 0
+    for index in range(0, len(data), 4):
+        red, green, blue, alpha = data[index : index + 4]
+        if alpha == 0 and (red or green or blue):
+            count += 1
+    return count
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("atlas")
@@ -114,6 +125,12 @@ def main() -> None:
         else:
             errors.append(message)
 
+    transparent_rgb_residue = transparent_rgb_residue_count(image)
+    if transparent_rgb_residue:
+        errors.append(
+            f"atlas has {transparent_rgb_residue} fully transparent pixels with non-zero RGB residue"
+        )
+
     result = {
         "ok": not errors,
         "file": str(atlas_path),
@@ -121,6 +138,7 @@ def main() -> None:
         "mode": source_mode,
         "width": image.width,
         "height": image.height,
+        "transparent_rgb_residue_pixels": transparent_rgb_residue,
         "errors": errors,
         "warnings": warnings,
         "cells": cells,

@@ -20,7 +20,7 @@ Unused cells after each row's final used column must be fully transparent.
 
 - `idle`: calm, low-distraction breathing/blinking loop; use as the reduced-motion first frame. Keep motion subtle and persona-preserving.
 - `running-right`: locomotion to the right; 8-frame loop should read directionally.
-- `running-left`: mirrored or redrawn locomotion to the left; do not simply reuse right-facing frames unless the design is symmetric.
+- `running-left`: mirrored or redrawn locomotion to the left; do not simply reuse right-facing frames unless the design is symmetric, and any mirror derivation must preserve frame order and timing semantics.
 - `waving`: greeting or attention gesture; clear start, raised gesture, return.
 - `jumping`: anticipation, lift, peak, descent, settle.
 - `failed`: error/sad/deflated reaction; readable but not visually noisy.
