@@ -1,0 +1,42 @@
+{
+  "name": "markmap-runtime",
+  "version": "0.18.12",
+  "purpose": "Local runtime for the ProjectGraph Markmap viewer.",
+  "source": "https://cdn.jsdelivr.net/npm/",
+  "files": [
+    {
+      "path": "d3.js",
+      "package": "d3@7.9.0",
+      "sha256": "f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539"
+    },
+    {
+      "path": "markmap-autoloader.js",
+      "package": "markmap-autoloader@0.18.12",
+      "sha256": "2dc8442b37b95ee09a139ca25d77e5f7c8c3c3f67cc1ae55c041a50c9f60908f"
+    },
+    {
+      "path": "markmap-lib.js",
+      "package": "markmap-lib@0.18.12",
+      "sha256": "07c2dd97a98ea6e78075968a41a63eae236d64be150451249c3f95cdbed643f5"
+    },
+    {
+      "path": "markmap-toolbar.css",
+      "package": "markmap-toolbar@0.18.12/dist/style.css",
+      "sha256": "a30fcf8f1d2659fc4deec0950c7d7a4c0be97975f75230eca0440ecabec931d9"
+    },
+    {
+      "path": "markmap-toolbar.js",
+      "package": "markmap-toolbar@0.18.12",
+      "sha256": "413c66c42fbe35e6f453b807a418d1a86f3b74f842e7fe96c5c156a856ddc7df"
+    },
+    {
+      "path": "markmap-view.js",
+      "package": "markmap-view@0.18.12",
+      "sha256": "86df5588ff2b83817ea92b9260bf12b6da9bc95e9393e9e715714fd170e26b63"
+    }
+  ],
+  "notes": [
+    "The viewer maps Markmap autoloader package requests to these local files.",
+    "The default ProjectGraph content does not require optional Markdown features that need extra dynamic assets, such as KaTeX or syntax highlighting."
+  ]
+}

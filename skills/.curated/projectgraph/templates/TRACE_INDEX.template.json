@@ -1,0 +1,24 @@
+{
+  "schema_version": "projectgraph.trace_index.v1",
+  "sources": {
+    "trace:projectgraph-bootstrap": {
+      "kind": "trace",
+      "path": ".projectgraph/TRACES/{{TRACE_FILENAME}}",
+      "summary": "Initialized the ProjectGraph file structure, local viewer, and validator; historical seed generation is not complete yet."
+    }
+  },
+  "node_sources": {
+    "pg.root": [
+      "trace:projectgraph-bootstrap"
+    ],
+    "pg.bootstrap.initialized": [
+      "trace:projectgraph-bootstrap"
+    ],
+    "pg.bootstrap.seed-next": [
+      "trace:projectgraph-bootstrap"
+    ],
+    "pg.bootstrap.user-review": [
+      "trace:projectgraph-bootstrap"
+    ]
+  }
+}

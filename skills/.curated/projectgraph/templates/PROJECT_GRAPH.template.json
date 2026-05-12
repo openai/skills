@@ -1,0 +1,51 @@
+{
+  "schema_version": "projectgraph.graph.v1",
+  "display": {
+    "format": "markdown_markmap",
+    "entrypoint": ".projectgraph/PROJECT_GRAPH.html",
+    "graph_data": ".projectgraph/PROJECT_GRAPH.json",
+    "trace_index": ".projectgraph/TRACE_INDEX.json",
+    "readable_outline": ".projectgraph/PROJECT_GRAPH.md",
+    "views": [
+      {
+        "id": "global",
+        "title": "Global Logic",
+        "description": "Show the complete record organized by the project's main logic flow.",
+        "root_id": "pg.root"
+      }
+    ]
+  },
+  "root": {
+    "id": "pg.root",
+    "title": "{{PROJECT_NAME}} ProjectGraph",
+    "source_refs": [
+      "trace:projectgraph-bootstrap"
+    ],
+    "children": [
+      {
+        "id": "pg.bootstrap.initialized",
+        "title": "ProjectGraph structure has been initialized",
+        "children": [],
+        "source_refs": [
+          "trace:projectgraph-bootstrap"
+        ]
+      },
+      {
+        "id": "pg.bootstrap.seed-next",
+        "title": "Next step is read-only history exploration and seed trace generation",
+        "children": [],
+        "source_refs": [
+          "trace:projectgraph-bootstrap"
+        ]
+      },
+      {
+        "id": "pg.bootstrap.user-review",
+        "title": "The first Graph should be user-reviewed before it becomes the update baseline",
+        "children": [],
+        "source_refs": [
+          "trace:projectgraph-bootstrap"
+        ]
+      }
+    ]
+  }
+}

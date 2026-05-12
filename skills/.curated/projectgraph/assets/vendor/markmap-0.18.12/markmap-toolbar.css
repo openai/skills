@@ -1,0 +1,37 @@
+.mm-toolbar {display:flex;-webkit-user-select:none;-moz-user-select:none;user-select:none;align-items:center;border-width:1px;--un-border-opacity:1;border-color:rgb(212 212 216 / var(--un-border-opacity));border-radius:0.25rem;border-style:solid;--un-bg-opacity:1;background-color:rgb(255 255 255 / var(--un-bg-opacity));padding:0.25rem;line-height:1;
+}
+  .mm-toolbar:hover {--un-border-opacity:1;border-color:rgb(161 161 170 / var(--un-border-opacity));
+  }
+  .mm-toolbar svg {display:block;
+  }
+  .mm-toolbar a {display:inline-block;text-decoration:none;
+  }
+  .mm-toolbar-brand > img {width:1rem;height:1rem;vertical-align:middle;
+    }
+  .mm-toolbar-brand > span {padding-left:0.25rem;padding-right:0.25rem;
+    }
+  .mm-toolbar-brand:not(:first-child), .mm-toolbar-item:not(:first-child) {margin-left:0.25rem;
+    }
+  .mm-toolbar-brand > *, .mm-toolbar-item > * {min-width:1rem;cursor:pointer;text-align:center;font-size:0.75rem;line-height:1rem;--un-text-opacity:1;color:rgb(161 161 170 / var(--un-text-opacity));
+    }
+  .mm-toolbar-brand.active,
+    .mm-toolbar-brand:hover,
+    .mm-toolbar-item.active,
+    .mm-toolbar-item:hover {border-radius:0.25rem;--un-bg-opacity:1;background-color:rgb(228 228 231 / var(--un-bg-opacity));
+    }
+  .mm-toolbar-brand.active > *, .mm-toolbar-brand:hover > *, .mm-toolbar-item.active > *, .mm-toolbar-item:hover > * {--un-text-opacity:1;color:rgb(39 39 42 / var(--un-text-opacity));
+      }
+  .mm-toolbar-brand.active, .mm-toolbar-item.active {--un-bg-opacity:1;background-color:rgb(212 212 216 / var(--un-bg-opacity));
+    }
+
+.markmap-dark .mm-toolbar {--un-border-opacity:1;border-color:rgb(82 82 91 / var(--un-border-opacity));--un-bg-opacity:1;background-color:rgb(39 39 42 / var(--un-bg-opacity));--un-text-opacity:1;color:rgb(161 161 170 / var(--un-text-opacity));
+}
+
+.markmap-dark .mm-toolbar:hover {--un-border-opacity:1;border-color:rgb(113 113 122 / var(--un-border-opacity));
+  }
+
+.markmap-dark .mm-toolbar > *:hover {--un-bg-opacity:1;background-color:rgb(82 82 91 / var(--un-bg-opacity));
+  }
+
+.markmap-dark .mm-toolbar > *:hover > * {--un-text-opacity:1;color:rgb(228 228 231 / var(--un-text-opacity));
+    }

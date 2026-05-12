@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ProjectGraph Markmap</title>
+  <style>
+    :root {
+      --border: #d7dce2;
+      --canvas: #f6f7f8;
+      --panel: #ffffff;
+      --panel-soft: #f1f4f7;
+      --text: #1f2328;
+      --muted: #626866;
+      --accent: #2f6feb;
+      --accent-ink: #0b3d91;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--canvas);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    header {
+      box-sizing: border-box;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .titlebar {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .hint {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .view-switcher {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 3px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-soft);
+    }
+
+    .view-switcher button {
+      height: 30px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 10px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .view-switcher button[aria-pressed="true"] {
+      background: var(--panel);
+      color: var(--accent-ink);
+      box-shadow: 0 0 0 1px var(--border);
+    }
+
+    main {
+      height: calc(100% - 64px);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      min-width: 0;
+    }
+
+    .graph-shell {
+      min-width: 0;
+      min-height: 0;
+      position: relative;
+    }
+
+    .markmap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .markmap > svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    aside {
+      box-sizing: border-box;
+      overflow: auto;
+      border-left: 1px solid var(--border);
+      background: var(--panel);
+      padding: 18px;
+    }
+
+    aside h2 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    aside h3 {
+      margin: 18px 0 8px;
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .empty {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .node-id {
+      margin-top: 10px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .source-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: #ffffff;
+    }
+
+    .source-card a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .source-card a:hover {
+      text-decoration: underline;
+    }
+
+    .source-summary,
+    .source-locator {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .error {
+      position: absolute;
+      inset: 24px;
+      max-width: 760px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .view-switcher {
+        justify-content: flex-start;
+      }
+
+      main {
+        height: calc(100% - 116px);
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(420px, 1fr) 300px;
+      }
+
+      aside {
+        border-left: 0;
+        border-top: 1px solid var(--border);
+      }
+    }
+  </style>
+  <script>
+    window.markmap = {
+      autoLoader: {
+        manual: true,
+        toolbar: true,
+        provider: (name) => ({
+          'd3@7.9.0': 'vendor/markmap-0.18.12/d3.js',
+          'markmap-lib@0.18.12': 'vendor/markmap-0.18.12/markmap-lib.js',
+          'markmap-view@0.18.12': 'vendor/markmap-0.18.12/markmap-view.js',
+          'markmap-toolbar@0.18.12': 'vendor/markmap-0.18.12/markmap-toolbar.js',
+          'markmap-toolbar@0.18.12/dist/style.css': 'vendor/markmap-0.18.12/markmap-toolbar.css'
+        })[name] || name
+      }
+    };
+  </script>
+</head>
+<body>
+  <header>
+    <div class="titlebar">
+      <h1>ProjectGraph</h1>
+      <div id="view-description" class="hint"></div>
+    </div>
+    <nav id="view-switcher" class="view-switcher" aria-label="ProjectGraph views"></nav>
+  </header>
+  <main>
+    <section class="graph-shell">
+      <div id="graph" class="markmap"></div>
+    </section>
+    <aside id="provenance-panel">
+      <div class="empty">Click a node label to see the trace, JSONL, or external conversation sources behind it.</div>
+    </aside>
+  </main>
+
+  <script>
+    const graphElement = document.getElementById('graph');
+    const panelElement = document.getElementById('provenance-panel');
+    const viewSwitcherElement = document.getElementById('view-switcher');
+    const viewDescriptionElement = document.getElementById('view-description');
+    const allNodesById = new Map();
+    const renderedNodesById = new Map();
+    const renderedNodesByTitle = new Map();
+    let traceIndex = null;
+    let graphData = null;
+    let views = [];
+    let loaderPromise = null;
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+    }
+
+    function stripProjectGraphPrefix(path) {
+      return path.replace(/^\.projectgraph\//, '');
+    }
+
+    function basename(path) {
+      return String(path || '').split('/').filter(Boolean).pop() || path;
+    }
+
+    function indexAllNode(node) {
+      allNodesById.set(node.id, node);
+      for (const child of node.children || []) {
+        indexAllNode(child);
+      }
+    }
+
+    function indexRenderedNode(node) {
+      renderedNodesById.set(node.id, node);
+      if (!renderedNodesByTitle.has(node.title)) {
+        renderedNodesByTitle.set(node.title, node);
+      }
+      for (const child of node.children || []) {
+        indexRenderedNode(child);
+      }
+    }
+
+    function cloneNode(node) {
+      return {
+        id: node.id,
+        title: node.title,
+        source_refs: [...(node.source_refs || [])],
+        children: (node.children || []).map(cloneNode)
+      };
+    }
+
+    function collectSourceRefs(node, refs = new Set()) {
+      for (const ref of node.source_refs || []) {
+        refs.add(ref);
+      }
+      for (const child of node.children || []) {
+        collectSourceRefs(child, refs);
+      }
+      return refs;
+    }
+
+    function buildViewRoot(view) {
+      if (view.root_id) {
+        const root = allNodesById.get(view.root_id);
+        if (root) {
+          return cloneNode(root);
+        }
+      }
+
+      const children = (view.node_refs || [])
+        .map((ref) => allNodesById.get(ref))
+        .filter(Boolean)
+        .map(cloneNode);
+      const refs = new Set();
+      for (const child of children) {
+        collectSourceRefs(child, refs);
+      }
+      return {
+        id: `view:${view.id}`,
+        title: view.title || graphData.root.title,
+        source_refs: [...refs],
+        children
+      };
+    }
+
+    function nodeToMarkdown(node, depth = 1) {
+      const hashes = '#'.repeat(Math.min(depth, 6));
+      const title = escapeHtml(node.title);
+      const line = `${hashes} <span data-node-id="${escapeHtml(node.id)}">${title}</span>`;
+      const children = (node.children || [])
+        .map((child) => nodeToMarkdown(child, depth + 1))
+        .join('\n');
+      return children ? `${line}\n\n${children}` : line;
+    }
+
+    function buildMarkdown(root) {
+      return `---\nmarkmap:\n  initialExpandLevel: 2\n  colorFreezeLevel: 2\n  duration: 300\n  maxWidth: 360\n---\n\n${nodeToMarkdown(root)}`;
+    }
+
+    function sourceLink(ref, source) {
+      if (!source) {
+        return { href: '', label: ref };
+      }
+      if (source.kind === 'trace' && source.path) {
+        return {
+          href: stripProjectGraphPrefix(source.path),
+          label: source.path.split('/').pop()
+        };
+      }
+      if (source.url) {
+        return {
+          href: source.url,
+          label: source.url
+        };
+      }
+      if (source.kind === 'codex_jsonl' && source.locator?.transcript_path) {
+        const line = source.locator?.transcript_lines
+          ? ` lines ${Object.values(source.locator.transcript_lines).filter(Boolean).join(', ')}`
+          : '';
+        return {
+          href: '',
+          label: `${basename(source.locator.transcript_path)}${line}`
+        };
+      }
+      return { href: '', label: ref };
+    }
+
+    function renderLocator(source) {
+      const locator = source?.locator;
+      if (!locator) {
+        return '';
+      }
+      const parts = [];
+      if (locator.transcript_path) {
+        parts.push(`<div><code>${escapeHtml(locator.transcript_path)}</code></div>`);
+      }
+      if (locator.transcript_lines) {
+        parts.push(`<div>lines: ${escapeHtml(Object.values(locator.transcript_lines).filter(Boolean).join(', '))}</div>`);
+      }
+      if (locator.tool_call_lines?.length) {
+        const toolLines = locator.tool_call_lines.map((item) => `${item.line}:${item.sha256_16}`).join(', ');
+        parts.push(`<div>tool calls: ${escapeHtml(toolLines)}</div>`);
+      }
+      return parts.length ? `<div class="source-locator">${parts.join('')}</div>` : '';
+    }
+
+    function renderPanel(node) {
+      const refs = node.source_refs || [];
+      const cards = refs.map((ref) => {
+        const source = traceIndex?.sources?.[ref];
+        const link = sourceLink(ref, source);
+        const summary = source?.summary || 'No summary recorded.';
+        const kind = source?.kind || 'unknown';
+        const title = link.href
+          ? `<a href="${escapeHtml(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`
+          : `<span>${escapeHtml(link.label)}</span>`;
+        return `<li class="source-card">
+          <div>${title}</div>
+          <div class="source-summary">${escapeHtml(kind)} - ${escapeHtml(summary)}</div>
+          ${renderLocator(source)}
+        </li>`;
+      }).join('');
+
+      panelElement.innerHTML = `
+        <h2>${escapeHtml(node.title)}</h2>
+        <div class="node-id">${escapeHtml(node.id)}</div>
+        <h3>Provenance</h3>
+        <ul class="source-list">${cards || '<li class="empty">No sources are registered for this node yet.</li>'}</ul>
+      `;
+    }
+
+    function findNodeFromEventTarget(target) {
+      const tagged = target.closest?.('[data-node-id]');
+      if (tagged?.dataset?.nodeId) {
+        return renderedNodesById.get(tagged.dataset.nodeId);
+      }
+
+      const group = target.closest?.('g.markmap-node');
+      const taggedInGroup = group?.querySelector?.('[data-node-id]');
+      if (taggedInGroup?.dataset?.nodeId) {
+        return renderedNodesById.get(taggedInGroup.dataset.nodeId);
+      }
+
+      const foreignObject = target.closest?.('foreignObject') || group?.querySelector?.('foreignObject');
+      const title = foreignObject?.textContent?.trim();
+      return title ? renderedNodesByTitle.get(title) : null;
+    }
+
+    function normalizeViews(graph) {
+      const configured = graph.display?.views || graph.views || [];
+      if (!Array.isArray(configured) || !configured.length) {
+        return [{
+          id: 'global',
+          title: 'Global Logic',
+          description: 'Show the complete record organized by the project main logic flow.',
+          root_id: graph.root.id
+        }];
+      }
+      return configured;
+    }
+
+    function renderViewButtons(activeId) {
+      viewSwitcherElement.innerHTML = views.map((view) => `
+        <button type="button" data-view-id="${escapeHtml(view.id)}" aria-pressed="${view.id === activeId ? 'true' : 'false'}">
+          ${escapeHtml(view.title || view.id)}
+        </button>
+      `).join('');
+    }
+
+    function requestedViewId() {
+      const params = new URLSearchParams(window.location.search);
+      const queryView = params.get('view');
+      const hashView = window.location.hash.replace(/^#/, '');
+      return queryView || hashView || views[0]?.id;
+    }
+
+    function rememberView(viewId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('view', viewId);
+      window.history.replaceState(null, '', url);
+    }
+
+    async function ensureMarkmapLoaded() {
+      if (window.markmap?.autoLoader?.render) {
+        await window.markmap.autoLoader.ready;
+        return;
+      }
+      if (!loaderPromise) {
+        loaderPromise = new Promise((resolve, reject) => {
+          const loader = document.createElement('script');
+          loader.src = 'vendor/markmap-0.18.12/markmap-autoloader.js';
+          loader.onload = resolve;
+          loader.onerror = reject;
+          document.body.appendChild(loader);
+        });
+      }
+      await loaderPromise;
+      await window.markmap.autoLoader.ready;
+    }
+
+    async function renderView(viewId) {
+      const view = views.find((item) => item.id === viewId) || views[0];
+      const root = buildViewRoot(view);
+      renderedNodesById.clear();
+      renderedNodesByTitle.clear();
+      indexRenderedNode(root);
+
+      graphElement.innerHTML = '';
+      const template = document.createElement('script');
+      template.type = 'text/template';
+      template.textContent = buildMarkdown(root);
+      graphElement.appendChild(template);
+
+      viewDescriptionElement.textContent = view.description || '';
+      renderViewButtons(view.id);
+      rememberView(view.id);
+      await ensureMarkmapLoaded();
+      window.markmap.autoLoader.render(graphElement);
+      renderPanel(root);
+    }
+
+    async function bootstrap() {
+      try {
+        const [graphResponse, traceResponse] = await Promise.all([
+          fetch('PROJECT_GRAPH.json'),
+          fetch('TRACE_INDEX.json')
+        ]);
+
+        if (!graphResponse.ok || !traceResponse.ok) {
+          throw new Error('Unable to load PROJECT_GRAPH.json or TRACE_INDEX.json.');
+        }
+
+        graphData = await graphResponse.json();
+        traceIndex = await traceResponse.json();
+        indexAllNode(graphData.root);
+        views = normalizeViews(graphData);
+
+        viewSwitcherElement.addEventListener('click', (event) => {
+          const button = event.target.closest?.('button[data-view-id]');
+          if (button) {
+            renderView(button.dataset.viewId);
+          }
+        });
+
+        graphElement.addEventListener('click', (event) => {
+          const node = findNodeFromEventTarget(event.target);
+          if (node) {
+            renderPanel(node);
+          }
+        }, true);
+
+        await renderView(requestedViewId());
+      } catch (error) {
+        graphElement.innerHTML = `<div class="error">
+          <strong>ProjectGraph viewer failed to load.</strong><br>
+          ${escapeHtml(error.message)}<br><br>
+          Open this page through a local HTTP server. For example, run
+          <code>python3 -m http.server 8765 --bind 127.0.0.1</code>.
+        </div>`;
+      }
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>
