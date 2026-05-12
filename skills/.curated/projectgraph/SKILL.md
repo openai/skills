@@ -12,7 +12,7 @@ ProjectGraph is a file-based, human-facing structure map for a Codex Project. Us
 - Visible Graph records only conclusions, facts, problem structure, route tradeoffs, and logic chains.
 - Process details stay hidden in trace files and `TRACE_INDEX.json`.
 - Every visible node must trace back to at least one source reference.
-- Use the target project's existing language, or the user's requested language, while preserving necessary technical terms.
+- Use Chinese as the core language by default, while preserving necessary English terms.
 - Do not add `confidence`, `status`, `RawTrace`, `LiveMindMap`, or `StableMap`.
 - Treat ProjectGraph as a record layer, not as an execution authority.
 - Automatic capture may write locator traces, but it must not silently rewrite the visible Graph.
@@ -101,3 +101,20 @@ For hook-generated traces, also include a short hash for every cited JSONL line.
 - `scripts/check_release.py`: runs skill-source release hygiene checks before packaging or publishing.
 - `templates/`: reusable target Project templates for AGENTS, trace locator, seed trace, Graph JSON, TraceIndex JSON, and Markdown outline.
 - `assets/`: local Markmap viewer runtime copied into target Projects by bootstrap.
+
+## Release Review Rules
+
+Use these rules when preparing this skill for `openai/skills` or another shared catalog:
+
+- Keep the published skill package minimal: `SKILL.md`, `LICENSE.txt`, scripts, templates, assets, examples, and references only when they are directly used by the skill.
+- Put broad design background, PR strategy, release notes, and reviewer-facing discussion outside the skill package unless maintainers ask for it inside the release artifact.
+- Preserve `assets/vendor/markmap-0.18.12/VENDOR_MANIFEST.json` and `THIRD_PARTY_NOTICES.md` whenever the local viewer runtime is shipped.
+- Do not add CDN fallbacks to `PROJECT_GRAPH.html`; the default viewer should remain local/offline.
+- If maintainers object to shipping vendored viewer assets in a curated skill, propose making the viewer optional or landing the first version in an experimental path while keeping Graph/Trace/validation as the core workflow.
+
+## Self-Bootstrapping Rule
+
+For the `Project_Cartographer` repo itself, keep two records in sync:
+
+- Graph records what was designed, decided, rejected, implemented, and why.
+- This skill records how future Codex agents should initialize, generate, maintain, and validate ProjectGraph in other Projects.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import shutil
@@ -27,6 +28,7 @@ REQUIRED_FILES = [
     "templates/SEED_TRACE_TEMPLATE.md",
     "assets/PROJECT_GRAPH.html",
     "assets/vendor/markmap-0.18.12/VENDOR_MANIFEST.json",
+    "assets/vendor/markmap-0.18.12/THIRD_PARTY_NOTICES.md",
 ]
 
 FORBIDDEN_PATTERNS = [
@@ -36,7 +38,7 @@ FORBIDDEN_PATTERNS = [
     re.compile(r"\b[A-Z0-9_]*(?:SECRET|TOKEN|KEY)\s*=\s*['\"]?[^'\"\s]{8,}", re.IGNORECASE),
 ]
 
-TEXT_SUFFIXES = {".md", ".py", ".json", ".html", ".css"}
+TEXT_SUFFIXES = {".md", ".py", ".json", ".html", ".css", ".txt"}
 
 
 def run(command: list[str], cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
@@ -59,6 +61,60 @@ def check_required_files(skill_root: Path) -> None:
     missing = [item for item in REQUIRED_FILES if not (skill_root / item).exists()]
     if missing:
         raise SystemExit("missing required release files:\n- " + "\n- ".join(missing))
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def check_license_and_vendor(skill_root: Path) -> None:
+    license_text = (skill_root / "LICENSE.txt").read_text(encoding="utf-8", errors="ignore")
+    if "Apache License" not in license_text or "Version 2.0" not in license_text:
+        raise SystemExit("LICENSE.txt must contain the Apache License 2.0 text")
+
+    viewer_html = (skill_root / "assets" / "PROJECT_GRAPH.html").read_text(encoding="utf-8", errors="ignore")
+    for forbidden in ("cdn.jsdelivr.net", "unpkg.com"):
+        if forbidden in viewer_html:
+            raise SystemExit(f"PROJECT_GRAPH.html should not include CDN fallback: {forbidden}")
+
+    vendor_root = skill_root / "assets" / "vendor" / "markmap-0.18.12"
+    manifest_path = vendor_root / "VENDOR_MANIFEST.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    notice_name = manifest.get("notice_file")
+    if not notice_name:
+        raise SystemExit("VENDOR_MANIFEST.json must declare notice_file")
+    notice_path = vendor_root / notice_name
+    if not notice_path.exists():
+        raise SystemExit(f"vendor notice file does not exist: {notice_path.relative_to(skill_root)}")
+    notice_text = notice_path.read_text(encoding="utf-8", errors="ignore")
+    for needle in ("Markmap", "MIT", "D3", "ISC"):
+        if needle not in notice_text:
+            raise SystemExit(f"vendor notice file must mention {needle}")
+
+    files = manifest.get("files")
+    if not isinstance(files, list) or not files:
+        raise SystemExit("VENDOR_MANIFEST.json must include a non-empty files list")
+    for item in files:
+        missing_fields = [
+            field
+            for field in ("path", "package", "license", "source_url", "sha256")
+            if not item.get(field)
+        ]
+        if missing_fields:
+            raise SystemExit(f"vendor manifest item missing fields {missing_fields}: {item}")
+        file_path = vendor_root / item["path"]
+        if not file_path.exists():
+            raise SystemExit(f"vendor file does not exist: {file_path.relative_to(skill_root)}")
+        actual_sha = sha256_file(file_path)
+        if actual_sha != item["sha256"]:
+            raise SystemExit(
+                f"vendor sha256 mismatch for {file_path.relative_to(skill_root)}: "
+                f"expected {item['sha256']}, got {actual_sha}"
+            )
 
 
 def check_forbidden_text(skill_root: Path) -> None:
@@ -194,6 +250,7 @@ def main() -> int:
 
     check_required_files(skill_root)
     check_forbidden_text(skill_root)
+    check_license_and_vendor(skill_root)
     check_templates(skill_root)
     check_scripts(skill_root)
     check_bootstrap_and_capture(skill_root)
