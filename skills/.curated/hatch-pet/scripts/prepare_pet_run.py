@@ -42,6 +42,51 @@ STATE_PROMPTS = {
     "review": "Ready-review loop: focused inspection of completed output with lean, blink, narrowed eyes, head tilt, or paw pose.",
 }
 
+STATE_REQUIREMENTS = {
+    "idle": [
+        "CRITICAL: idle is the low-distraction baseline state and the first frame is also used as the reduced-motion static pet.",
+        "Use only subtle idle motion: gentle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet motion that fits the pet persona.",
+        "Keep the pet essentially in the same pose, facing direction, silhouette, markings, palette, and prop state across all 6 frames.",
+        "Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.",
+        "Feet, base, body, or object anchor should remain planted or nearly planted.",
+        "The first and last frames should be very close visually so the loop feels calm and does not pop.",
+    ],
+    "waving": [
+        "Show the greeting through paw, hand, wing, or limb pose only.",
+        "Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.",
+    ],
+    "jumping": [
+        "Show the jump through pose and vertical body position only: anticipation, lift, airborne peak, descent, settle.",
+        "Do not draw ground shadows, contact shadows, drop shadows, oval shadows, landing marks, dust, smears, bounce pads, or motion marks under the pet.",
+        "Keep the background outside the pet perfectly flat chroma key with no darker key-colored patches.",
+    ],
+    "failed": [
+        "Show failure through slumped pose, drooping ears/limbs, closed or sad eyes, and lower body position.",
+        "Tears, small smoke puffs, or tiny stars are allowed only if attached to or overlapping the pet silhouette and kept inside the same frame slot.",
+        "Do not draw red X marks, floating symbols, detached stars, separated smoke clouds, falling tear drops, dust, or other loose effects.",
+    ],
+    "waiting": [
+        "Show that Codex needs approval, help, or user input through an expectant asking pose.",
+        "Keep the motion patient and readable, without turning it into ordinary idle or review.",
+    ],
+    "running": [
+        "Show the pet actively working or processing, as if running a task: focused posture, busy hands or paws, purposeful bobbing, thinking motion, tool or prop motion only if already part of the pet identity, or other non-locomotion activity.",
+        "Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, directional travel, speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
+    ],
+    "review": [
+        "Show review through lean, blink, narrowed eyes, head tilt, or paw/hand position.",
+        "Do not add magnifying glasses, papers, code, UI, punctuation, symbols, or other new props unless they already exist in the base pet identity.",
+    ],
+    "running-right": [
+        "Show directional drag movement through body, limb, and prop movement only.",
+        "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
+    ],
+    "running-left": [
+        "Show directional drag movement through body, limb, and prop movement only.",
+        "Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.",
+    ],
+}
+
 NON_DERIVABLE_STATES = {
     "waving",
     "jumping",
@@ -457,6 +502,7 @@ def row_prompt(
     chroma_key = args.chroma_key["hex"]
     chroma_name = args.chroma_key["name"]
     state_prompt = STATE_PROMPTS[state]
+    state_requirements = "\n".join(f"- {line}" for line in STATE_REQUIREMENTS[state])
     return f"""Create one horizontal animation strip for Codex pet `{args.pet_id}`, state `{state}`.
 
 Use the attached canonical base for identity. Use the attached layout guide only for slot count, spacing, centering, and padding; do not draw the guide.
@@ -468,6 +514,9 @@ Style: {style_contract}
 
 State action: {state_prompt}
 
+State requirements:
+{state_requirements}
+
 Clean extraction: crisp opaque edges, safe padding, no scenery, text, guide marks, checkerboard, shadows, glows, motion blur, speed lines, dust, detached effects, stray pixels, or chroma-key colors inside the pet."""
 
 
@@ -478,11 +527,15 @@ def retry_row_prompt(
     chroma_key = args.chroma_key["hex"]
     chroma_name = args.chroma_key["name"]
     state_prompt = STATE_PROMPTS[state]
+    state_requirements = "\n".join(f"- {line}" for line in STATE_REQUIREMENTS[state])
     return f"""Create Codex pet row `{state}` for `{args.pet_id}`: exactly {frames} full-body frames in one horizontal strip on flat pure {chroma_name} {chroma_key}.
 
 Use the attached canonical base for identity and the layout guide only for spacing. Same pet in every frame: {pet_notes}. Preserve silhouette, face, palette, material, proportions, markings, and props.
 
 Action: {state_prompt}
+
+State requirements:
+{state_requirements}
 
 One centered complete pose per invisible slot. No text, boxes, guide marks, scenery, shadows, glows, motion blur, speed lines, dust, detached effects, stray pixels, or {chroma_key} colors in the pet."""
 

@@ -137,13 +137,13 @@ Avoid these by default because they usually break transparent-background cleanup
 State-specific guidance:
 
 - `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet persona-preserving motion. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
-- `waving`: show the wave through paw, hand, wing, or limb pose only.
-- `jumping`: show vertical motion through body position only.
-- `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules.
-- `waiting`: show that Codex needs approval, help, or user input through an expectant asking pose.
-- `running`: show active task work, processing, thinking, scanning, typing, or focused effort. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, or directional travel.
-- `review`: show focus through lean, blink, eyes, head tilt, or paw/hand position.
-- `running-right` and `running-left`: show directional drag movement through body, limb, and prop movement only.
+- `waving`: show the wave through paw, hand, wing, or limb pose only. Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.
+- `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
+- `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.
+- `waiting`: show that Codex needs approval, help, or user input through an expectant asking pose. Keep it distinct from ordinary idle and review.
+- `running`: show active task work, processing, thinking, scanning, typing, or focused effort. Do not show literal foot-running, jogging, sprinting, treadmill motion, raised knees, long steps, pumping arms, directional travel, speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.
+- `review`: show focus through lean, blink, eyes, head tilt, or paw/hand position. Do not add magnifying glasses, papers, code, UI, punctuation, symbols, or other new props unless they already exist in the base pet identity.
+- `running-right` and `running-left`: show directional drag movement through body, limb, and prop movement only. Do not draw speed lines, dust clouds, floor shadows, motion trails, or detached motion effects.
 
 ## Visible Progress Plan
 
@@ -372,6 +372,7 @@ Row worker responsibilities:
 - read the row prompt and use all listed input images
 - use `$imagegen` only; do not draw, edit, tile, or synthesize sprites locally
 - perform a quick visual sanity check for frame count, identity, chroma background, spacing, clipping, and detached effects
+- enforce the row prompt's transparency and effects rules, including no detached effects, no wave marks for `waving`, no speed lines or dust for directional running rows, no literal foot-running for the non-directional `running` row, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt
 - return only `selected_source=/absolute/path/to/selected-output.png` and `qa_note=<one sentence>`
 
 Final visual QA worker responsibilities:
@@ -424,7 +425,7 @@ Input images:
 
 Use $imagegen only. Read the row prompt and attach every listed input image. If imagegen returns Bad Request, retry once with the retry prompt and the same input images.
 
-Before returning, visually check: exact frame count, same pet identity as canonical base, flat chroma background, complete separated unclipped poses, and no detached effects or guide marks.
+Before returning, visually check: exact frame count, same pet identity as canonical base, flat chroma background, complete separated unclipped poses, and no detached effects or guide marks. The prompt's transparency and effects rules are mandatory: no detached effects, no wave marks for `waving`, no speed lines or dust for directional running rows, no literal foot-running for the non-directional `running` row, and only attached opaque sprite-like tears/smoke/stars when allowed by the state prompt.
 
 Do not edit manifests, copy into decoded, mark jobs complete, mirror rows, run image-processing scripts, repair, package, or open unrelated files.
 Do not include Markdown image previews, base64, or extra attachments in the final response.
