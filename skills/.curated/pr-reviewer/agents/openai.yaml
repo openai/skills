@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Reviewer"
+  short_description: "Persistent branch-aware PR reviews"
+  default_prompt: "Use $pr-reviewer to review the current branch against main."
