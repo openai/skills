@@ -1,0 +1,4 @@
+interface:
+  display_name: "Luck Skill"
+  short_description: "Chinese almanac cards and practical daily guidance"
+  default_prompt: "Use $luck-skill to generate a daily luck card from Toolbox Huangli JSON, including lucky directions, clothing colors, good-for items, cautions, and a modern heads-up from Peng Zu taboos."
