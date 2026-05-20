@@ -32,10 +32,17 @@
 git clone https://github.com/clllb/luck-skill.git ~/.claude/skills/luck-skill
 ```
 
-**OpenAI Codex / OpenCode**
+**OpenAI Codex**
 
 ```bash
 git clone https://github.com/clllb/luck-skill.git ~/.codex/skills/luck-skill
+```
+
+**OpenCode**
+
+```bash
+mkdir -p ~/.config/opencode/skill
+git clone https://github.com/clllb/luck-skill.git ~/.config/opencode/skill/luck-skill
 ```
 
 安装后用 `/luck-skill` 调用，或者直接用中文说「今天黄历」「明天适合签约吗」即可。

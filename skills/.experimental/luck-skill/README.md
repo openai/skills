@@ -32,10 +32,17 @@ Just tell your AI assistant:
 git clone https://github.com/clllb/luck-skill.git ~/.claude/skills/luck-skill
 ```
 
-**OpenAI Codex / OpenCode**
+**OpenAI Codex**
 
 ```bash
 git clone https://github.com/clllb/luck-skill.git ~/.codex/skills/luck-skill
+```
+
+**OpenCode**
+
+```bash
+mkdir -p ~/.config/opencode/skill
+git clone https://github.com/clllb/luck-skill.git ~/.config/opencode/skill/luck-skill
 ```
 
 Then invoke with `/luck-skill` or just ask naturally — in Chinese, English, or any language you prefer.
