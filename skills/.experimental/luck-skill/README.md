@@ -2,6 +2,8 @@
 
 [English](README.md) | [简体中文](README_zh.md)
 
+It is like an Eastern strategist and a Western Lady Luck in one: reading traditional almanac signals to help you choose timing, direction, colors, and a little extra good fortune for the day.
+
 A Chinese almanac (黄历) skill for AI coding assistants. Get daily luck cards, outfit color guidance, and traditional almanac insights — translated into modern, practical advice.
 
 If this skill is useful to you, please consider giving the repo a star. It really means a lot to me! 🌟
