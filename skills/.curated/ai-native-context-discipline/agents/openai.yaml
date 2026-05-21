@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Context Discipline"
+  short_description: "Prevent context rot in long sessions"
+  default_prompt: "Use $ai-native-context-discipline to re-anchor this long coding session and prevent context rot."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Implementation Plan"
+  short_description: "MVP-first phased planning workflow"
+  default_prompt: "Use $ai-native-implementation-plan to convert my problem definition into an MVP-first implementation plan."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Structured Improvement"
+  short_description: "Harden an MVP without scope creep"
+  default_prompt: "Use $ai-native-structured-improvement to harden this MVP without expanding scope."

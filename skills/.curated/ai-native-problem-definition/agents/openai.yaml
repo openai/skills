@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Problem Definition"
+  short_description: "Pressure-test an idea into clarity"
+  default_prompt: "Use $ai-native-problem-definition to turn my project idea into a clear, bounded problem statement."

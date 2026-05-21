@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Project Foundation"
+  short_description: "Persist and stress-test the plan"
+  default_prompt: "Use $ai-native-project-foundation to create the project foundation and persist the implementation plan."
