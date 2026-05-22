@@ -1,0 +1,4 @@
+interface:
+  display_name: "PEFT and LoRA"
+  short_description: "Fine-tune and merge lightweight model adapters"
+  default_prompt: "Use $peft-lora to fine-tune, debug, or merge a PEFT/LoRA adapter."
