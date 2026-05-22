@@ -1,0 +1,4 @@
+interface:
+  display_name: "RAG and Vector Search"
+  short_description: "Build and evaluate retrieval pipelines"
+  default_prompt: "Use $rag-vector-search to build, debug, or evaluate this retrieval system."
