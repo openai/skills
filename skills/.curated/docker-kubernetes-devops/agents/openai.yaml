@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docker and Kubernetes"
+  short_description: "Build and debug container deployments"
+  default_prompt: "Use $docker-kubernetes-devops to build, run, or debug this container setup."
