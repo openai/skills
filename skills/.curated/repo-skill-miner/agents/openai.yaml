@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Skill Miner"
+  short_description: "Mine codebases for reusable skill candidates"
+  default_prompt: "Use $repo-skill-miner to mine this repository for high-value OpenAI skill candidates."
