@@ -35,7 +35,11 @@ def validate_skill(skill_path):
         if not isinstance(frontmatter, dict):
             return False, "Frontmatter must be a YAML dictionary"
     except yaml.YAMLError as e:
-        return False, f"Invalid YAML in frontmatter: {e}"
+        return (
+            False,
+            f"Invalid YAML in frontmatter: {e} "
+            "Hint: quote special characters in frontmatter values, or emit frontmatter with a YAML serializer.",
+        )
 
     allowed_properties = {"name", "description", "license", "allowed-tools", "metadata"}
 

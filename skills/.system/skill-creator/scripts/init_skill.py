@@ -14,6 +14,7 @@ Examples:
 """
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -23,11 +24,25 @@ from generate_openai_yaml import write_openai_yaml
 MAX_SKILL_NAME_LENGTH = 64
 ALLOWED_RESOURCES = {"scripts", "references", "assets"}
 
-SKILL_TEMPLATE = """---
-name: {skill_name}
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
----
+SKILL_DESCRIPTION = (
+    "[TODO: Complete and informative explanation of what the skill does and when to use it. "
+    "Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]"
+)
 
+
+def render_skill_frontmatter(skill_name):
+    """Render skill frontmatter with YAML-safe quoted scalars."""
+    return "\n".join(
+        [
+            "---",
+            f"name: {json.dumps(skill_name)}",
+            f"description: {json.dumps(SKILL_DESCRIPTION)}",
+            "---",
+        ]
+    )
+
+
+SKILL_TEMPLATE = """{frontmatter}
 # {skill_title}
 
 ## Overview
@@ -286,7 +301,10 @@ def init_skill(skill_name, path, resources, include_examples, interface_override
 
     # Create SKILL.md from template
     skill_title = title_case_skill_name(skill_name)
-    skill_content = SKILL_TEMPLATE.format(skill_name=skill_name, skill_title=skill_title)
+    skill_content = SKILL_TEMPLATE.format(
+        frontmatter=render_skill_frontmatter(skill_name),
+        skill_title=skill_title,
+    )
 
     skill_md_path = skill_dir / "SKILL.md"
     try:
