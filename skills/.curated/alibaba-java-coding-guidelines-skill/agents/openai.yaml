@@ -1,0 +1,7 @@
+interface:
+  display_name: "阿里 Java 规约 Skill"
+  short_description: "阿里 Java 编码规范 skill"
+  default_prompt: "使用 $alibaba-java-coding-guidelines-skill 按阿里巴巴 Java 编码规范审查这次 Java 改动。"
+
+policy:
+  allow_implicit_invocation: true
