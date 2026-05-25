@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Walkthrough"
+  short_description: "按真实运行链路和状态账本讲透代码实现。"
+  default_prompt: "Use $code-walkthrough to explain this feature from source as a complete runtime story with state/data continuity."
