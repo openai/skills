@@ -338,6 +338,7 @@ Write the YAML frontmatter with `name` and `description`:
 - `description`: This is the primary triggering mechanism for your skill, and helps Codex understand when to use the skill.
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Codex.
+  - Quote the description string when it contains YAML-sensitive characters such as `: `, brackets, quotes, or file paths. For example, write `description: "Convert files into a standard format: readable output for reports."` rather than leaving the string unquoted.
   - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Codex needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks"
 
 Do not include any other fields in YAML frontmatter.
@@ -355,6 +356,8 @@ scripts/quick_validate.py <path/to/skill-folder>
 ```
 
 The validation script checks YAML frontmatter format, required fields, and naming rules. If validation fails, fix the reported issues and run the command again.
+
+If a skill exists on disk but does not appear in Codex's available skill list, run this validation first. A common cause is invalid YAML frontmatter, for example an unquoted description containing `: ` such as `format: readable`.
 
 ### Step 6: Iterate
 
