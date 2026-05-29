@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI-Native CLI"
+  short_description: "Design spec for building agent-friendly CLI tools"
+  default_prompt: "Follow the AI-Native CLI spec to build or audit a command-line tool that is safe and reliable for AI agents."
