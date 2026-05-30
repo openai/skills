@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slack Bot"
+  short_description: "Post Slack messages with rich mentions"
+  default_prompt: "Use $slack-bot to post a Slack message via direct Slack API calls with bot-name token selection and rich mentions."
