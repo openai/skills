@@ -1,0 +1,3255 @@
+{
+  "plugins": [
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Earnings calls, transcripts, financial events, and market commentary",
+      "display_name": "Aiera",
+      "homepage": "https://www.aiera.com",
+      "keywords": [],
+      "manifest_path": "plugins/aiera/.codex-plugin/plugin.json",
+      "name": "aiera",
+      "plugin_path": "plugins/aiera",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "aiera aiera earnings calls, transcripts, financial events, and market commentary research earnings calls, transcripts, financial events, and market commentary earnings calls, transcripts, financial events, and market commentary"
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Airtable is the database and operations layer for your agents \u2014 whether running product, marketing, sales, ops, HR, or a custom business app. It combines structured data with multiplayer visual surfaces (grid, kanban, calendar, gallery, timeline) humans and agents share \u2014 plus sync integrations to Jira, Salesforce, Zendesk, Google Drive, Databricks, and the rest of your stack, all backed by enterprise governance. This plugin makes Codex fluent in Airtable: creating bases and schema, working with records, and sharing UI for collaboration. Uses the Airtable app connector.",
+      "display_name": "Airtable",
+      "homepage": "https://www.airtable.com",
+      "keywords": [
+        "airtable",
+        "database",
+        "relational-database",
+        "application-database",
+        "data-store",
+        "persistence",
+        "crud",
+        "product",
+        "product-ops",
+        "crm",
+        "sales",
+        "marketing",
+        "operations",
+        "hr",
+        "hiring",
+        "project-management",
+        "roadmap",
+        "customer-success",
+        "nocode",
+        "low-code",
+        "spreadsheet",
+        "collaboration",
+        "real-time",
+        "governance",
+        "workflow",
+        "automation",
+        "internal-tools",
+        "mcp",
+        "content"
+      ],
+      "manifest_path": "plugins/airtable/.codex-plugin/plugin.json",
+      "name": "airtable",
+      "plugin_path": "plugins/airtable",
+      "repository": "https://github.com/airtable/skills",
+      "search_text": "airtable airtable airtable is the database and operations layer for your agents \u2014 whether running product, marketing, sales, ops, hr, or a custom business app. it combines structured data with multiplayer visual surfaces (grid, kanban, calendar, gallery, timeline) humans and agents share \u2014 plus sync integrations to jira, salesforce, zendesk, google drive, databricks, and the rest of your stack, all backed by enterprise governance. this plugin makes codex fluent in airtable: creating bases and schema, working with records, and sharing ui for collaboration. uses the airtable app connector. productivity airtable database relational-database application-database data-store persistence crud product product-ops crm sales marketing operations hr hiring project-management roadmap customer-success nocode low-code spreadsheet collaboration real-time governance workflow automation internal-tools mcp content read write database and operations layer for your agents. airtable is the database and operations layer for your agents \u2014 whether running product, marketing, sales, ops, hr, or a custom business app. it combines structured data with multiplayer visual surfaces (grid, kanban, calendar, gallery, timeline) humans and agents share \u2014 plus sync integrations to jira, salesforce, zendesk, google drive, databricks, and the rest of your stack, all backed by enterprise governance. this plugin makes codex fluent in your airtable bases: creating bases and schema, working with records, and sharing ui for collaboration. uses the airtable app connector."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Stop watching the markets.",
+      "display_name": "Alpaca",
+      "homepage": "https://alpaca.markets/",
+      "keywords": [],
+      "manifest_path": "plugins/alpaca/.codex-plugin/plugin.json",
+      "name": "alpaca",
+      "plugin_path": "plugins/alpaca",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "alpaca alpaca stop watching the markets. research stop watching the markets. stop watching the markets. turn your words into insights with alpaca.\nask codex real market questions and get live answers you can act on, including historical data, snapshots, quotes, and option chain information. stock, options, and crypto market data embedded right into your conversation so you can turn analysis into automated actions.\n\"how has aapl's stock performed this quarter vs goog?\"\n\"show me the spy option chain that expires next friday.\"\n\"when has btc's price reached $100k usd this year?\""
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Product analytics and funnels",
+      "display_name": "Amplitude",
+      "homepage": "",
+      "keywords": [],
+      "manifest_path": "plugins/amplitude/.codex-plugin/plugin.json",
+      "name": "amplitude",
+      "plugin_path": "plugins/amplitude",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "amplitude amplitude product analytics and funnels productivity product analytics and funnels product analytics and funnels"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "B2B prospecting, account research, contacts, and outreach lists",
+      "display_name": "Apollo",
+      "homepage": "https://www.apollo.io",
+      "keywords": [],
+      "manifest_path": "plugins/apollo/.codex-plugin/plugin.json",
+      "name": "apollo",
+      "plugin_path": "plugins/apollo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "apollo apollo b2b prospecting, account research, contacts, and outreach lists productivity b2b prospecting, account research, contacts, and outreach lists b2b prospecting, account research, contacts, and outreach lists"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with your Asana tasks, subtasks, comments, due dates, and project details to create summaries, understand priorities, and prepare clear status updates.",
+      "display_name": "Asana",
+      "homepage": "https://asana.com",
+      "keywords": [
+        "asana",
+        "tasks",
+        "project-management",
+        "productivity",
+        "collaboration",
+        "work-management"
+      ],
+      "manifest_path": "plugins/asana/.codex-plugin/plugin.json",
+      "name": "asana",
+      "plugin_path": "plugins/asana",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "asana asana work with your asana tasks, subtasks, comments, due dates, and project details to create summaries, understand priorities, and prepare clear status updates. productivity asana tasks project-management productivity collaboration work-management interactive write read and manage asana work with your asana tasks, subtasks, comments, due dates, and project details to create summaries, understand priorities, and prepare clear status updates."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Manage Jira and Confluence fast",
+      "display_name": "Atlassian Rovo",
+      "homepage": "https://www.atlassian.com",
+      "keywords": [
+        "atlassian"
+      ],
+      "manifest_path": "plugins/atlassian-rovo/.codex-plugin/plugin.json",
+      "name": "atlassian-rovo",
+      "plugin_path": "plugins/atlassian-rovo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "atlassian-rovo atlassian rovo manage jira and confluence fast productivity atlassian interactive write manage jira and confluence fast manage jira and confluence fast"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Attio connects Codex directly to your CRM workspace, letting you manage customer relationships through na...",
+      "display_name": "Attio",
+      "homepage": "https://attio.com",
+      "keywords": [],
+      "manifest_path": "plugins/attio/.codex-plugin/plugin.json",
+      "name": "attio",
+      "plugin_path": "plugins/attio",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "attio attio attio connects codex directly to your crm workspace, letting you manage customer relationships through na... productivity attio connects codex directly to your crm workspace, letting you manage customer relationships through na... attio connects codex directly to your crm workspace, letting you manage customer relationships through natural conversation. \n\nsearch and filter contacts, companies, and deals with flexible queries. create, update, and organize records without switching between screens. add notes, manage tasks, and track your sales pipeline\u2014all through simple requests. \n\nkey capabilities: \n- search records using powerful filters (find companies by size, industry, last contact date) \n- create and update people, companies, and deal records \n- manage notes attached to any record \n- track and complete tasks \n- navigate lists and organize your data \n\nwhether you're preparing for a meeting, updating deal stages, or researching prospects, attio brings your crm data into your conversation \u2014 no manual data entry required."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Binance for Codex lets you access and explore Binance public, read-only market data using natural language.",
+      "display_name": "Binance",
+      "homepage": "https://www.binance.com",
+      "keywords": [],
+      "manifest_path": "plugins/binance/.codex-plugin/plugin.json",
+      "name": "binance",
+      "plugin_path": "plugins/binance",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "binance binance binance for codex lets you access and explore binance public, read-only market data using natural language. research binance for codex lets you access and explore binance public, read-only market data using natural language. binance for codex lets you access and explore binance public, read-only market data using natural language. retrieve current and historical prices, order books, recent trades, candlesticks (klines), and exchange metadata across spot, futures, and options. no authentication is required. this app does not access user accounts and does not support trading or transactions.\n\nmarket data is provided \u201cas is\u201d from binance\u2019s public apis and may be delayed, incomplete, or subject to change. this information is for informational purposes only and should not be relied upon for trading or financial decisions. binance makes no representations or warranties regarding accuracy or timeliness and disclaims all liability arising from use of this data."
+    },
+    {
+      "capabilities": [],
+      "category": "Design",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "BioRender helps scientists create professional figures in minutes.",
+      "display_name": "BioRender",
+      "homepage": "https://biorender.com/",
+      "keywords": [],
+      "manifest_path": "plugins/biorender/.codex-plugin/plugin.json",
+      "name": "biorender",
+      "plugin_path": "plugins/biorender",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "biorender biorender biorender helps scientists create professional figures in minutes. design biorender helps scientists create professional figures in minutes. biorender helps scientists create professional figures in minutes. access thousands of scientifically accurate templates and icons directly in codex to visualize protocols, pathways, molecular structures, and more. brainstorm with your team, communicate research concepts, or build publication-ready figures for presentations, manuscripts, grant proposals, and posters."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search and reference your documents",
+      "display_name": "Box",
+      "homepage": "https://www.box.com/home",
+      "keywords": [],
+      "manifest_path": "plugins/box/.codex-plugin/plugin.json",
+      "name": "box",
+      "plugin_path": "plugins/box",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "box box search and reference your documents productivity search and reference your documents search and reference your documents in box and work safely with box content flows from codex."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Brand24 app in Codex lets marketing and PR teams instantly explore brand mentions, sentiment, and med...",
+      "display_name": "Brand24",
+      "homepage": "https://brand24.com",
+      "keywords": [],
+      "manifest_path": "plugins/brand24/.codex-plugin/plugin.json",
+      "name": "brand24",
+      "plugin_path": "plugins/brand24",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "brand24 brand24 the brand24 app in codex lets marketing and pr teams instantly explore brand mentions, sentiment, and med... productivity the brand24 app in codex lets marketing and pr teams instantly explore brand mentions, sentiment, and med... the brand24 app in codex lets marketing and pr teams instantly explore brand mentions, sentiment, and media coverage using simple prompts.\nsummarize conversations, track brand reputation, analyze trends over time, and uncover key discussion sources across social media, news, blogs, and forums without leaving codex.\n\nfrom spotting emerging issues to understanding audience perception and campaign impact, codex interprets brand24 data in real time, helping marketers and pr specialists move from monitoring to insight and action with no extra setup."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect Brex to Codex and review your company finances through natural conversation \u2014 at Codex speed.",
+      "display_name": "Brex",
+      "homepage": "https://brex.com",
+      "keywords": [],
+      "manifest_path": "plugins/brex/.codex-plugin/plugin.json",
+      "name": "brex",
+      "plugin_path": "plugins/brex",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "brex brex connect brex to codex and review your company finances through natural conversation \u2014 at codex speed. productivity connect brex to codex and review your company finances through natural conversation \u2014 at codex speed. connect brex to codex and review your company finances through natural conversation \u2014 at codex speed.\n\nfor finance teams: analyze spend, detect anomalies, and run custom queries and reports instantly to accelerate decisions and do more with less.\n\nfor employees: see how much you can spend, ask policy questions, check reimbursement status, manage travel, and more right in codex.\n\naccess is role-aware by default: employees see only what applies to them, while admins retain full visibility and control."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets",
+        ".mcp.json"
+      ],
+      "description": "Build iOS apps with workflows for App Intents, SwiftUI UI work, refactors, performance profiling, leak investigation, and simulator debugging.",
+      "display_name": "Build iOS Apps",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "ios",
+        "swift",
+        "swiftui",
+        "app-intents",
+        "shortcuts",
+        "siri",
+        "spotlight",
+        "xcode",
+        "performance",
+        "debugging"
+      ],
+      "manifest_path": "plugins/build-ios-apps/.codex-plugin/plugin.json",
+      "name": "build-ios-apps",
+      "plugin_path": "plugins/build-ios-apps",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "build-ios-apps build ios apps build ios apps with workflows for app intents, swiftui ui work, refactors, performance profiling, leak investigation, and simulator debugging. developer tools ios swift swiftui app-intents shortcuts siri spotlight xcode performance debugging interactive read write build, refine, and debug ios apps with app intents, swiftui, and xcode workflows use build ios apps to design app intents and app shortcuts, build or refactor swiftui ui, adopt modern ios patterns such as liquid glass, audit runtime performance, capture ettrace profiles, investigate memory leaks, and debug apps on simulators with xcodebuildmcp-backed workflows."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "commands",
+        "assets"
+      ],
+      "description": "Build, run, test, debug, instrument, and implement local macOS apps using Xcode, SwiftUI, AppKit interop, unified logging, and shell-first desktop workflows.",
+      "display_name": "Build macOS Apps",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "macos",
+        "swift",
+        "swiftui",
+        "appkit",
+        "xcode",
+        "swiftpm",
+        "debugging",
+        "codesign",
+        "logging",
+        "telemetry",
+        "oslog"
+      ],
+      "manifest_path": "plugins/build-macos-apps/.codex-plugin/plugin.json",
+      "name": "build-macos-apps",
+      "plugin_path": "plugins/build-macos-apps",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "build-macos-apps build macos apps build, run, test, debug, instrument, and implement local macos apps using xcode, swiftui, appkit interop, unified logging, and shell-first desktop workflows. developer tools macos swift swiftui appkit xcode swiftpm debugging codesign logging telemetry oslog interactive read write build, debug, instrument, and implement macos apps with swiftui and appkit guidance macos development workflows for discovering local projects, building and running desktop apps, implementing native swiftui scenes, bridging into appkit when necessary, adding lightweight logger telemetry, triaging test failures, inspecting signing and entitlements, and debugging desktop-specific build or runtime errors."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets"
+      ],
+      "description": "Build web apps with frontend asset design, browser testing, UI components, payments, and database guidance.",
+      "display_name": "Build Web Apps",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "build-web-apps",
+        "build",
+        "product-apps",
+        "frontend",
+        "image-generation",
+        "browser-testing",
+        "frontend-debugging",
+        "stripe",
+        "supabase",
+        "shadcn",
+        "full-stack",
+        "frontend-qa"
+      ],
+      "manifest_path": "plugins/build-web-apps/.codex-plugin/plugin.json",
+      "name": "build-web-apps",
+      "plugin_path": "plugins/build-web-apps",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "build-web-apps build web apps build web apps with frontend asset design, browser testing, ui components, payments, and database guidance. developer tools build-web-apps build product-apps frontend image-generation browser-testing frontend-debugging stripe supabase shadcn full-stack frontend-qa interactive read write build frontend-focused web apps with generated assets, browser testing, payments, and databases use build web apps to create frontend application surfaces with codex-generated visual assets, verify them with the browser plugin and built-in app browser, compose shadcn/ui, wire stripe payments, and design or tune supabase/postgres data flows."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets"
+      ],
+      "description": "Design, critique, implement, test, and export web data visualizations in Codex, including charts, maps, dashboards, Gantt, UML, scrollytelling, reports, slides, mobile views, shareable state, and advanced WebGL concepts.",
+      "display_name": "Build Web Data Visualization",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "build-web-data-visualization",
+        "web-data-visualization",
+        "data-visualization",
+        "charts",
+        "dashboards",
+        "maps",
+        "geospatial",
+        "vega-lite",
+        "observable-plot",
+        "d3",
+        "canvas",
+        "webgl",
+        "threejs",
+        "react",
+        "nextjs",
+        "typescript",
+        "svg",
+        "accessibility",
+        "testing",
+        "visual-regression",
+        "reports",
+        "slides",
+        "infographics",
+        "scrollytelling",
+        "parallax",
+        "gantt",
+        "uml",
+        "software-architecture",
+        "graph-layout",
+        "node-link",
+        "mobile",
+        "responsive",
+        "shareable-state",
+        "visual-design",
+        "visual-design-contract",
+        "color-contrast",
+        "uncertainty",
+        "export",
+        "diagrams",
+        "operational-workspaces",
+        "humanitarian",
+        "geopolitical"
+      ],
+      "manifest_path": "plugins/build-web-data-visualization/.codex-plugin/plugin.json",
+      "name": "build-web-data-visualization",
+      "plugin_path": "plugins/build-web-data-visualization",
+      "repository": "",
+      "search_text": "build-web-data-visualization build web data visualization design, critique, implement, test, and export web data visualizations in codex, including charts, maps, dashboards, gantt, uml, scrollytelling, reports, slides, mobile views, shareable state, and advanced webgl concepts. developer tools build-web-data-visualization web-data-visualization data-visualization charts dashboards maps geospatial vega-lite observable-plot d3 canvas webgl threejs react nextjs typescript svg accessibility testing visual-regression reports slides infographics scrollytelling parallax gantt uml software-architecture graph-layout node-link mobile responsive shareable-state visual-design visual-design-contract color-contrast uncertainty export diagrams operational-workspaces humanitarian geopolitical interactive read write design, build, test, and export web data visualizations use build web data visualization to choose, design, implement, test, and export browser charts, dashboards, maps, webgl/three.js scenes, canvas/d3 visuals, gantt charts, uml/software diagrams, scrollytelling, reports, pdfs, and slide decks. it emphasizes source-backed data, accessible responsive layouts, url-shareable analysis state, and concept-first design for advanced visual stories."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search Calendly events and availability so Codex can reason about meetings and scheduling.",
+      "display_name": "Calendly",
+      "homepage": "https://calendly.com",
+      "keywords": [
+        "calendly",
+        "calendar",
+        "scheduling",
+        "meetings",
+        "availability",
+        "events"
+      ],
+      "manifest_path": "plugins/calendly/.codex-plugin/plugin.json",
+      "name": "calendly",
+      "plugin_path": "plugins/calendly",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "calendly calendly search calendly events and availability so codex can reason about meetings and scheduling. productivity calendly calendar scheduling meetings availability events search calendly meetings, events, and availability. calendly connects codex to your scheduling workflows so you can inspect upcoming meetings, review event details, reason about availability, and summarize attendee follow-ups."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search, create, edit designs",
+      "display_name": "Canva",
+      "homepage": "https://www.canva.com",
+      "keywords": [],
+      "manifest_path": "plugins/canva/.codex-plugin/plugin.json",
+      "name": "canva",
+      "plugin_path": "plugins/canva",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "canva canva search, create, edit designs productivity search, create, edit designs search, create, edit designs"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Carta CRM helps investment teams stay on top of deal flow by keeping deals, companies, and relationships in...",
+      "display_name": "Carta CRM",
+      "homepage": "https://carta.com",
+      "keywords": [],
+      "manifest_path": "plugins/carta-crm/.codex-plugin/plugin.json",
+      "name": "carta-crm",
+      "plugin_path": "plugins/carta-crm",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "carta-crm carta crm carta crm helps investment teams stay on top of deal flow by keeping deals, companies, and relationships in... productivity carta crm helps investment teams stay on top of deal flow by keeping deals, companies, and relationships in... carta crm helps investment teams stay on top of deal flow by keeping deals, companies, and relationships in one place. track opportunities through each stage, capture meeting notes and key takeaways alongside the right deal or contact, and quickly find past context when you need it."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Unleash Codex as your private markets research agent.",
+      "display_name": "CB Insights",
+      "homepage": "https://cbinsights.com",
+      "keywords": [],
+      "manifest_path": "plugins/cb-insights/.codex-plugin/plugin.json",
+      "name": "cb-insights",
+      "plugin_path": "plugins/cb-insights",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "cb-insights cb insights unleash codex as your private markets research agent. research unleash codex as your private markets research agent. unleash codex as your private markets research agent. source companies, build market maps, draft investment memos, and monitor competitors \u2014 all powered by cb insights\u2019 predictive intelligence. tap into 11m+ double-validated company profiles, leading coverage of recent equity deals, proprietary taxonomies, unique scores, hidden signals, and over 20 years of bleeding edge technology research to identify and analyze relevant, high-potential companies ahead of your competition.\n\nbuilt for corporate strategists seeking acquisition targets, vcs screening deal flow, and business development teams hunting new partners. if your work involves private companies, cb insights delivers the insight you need to make your next move first."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Channel99 real time go to market intelligence connects Codex directly to Channel99\u2019s performance marketin...",
+      "display_name": "Channel99",
+      "homepage": "https://www.channel99.com/",
+      "keywords": [],
+      "manifest_path": "plugins/channel99/.codex-plugin/plugin.json",
+      "name": "channel99",
+      "plugin_path": "plugins/channel99",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "channel99 channel99 channel99 real time go to market intelligence connects codex directly to channel99\u2019s performance marketin... productivity channel99 real time go to market intelligence connects codex directly to channel99\u2019s performance marketin... channel99 real time go to market intelligence connects codex directly to channel99\u2019s performance marketing intelligence. giving ai assistants real-time access to unified b2b marketing data and insights.. powered by channel99\u2019s advanced attribution, account identification, and ai-driven analytics. the channel99 connection enables natural-language queries that deliver accurate campaign performance, spend efficiency, audience engagement and cross channel attribution insights eliminating manual data pulls, siloed dashboards and complex api engineering. \n\nmarketers, analysts, and business leaders can ask codex strategic questions like \u201cwhich channels drove the most high-value engagement last quarter?\u201d or \u201cwhere should we reallocate budget to improve pipeline efficiency?\u201d and get precise, context-aware results powered by channel99\u2019s industry leading performance data. \n\ndeveloped by channel99 a b2b marketing technology company dedicated to improving roi, lowering acquisition costs, and bringing financial transparency to digital marketing investments."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Circleback helps teams get the most out of every conversation with AI-powered meeting notes, action items,...",
+      "display_name": "Circleback",
+      "homepage": "https://circleback.ai",
+      "keywords": [],
+      "manifest_path": "plugins/circleback/.codex-plugin/plugin.json",
+      "name": "circleback",
+      "plugin_path": "plugins/circleback",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "circleback circleback circleback helps teams get the most out of every conversation with ai-powered meeting notes, action items,... productivity circleback helps teams get the most out of every conversation with ai-powered meeting notes, action items,... circleback helps teams get the most out of every conversation with ai-powered meeting notes, action items, automations, and search.\n\nsearch and access data from in-person and online meetings you've recorded in circleback, including meeting notes, action items, transcripts, people, and companies as well as your calendar and email."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Build, test, and deploy any application",
+      "display_name": "CircleCI",
+      "homepage": "https://circleci.com",
+      "keywords": [
+        "circleci",
+        "ci/cd",
+        "ci"
+      ],
+      "manifest_path": "plugins/circleci/.codex-plugin/plugin.json",
+      "name": "circleci",
+      "plugin_path": "plugins/circleci",
+      "repository": "https://github.com/circleci-public/skills",
+      "search_text": "circleci circleci build, test, and deploy any application developer tools circleci ci/cd ci interactive write build, test, and deploy any application bring testing, deployment, and ci best practices into codex"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Find, enrich, and organize GTM accounts, contacts, and prospecting workflows from Clay.",
+      "display_name": "Clay",
+      "homepage": "https://www.clay.com",
+      "keywords": [
+        "clay",
+        "gtm",
+        "sales",
+        "prospecting",
+        "lead-enrichment",
+        "contacts",
+        "accounts"
+      ],
+      "manifest_path": "plugins/clay/.codex-plugin/plugin.json",
+      "name": "clay",
+      "plugin_path": "plugins/clay",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "clay clay find, enrich, and organize gtm accounts, contacts, and prospecting workflows from clay. productivity clay gtm sales prospecting lead-enrichment contacts accounts find and enrich gtm accounts, contacts, and prospects. clay connects codex to your gtm workflows so you can find prospects, enrich leads, summarize account context, and organize outreach signals from clay data."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Turn Codex into your ClickUp command center.",
+      "display_name": "ClickUp",
+      "homepage": "",
+      "keywords": [],
+      "manifest_path": "plugins/clickup/.codex-plugin/plugin.json",
+      "name": "clickup",
+      "plugin_path": "plugins/clickup",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "clickup clickup turn codex into your clickup command center. productivity turn codex into your clickup command center. turn codex into your clickup command center. ask anything, find everything, take action - without breaking your flow.\n\u2022 deep workspace search:  ask questions naturally, get precise answers from across all your work\n\u2022 action in the same breath: find, create, update, and manage work in codex\n\u2022 zero context switching:  go from question to answer to action without leaving the conversation"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "CRM leads, opportunities, activities, and sales pipeline context",
+      "display_name": "Close",
+      "homepage": "https://www.close.com",
+      "keywords": [],
+      "manifest_path": "plugins/close/.codex-plugin/plugin.json",
+      "name": "close",
+      "plugin_path": "plugins/close",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "close close crm leads, opportunities, activities, and sales pipeline context productivity crm leads, opportunities, activities, and sales pipeline context crm leads, opportunities, activities, and sales pipeline context"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "commands",
+        "assets",
+        ".mcp.json"
+      ],
+      "description": "Cloudflare platform plugin with curated skills for Workers, Wrangler, and Agents SDK plus the official Cloudflare API MCP server.",
+      "display_name": "Cloudflare",
+      "homepage": "https://workers.cloudflare.com/",
+      "keywords": [
+        "cloudflare",
+        "workflow",
+        "deployment",
+        "edge-functions",
+        "edge",
+        "analytics",
+        "wrangler",
+        "agents-sdk",
+        "serverless",
+        "ai-gateway"
+      ],
+      "manifest_path": "plugins/cloudflare/.codex-plugin/plugin.json",
+      "name": "cloudflare",
+      "plugin_path": "plugins/cloudflare",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "cloudflare cloudflare cloudflare platform plugin with curated skills for workers, wrangler, and agents sdk plus the official cloudflare api mcp server. developer tools cloudflare workflow deployment edge-functions edge analytics wrangler agents-sdk serverless ai-gateway interactive write cloudflare platform guidance with official mcp bring cloudflare platform guidance into codex with curated skills for the broader platform, wrangler cli, and the agents sdk, plus the official cloudflare api mcp server for authenticated access to live account data and workflows across workers, pages, storage, ai, networking, security, and analytics services."
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Manage, search, and transform your Cloudinary media library \u2014 directly from Codex.",
+      "display_name": "Cloudinary",
+      "homepage": "https://cloudinary.com/",
+      "keywords": [],
+      "manifest_path": "plugins/cloudinary/.codex-plugin/plugin.json",
+      "name": "cloudinary",
+      "plugin_path": "plugins/cloudinary",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "cloudinary cloudinary manage, search, and transform your cloudinary media library \u2014 directly from codex. developer tools manage, search, and transform your cloudinary media library \u2014 directly from codex. manage, search, and transform your cloudinary media library \u2014 directly from codex.\n\nthe cloudinary app connects your cloudinary account to codex, giving you full control over your visual assets through natural language. upload, organize, tag, transform, and analyze images or videos without leaving the chat. \n\nwhat you can do\n- upload assets from urls, local files, or base64 data \u2014 automatically analyze, tag, or moderate them.\n- browse and search your entire media library using smart filters or text queries (tags, format, date, size, etc.).\n- organize your library \u2014 create folders, rename files, manage metadata, and clean up obsolete assets.\n- transform images or videos with cloudinary\u2019s powerful syntax \u2014 resize, crop, watermark, apply filters, or optimize for delivery.\n- generate archives and backups, or restore previous versions when needed.\n- analyze assets with ai \u2014 detect faces, extract text, get color palettes, and accessibility scores.\n- monitor usage \u2014 track storage, bandwidth, and transformation credits in real time.\n- visual search \u2014 find visually similar images by uploading an example or describing it.\n\nperfect for\n- developers who want to experiment with cloudinary api commands in natural language.\n- marketers & designers managing campaign visuals and brand assets.\n- teams automating content workflows with codex or building multi-agent setups.\n\nturn codex into a powerful media management assistant with the cloudinary app."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "AI-powered code review in Codex, powered by CodeRabbit.",
+      "display_name": "CodeRabbit",
+      "homepage": "https://docs.coderabbit.ai/cli/overview",
+      "keywords": [
+        "code-review",
+        "ai",
+        "coderabbit",
+        "codex"
+      ],
+      "manifest_path": "plugins/coderabbit/.codex-plugin/plugin.json",
+      "name": "coderabbit",
+      "plugin_path": "plugins/coderabbit",
+      "repository": "https://github.com/coderabbitai/codex-plugin",
+      "search_text": "coderabbit coderabbit ai-powered code review in codex, powered by coderabbit. developer tools code-review ai coderabbit codex interactive write run ai-powered code review for your current changes run coderabbit review workflows in codex to inspect diffs, surface actionable findings, and turn review output into follow-up fixes."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Security",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Codex Security workflows for security scans, analysis, and investigation.",
+      "display_name": "Codex Security",
+      "homepage": "https://developers.openai.com/codex/security",
+      "keywords": [
+        "security",
+        "code-review",
+        "diff-review",
+        "appsec",
+        "threat-modeling"
+      ],
+      "manifest_path": "plugins/codex-security/.codex-plugin/plugin.json",
+      "name": "codex-security",
+      "plugin_path": "plugins/codex-security",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "codex-security codex security codex security workflows for security scans, analysis, and investigation. security security code-review diff-review appsec threat-modeling interactive read write security scanning for your codebase codex security packages reusable workflows for security scans, analysis, validation, and investigation across code, diffs, and related artifacts."
+    },
+    {
+      "capabilities": [],
+      "category": "Lifestyle",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Cogedim is one of France's leading real estate developers.",
+      "display_name": "Cogedim",
+      "homepage": "https://www.cogedim.com",
+      "keywords": [],
+      "manifest_path": "plugins/cogedim/.codex-plugin/plugin.json",
+      "name": "cogedim",
+      "plugin_path": "plugins/cogedim",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "cogedim cogedim cogedim is one of france's leading real estate developers. lifestyle cogedim is one of france's leading real estate developers. cogedim is one of france's leading real estate developers. a specialist in off-plan sales (vefa) for over 60 years, cogedim guides you every step of the way, from defining your needs to handing over the keys."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Embed complete buyer intelligence directly within Codex.",
+      "display_name": "Common Room",
+      "homepage": "https://commonroom.io",
+      "keywords": [],
+      "manifest_path": "plugins/common-room/.codex-plugin/plugin.json",
+      "name": "common-room",
+      "plugin_path": "plugins/common-room",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "common-room common room embed complete buyer intelligence directly within codex. productivity embed complete buyer intelligence directly within codex. embed complete buyer intelligence directly within codex. research accounts and contacts, surface buying signals, and browse activity history - all through natural language. build prospect lists of net-new companies by industry, size, tech stack, or location. filter and sort contacts by segment, role, lead score, or website visits. every result is grounded\u00a0in real context, real prioritization, and real revenue opportunity directly from your crm fields, scores, enrichment, and signals - so you always know what's actually happening in your accounts.\n\nyou can use the common room mcp to:\n\n\u00a0account research:\n\u00a0\"tell me about datadog and create a plan on how to approach the account\"\n\n\u00a0contact lookup:\n\u00a0\"research jane.doe@company.com\u00a0using common room\"\n\n\u00a0prospect:\n\u00a0\"find saas companies in the us using snowflake with 200\u20131000 employees\"\n\n\u00a0filter by segment and role:\n\u00a0\"show me all economic buyers in my 'champions changing jobs' segment\"\n\n\u00a0surface high-intent contacts:\n\u00a0\"find contacts at icp companies who have visited our pricing page this week\"\n\n\u00a0track website visitors:\n\u00a0\"who visited our pricing page in the last 7 days?\""
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Conductor MCP server retrieves proprietary performance metrics regarding a brand's visibility, sentimen...",
+      "display_name": "Conductor",
+      "homepage": "https://www.conductor.com/",
+      "keywords": [],
+      "manifest_path": "plugins/conductor/.codex-plugin/plugin.json",
+      "name": "conductor",
+      "plugin_path": "plugins/conductor",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "conductor conductor the conductor mcp server retrieves proprietary performance metrics regarding a brand's visibility, sentimen... productivity the conductor mcp server retrieves proprietary performance metrics regarding a brand's visibility, sentimen... the conductor mcp server retrieves proprietary performance metrics regarding a brand's visibility, sentiment, and rankings on both traditional search engines (e.g., google) and generative ai platforms (e.g., codex, gemini, copilot, perplexity or google ai overview). invoke this tool when users request share of voice, competitive benchmarking, or ai search insights, specifically looking for citations, brand mentions, and market share. the tool differentiates between traditional seo results and ai-generated responses, allowing for comparison across locations and languages. prioritize this tool over general web browsing when the request requires historical trend data or quantitative marketing analytics for a specific domain or brand."
+    },
+    {
+      "capabilities": [
+        "Backend setup",
+        "Database schema",
+        "Reactive queries",
+        "Server functions",
+        "Auth-aware data access",
+        "Realtime apps",
+        "Scheduled jobs",
+        "File storage",
+        "Mobile backends",
+        "Scaling guidance"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Add a reactive, type-safe backend, database, server functions, and scaling guidance to JavaScript and TypeScript apps with Convex.",
+      "display_name": "Convex",
+      "homepage": "https://chatgpt.com/apps/convex/asdk_app_6a0faef988b48191b843bac5cd170a9e",
+      "keywords": [
+        "convex",
+        "backend",
+        "database",
+        "realtime",
+        "reactive",
+        "websocket",
+        "auth",
+        "storage",
+        "scheduler",
+        "cron",
+        "server functions",
+        "crud",
+        "full-stack",
+        "typescript",
+        "javascript",
+        "react",
+        "nextjs",
+        "expo",
+        "mobile",
+        "mcp"
+      ],
+      "manifest_path": "plugins/convex/.codex-plugin/plugin.json",
+      "name": "convex",
+      "plugin_path": "plugins/convex",
+      "repository": "https://github.com/get-convex/convex-codex-plugin",
+      "search_text": "convex convex add a reactive, type-safe backend, database, server functions, and scaling guidance to javascript and typescript apps with convex. developer tools convex backend database realtime reactive websocket auth storage scheduler cron server functions crud full-stack typescript javascript react nextjs expo mobile mcp backend setup database schema reactive queries server functions auth-aware data access realtime apps scheduled jobs file storage mobile backends scaling guidance add a backend to js/ts apps. use the reviewed convex chatgpt app from codex whenever a project needs a backend: database schema, reactive queries, mutations, server functions, auth-aware data access, real-time features, file storage, scheduled jobs, mobile/web app backends, or production scaling guidance. convex helps coding agents choose backend primitives that are type-safe, reactive, and suitable for full-stack javascript and typescript apps."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Analyze multi-channel marketing, financial, sales, e-commerce, and other business data within Codex by co...",
+      "display_name": "Coupler.io",
+      "homepage": "https://www.coupler.io/",
+      "keywords": [],
+      "manifest_path": "plugins/coupler-io/.codex-plugin/plugin.json",
+      "name": "coupler-io",
+      "plugin_path": "plugins/coupler-io",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "coupler-io coupler.io analyze multi-channel marketing, financial, sales, e-commerce, and other business data within codex by co... productivity analyze multi-channel marketing, financial, sales, e-commerce, and other business data within codex by co... analyze multi-channel marketing, financial, sales, e-commerce, and other business data within codex by connecting to your coupler.io data flows. fetch and transform raw data from platforms like google ads, facebook, hubspot, and salesforce into actionable intelligence for smarter, faster decision-making with accurate, up-to-date business information.\n\nyou can use the coupler.io connector to:\n\n1. analyze customer acquisition costs: \"what's our overall customer acquisition cost across all paid channels this quarter compared to last quarter? i need this for the board meeting\"\n2. review marketing roi: \"show me the roi breakdown by marketing channel for the past 6 months. i need to reallocate our annual budget\"\n3. identify high-performing campaigns:\"which campaigns are contributing most to our pipeline revenue? i want to double down on what's working\"\n4. review sales pipeline: \"can you pull the sales pipeline report for this month? i need to see how many deals are in each stage and the total value at each stage\"\n5. analyze conversion rates: \"what are our conversion rates from lead to opportunity and from opportunity to closed-won for the last quarter? how do they compare to our targets?\"\n6. forecast revenue: \"how many deals are expected to close this month based on their probability scores? what's our forecasted revenue vs our monthly target?\"\n7. compare quarterly profits: \"check the profit for this quarter, compare it to last quarter, and provide a breakdown by department\"\n8. generate cash flow reports: \"could you provide a cash flow report for the last 30 days, including all incoming and outgoing transactions?\"\n9. review accounts receivable: \"share the current accounts receivable status and tell me how many overdue invoices we have and which customers owe the most\""
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search your enterprise content",
+      "display_name": "Coveo",
+      "homepage": "https://www.coveo.com",
+      "keywords": [],
+      "manifest_path": "plugins/coveo/.codex-plugin/plugin.json",
+      "name": "coveo",
+      "plugin_path": "plugins/coveo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "coveo coveo search your enterprise content productivity search your enterprise content search your enterprise content"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "With the Cube MCP Server, you can: - Query live Cube data from actuals, budgets, forecasts, variances, and...",
+      "display_name": "Cube",
+      "homepage": "https://www.cubesoftware.com/",
+      "keywords": [],
+      "manifest_path": "plugins/cube/.codex-plugin/plugin.json",
+      "name": "cube",
+      "plugin_path": "plugins/cube",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "cube cube with the cube mcp server, you can: - query live cube data from actuals, budgets, forecasts, variances, and... research with the cube mcp server, you can: - query live cube data from actuals, budgets, forecasts, variances, and... with the cube mcp server, you can:\n- query live cube data from actuals, budgets, forecasts, variances, and more\n- ask an ai to generate board decks, run variance analysis, or build financial summaries using your real cube data\n- drill into transaction-level detail and dimension breakdowns directly from an ai chat\n- maintain full security: cube's role-based access control (rbac) security model enforces your user permissions on every ai request. if you can't see it in cube, the ai can't see it either"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Daloopa supplies high quality fundamental data sourced from SEC Filings, investor presentations and any pub...",
+      "display_name": "Daloopa",
+      "homepage": "https://daloopa.com/",
+      "keywords": [],
+      "manifest_path": "plugins/daloopa/.codex-plugin/plugin.json",
+      "name": "daloopa",
+      "plugin_path": "plugins/daloopa",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "daloopa daloopa daloopa supplies high quality fundamental data sourced from sec filings, investor presentations and any pub... research daloopa supplies high quality fundamental data sourced from sec filings, investor presentations and any pub... daloopa supplies high quality fundamental data sourced from sec filings, investor presentations and any public financial documents, with hyperlinks to source document overlaying each data point. provides a zero-hallucination foundation for any quantitative financial analysis in codex."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Writes"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Investigate Datadog telemetry and workflows from Codex",
+      "display_name": "Datadog (Preview)",
+      "homepage": "https://www.datadoghq.com/",
+      "keywords": [],
+      "manifest_path": "plugins/datadog/.codex-plugin/plugin.json",
+      "name": "datadog",
+      "plugin_path": "plugins/datadog",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "datadog datadog (preview) investigate datadog telemetry and workflows from codex developer tools interactive writes investigate logs, metrics, traces, and incidents analyze, investigate, and act on your datadog telemetry directly from codex using natural language. ask questions about your production applications, identify, visualize, and remediate issues in your critical services. run agentic loops to ensure you continue to maintain good observability and service management posture."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Deal room documents, diligence materials, and Q&A workflows",
+      "display_name": "Datasite",
+      "homepage": "https://www.datasite.com",
+      "keywords": [],
+      "manifest_path": "plugins/datasite/.codex-plugin/plugin.json",
+      "name": "datasite",
+      "plugin_path": "plugins/datasite",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "datasite datasite deal room documents, diligence materials, and q&a workflows productivity deal room documents, diligence materials, and q&a workflows deal room documents, diligence materials, and q&a workflows"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Use Deepnote's collaborative data workspace to explore data, automate notebooks and SQL workflows, and turn analysis into shareable results.",
+      "display_name": "Deepnote",
+      "homepage": "https://deepnote.com",
+      "keywords": [
+        "deepnote",
+        "chatgpt-app",
+        "openai",
+        "notebooks",
+        "data",
+        "analytics"
+      ],
+      "manifest_path": "plugins/deepnote/.codex-plugin/plugin.json",
+      "name": "deepnote",
+      "plugin_path": "plugins/deepnote",
+      "repository": "https://github.com/openai/plugins/tree/main/plugins/deepnote",
+      "search_text": "deepnote deepnote use deepnote's collaborative data workspace to explore data, automate notebooks and sql workflows, and turn analysis into shareable results. productivity deepnote chatgpt-app openai notebooks data analytics interactive read write explore data and automate analysis in deepnote deepnote gives teams a collaborative workspace for notebooks, sql, apps, and data workflows. this plugin helps openai work with connected deepnote projects, inspect and run notebooks, and turn workspace context into useful analysis and shareable results."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Demandbase integration with Codex gives sales, marketing, and GTM teams seamless access to rich B2B data...",
+      "display_name": "Demandbase",
+      "homepage": "https://www.demandbase.com",
+      "keywords": [],
+      "manifest_path": "plugins/demandbase/.codex-plugin/plugin.json",
+      "name": "demandbase",
+      "plugin_path": "plugins/demandbase",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "demandbase demandbase demandbase integration with codex gives sales, marketing, and gtm teams seamless access to rich b2b data... productivity demandbase integration with codex gives sales, marketing, and gtm teams seamless access to rich b2b data... demandbase integration with codex gives sales, marketing, and gtm teams seamless access to rich b2b data directly inside codex for easier account targeting and engagement.\n\nthis app connects codex to demandbase via a secure mcp connection, letting you access both first and third party data:\nthird-party data (3p): search and retrieve industry-leading company and contact data from demandbase, including firmographics, technographics, family tree, company news, and leadership profiles.\n\nfirst-party data (1p): securely access your own demandbase 1p data such as known accounts, contacts, crm entities, engagement, and in-pipeline opportunities\n\nwhat you can do:\nsearch companies by name, location, size, revenue, or industry\ndiscover decision-makers and influencers by role or job level\nfetch full company profiles including recent news and competitors\ntap into 1p signals like engagement, mqa status, or activity\n\nwho it\u2019s for:\nsales reps looking for fast answers about a target account in real time\nmarketers enriching leads or refining personas\nrevops and enablement teams embedding intelligence into workflows\nai product teams creating agent workflows\n\n\nnote: this requires demandbase licences, please contact partnersupport@demandbase.com."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Docket AI makes your sales knowledge your instant superpower.",
+      "display_name": "Docket",
+      "homepage": "https://www.docket.io/",
+      "keywords": [],
+      "manifest_path": "plugins/docket/.codex-plugin/plugin.json",
+      "name": "docket",
+      "plugin_path": "plugins/docket",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "docket docket docket ai makes your sales knowledge your instant superpower. productivity docket ai makes your sales knowledge your instant superpower. docket ai makes your sales knowledge your instant superpower. sales reps get accurate, on-demand answers to product, competitive, technical, and customer questions\u2014pulled directly from your unified sales knowledge lake\u2122. guided by verified company intel, reps handle objections confidently, uncover prospect details, and craft personalised responses on the spot."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Agreement envelopes, signing status, recipients, and contract dates",
+      "display_name": "Docusign",
+      "homepage": "https://www.docusign.com",
+      "keywords": [],
+      "manifest_path": "plugins/docusign/.codex-plugin/plugin.json",
+      "name": "docusign",
+      "plugin_path": "plugins/docusign",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "docusign docusign agreement envelopes, signing status, recipients, and contract dates productivity agreement envelopes, signing status, recipients, and contract dates agreement envelopes, signing status, recipients, and contract dates"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Monitor and manage your network infrastructure through natural language.",
+      "display_name": "Domotz (Preview)",
+      "homepage": "https://www.domotz.com",
+      "keywords": [],
+      "manifest_path": "plugins/domotz-preview/.codex-plugin/plugin.json",
+      "name": "domotz-preview",
+      "plugin_path": "plugins/domotz-preview",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "domotz-preview domotz (preview) monitor and manage your network infrastructure through natural language. productivity monitor and manage your network infrastructure through natural language. monitor and manage your network infrastructure through natural language. query devices, check alerts, inspect metrics, manage configurations, and control power across all your sites. requires a domotz account enabled to the mcp preview program."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect Dovetail inside Codex to turn customer feedback into decisions without leaving your conversation.",
+      "display_name": "Dovetail ",
+      "homepage": "https://dovetail.com",
+      "keywords": [],
+      "manifest_path": "plugins/dovetail/.codex-plugin/plugin.json",
+      "name": "dovetail",
+      "plugin_path": "plugins/dovetail",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "dovetail dovetail  connect dovetail inside codex to turn customer feedback into decisions without leaving your conversation. productivity connect dovetail inside codex to turn customer feedback into decisions without leaving your conversation. connect dovetail inside codex to turn customer feedback into decisions without leaving your conversation. search your dovetail workspace for relevant projects, notes, docs, and themes, and get results back instantly. ask things like \u201csummarize top friction points impacting enterprise renewal conversations\u201d to surface evidence in seconds."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Factiva Connector, enables authorized users to search Factiva\u2019s global news archive, including premium...",
+      "display_name": "Dow Jones Factiva",
+      "homepage": "https://www.dowjones.com/business-intelligence/factiva/",
+      "keywords": [],
+      "manifest_path": "plugins/dow-jones-factiva/.codex-plugin/plugin.json",
+      "name": "dow-jones-factiva",
+      "plugin_path": "plugins/dow-jones-factiva",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "dow-jones-factiva dow jones factiva the factiva connector, enables authorized users to search factiva\u2019s global news archive, including premium... research the factiva connector, enables authorized users to search factiva\u2019s global news archive, including premium... the factiva connector, enables authorized users to search factiva\u2019s global news archive, including premium dow jones sources, and incorporate insights from that content into their codex responses.  \n\nusers can research companies, industries, and markets and ground their  answers in licensed content, complete with citations and direct links to original articles.\n\na subscription to factiva is required. \n\nfactiva content may not be shared outside your organization or used for machine learning or ai training purposes. this connector may only be used with your organization\u2019s codex instance."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with documents and files stored in Egnyte directly from Codex.",
+      "display_name": "Egnyte",
+      "homepage": "https://www.egnyte.com",
+      "keywords": [],
+      "manifest_path": "plugins/egnyte/.codex-plugin/plugin.json",
+      "name": "egnyte",
+      "plugin_path": "plugins/egnyte",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "egnyte egnyte work with documents and files stored in egnyte directly from codex. productivity work with documents and files stored in egnyte directly from codex. work with documents and files stored in egnyte directly from codex. search across folders, retrieve relevant files, and extract key information to answer questions or generate summaries.\n\nquickly surface insights from contracts, reports, and internal documents. combine information from multiple files to create concise summaries, stakeholder updates, or draft written content grounded in your team\u2019s internal materials."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "commands",
+        "assets"
+      ],
+      "description": "Official Expo skills for building, deploying, upgrading, and debugging Expo and React Native apps.",
+      "display_name": "Expo",
+      "homepage": "https://docs.expo.dev/skills/",
+      "keywords": [
+        "expo",
+        "react-native",
+        "expo-router",
+        "codex-run-actions",
+        "eas",
+        "mobile",
+        "ios",
+        "android",
+        "deployment",
+        "upgrades",
+        "native-modules"
+      ],
+      "manifest_path": "plugins/expo/.codex-plugin/plugin.json",
+      "name": "expo",
+      "plugin_path": "plugins/expo",
+      "repository": "https://github.com/expo/skills/tree/main/plugins/expo",
+      "search_text": "expo expo official expo skills for building, deploying, upgrading, and debugging expo and react native apps. developer tools expo react-native expo-router codex-run-actions eas mobile ios android deployment upgrades native-modules interactive read write build, deploy, upgrade, and debug expo and react native apps official expo-authored skills for building expo router ui, authoring api routes, configuring data fetching and styling, writing expo native modules, creating dev clients, upgrading expo sdks, wiring codex app run actions, and deploying expo apps with eas workflows, builds, hosting, testflight, app store, and play store guidance."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Financial data, estimates, market analytics, and research context",
+      "display_name": "FactSet",
+      "homepage": "https://www.factset.com",
+      "keywords": [],
+      "manifest_path": "plugins/factset/.codex-plugin/plugin.json",
+      "name": "factset",
+      "plugin_path": "plugins/factset",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "factset factset financial data, estimates, market analytics, and research context research financial data, estimates, market analytics, and research context financial data, estimates, market analytics, and research context"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Design",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "commands",
+        "assets",
+        ".app.json",
+        "hooks.json"
+      ],
+      "description": "Figma workflows for design implementation, Code Connect templates, and design system rule generation.",
+      "display_name": "Figma",
+      "homepage": "https://www.figma.com",
+      "keywords": [
+        "figma",
+        "design-to-code",
+        "ui-implementation",
+        "code-connect",
+        "design-system"
+      ],
+      "manifest_path": "plugins/figma/.codex-plugin/plugin.json",
+      "name": "figma",
+      "plugin_path": "plugins/figma",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "figma figma figma workflows for design implementation, code connect templates, and design system rule generation. design figma design-to-code ui-implementation code-connect design-system interactive read write design-to-code workflows powered by the figma integration figma workflows for implementing designs in code, creating code connect templates for published figma components, and generating project-specific design system rules for repeatable figma-to-code work."
+    },
+    {
+      "capabilities": [],
+      "category": "Lifestyle",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "A FINN car subscription is a flexible way to stay mobile anytime - without long-term commitments like buyin...",
+      "display_name": "FINN",
+      "homepage": "https://www.finn.com/de-DE",
+      "keywords": [],
+      "manifest_path": "plugins/finn/.codex-plugin/plugin.json",
+      "name": "finn",
+      "plugin_path": "plugins/finn",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "finn finn a finn car subscription is a flexible way to stay mobile anytime - without long-term commitments like buyin... lifestyle a finn car subscription is a flexible way to stay mobile anytime - without long-term commitments like buyin... a finn car subscription is a flexible way to stay mobile anytime - without long-term commitments like buying or leasing a car. with a fixed monthly rate that already includes insurance, maintenance, registration, and even co\u2082 offsetting, the car subscription offers full transparency and convenience.\n\nbest of all, you can book online in just a few minutes, and your new car will be delivered straight to your doorstep or you can pick it up at one of our stations."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Fireflies app brings your meetings and knowledge directly into Codex.",
+      "display_name": "Fireflies",
+      "homepage": "https://fireflies.ai",
+      "keywords": [],
+      "manifest_path": "plugins/fireflies/.codex-plugin/plugin.json",
+      "name": "fireflies",
+      "plugin_path": "plugins/fireflies",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "fireflies fireflies the fireflies app brings your meetings and knowledge directly into codex. productivity the fireflies app brings your meetings and knowledge directly into codex. the fireflies app brings your meetings and knowledge directly into codex.\n\nanalyze any conversation\u2014sales, customer success, product, recruiting\u2014for insights, action items, and sentiment. track feature requests and pain points, update crms or systems of record, and instantly retrieve context from your organization's meetings.\n\nwith fireflies and codex, centralize your company knowledge and turn every conversation into searchable, actionable insights."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Fyxer for Codex lets you write emails that sound like you, right from the chat.",
+      "display_name": "Fyxer",
+      "homepage": "https://www.fyxer.com",
+      "keywords": [],
+      "manifest_path": "plugins/fyxer/.codex-plugin/plugin.json",
+      "name": "fyxer",
+      "plugin_path": "plugins/fyxer",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "fyxer fyxer fyxer for codex lets you write emails that sound like you, right from the chat. productivity fyxer for codex lets you write emails that sound like you, right from the chat. fyxer for codex lets you write emails that sound like you, right from the chat. fyxer learns your writing style from past emails and uses context from your calendar and meeting notes to create personalized email drafts. just describe what you want to say and get a polished email ready to review and send."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Design, prototype, and ship browser games with guided 2D and 3D workflows, asset pipelines, and playtesting support.",
+      "display_name": "Game Studio",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "games",
+        "phaser",
+        "threejs",
+        "react-three-fiber",
+        "gltf",
+        "rapier",
+        "webgl",
+        "sprites",
+        "playtest"
+      ],
+      "manifest_path": "plugins/game-studio/.codex-plugin/plugin.json",
+      "name": "game-studio",
+      "plugin_path": "plugins/game-studio",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "game-studio game studio design, prototype, and ship browser games with guided 2d and 3d workflows, asset pipelines, and playtesting support. developer tools games phaser threejs react-three-fiber gltf rapier webgl sprites playtest interactive write design, prototype, and ship browser games plan, prototype, and build browser games with guided workflows for gameplay systems, ui, asset pipelines, and playtesting across 2d and 3d projects."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Inspect repositories, triage pull requests and issues, debug CI, and publish changes through a hybrid GitHub connector and CLI workflow.",
+      "display_name": "GitHub",
+      "homepage": "https://github.com/",
+      "keywords": [
+        "github",
+        "pull-request",
+        "code-review",
+        "issues",
+        "ci",
+        "actions"
+      ],
+      "manifest_path": "plugins/github/.codex-plugin/plugin.json",
+      "name": "github",
+      "plugin_path": "plugins/github",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "github github inspect repositories, triage pull requests and issues, debug ci, and publish changes through a hybrid github connector and cli workflow. developer tools github pull-request code-review issues ci actions interactive write triage prs, issues, ci, and publish flows use github to inspect repositories, review pull requests, address feedback, debug failing actions checks, and prepare code changes for review through a connector-first workflow with targeted cli fallbacks."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with Gmail using the configured Gmail app connector.",
+      "display_name": "Gmail",
+      "homepage": "https://workspace.google.com/products/gmail/",
+      "keywords": [
+        "gmail",
+        "email",
+        "google"
+      ],
+      "manifest_path": "plugins/gmail/.codex-plugin/plugin.json",
+      "name": "gmail",
+      "plugin_path": "plugins/gmail",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "gmail gmail work with gmail using the configured gmail app connector. productivity gmail email google interactive write read and manage gmail use gmail to summarize inbox activity, draft replies, and organize email threads through the connected gmail app."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect Google Calendar for scheduling, availability, daily briefs, and event management.",
+      "display_name": "Google Calendar",
+      "homepage": "https://workspace.google.com/products/calendar/",
+      "keywords": [
+        "google-calendar",
+        "calendar",
+        "agenda",
+        "daily-brief",
+        "scheduling",
+        "productivity"
+      ],
+      "manifest_path": "plugins/google-calendar/.codex-plugin/plugin.json",
+      "name": "google-calendar",
+      "plugin_path": "plugins/google-calendar",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "google-calendar google calendar connect google calendar for scheduling, availability, daily briefs, and event management. productivity google-calendar calendar agenda daily-brief scheduling productivity interactive write manage google calendar events and schedules use google calendar to summarize a day, check availability, list calendars, and create, update, or delete events directly from task prompts."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Use Google Drive as the single entrypoint for Drive, Docs, Sheets, and Slides work.",
+      "display_name": "Google Drive",
+      "homepage": "https://workspace.google.com/products/drive/",
+      "keywords": [
+        "google-drive",
+        "google-docs",
+        "google-sheets",
+        "google-slides",
+        "productivity"
+      ],
+      "manifest_path": "plugins/google-drive/.codex-plugin/plugin.json",
+      "name": "google-drive",
+      "plugin_path": "plugins/google-drive",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "google-drive google drive use google drive as the single entrypoint for drive, docs, sheets, and slides work. productivity google-drive google-docs google-sheets google-slides productivity interactive write work across drive, docs, sheets, and slides use google drive as one unified google file plugin for search, file organization, sharing, and google docs, google sheets, and google slides workflows."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search government contracts, awards, and vendors directly from Codex.",
+      "display_name": "GovTribe",
+      "homepage": "https://govtribe.com/",
+      "keywords": [],
+      "manifest_path": "plugins/govtribe/.codex-plugin/plugin.json",
+      "name": "govtribe",
+      "plugin_path": "plugins/govtribe",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "govtribe govtribe search government contracts, awards, and vendors directly from codex. research search government contracts, awards, and vendors directly from codex. search government contracts, awards, and vendors directly from codex. govtribe brings u.s. procurement intelligence into your ai workflow\u2014find relevant opportunities across federal agencies; analyze vendor competition; explore teaming partners; and track agency spending patterns. whether you're researching new markets, conducting competitive analysis, or preparing a proposal, get instant access to billions in public sector data without leaving your conversation."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Granola MCP connects your meeting history to Codex so your assistant can pull real context from past conv...",
+      "display_name": "Granola",
+      "homepage": "https://www.granola.ai",
+      "keywords": [],
+      "manifest_path": "plugins/granola/.codex-plugin/plugin.json",
+      "name": "granola",
+      "plugin_path": "plugins/granola",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "granola granola granola mcp connects your meeting history to codex so your assistant can pull real context from past conv... productivity granola mcp connects your meeting history to codex so your assistant can pull real context from past conv... granola mcp connects your meeting history to codex so your assistant can pull real context from past conversations while you work.\n\nuse mcp when you're already working on something bigger:\n\n-   writing prds or proposals: pull customer feedback, stakeholder input, and decisions from relevant meetings directly into your draft\n    \n-   building presentations or reports: combine insights from multiple conversations with your other research and data\n    \n-   coding with context: give your ai the project background, requirements, and technical decisions discussed in planning meetings\n    \n-   strategic analysis: merge meeting insights with documents, data, and other sources for comprehensive analysis\n    \nhow it works:\n\nyour ai assistant can search your granola meetings by topic, person, company, or timeframe - then cite specific conversations in its responses. no more switching tabs to find \"what the customer said\" or \"when we decided that.\"\n\nthe difference:\n\ninstead of copy-pasting meeting notes into prompts, your ai pulls exactly what it needs from your meeting history automatically. you stay focused on the work, not the research or context."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Happenstance searches your professional network using natural language to find the right people.",
+      "display_name": "Happenstance",
+      "homepage": "https://happenstance.ai",
+      "keywords": [],
+      "manifest_path": "plugins/happenstance/.codex-plugin/plugin.json",
+      "name": "happenstance",
+      "plugin_path": "plugins/happenstance",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "happenstance happenstance happenstance searches your professional network using natural language to find the right people. productivity happenstance searches your professional network using natural language to find the right people. happenstance searches your professional network using natural language to find the right people. results surface mutual connections and rank by relationship strength, helping you find the warmest intro path. deep research anyone to get comprehensive profiles with career history and expertise. ideal for sales, recruiting, venture capital, and business development."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect to sync Help Scout mailboxes and conversations for use in Codex.",
+      "display_name": "Help Scout",
+      "homepage": "https://www.helpscout.com/",
+      "keywords": [],
+      "manifest_path": "plugins/help-scout/.codex-plugin/plugin.json",
+      "name": "help-scout",
+      "plugin_path": "plugins/help-scout",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "help-scout help scout connect to sync help scout mailboxes and conversations for use in codex. productivity connect to sync help scout mailboxes and conversations for use in codex. connect to sync help scout mailboxes and conversations for use in codex."
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Design",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Create HeyGen avatar videos and personalized video messages. Build a persistent digital identity from a description or hosted photo URL, then generate presenter-led videos with your digital twin.",
+      "display_name": "HeyGen",
+      "homepage": "https://heygen.com",
+      "keywords": [
+        "heygen",
+        "avatar",
+        "identity",
+        "video",
+        "digital-twin",
+        "video-message",
+        "presenter",
+        "talking-head",
+        "ai-avatar",
+        "avatar-video"
+      ],
+      "manifest_path": "plugins/heygen/.codex-plugin/plugin.json",
+      "name": "heygen",
+      "plugin_path": "plugins/heygen",
+      "repository": "https://github.com/heygen-com/skills",
+      "search_text": "heygen heygen create heygen avatar videos and personalized video messages. build a persistent digital identity from a description or hosted photo url, then generate presenter-led videos with your digital twin. design heygen avatar identity video digital-twin video-message presenter talking-head ai-avatar avatar-video read write avatar videos and personalized video messages heygen skills give your agent a face, a voice, and the ability to send video like a message. use heygen-avatar to build a persistent digital identity from a written description or hosted photo url and pick a voice, then heygen-video to generate identity-first presenter videos via the heygen v3 video agent pipeline (avatar resolution, aspect ratio correction, prompt engineering, and voice selection are handled automatically)."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Access HG Insights revenue growth intelligence, account data, buyer intent, technographics, and GTM signals from Codex.",
+      "display_name": "HG Insights",
+      "homepage": "https://hginsights.com",
+      "keywords": [
+        "hg-insights",
+        "revenue-growth-intelligence",
+        "gtm",
+        "technographics",
+        "buyer-intent",
+        "account-intelligence"
+      ],
+      "manifest_path": "plugins/hg-insights/.codex-plugin/plugin.json",
+      "name": "hg-insights",
+      "plugin_path": "plugins/hg-insights",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "hg-insights hg insights access hg insights revenue growth intelligence, account data, buyer intent, technographics, and gtm signals from codex. productivity hg-insights revenue-growth-intelligence gtm technographics buyer-intent account-intelligence use hg insights revenue intelligence and gtm signals from codex. hg insights connects codex to revenue growth intelligence for market sizing, account prioritization, technographics, spend data, buyer intent, and gtm planning."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "HighLevel gives agencies a unified CRM, automation, and client communication platform.",
+      "display_name": "HighLevel",
+      "homepage": "https://www.gohighlevel.com",
+      "keywords": [],
+      "manifest_path": "plugins/highlevel/.codex-plugin/plugin.json",
+      "name": "highlevel",
+      "plugin_path": "plugins/highlevel",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "highlevel highlevel highlevel gives agencies a unified crm, automation, and client communication platform. productivity highlevel gives agencies a unified crm, automation, and client communication platform. highlevel gives agencies a unified crm, automation, and client communication platform. this connector lets you securely bring highlevel data\u2014contacts, opportunities, appointments, conversations and more\u2014into gpt, turning raw records into clear summaries, next-step recommendations, and ready-to-use content. analyze pipelines, qualify leads, and prepare follow-ups in seconds without leaving the chat."
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Hostinger Horizons lets you build real websites and apps just by describing what you want.",
+      "display_name": "Hostinger",
+      "homepage": "https://hostinger.com",
+      "keywords": [],
+      "manifest_path": "plugins/hostinger/.codex-plugin/plugin.json",
+      "name": "hostinger",
+      "plugin_path": "plugins/hostinger",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "hostinger hostinger hostinger horizons lets you build real websites and apps just by describing what you want. developer tools hostinger horizons lets you build real websites and apps just by describing what you want. hostinger horizons lets you build real websites and apps just by describing what you want. designed for people with no technical background, it turns ideas into working products in minutes. when you're happy with the result, launch instantly with one click."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with your HubSpot data to analyze patterns, create and update records, and manage your CRM operations.",
+      "display_name": "HubSpot",
+      "homepage": "https://www.hubspot.com/",
+      "keywords": [
+        "hubspot",
+        "crm",
+        "sales",
+        "pipeline",
+        "customer-support"
+      ],
+      "manifest_path": "plugins/hubspot/.codex-plugin/plugin.json",
+      "name": "hubspot",
+      "plugin_path": "plugins/hubspot",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "hubspot hubspot work with your hubspot data to analyze patterns, create and update records, and manage your crm operations. productivity hubspot crm sales pipeline customer-support interactive read write work with your hubspot data to analyze patterns, create and update records, and manage your crm operations. work with your hubspot data to analyze patterns, create and update records, and manage your crm operations. read from and write to deals, contacts, companies, tickets, engagements, and other objects you have permission to access. prepare reports, update deal stages, log calls and emails, create tasks, or review pipeline details before meetings. use it for quick updates in chat or comprehensive crm management, all grounded in your actual hubspot data."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Inspect models, datasets, Spaces, and research",
+      "display_name": "Hugging Face",
+      "homepage": "https://huggingface.co",
+      "keywords": [
+        "hugging-face",
+        "models",
+        "datasets",
+        "spaces",
+        "machine-learning"
+      ],
+      "manifest_path": "plugins/hugging-face/.codex-plugin/plugin.json",
+      "name": "hugging-face",
+      "plugin_path": "plugins/hugging-face",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "hugging-face hugging face inspect models, datasets, spaces, and research developer tools hugging-face models datasets spaces machine-learning interactive read write inspect models, datasets, spaces, and research connect to the hugging face hub to explore models and datasets, access sdk documentation and more. manage machine learning jobs and connect to thousands of ai applications via spaces."
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Design",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Write HTML, render video. Compositions, GSAP animations, captions, voiceovers, audio-reactive visuals, and website-to-video capture for HyperFrames.",
+      "display_name": "HyperFrames by HeyGen",
+      "homepage": "https://hyperframes.heygen.com",
+      "keywords": [
+        "hyperframes",
+        "video",
+        "html",
+        "gsap",
+        "animation",
+        "composition",
+        "rendering",
+        "captions",
+        "tts",
+        "audio-reactive"
+      ],
+      "manifest_path": "plugins/hyperframes/.codex-plugin/plugin.json",
+      "name": "hyperframes",
+      "plugin_path": "plugins/hyperframes",
+      "repository": "https://github.com/heygen-com/hyperframes",
+      "search_text": "hyperframes hyperframes by heygen write html, render video. compositions, gsap animations, captions, voiceovers, audio-reactive visuals, and website-to-video capture for hyperframes. design hyperframes video html gsap animation composition rendering captions tts audio-reactive read write write html, render video build videos from html with hyperframes. author compositions with html + css + gsap, use the cli for init/preview/render/transcribe/tts, install reusable registry blocks and components, follow the gsap animation reference, and turn any website into a video with the 7-step capture-to-video pipeline."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Screen record with context",
+      "display_name": "Jam",
+      "homepage": "https://jam.dev",
+      "keywords": [],
+      "manifest_path": "plugins/jam/.codex-plugin/plugin.json",
+      "name": "jam",
+      "plugin_path": "plugins/jam",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "jam jam screen record with context productivity screen record with context screen record with context"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Unlock the profitability of short-term rental investments with our ROI Calculator app, tailored for platfor...",
+      "display_name": "KeyBid Puls",
+      "homepage": "https://keybid.eu",
+      "keywords": [],
+      "manifest_path": "plugins/keybid-puls/.codex-plugin/plugin.json",
+      "name": "keybid-puls",
+      "plugin_path": "plugins/keybid-puls",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "keybid-puls keybid puls unlock the profitability of short-term rental investments with our roi calculator app, tailored for platfor... productivity unlock the profitability of short-term rental investments with our roi calculator app, tailored for platfor... unlock the profitability of short-term rental investments with our roi calculator app, tailored for platforms like airbnb, booking.com, and vrbo. users can paste property urls from sites such as idealista.com, imobiliare.ro, storia.ro, and spitogatos.gr (with more integrations on the way), or upload screenshots from other real estate platforms. the app analyzes the data to deliver instant revenue projections, detailed reports, and a concise conclusion on whether the property is worth purchasing for short-term rentals. covering 56 countries and over 191 cities, it supports multiple languages including english, romanian, spanish, and greek for seamless global use. ideal for property owners and investors seeking data-driven insights to evaluate vacation rental opportunities. explore more at https://keybid.eu/keybid-puls."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Research",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "General life-sciences research workflows with query routing, evidence synthesis, and optional parallel subagent analysis across genetics, omics, biology, chemistry, structure, clinical evidence, and public dataset discovery.",
+      "display_name": "Life Science Research",
+      "homepage": "https://github.com/openai/openai/tree/master/plugins/life-science-research",
+      "keywords": [
+        "life-science",
+        "research",
+        "bioinformatics",
+        "human-genetics",
+        "functional-genomics",
+        "transcriptomics",
+        "proteomics",
+        "metabolomics",
+        "clinical-research",
+        "drug-discovery",
+        "skill-routing",
+        "evidence-synthesis",
+        "parallel-analysis",
+        "gwas",
+        "variant-interpretation",
+        "pathway-biology",
+        "protein-structure"
+      ],
+      "manifest_path": "plugins/life-science-research/.codex-plugin/plugin.json",
+      "name": "life-science-research",
+      "plugin_path": "plugins/life-science-research",
+      "repository": "https://github.com/openai/openai/tree/master/plugins/life-science-research",
+      "search_text": "life-science-research life science research general life-sciences research workflows with query routing, evidence synthesis, and optional parallel subagent analysis across genetics, omics, biology, chemistry, structure, clinical evidence, and public dataset discovery. research life-science research bioinformatics human-genetics functional-genomics transcriptomics proteomics metabolomics clinical-research drug-discovery skill-routing evidence-synthesis parallel-analysis gwas variant-interpretation pathway-biology protein-structure interactive read write general life-sciences research with routing, evidence synthesis, and optional parallel subagent analysis internal life-science research workflows that help codex interpret a user's research question, normalize the relevant entities, choose the right skills, and synthesize evidence-backed answers across public resources. the plugin spans human genetics, functional genomics, expression, pathways, protein structure, chemistry, pharmacology, literature, clinical evidence, and public study discovery, with a research-router entrypoint for broad tasks and optional subagent-assisted parallel work when evidence lanes are independent."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Find and reference issues and projects.",
+      "display_name": "Linear",
+      "homepage": "https://linear.app/",
+      "keywords": [],
+      "manifest_path": "plugins/linear/.codex-plugin/plugin.json",
+      "name": "linear",
+      "plugin_path": "plugins/linear",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "linear linear find and reference issues and projects. productivity find and reference issues and projects. manage issues, projects, and team workflows in linear from codex."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Financial market data, company intelligence, and news",
+      "display_name": "LSEG",
+      "homepage": "https://www.lseg.com",
+      "keywords": [],
+      "manifest_path": "plugins/lseg/.codex-plugin/plugin.json",
+      "name": "lseg",
+      "plugin_path": "plugins/lseg",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "lseg lseg financial market data, company intelligence, and news research financial market data, company intelligence, and news financial market data, company intelligence, and news"
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "MarcoPolo spins up a secure container where Codex can work with your actual data.",
+      "display_name": "MarcoPolo",
+      "homepage": "https://marcopolo.dev",
+      "keywords": [],
+      "manifest_path": "plugins/marcopolo/.codex-plugin/plugin.json",
+      "name": "marcopolo",
+      "plugin_path": "plugins/marcopolo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "marcopolo marcopolo marcopolo spins up a secure container where codex can work with your actual data. developer tools marcopolo spins up a secure container where codex can work with your actual data. marcopolo spins up a secure container where codex can work with your actual data. connect to your databases, apis, s3, lakehouses, crms, jira, logs and much more\u2014using scoped credentials that are never exposed to the model. \n\ncodex gets duckdb, python, a shell, and a set of tools to explore, query, transform, and analyze data across systems. the workspace persists over time, so that you can build on your work. \n\nprep a report, understand your data, debug an issue, or review the latest metrics right here in the conversation."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Give Codex the full context of your second brain by connecting your Mem knowledge base.",
+      "display_name": "Mem",
+      "homepage": "https://mem.ai",
+      "keywords": [],
+      "manifest_path": "plugins/mem/.codex-plugin/plugin.json",
+      "name": "mem",
+      "plugin_path": "plugins/mem",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "mem mem give codex the full context of your second brain by connecting your mem knowledge base. productivity give codex the full context of your second brain by connecting your mem knowledge base. give codex the full context of your second brain by connecting your mem knowledge base. search your ai notebook for context, capture and recall ideas, save chats into new notes, edit and update living docs, and organize your ai workspace \u2014 simply by asking codex. use for: synthesizing and pulling actions items from meeting notes, deep research, personal knowledge management (pkm), knowledge repository building, task management, prioritization, and content development. example prompts: \"search my notes for pricing strategy and validate our thinking with research.\" \"create a note from this chat and add it to our gtm collection.\" \"list all open tasks from this week's notes and add to my to-do list.\""
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Company matching, firmographic lookup, and go-to-market account intelligence",
+      "display_name": "Meticulate",
+      "homepage": "",
+      "keywords": [],
+      "manifest_path": "plugins/meticulate/.codex-plugin/plugin.json",
+      "name": "meticulate",
+      "plugin_path": "plugins/meticulate",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "meticulate meticulate company matching, firmographic lookup, and go-to-market account intelligence productivity company matching, firmographic lookup, and go-to-market account intelligence company matching, firmographic lookup, and go-to-market account intelligence"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Legal research, cases, statutes, regulations, and cited research memos",
+      "display_name": "Midpage",
+      "homepage": "https://www.midpage.ai",
+      "keywords": [],
+      "manifest_path": "plugins/midpage/.codex-plugin/plugin.json",
+      "name": "midpage",
+      "plugin_path": "plugins/midpage",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "midpage midpage legal research, cases, statutes, regulations, and cited research memos research legal research, cases, statutes, regulations, and cited research memos legal research, cases, statutes, regulations, and cited research memos"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Business",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Query and analyze Mixpanel",
+      "display_name": "Mixpanel",
+      "homepage": "https://mixpanel.com/home",
+      "keywords": [
+        "mixpanel",
+        "analytics",
+        "segmentation",
+        "funnels",
+        "retention",
+        "events"
+      ],
+      "manifest_path": "plugins/mixpanel/.codex-plugin/plugin.json",
+      "name": "mixpanel",
+      "plugin_path": "plugins/mixpanel",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "mixpanel mixpanel query and analyze mixpanel business mixpanel analytics segmentation funnels retention events interactive read write query and analyze mixpanel query and analyze your mixpanel data directly in chatgpt. run segmentation, funnel, and retention analyses, explore your event taxonomy, manage lexicon metadata, and resolve data quality issues - all without leaving your conversation.\n\nwith the mixpanel mcp server connected, chatgpt can reason about your product analytics alongside your code, documents, and decisions. ask questions in plain language, drill into user behavior, and get answers grounded in your actual data."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Business",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Analyze Mixpanel data with the mixpanel_headless Python SDK and Codex skills.",
+      "display_name": "Mixpanel Headless",
+      "homepage": "https://mixpanel.github.io/mixpanel-headless/",
+      "keywords": [
+        "mixpanel",
+        "analytics",
+        "product-analytics",
+        "python",
+        "data-science",
+        "funnels",
+        "retention",
+        "flows",
+        "dashboards"
+      ],
+      "manifest_path": "plugins/mixpanel-headless/.codex-plugin/plugin.json",
+      "name": "mixpanel-headless",
+      "plugin_path": "plugins/mixpanel-headless",
+      "repository": "https://github.com/mixpanel/mixpanel-headless",
+      "search_text": "mixpanel-headless mixpanel headless analyze mixpanel data with the mixpanel_headless python sdk and codex skills. business mixpanel analytics product-analytics python data-science funnels retention flows dashboards interactive read write analyze mixpanel data with python use mixpanel headless skills to install and authenticate the mixpanel_headless python sdk, discover mixpanel schemas, run segmentation, funnel, retention, flow, and user-profile analyses, and build or inspect mixpanel dashboards from codex."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "A powerful MCP connector enabling AI agents to seamlessly interact with monday.com.",
+      "display_name": "Monday.com",
+      "homepage": "https://monday.com",
+      "keywords": [],
+      "manifest_path": "plugins/monday-com/.codex-plugin/plugin.json",
+      "name": "monday-com",
+      "plugin_path": "plugins/monday-com",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "monday-com monday.com a powerful mcp connector enabling ai agents to seamlessly interact with monday.com. productivity a powerful mcp connector enabling ai agents to seamlessly interact with monday.com. a powerful mcp connector enabling ai agents to seamlessly interact with monday.com. this connector provides comprehensive access to monday.com features including board management, item operations, dashboards, and more, allowing ai assistants to help manage projects, gain insights, and automate workflows within monday.com."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Credit and risk intelligence",
+      "display_name": "Moody's",
+      "homepage": "",
+      "keywords": [],
+      "manifest_path": "plugins/moody-s/.codex-plugin/plugin.json",
+      "name": "moody-s",
+      "plugin_path": "plugins/moody-s",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "moody-s moody's credit and risk intelligence research credit and risk intelligence credit and risk intelligence"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Investment and fund research",
+      "display_name": "Morningstar",
+      "homepage": "",
+      "keywords": [],
+      "manifest_path": "plugins/morningstar/.codex-plugin/plugin.json",
+      "name": "morningstar",
+      "plugin_path": "plugins/morningstar",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "morningstar morningstar investment and fund research research investment and fund research investment and fund research"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect AI assistants to your MotherDuck data warehouse.",
+      "display_name": "MotherDuck",
+      "homepage": "https://motherduck.com/",
+      "keywords": [],
+      "manifest_path": "plugins/motherduck/.codex-plugin/plugin.json",
+      "name": "motherduck",
+      "plugin_path": "plugins/motherduck",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "motherduck motherduck connect ai assistants to your motherduck data warehouse. productivity connect ai assistants to your motherduck data warehouse. connect ai assistants to your motherduck data warehouse. explore, visualize, and manage data using natural language\u2013no sql skills required. create dives: interactive visualizations that let you save and share answers with your team, staying up-to-date with your latest data. works with real-world data without requiring semantic models or pre-configuration. your ai assistant acts like a data analyst, exploring, validating, analyzing, and visualizing data iteratively to answer your questions."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "MT Newswires brings real-time global financial news directly into Codex \u2014 providing original, unbiased an...",
+      "display_name": "MT Newswires",
+      "homepage": "https://www.mtnewswires.com",
+      "keywords": [],
+      "manifest_path": "plugins/mt-newswires/.codex-plugin/plugin.json",
+      "name": "mt-newswires",
+      "plugin_path": "plugins/mt-newswires",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "mt-newswires mt newswires mt newswires brings real-time global financial news directly into codex \u2014 providing original, unbiased an... research mt newswires brings real-time global financial news directly into codex \u2014 providing original, unbiased an... mt newswires brings real-time global financial news directly into codex \u2014 providing original, unbiased and comprehensive multi-asset class coverage of capital markets and economies in over 180 topics.\n\npowered by a global newsroom trusted by the largest banks, brokerages, professional trading, wealth management and research applications globally, every story is built for ai \u2014 so you get answers grounded in live market intelligence, not stale data.\n\nwhat you can do:\n\u2022 get the latest news on any ticker and analyze price impact\n\u2022 monitor energy sector developments across global equities \n\u2022 track macro events and global central bank signals in real time\n\u2022 screen for earnings, m&a, and market-moving headlines\n\nexample prompts:\n\u2192 \"what is the latest news for nvidia and has it influenced the stock's price?\"\n\u2192 \"summarize the major analyst rating change developments from the past hour.\"\n\u2192 \"what macro events are driving markets today?\""
+    },
+    {
+      "capabilities": [],
+      "category": "Lifestyle",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "MyRegistry.com helps make gift-giving easy for friends & family to get you the gifts you really want!",
+      "display_name": "MyRegistry.com",
+      "homepage": "https://www.myregistry.com/",
+      "keywords": [],
+      "manifest_path": "plugins/myregistry-com/.codex-plugin/plugin.json",
+      "name": "myregistry-com",
+      "plugin_path": "plugins/myregistry-com",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "myregistry-com myregistry.com myregistry.com helps make gift-giving easy for friends & family to get you the gifts you really want! lifestyle myregistry.com helps make gift-giving easy for friends & family to get you the gifts you really want! myregistry.com helps make gift-giving easy for friends & family to get you the gifts you really want! create a universal gift list for weddings, baby showers, birthdays, or any celebration and add gifts from any store."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Manage Neon Serverless Postgres projects and databases with the neon-postgres agent skill and the Neon MCP Server",
+      "display_name": "Neon Postgres",
+      "homepage": "https://neon.com/docs/ai/neon-mcp-server",
+      "keywords": [
+        "neon",
+        "postgres",
+        "serverless",
+        "database",
+        "mcp",
+        "sql"
+      ],
+      "manifest_path": "plugins/neon-postgres/.codex-plugin/plugin.json",
+      "name": "neon-postgres",
+      "plugin_path": "plugins/neon-postgres",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "neon-postgres neon postgres manage neon serverless postgres projects and databases with the neon-postgres agent skill and the neon mcp server developer tools neon postgres serverless database mcp sql interactive write manage neon serverless postgres projects and databases use the neon postgres plugin to create and manage neon serverless postgres projects and databases. includes the neon mcp server for project and database management, and the neon-postgres skill with guides on connection methods, branching, autoscaling, neon auth, and more."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Deploy projects and manage preview or production releases on Netlify.",
+      "display_name": "Netlify",
+      "homepage": "https://www.netlify.com",
+      "keywords": [
+        "netlify",
+        "deployment",
+        "hosting",
+        "preview",
+        "static-sites"
+      ],
+      "manifest_path": "plugins/netlify/.codex-plugin/plugin.json",
+      "name": "netlify",
+      "plugin_path": "plugins/netlify",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "netlify netlify deploy projects and manage preview or production releases on netlify. developer tools netlify deployment hosting preview static-sites interactive write deploy projects and manage releases use netlify to inspect deployment state, manage sites, and pair the netlify app with the curated deployment skill for preview and production workflows."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Network Solutions Domain Search Assistant makes finding an available domain fast, simple, and conversat...",
+      "display_name": "Network Solutions",
+      "homepage": "https://www.networksolutions.com/",
+      "keywords": [],
+      "manifest_path": "plugins/network-solutions/.codex-plugin/plugin.json",
+      "name": "network-solutions",
+      "plugin_path": "plugins/network-solutions",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "network-solutions network solutions the network solutions domain search assistant makes finding an available domain fast, simple, and conversat... productivity the network solutions domain search assistant makes finding an available domain fast, simple, and conversat... the network solutions domain search assistant makes finding an available domain fast, simple, and conversational. instead of searching one name at a time, users can describe their idea in plain language and instantly check domain availability across relevant extensions. the assistant helps refine names, suggest alternatives, and quickly identify options that are ready to register.\n\nbuilt to remove friction and frustration from domain discovery, this chat-powered experience keeps users moving forward when names are taken and surfaces smarter, brand-ready options in real time. whether you\u2019re launching a business, starting a personal project, or exploring new ideas, network solutions helps you go from concept to available domain with confidence."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Notion workflows for implementation planning, research synthesis, meeting preparation, and knowledge capture.",
+      "display_name": "Notion",
+      "homepage": "https://www.notion.so/",
+      "keywords": [
+        "notion",
+        "documentation",
+        "research",
+        "meeting-prep",
+        "knowledge-management",
+        "planning"
+      ],
+      "manifest_path": "plugins/notion/.codex-plugin/plugin.json",
+      "name": "notion",
+      "plugin_path": "plugins/notion",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "notion notion notion workflows for implementation planning, research synthesis, meeting preparation, and knowledge capture. productivity notion documentation research meeting-prep knowledge-management planning interactive read write notion workflows for specs, research, meetings, and knowledge capture notion workflows for turning specs into implementation plans, synthesizing research into structured documentation, preparing meeting materials with workspace context, and capturing decisions or conversations into durable knowledge pages."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Query Omni using the same semantic model, permissions, and logic defined by your data team directly from Codex.",
+      "display_name": "Omni Analytics",
+      "homepage": "https://www.omni.co",
+      "keywords": [],
+      "manifest_path": "plugins/omni-analytics/.codex-plugin/plugin.json",
+      "name": "omni-analytics",
+      "plugin_path": "plugins/omni-analytics",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "omni-analytics omni analytics query omni using the same semantic model, permissions, and logic defined by your data team directly from codex. productivity query omni using the same semantic model, permissions, and logic defined by your data team directly from codex. query omni using the same semantic model, permissions, and logic defined by your data team directly from codex. allow internal teams to ask data questions in their ai workflows without logging into omni directly, while still enforcing row-level security and business definitions."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Engineering",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Build with OpenAI APIs, Agents SDK, and ChatGPT Apps, and create and save OpenAI API keys from Codex.",
+      "display_name": "OpenAI Developers",
+      "homepage": "https://platform.openai.com/",
+      "keywords": [
+        "openai-platform",
+        "api-key",
+        "agents-sdk",
+        "agents",
+        "chatgpt-apps",
+        "apps-sdk",
+        "mcp",
+        "submissions",
+        "codex"
+      ],
+      "manifest_path": "plugins/openai-developers/.codex-plugin/plugin.json",
+      "name": "openai-developers",
+      "plugin_path": "plugins/openai-developers",
+      "repository": "https://github.com/openai/plugins/tree/main/plugins/openai-developers",
+      "search_text": "openai-developers openai developers build with openai apis, agents sdk, and chatgpt apps, and create and save openai api keys from codex. engineering openai-platform api-key agents-sdk agents chatgpt-apps apps-sdk mcp submissions codex interactive read write develop ai apps, agents, and chatgpt apps with openai best practices use openai developers in codex to build ai applications, agents, and chatgpt apps with openai docs, the openai api, apps sdk, and agents sdk. connect to the openai platform (platform.openai.com) and see your codex-built apps work right out of the box with real openai api keys. run and locally deploy agents sdk projects through the deployment manager, scaffold chatgpt apps, and prepare chatgpt apps submission artifacts."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Otter.ai MCP server connects Codex to your meeting intelligence, enabling search and retrieval of transcripts, summaries, action items, and meeting metadata directly within your workflow.",
+      "display_name": "Otter.ai",
+      "homepage": "https://otter.ai",
+      "keywords": [
+        "otter",
+        "meetings",
+        "transcripts",
+        "summaries",
+        "action-items",
+        "productivity"
+      ],
+      "manifest_path": "plugins/otter-ai/.codex-plugin/plugin.json",
+      "name": "otter-ai",
+      "plugin_path": "plugins/otter-ai",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "otter-ai otter.ai the otter.ai mcp server connects codex to your meeting intelligence, enabling search and retrieval of transcripts, summaries, action items, and meeting metadata directly within your workflow. productivity otter meetings transcripts summaries action-items productivity the otter.ai mcp server connects codex to your meeting intelligence, enabling search and retrieval of tra... the otter.ai mcp server connects codex to your meeting intelligence, enabling search and retrieval of transcripts, summaries, action items, and meeting metadata directly within your workflow. search meetings by keyword, date range, attendee, folder, or channel, then fetch full transcripts with speaker attribution. use it to prepare for meetings by reviewing past discussions, extract decisions from historical conversations, or synthesize insights across your meeting archive. supports both personal and enterprise otter.ai workspaces."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect Outlook Calendar for scheduling, daily briefs, event prep, and safe meeting changes.",
+      "display_name": "Outlook Calendar",
+      "homepage": "https://www.microsoft.com/en-us/microsoft-365/outlook/calendar-app",
+      "keywords": [
+        "outlook-calendar",
+        "calendar",
+        "microsoft",
+        "scheduling",
+        "teams",
+        "daily-brief",
+        "meeting-prep"
+      ],
+      "manifest_path": "plugins/outlook-calendar/.codex-plugin/plugin.json",
+      "name": "outlook-calendar",
+      "plugin_path": "plugins/outlook-calendar",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "outlook-calendar outlook calendar connect outlook calendar for scheduling, daily briefs, event prep, and safe meeting changes. productivity outlook-calendar calendar microsoft scheduling teams daily-brief meeting-prep interactive write manage outlook schedules and meeting changes use outlook calendar to summarize a day, compare availability, prepare for meetings, explain outlook status semantics, and schedule, reschedule, or cancel events through the connected microsoft outlook app."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with Outlook Email using the configured Microsoft Outlook app connector.",
+      "display_name": "Outlook Email",
+      "homepage": "https://www.microsoft.com/en-us/microsoft-365/outlook/email-and-calendar-software-microsoft-outlook",
+      "keywords": [
+        "outlook-email",
+        "email",
+        "microsoft"
+      ],
+      "manifest_path": "plugins/outlook-email/.codex-plugin/plugin.json",
+      "name": "outlook-email",
+      "plugin_path": "plugins/outlook-email",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "outlook-email outlook email work with outlook email using the configured microsoft outlook app connector. productivity outlook-email email microsoft interactive write triage outlook inboxes and draft replies use outlook email to triage inboxes, summarize threads, extract actions, and draft replies or forwards through the connected microsoft outlook app."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Particl Market Research helps teams answer ecommerce research questions directly in Codex.",
+      "display_name": "Particl Market Research",
+      "homepage": "https://www.particl.com",
+      "keywords": [],
+      "manifest_path": "plugins/particl-market-research/.codex-plugin/plugin.json",
+      "name": "particl-market-research",
+      "plugin_path": "plugins/particl-market-research",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "particl-market-research particl market research particl market research helps teams answer ecommerce research questions directly in codex. research particl market research helps teams answer ecommerce research questions directly in codex. particl market research helps teams answer ecommerce research questions directly in codex. it supports company discovery, product catalog research, product detail and variant analysis, market leader discovery, market trend analysis, marketing asset discovery, retail event tracking, sales timeseries, and product mix breakdowns.\n\nthe app uses your authenticated particl account and returns structured market intelligence data from particl apis."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect to sync Pipedrive deals and contacts for use in Codex.",
+      "display_name": "Pipedrive",
+      "homepage": "https://www.pipedrive.com/",
+      "keywords": [],
+      "manifest_path": "plugins/pipedrive/.codex-plugin/plugin.json",
+      "name": "pipedrive",
+      "plugin_path": "plugins/pipedrive",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "pipedrive pipedrive connect to sync pipedrive deals and contacts for use in codex. productivity connect to sync pipedrive deals and contacts for use in codex. connect to sync pipedrive deals and contacts for use in codex."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "PitchBook provides structured access to private capital market data across  companies, investors, funds, de...",
+      "display_name": "PitchBook",
+      "homepage": "https://www.pitchbook.com",
+      "keywords": [],
+      "manifest_path": "plugins/pitchbook/.codex-plugin/plugin.json",
+      "name": "pitchbook",
+      "plugin_path": "plugins/pitchbook",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "pitchbook pitchbook pitchbook provides structured access to private capital market data across  companies, investors, funds, de... research pitchbook provides structured access to private capital market data across  companies, investors, funds, de... pitchbook provides structured access to private capital market data across  companies, investors, funds, deals, limited partners, and people. it returns normalized fields such as  firmographics, financing rounds, deal terms, ownership information, financials, fund performance  metrics when available, lp commitments, investor portfolios, and team details with associated source  metadata. use this connector when a query requires factual private market information or retrieval of  structured data related to private companies, investment activity, or market participants. it supports  queries that involve identifying entities, summarizing historical activity, or assembling datasets for  further analysis."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Evaluate Codex skills and plugins from chat with a beginner-friendly start command, local-first reports, token budget explanations, and guided benchmarking.",
+      "display_name": "Plugin Eval",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "codex",
+        "plugin",
+        "skill",
+        "evaluation",
+        "quality",
+        "budget"
+      ],
+      "manifest_path": "plugins/plugin-eval/.codex-plugin/plugin.json",
+      "name": "plugin-eval",
+      "plugin_path": "plugins/plugin-eval",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "plugin-eval plugin eval evaluate codex skills and plugins from chat with a beginner-friendly start command, local-first reports, token budget explanations, and guided benchmarking. developer tools codex plugin skill evaluation quality budget interactive write start from chat, then evaluate or benchmark locally ask codex to evaluate a plugin or skill, give you a full analysis of a named plugin such as game-studio, explain why it scored that way, show what to fix first, explain its token budget, measure real token usage, benchmark a plugin, or tell you what to run next. plugin eval keeps the path engineer-friendly: start with a natural chat request, then use the local `plugin-eval start` entrypoint or the routed workflow command it recommends."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Use the PolicyNote app to access structured policy and regulatory intelligence from around the world.",
+      "display_name": "PolicyNote",
+      "homepage": "https://fiscalnote.com/products/policynote-api",
+      "keywords": [],
+      "manifest_path": "plugins/policynote/.codex-plugin/plugin.json",
+      "name": "policynote",
+      "plugin_path": "plugins/policynote",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "policynote policynote use the policynote app to access structured policy and regulatory intelligence from around the world. research use the policynote app to access structured policy and regulatory intelligence from around the world. use the policynote app to access structured policy and regulatory intelligence from around the world. search legislation, regulatory actions, policy updates, and government activity across jurisdictions.\n\nthe app enables developers, analysts, and policy professionals to retrieve policy data programmatically and integrate it into internal tools, research workflows, dashboards, or monitoring systems. queries return structured information about policy developments, government sources, and regulatory changes.\n\npolicynote helps teams track public policy activity, build alerts, power analysis tools, and integrate government intelligence into their applications."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Access Pylon's customer support platform directly from Codex to search, manage, and resolve customer issues.",
+      "display_name": "Pylon",
+      "homepage": "https://www.usepylon.com/",
+      "keywords": [],
+      "manifest_path": "plugins/pylon/.codex-plugin/plugin.json",
+      "name": "pylon",
+      "plugin_path": "plugins/pylon",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "pylon pylon access pylon's customer support platform directly from codex to search, manage, and resolve customer issues. productivity access pylon's customer support platform directly from codex to search, manage, and resolve customer issues. access pylon's customer support platform directly from codex to search, manage, and resolve\ncustomer issues. stay on top of your support queue while connecting codex's insights to real customer conversations.\n\nyou can use the pylon app to:\n  \u2022 check your queue: \"what pylon issues are assigned to me that need a response?\"\n  \u2022 research customers: \"summarize recent issues from acme corp and flag any escalations.\"\n  \u2022 update issues: \"mark the billing issue from sarah as resolved and add a note that we issued a refund.\""
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Access structured first-party IR data from over 14,500+ public companies across 65 markets Quartr delivers...",
+      "display_name": "Quartr",
+      "homepage": "https://quartr.com",
+      "keywords": [],
+      "manifest_path": "plugins/quartr/.codex-plugin/plugin.json",
+      "name": "quartr",
+      "plugin_path": "plugins/quartr",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "quartr quartr access structured first-party ir data from over 14,500+ public companies across 65 markets quartr delivers... research access structured first-party ir data from over 14,500+ public companies across 65 markets quartr delivers... access structured first-party ir data from over 14,500+ public companies across 65 markets quartr delivers live and recorded earnings calls, real-time and historical transcripts with speaker identification, slide presentations, filings, reports, and event summaries. best-in-class reliability and timeliness. ideal for financial research, investment analysis, and building data-driven workflows on top of institutional-grade public company data.\n\nyou can use quartr for:\n\nearnings call analysis:\n\"list forward-looking statements for nvidia from recent transcripts and filings that reference expected progress or results in the upcoming earnings release.\"\n\ncompetitive intelligence:\n\"compare how semiconductor companies talk about the same end markets and demand.\"\n\nkpi tracking:\n\"what kpis has spotify introduced, stopped emphasizing, or reframed across its last eight quarters?\"\n\nnarrative assessment:\n\"what were the most recurring themes in analyst questions during eli lilly's last two earnings calls? highlight key areas of focus and concern.\""
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Manage your Quicknode infrastructure directly in OpenAI.",
+      "display_name": "Quicknode",
+      "homepage": "https://www.quicknode.com/",
+      "keywords": [],
+      "manifest_path": "plugins/quicknode/.codex-plugin/plugin.json",
+      "name": "quicknode",
+      "plugin_path": "plugins/quicknode",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "quicknode quicknode manage your quicknode infrastructure directly in openai. developer tools manage your quicknode infrastructure directly in openai. manage your quicknode infrastructure directly in openai. create and manage endpoints, monitor logs and usage, configure security and rate limits, and review billing from one conversation."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Ranked AI provides industry leading AI SEO & PPC software, with a fully managed service integrated into it.",
+      "display_name": "Ranked AI",
+      "homepage": "https://www.ranked.ai",
+      "keywords": [],
+      "manifest_path": "plugins/ranked-ai/.codex-plugin/plugin.json",
+      "name": "ranked-ai",
+      "plugin_path": "plugins/ranked-ai",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "ranked-ai ranked ai ranked ai provides industry leading ai seo & ppc software, with a fully managed service integrated into it. productivity ranked ai provides industry leading ai seo & ppc software, with a fully managed service integrated into it. ranked ai provides industry leading ai seo & ppc software, with a fully managed service integrated into it. we combine ai with industry veterans that know how to help you rank your website on traditional & ai search. manage your traditional & ai search keywords, audits, backlinks, reports and more with our integrated app."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect your Razorpay account to access your payment data through conversation.",
+      "display_name": "Razorpay",
+      "homepage": "https://razorpay.com/",
+      "keywords": [],
+      "manifest_path": "plugins/razorpay/.codex-plugin/plugin.json",
+      "name": "razorpay",
+      "plugin_path": "plugins/razorpay",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "razorpay razorpay connect your razorpay account to access your payment data through conversation. productivity connect your razorpay account to access your payment data through conversation. connect your razorpay account to access your payment data through conversation.\nask codex about your payments, orders, refunds, settlements, qr codes, payment links etc. get instant answers to questions like \"show me today's payments,\" \"what's the status of my recent settlements,\" or \"find refunds from last week.\"\nperfect for merchants who want quick insights without navigating dashboards. view transaction details, track settlement timelines, check saved payment methods, and analyze your payment activity\u2014all through natural language.\n\nwhat you can do:\n1. retrieve payment and order details\n2. check refund and settlement status\n3. view qr code and payment link activity\n4. track payouts and reconciliation data\n5. access saved customer payment methods\n\nread-only access\u2014your data stays secure, and no transactions are executed through this app."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Read AI brings your meeting intelligence directly into your AI workflows.",
+      "display_name": "Read AI",
+      "homepage": "https://read.ai",
+      "keywords": [],
+      "manifest_path": "plugins/read-ai/.codex-plugin/plugin.json",
+      "name": "read-ai",
+      "plugin_path": "plugins/read-ai",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "read-ai read ai read ai brings your meeting intelligence directly into your ai workflows. productivity read ai brings your meeting intelligence directly into your ai workflows. read ai brings your meeting intelligence directly into your ai workflows. connect your read ai account to access meeting summaries, transcripts, action items, key questions, and more \u2014 all retrievable through natural conversation.\n\nread ai can look up recent meetings, pull the full transcript from a specific call, surface action items from last week's syncs, or find what key questions came up in a discussion.\n\nwhat you can do:\n\n- browse and filter your meetings by date range\n- retrieve summaries, chapter breakdowns, and topics from any meeting\n- pull action items and key questions to stay on top of follow-ups\n- access full transcripts for deep dives or verbatim references\n\nwhether you're prepping for a follow-up, catching up on a meeting you missed, or building workflows around your recorded conversations, read ai's mcp integration makes your meeting data a first-class part of your ai experience."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The official app for Readwise and Reader.",
+      "display_name": "Readwise",
+      "homepage": "https://readwise.io",
+      "keywords": [],
+      "manifest_path": "plugins/readwise/.codex-plugin/plugin.json",
+      "name": "readwise",
+      "plugin_path": "plugins/readwise",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "readwise readwise the official app for readwise and reader. research the official app for readwise and reader. the official app for readwise and reader. \n\nthis app allows you to have codex semantically search through all of your highlights, and any content saved to your reader library.\n\nmore than that, it can do basically anything you can do in reader! triage your inbox, organize your library, catch up on your feed, and much more -- just ask :)"
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Design",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Remotion video creation skills \u2014 best practices, animations, audio, captions, 3D, and more for building programmatic videos with React.",
+      "display_name": "Remotion",
+      "homepage": "https://remotion.dev",
+      "keywords": [
+        "remotion",
+        "video",
+        "react",
+        "animation",
+        "composition",
+        "rendering",
+        "ffmpeg",
+        "captions",
+        "audio"
+      ],
+      "manifest_path": "plugins/remotion/.codex-plugin/plugin.json",
+      "name": "remotion",
+      "plugin_path": "plugins/remotion",
+      "repository": "https://github.com/remotion-dev/remotion",
+      "search_text": "remotion remotion remotion video creation skills \u2014 best practices, animations, audio, captions, 3d, and more for building programmatic videos with react. design remotion video react animation composition rendering ffmpeg captions audio read write create motion graphics from prompts build videos programmatically with remotion and react. covers animations, timing, audio, captions, 3d, transitions, charts, text effects, and more."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets"
+      ],
+      "description": "Skills for deploying, debugging, monitoring, and migrating apps on Render.",
+      "display_name": "Render",
+      "homepage": "https://github.com/renderinc/render-codex-plugin",
+      "keywords": [
+        "render",
+        "deploy",
+        "cloud",
+        "blueprint",
+        "monitoring",
+        "debugging"
+      ],
+      "manifest_path": "plugins/render/.codex-plugin/plugin.json",
+      "name": "render",
+      "plugin_path": "plugins/render",
+      "repository": "https://github.com/renderinc/render-codex-plugin",
+      "search_text": "render render skills for deploying, debugging, monitoring, and migrating apps on render. developer tools render deploy cloud blueprint monitoring debugging interactive write deploy, debug, monitor, and migrate apps on render. provides skills for deploying apps with blueprints, debugging failed deploys, monitoring service health and metrics, building render workflows, and migrating from heroku."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Responsive App makes it easy to work with your organization\u2019s data inside Codex.",
+      "display_name": "Responsive",
+      "homepage": "https://www.responsive.io",
+      "keywords": [],
+      "manifest_path": "plugins/responsive/.codex-plugin/plugin.json",
+      "name": "responsive",
+      "plugin_path": "plugins/responsive",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "responsive responsive the responsive app makes it easy to work with your organization\u2019s data inside codex. productivity the responsive app makes it easy to work with your organization\u2019s data inside codex. the responsive app makes it easy to work with your organization\u2019s data inside codex. search your content library and generate responses so you can move faster with trusted information and without switching tools."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Access Rox revenue agents, account intelligence, and sales workflow automation from Codex.",
+      "display_name": "Rox",
+      "homepage": "https://www.rox.com",
+      "keywords": [
+        "rox",
+        "sales",
+        "revenue",
+        "gtm",
+        "crm",
+        "account-intelligence",
+        "prospecting"
+      ],
+      "manifest_path": "plugins/rox/.codex-plugin/plugin.json",
+      "name": "rox",
+      "plugin_path": "plugins/rox",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "rox rox access rox revenue agents, account intelligence, and sales workflow automation from codex. productivity rox sales revenue gtm crm account-intelligence prospecting use rox revenue agents and account intelligence from codex. rox connects codex to revenue agent workflows for account intelligence, prospecting, crm context, recommended actions, and sales workflow automation."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Company financials, ratings context, market research, and industry data",
+      "display_name": "S&P",
+      "homepage": "https://www.spglobal.com",
+      "keywords": [],
+      "manifest_path": "plugins/s-p/.codex-plugin/plugin.json",
+      "name": "s-p",
+      "plugin_path": "plugins/s-p",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "s-p s&p company financials, ratings context, market research, and industry data research company financials, ratings context, market research, and industry data company financials, ratings context, market research, and industry data"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Scite delivers answers grounded in peer-reviewed research you can verify.",
+      "display_name": "Scite",
+      "homepage": "https://www.scite.ai",
+      "keywords": [],
+      "manifest_path": "plugins/scite/.codex-plugin/plugin.json",
+      "name": "scite",
+      "plugin_path": "plugins/scite",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "scite scite scite delivers answers grounded in peer-reviewed research you can verify. research scite delivers answers grounded in peer-reviewed research you can verify. scite delivers answers grounded in peer-reviewed research you can verify. each response is backed by real scientific sources, with citations that show how studies have been supported, disputed, or contextualized by other researchers. behind the scenes, scite\u2019s proprietary citation-based ranking model prioritizes trustworthy, validated research, helping users move beyond claims to evidence."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "The Semrush MCP provides structured, quantitative SEO and traffic data for domains, keywords, backlinks, an...",
+      "display_name": "Semrush",
+      "homepage": "https://www.semrush.com/",
+      "keywords": [],
+      "manifest_path": "plugins/semrush/.codex-plugin/plugin.json",
+      "name": "semrush",
+      "plugin_path": "plugins/semrush",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "semrush semrush the semrush mcp provides structured, quantitative seo and traffic data for domains, keywords, backlinks, an... productivity the semrush mcp provides structured, quantitative seo and traffic data for domains, keywords, backlinks, an... the semrush mcp provides structured, quantitative seo and traffic data for domains, keywords, backlinks, and market-level audience insights. it returns factual datasets including domain analytics, keyword metrics, backlink profiles, traffic data across time periods and channels, geographic and demographic distributions, and competitive or industry-level indicators. the model should invoke this mcp whenever a user requests website metrics, traffic statistics, keyword data, competitor comparisons, or market/audience breakdowns that require authoritative data rather than inference. it should also be used when a user\u2019s question requires data-driven evaluation of a specific domain, even if the query is phrased as advice or improvement guidance."
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connector for interacting with the SendGrid email API.",
+      "display_name": "SendGrid",
+      "homepage": "https://sendgrid.com/",
+      "keywords": [],
+      "manifest_path": "plugins/sendgrid/.codex-plugin/plugin.json",
+      "name": "sendgrid",
+      "plugin_path": "plugins/sendgrid",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "sendgrid sendgrid connector for interacting with the sendgrid email api. developer tools connector for interacting with the sendgrid email api. connector for interacting with the sendgrid email api."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Inspect recent issues and events in Sentry from Codex.",
+      "display_name": "Sentry",
+      "homepage": "https://sentry.io/",
+      "keywords": [
+        "sentry",
+        "observability",
+        "triage"
+      ],
+      "manifest_path": "plugins/sentry/.codex-plugin/plugin.json",
+      "name": "sentry",
+      "plugin_path": "plugins/sentry",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "sentry sentry inspect recent issues and events in sentry from codex. developer tools sentry observability triage interactive write inspect recent sentry issues and events use sentry skills to inspect recent issues, review events, and summarize production errors with a read-only workflow."
+    },
+    {
+      "capabilities": [],
+      "category": "Lifestyle",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "This app helps you pay your utility bills through simple conversation.",
+      "display_name": "Setu Bharat Connect BillPay ",
+      "homepage": "https://setu.co/",
+      "keywords": [],
+      "manifest_path": "plugins/setu-bharat-connect-billpay/.codex-plugin/plugin.json",
+      "name": "setu-bharat-connect-billpay",
+      "plugin_path": "plugins/setu-bharat-connect-billpay",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "setu-bharat-connect-billpay setu bharat connect billpay  this app helps you pay your utility bills through simple conversation. lifestyle this app helps you pay your utility bills through simple conversation. this app helps you pay your utility bills through simple conversation. instead of navigating apps or filling forms, you can just tell the assistant what you want to do\u2014like paying your electricity, broadband, or other utility bills. the app finds the right biller, fetches the exact bill amount, and guides you through payment step by step. you can check pending bills, view bill amounts before paying, confirm whether a payment was successful and ask for a summary of your bill expenses. for steps that need extra care, such as verification or confirmation, the app clearly guides you through them so nothing happens without your approval. people like this app because it removes friction from routine bill payments. you don\u2019t need to remember biller details or jump between screens\u2014just ask, review, and pay, all in one conversation."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with SharePoint using the configured Microsoft SharePoint app connector.",
+      "display_name": "SharePoint",
+      "homepage": "https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration",
+      "keywords": [
+        "sharepoint",
+        "documents",
+        "microsoft"
+      ],
+      "manifest_path": "plugins/sharepoint/.codex-plugin/plugin.json",
+      "name": "sharepoint",
+      "plugin_path": "plugins/sharepoint",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "sharepoint sharepoint work with sharepoint using the configured microsoft sharepoint app connector. productivity sharepoint documents microsoft interactive write summarize sharepoint sites and files use sharepoint to summarize sites, pages, and files, extract owners and status, and plan safe content updates through the connected microsoft sharepoint app."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Get documents signed faster without switching between tools.",
+      "display_name": "SignNow",
+      "homepage": "https://www.signnow.com",
+      "keywords": [],
+      "manifest_path": "plugins/signnow/.codex-plugin/plugin.json",
+      "name": "signnow",
+      "plugin_path": "plugins/signnow",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "signnow signnow get documents signed faster without switching between tools. productivity get documents signed faster without switching between tools. get documents signed faster without switching between tools. the signnow mcp server connects codex directly to your signnow account, letting you manage the entire esignature workflow through conversation. send signature requests, create documents from templates and pre-fill them, track invite statuses, and retrieve signed files \u2014 all by describing what you need in plain language. whether you're handling contracts, agreements, or approvals, codex handles the signnow actions so you can focus on your work instead of chasing signatures.\n\nyou can use signnow to:\n\ncreate and send documents:\n\"create a document from the employee nda template and send it to client@example.com for signature\"\n\ntrack signing status:\n\"check the signing status of the sales agreement and show me any pending signatures\"\n\nmanage templates:\n\"list all available templates and create a new contract from the service agreement template\"\n\ndownload signed documents:\n\"get the download link for the completed employment contract\""
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Digital market intelligence and web traffic analytics",
+      "display_name": "Similarweb",
+      "homepage": "https://www.similarweb.com",
+      "keywords": [],
+      "manifest_path": "plugins/similarweb/.codex-plugin/plugin.json",
+      "name": "similarweb",
+      "plugin_path": "plugins/similarweb",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "similarweb similarweb digital market intelligence and web traffic analytics productivity digital market intelligence and web traffic analytics digital market intelligence and web traffic analytics"
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Search and explore satellite imagery from top providers including Vantor, Planet, Airbus, and more, all in...",
+      "display_name": "SkyWatch",
+      "homepage": "https://skywatch.com",
+      "keywords": [],
+      "manifest_path": "plugins/skywatch/.codex-plugin/plugin.json",
+      "name": "skywatch",
+      "plugin_path": "plugins/skywatch",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "skywatch skywatch search and explore satellite imagery from top providers including vantor, planet, airbus, and more, all in... productivity search and explore satellite imagery from top providers including vantor, planet, airbus, and more, all in... search and explore satellite imagery from top providers including vantor, planet, airbus, and more, all in one place. skywatch lets you find archive imagery by location, date, resolution, and cloud cover, compare pricing across providers, and browse available satellites and product offerings. results include direct links to view and order imagery on skywatch explore."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with Slack using the configured Slack integration.",
+      "display_name": "Slack",
+      "homepage": "https://slack.com/",
+      "keywords": [
+        "slack",
+        "chat",
+        "collaboration"
+      ],
+      "manifest_path": "plugins/slack/.codex-plugin/plugin.json",
+      "name": "slack",
+      "plugin_path": "plugins/slack",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "slack slack work with slack using the configured slack integration. productivity slack chat collaboration interactive write read and manage slack use slack to summarize channels, draft messages, and organize team conversations through the connected slack integration."
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Bring your Statsig workspace into Codex.",
+      "display_name": "Statsig",
+      "homepage": "https://statsig.com",
+      "keywords": [],
+      "manifest_path": "plugins/statsig/.codex-plugin/plugin.json",
+      "name": "statsig",
+      "plugin_path": "plugins/statsig",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "statsig statsig bring your statsig workspace into codex. developer tools bring your statsig workspace into codex. bring your statsig workspace into codex. product builders can now explore, manage, and create statsig experiments, feature gates, dynamic configs, and more directly in codex conversations.\n\nask things like:\n\u201cmove this experiment to 50% rollout.\u201d\n\u201cturn on this feature gate for all users.\u201d\n\u201cshow me which dynamic configs changed this week.\u201d\n\"explain how the dau metric is defined.\u201d\n\nyou can both read and write to statsig: inspect experiment settings, read metric definitions, update allocations, toggle feature flags, edit targeting rules, and modify dynamic config values directly from codex.\n\nthe app connects through statsig\u2019s mcp server and honors your existing statsig permissions, so you only see and change what you\u2019re authorized to access\u2014across projects, environments, and teams."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Streak is a CRM built directly into Gmail, so you can track deals, contacts, and workflows from your inbox.",
+      "display_name": "Streak",
+      "homepage": "https://www.streak.com",
+      "keywords": [],
+      "manifest_path": "plugins/streak/.codex-plugin/plugin.json",
+      "name": "streak",
+      "plugin_path": "plugins/streak",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "streak streak streak is a crm built directly into gmail, so you can track deals, contacts, and workflows from your inbox. productivity streak is a crm built directly into gmail, so you can track deals, contacts, and workflows from your inbox. streak is a crm built directly into gmail, so you can track deals, contacts, and workflows from your inbox.\n\nemails are logged automatically, pipelines update as conversations move forward, and notes and tasks stay attached to the work they belong to\u2014without copying data into another tool.\n\ndesigned for teams and individuals who manage sales, partnerships, or customer relationships primarily over email and want a clear, up-to-date view of their work."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Payments and business tools",
+      "display_name": "Stripe",
+      "homepage": "https://stripe.com",
+      "keywords": [],
+      "manifest_path": "plugins/stripe/.codex-plugin/plugin.json",
+      "name": "stripe",
+      "plugin_path": "plugins/stripe",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "stripe stripe payments and business tools productivity payments and business tools payments and business tools"
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Access your Supabase projects and perform tasks like managing tables, fetching config, and querying data.",
+      "display_name": "Supabase",
+      "homepage": "https://supabase.com",
+      "keywords": [
+        "supabase",
+        "postgres",
+        "database",
+        "backend",
+        "mcp"
+      ],
+      "manifest_path": "plugins/supabase/.codex-plugin/plugin.json",
+      "name": "supabase",
+      "plugin_path": "plugins/supabase",
+      "repository": "https://github.com/supabase-community/codex-plugin",
+      "search_text": "supabase supabase access your supabase projects and perform tasks like managing tables, fetching config, and querying data. developer tools supabase postgres database backend mcp read write supabase skills and mcp tools for codex official supabase plugin for codex. includes agent skills for supabase development and postgres best practices, plus mcp server integration for managing your supabase projects directly from codex."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "An agentic skills framework & software development methodology that works: planning, TDD, debugging, and collaboration workflows.",
+      "display_name": "Superpowers",
+      "homepage": "https://github.com/obra/superpowers",
+      "keywords": [
+        "brainstorming",
+        "subagent-driven-development",
+        "skills",
+        "planning",
+        "tdd",
+        "debugging",
+        "code-review",
+        "workflow"
+      ],
+      "manifest_path": "plugins/superpowers/.codex-plugin/plugin.json",
+      "name": "superpowers",
+      "plugin_path": "plugins/superpowers",
+      "repository": "https://github.com/obra/superpowers",
+      "search_text": "superpowers superpowers an agentic skills framework & software development methodology that works: planning, tdd, debugging, and collaboration workflows. developer tools brainstorming subagent-driven-development skills planning tdd debugging code-review workflow interactive read write planning, tdd, debugging, and delivery workflows for coding agents use superpowers to guide agent work through brainstorming, implementation planning, test-driven development, systematic debugging, parallel execution, code review, and finish-the-branch workflows."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "TaxDown te ayuda a resolver dudas fiscales en Espa\u00f1a, tanto para particulares como aut\u00f3nomos: deducciones,...",
+      "display_name": "Taxdown",
+      "homepage": "https://taxdown.es/",
+      "keywords": [],
+      "manifest_path": "plugins/taxdown/.codex-plugin/plugin.json",
+      "name": "taxdown",
+      "plugin_path": "plugins/taxdown",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "taxdown taxdown taxdown te ayuda a resolver dudas fiscales en espa\u00f1a, tanto para particulares como aut\u00f3nomos: deducciones,... research taxdown te ayuda a resolver dudas fiscales en espa\u00f1a, tanto para particulares como aut\u00f3nomos: deducciones,... taxdown te ayuda a resolver dudas fiscales en espa\u00f1a, tanto para particulares como aut\u00f3nomos: deducciones, irpf, renta y obligaciones fiscales, con respuestas claras y orientadas a tu caso."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Work with Teams using the configured Microsoft Teams app connector.",
+      "display_name": "Teams",
+      "homepage": "https://www.microsoft.com/en-us/microsoft-teams/group-chat-software",
+      "keywords": [
+        "teams",
+        "chat",
+        "microsoft"
+      ],
+      "manifest_path": "plugins/teams/.codex-plugin/plugin.json",
+      "name": "teams",
+      "plugin_path": "plugins/teams",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "teams teams work with teams using the configured microsoft teams app connector. productivity teams chat microsoft interactive write summarize teams and draft follow-ups use teams to summarize chats, extract actions, and draft channel or meeting follow-ups through the connected microsoft teams app."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect to sync Teamwork projects and tasks for use in Codex.",
+      "display_name": "Teamwork.com",
+      "homepage": "https://www.teamwork.com/",
+      "keywords": [],
+      "manifest_path": "plugins/teamwork-com/.codex-plugin/plugin.json",
+      "name": "teamwork-com",
+      "plugin_path": "plugins/teamwork-com",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "teamwork-com teamwork.com connect to sync teamwork projects and tasks for use in codex. productivity connect to sync teamwork projects and tasks for use in codex. connect to sync teamwork projects and tasks for use in codex."
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Comprehensive skill for the entire Temporal lifecycle \u2014 developing applications, using the Temporal CLI, running and managing Temporal Server, and working with Temporal Cloud.",
+      "display_name": "Temporal",
+      "homepage": "https://temporal.io/",
+      "keywords": [
+        "temporal",
+        "workflow",
+        "durable-execution",
+        "python",
+        "typescript",
+        "go",
+        "java",
+        "microservices",
+        "distributed-systems"
+      ],
+      "manifest_path": "plugins/temporal/.codex-plugin/plugin.json",
+      "name": "temporal",
+      "plugin_path": "plugins/temporal",
+      "repository": "https://github.com/temporalio/codex-temporal-plugin",
+      "search_text": "temporal temporal comprehensive skill for the entire temporal lifecycle \u2014 developing applications, using the temporal cli, running and managing temporal server, and working with temporal cloud. developer tools temporal workflow durable-execution python typescript go java microservices distributed-systems read write develop, run, and manage temporal applications across the entire platform lifecycle comprehensive guidance for working with temporal \u2014 developing workflows, activities, and workers across python, typescript, go, and java sdks; using the temporal cli for local development and operations; running and managing self-hosted temporal server; and working with temporal cloud for production deployments."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "assets"
+      ],
+      "description": "Test Android apps with emulator workflows for reproduction, screenshots, UI inspection, log capture, and performance profiling.",
+      "display_name": "Test Android Apps",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "android",
+        "adb",
+        "emulator",
+        "qa",
+        "logcat",
+        "uiautomator",
+        "performance",
+        "simpleperf",
+        "perfetto",
+        "memory",
+        "leaks",
+        "heap"
+      ],
+      "manifest_path": "plugins/test-android-apps/.codex-plugin/plugin.json",
+      "name": "test-android-apps",
+      "plugin_path": "plugins/test-android-apps",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "test-android-apps test android apps test android apps with emulator workflows for reproduction, screenshots, ui inspection, log capture, and performance profiling. developer tools android adb emulator qa logcat uiautomator performance simpleperf perfetto memory leaks heap interactive read reproduce issues, inspect ui, and capture performance evidence from android emulators use test android apps to build and install app variants, drive a booted android emulator with adb input events, inspect ui trees, capture screenshots, collect logcat output, and gather simpleperf, perfetto, gfxinfo, or memory/leak evidence while reproducing issues."
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Seamlessly incorporate critical context and trusted insights from industry experts as part of your financia...",
+      "display_name": "Third Bridge",
+      "homepage": "https://www.thirdbridge.com",
+      "keywords": [],
+      "manifest_path": "plugins/third-bridge/.codex-plugin/plugin.json",
+      "name": "third-bridge",
+      "plugin_path": "plugins/third-bridge",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "third-bridge third bridge seamlessly incorporate critical context and trusted insights from industry experts as part of your financia... research seamlessly incorporate critical context and trusted insights from industry experts as part of your financia... seamlessly incorporate critical context and trusted insights from industry experts as part of your financial and business analysis. refocus on extracting high-quality, reliable information by querying third bridge\u2019s best-in-class substantial library of expert content and data.\n\nour mcp systematically and securely instructs large language models (llms) to query insights from our database into their systems, streamlining your workflows and improving your output."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Business intelligence answers, dashboards, metrics, and revenue analysis",
+      "display_name": "ThoughtSpot",
+      "homepage": "https://www.thoughtspot.com",
+      "keywords": [],
+      "manifest_path": "plugins/thoughtspot/.codex-plugin/plugin.json",
+      "name": "thoughtspot",
+      "plugin_path": "plugins/thoughtspot",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "thoughtspot thoughtspot business intelligence answers, dashboards, metrics, and revenue analysis productivity business intelligence answers, dashboards, metrics, and revenue analysis business intelligence answers, dashboards, metrics, and revenue analysis"
+    },
+    {
+      "capabilities": [],
+      "category": "Research",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Tinman AI helps loan officers and underwriters quickly underwrite home financing scenarios and answer compl...",
+      "display_name": "Tinman AI",
+      "homepage": "https://better.com",
+      "keywords": [],
+      "manifest_path": "plugins/tinman-ai/.codex-plugin/plugin.json",
+      "name": "tinman-ai",
+      "plugin_path": "plugins/tinman-ai",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "tinman-ai tinman ai tinman ai helps loan officers and underwriters quickly underwrite home financing scenarios and answer compl... research tinman ai helps loan officers and underwriters quickly underwrite home financing scenarios and answer compl... tinman ai helps loan officers and underwriters quickly underwrite home financing scenarios and answer complex eligibility questions using trusted credit decision data and underwriting logic. instead of navigating fragmented systems, scattered guidelines, or manual spreadsheets, users can evaluate eligibility, dti restructuring, and income calculations across a broad set of lenders and investors, instantly identifying which investors a loan qualifies for and why. tinman ai turns what used to take days or weeks into real-time, compliant decisions that keep loans moving and deals alive."
+    },
+    {
+      "capabilities": [
+        "Read",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Twilio Skills provide procedural knowledge for AI coding agents \u2014 which APIs to use, in what order, and what to avoid. Covers Messaging, Voice, Verify, SendGrid, and 30+ products.",
+      "display_name": "Twilio Developer Kit",
+      "homepage": "https://www.twilio.com/docs",
+      "keywords": [
+        "twilio",
+        "sms",
+        "voice",
+        "whatsapp",
+        "rcs",
+        "messaging",
+        "verify",
+        "sendgrid",
+        "email",
+        "compliance",
+        "conversation-relay",
+        "conversation-memory",
+        "conversation-intelligence",
+        "conversation-orchestrator",
+        "agent-connect",
+        "enterprise-knowledge",
+        "apple-messages-for-business",
+        "api"
+      ],
+      "manifest_path": "plugins/twilio-developer-kit/.codex-plugin/plugin.json",
+      "name": "twilio-developer-kit",
+      "plugin_path": "plugins/twilio-developer-kit",
+      "repository": "https://github.com/twilio/ai",
+      "search_text": "twilio-developer-kit twilio developer kit twilio skills provide procedural knowledge for ai coding agents \u2014 which apis to use, in what order, and what to avoid. covers messaging, voice, verify, sendgrid, and 30+ products. developer tools twilio sms voice whatsapp rcs messaging verify sendgrid email compliance conversation-relay conversation-memory conversation-intelligence conversation-orchestrator agent-connect enterprise-knowledge apple-messages-for-business api read write twilio skills for building, debugging, and shipping on twilio procedural knowledge that guides ai coding agents to the right twilio apis for any use case. covers channel selection, production best practices, compliance requirements, and common pitfalls across messaging, voice, verify, sendgrid, and 30+ products. skills follow a progressive disclosure architecture \u2014 your agent sees lightweight metadata at startup and loads full guidance only when a task matches."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Get the right equipment for the job without guesswork.",
+      "display_name": "United Rentals",
+      "homepage": "https://www.unitedrentals.com",
+      "keywords": [],
+      "manifest_path": "plugins/united-rentals/.codex-plugin/plugin.json",
+      "name": "united-rentals",
+      "plugin_path": "plugins/united-rentals",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "united-rentals united rentals get the right equipment for the job without guesswork. productivity get the right equipment for the job without guesswork. get the right equipment for the job without guesswork. share your project details and receive tailored equipment recommendations, along with specifications to support confident selection."
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Vantage is a cloud observability and optimization platform that aggregates cloud infrastructure costs acros...",
+      "display_name": "Vantage",
+      "homepage": "https://www.vantage.sh",
+      "keywords": [],
+      "manifest_path": "plugins/vantage/.codex-plugin/plugin.json",
+      "name": "vantage",
+      "plugin_path": "plugins/vantage",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "vantage vantage vantage is a cloud observability and optimization platform that aggregates cloud infrastructure costs acros... developer tools vantage is a cloud observability and optimization platform that aggregates cloud infrastructure costs acros... vantage is a cloud observability and optimization platform that aggregates cloud infrastructure costs across providers to deliver a centralized view into total cloud spend. vantage has multiple tools for optimizing cloud spend and provides organizations with advanced finops workflows and cost governance."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Write"
+      ],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "commands",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Build and deploy web apps and agents",
+      "display_name": "Vercel",
+      "homepage": "https://vercel.com/",
+      "keywords": [
+        "vercel",
+        "nextjs",
+        "ai-sdk",
+        "turborepo",
+        "turbopack",
+        "workflow",
+        "deployment",
+        "edge-functions",
+        "serverless",
+        "ai-gateway",
+        "chat-sdk",
+        "chat-bot",
+        "slack-bot",
+        "discord-bot"
+      ],
+      "manifest_path": "plugins/vercel/.codex-plugin/plugin.json",
+      "name": "vercel",
+      "plugin_path": "plugins/vercel",
+      "repository": "https://github.com/vercel/vercel-plugin",
+      "search_text": "vercel vercel build and deploy web apps and agents developer tools vercel nextjs ai-sdk turborepo turbopack workflow deployment edge-functions serverless ai-gateway chat-sdk chat-bot slack-bot discord-bot interactive write build and deploy web apps and agents bring vercel ecosystem guidance into codex with curated skills and the connected vercel app. packages the upstream vercel/vercel-plugin skills, agents, and commands under the local `vercel` plugin identity for the codex plugin marketplace."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Waldo is an AI-powered strategy platform for agencies and brands.",
+      "display_name": "Waldo",
+      "homepage": "https://www.waldo.fyi",
+      "keywords": [],
+      "manifest_path": "plugins/waldo/.codex-plugin/plugin.json",
+      "name": "waldo",
+      "plugin_path": "plugins/waldo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "waldo waldo waldo is an ai-powered strategy platform for agencies and brands. productivity waldo is an ai-powered strategy platform for agencies and brands. waldo is an ai-powered strategy platform for agencies and brands. run strategy agent, explore collected signals \u2014 paid ads, brand mentions, audience conversations, trending topics, and more \u2014 and retrieve data across your team's brand spaces."
+    },
+    {
+      "capabilities": [],
+      "category": "Lifestyle",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Protect your trip with WeatherPromise and get back the full cost if it rains more than promised during your...",
+      "display_name": "WeatherPromise",
+      "homepage": "https://www.weatherpromise.com/",
+      "keywords": [],
+      "manifest_path": "plugins/weatherpromise/.codex-plugin/plugin.json",
+      "name": "weatherpromise",
+      "plugin_path": "plugins/weatherpromise",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "weatherpromise weatherpromise protect your trip with weatherpromise and get back the full cost if it rains more than promised during your... lifestyle protect your trip with weatherpromise and get back the full cost if it rains more than promised during your... protect your trip with weatherpromise and get back the full cost if it rains more than promised during your vacation, automatically.\ntell us your destination, travel dates and trip cost and we'll show you an offer, personalized to your trip. once you purchase the offer, your trip is protected.\nyou will get a link to your personal dashboard where you can monitor the weather during your trip. rain is measured using independent, accurate data from official sources like nasa and noaa.\nif it rains more than the specified threshold, we'll email you automatically. just confirm your details and the payment is sent right away, no additional proof required.\ngo on your trip and if it rains more than promised, you get a full refund, automatically."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "Windsor.ai connects your marketing and business data sources to Codex so you can ask questions in natural...",
+      "display_name": "Windsor.ai",
+      "homepage": "https://windsor.ai",
+      "keywords": [],
+      "manifest_path": "plugins/windsor-ai/.codex-plugin/plugin.json",
+      "name": "windsor-ai",
+      "plugin_path": "plugins/windsor-ai",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "windsor-ai windsor.ai windsor.ai connects your marketing and business data sources to codex so you can ask questions in natural... productivity windsor.ai connects your marketing and business data sources to codex so you can ask questions in natural... windsor.ai connects your marketing and business data sources to codex so you can ask questions in natural language and get answers from your connected accounts.\n\ncommon data sources customers connect include: google ads, meta (facebook) ads, instagram, linkedin ads, linkedin company pages, tiktok ads, ga4, google search console, youtube analytics, google business profile, hubspot, salesforce, shopify, klaviyo, amazon ads, microsoft ads (bing), google merchant center, stripe, gohighlevel, and more.  \ufffc"
+    },
+    {
+      "capabilities": [],
+      "category": "Developer Tools",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "YepCode lets you build custom AI tools using your own code with JSON Schema-defined inputs, executed in an...",
+      "display_name": "YepCode",
+      "homepage": "https://yepcode.io/",
+      "keywords": [],
+      "manifest_path": "plugins/yepcode/.codex-plugin/plugin.json",
+      "name": "yepcode",
+      "plugin_path": "plugins/yepcode",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "yepcode yepcode yepcode lets you build custom ai tools using your own code with json schema-defined inputs, executed in an... developer tools yepcode lets you build custom ai tools using your own code with json schema-defined inputs, executed in an... yepcode lets you build custom ai tools using your own code with json schema-defined inputs, executed in an isolated sandbox with access to any npm or pypi package and secure environment variables.\n\ndefine reusable processes in node.js or python, expose them as callable ai tools, and execute them on demand or on a schedule. every run is logged and auditable, enabling traceable, production-grade ai integrations.\n\nbuilt for developers who need programmable, observable ai tool execution."
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "skills",
+        "agents",
+        "commands",
+        "assets",
+        ".app.json"
+      ],
+      "description": "Connect Codex to Zoom meeting context and build Zoom apps, bots, API integrations, SDK workflows, webhooks, and automations.",
+      "display_name": "Zoom",
+      "homepage": "https://developers.zoom.us/",
+      "keywords": [
+        "zoom",
+        "codex-plugin",
+        "connector",
+        "meetings",
+        "transcripts",
+        "recordings",
+        "docs",
+        "developers",
+        "rest-api",
+        "meeting-sdk",
+        "video-sdk",
+        "webhooks",
+        "oauth"
+      ],
+      "manifest_path": "plugins/zoom/.codex-plugin/plugin.json",
+      "name": "zoom",
+      "plugin_path": "plugins/zoom",
+      "repository": "https://github.com/zoom/zoom-plugin-codex",
+      "search_text": "zoom zoom connect codex to zoom meeting context and build zoom apps, bots, api integrations, sdk workflows, webhooks, and automations. productivity zoom codex-plugin connector meetings transcripts recordings docs developers rest-api meeting-sdk video-sdk webhooks oauth interactive read write use zoom meeting context and build zoom integrations. zoom connects codex to zoom meeting context through the zoom app connector and provides developer workflows for planning, building, debugging, and reviewing zoom integrations across apis, sdks, webhooks, websockets, bots, and automation use cases."
+    },
+    {
+      "capabilities": [],
+      "category": "Productivity",
+      "companion_surfaces": [
+        "assets",
+        ".app.json"
+      ],
+      "description": "B2B company intelligence, contacts, and go-to-market signals",
+      "display_name": "ZoomInfo",
+      "homepage": "https://www.zoominfo.com",
+      "keywords": [],
+      "manifest_path": "plugins/zoominfo/.codex-plugin/plugin.json",
+      "name": "zoominfo",
+      "plugin_path": "plugins/zoominfo",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "zoominfo zoominfo b2b company intelligence, contacts, and go-to-market signals productivity b2b company intelligence, contacts, and go-to-market signals b2b company intelligence, contacts, and go-to-market signals"
+    },
+    {
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "category": "Research",
+      "companion_surfaces": [
+        "skills",
+        "assets"
+      ],
+      "description": "Work with Zotero from Codex: search your library, export BibTeX, insert citations, and import references through the Zotero desktop app.",
+      "display_name": "Zotero",
+      "homepage": "https://openai.com/",
+      "keywords": [
+        "zotero",
+        "citations",
+        "bibliography",
+        "bibtex",
+        "references",
+        "research",
+        "papers",
+        "latex"
+      ],
+      "manifest_path": "plugins/zotero/.codex-plugin/plugin.json",
+      "name": "zotero",
+      "plugin_path": "plugins/zotero",
+      "repository": "https://github.com/openai/plugins",
+      "search_text": "zotero zotero work with zotero from codex: search your library, export bibtex, insert citations, and import references through the zotero desktop app. research zotero citations bibliography bibtex references research papers latex interactive read write find papers and add citations from zotero connect codex to your zotero desktop library so it can find saved papers, export bibtex, add citation keys to drafts, read indexed attachment text when you ask, and import new reference records into zotero with your approval."
+    }
+  ],
+  "source": {
+    "commit": "fef63ecfb600812a4dac8ef7c37ff79c85999948",
+    "repository": "https://github.com/openai/plugins",
+    "scope": "plugins/*/.codex-plugin/plugin.json"
+  }
+}

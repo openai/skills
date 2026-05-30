@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Plugin Discovery"
+  short_description: "Find relevant Codex plugins"
+  default_prompt: "Use $codex-plugin-discovery to find Codex plugins for my task."
