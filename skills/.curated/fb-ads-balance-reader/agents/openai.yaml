@@ -1,0 +1,7 @@
+interface:
+  display_name: "FB Ads Balance Reader"
+  short_description: "Read Meta Ads billing balances safely"
+  default_prompt: "Use $fb-ads-balance-reader to check current balance and spending-limit remaining amount for all BM ad accounts."
+
+policy:
+  allow_implicit_invocation: false

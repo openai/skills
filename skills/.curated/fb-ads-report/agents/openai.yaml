@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Report"
+  short_description: "Create Feishu-ready FB guard reports"
+  default_prompt: "Use $fb-ads-report to format FB Ads Guard coverage, decisions, and limitations into a concise report."

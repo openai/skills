@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Delivery Closer"
+  short_description: "Safely pause FB Ads delivery through Computer Use"
+  default_prompt: "Use $fb-ads-delivery-closer to execute an explicitly authorized Ads Manager pause/close operation with preflight checks, Computer Use verification, and audit reporting."

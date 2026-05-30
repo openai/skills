@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Metrics Reader"
+  short_description: "Read Ads Manager spend metrics safely"
+  default_prompt: "Use $fb-ads-metrics-reader to export or read Ads Manager metrics without changing delivery."

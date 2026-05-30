@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Scope"
+  short_description: "Reconcile BM ad account coverage"
+  default_prompt: "Use $fb-ads-scope to enumerate all ad accounts under the current BM and produce a coverage table."

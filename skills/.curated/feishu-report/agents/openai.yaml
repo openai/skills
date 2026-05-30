@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Report"
+  short_description: "Send structured reports to a Feishu bot webhook."
+  default_prompt: "Send this report to Feishu."

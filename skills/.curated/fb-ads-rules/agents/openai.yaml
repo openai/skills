@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Rules"
+  short_description: "Evaluate spend and recovery rules"
+  default_prompt: "Use $fb-ads-rules to turn collected Ads Manager metrics into pause or watch decisions."

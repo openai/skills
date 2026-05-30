@@ -1,0 +1,4 @@
+interface:
+  display_name: "FB Ads Guard"
+  short_description: "Coordinate safe FB Ads guard workflows"
+  default_prompt: "Use $fb-ads-guard to run a safe FB Ads Manager monitoring workflow and coordinate the needed sub-skills."
