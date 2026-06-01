@@ -1,6 +1,6 @@
 ---
 name: databricks-skill-installer
-description: Run `databricks experimental aitools install --global` to install or refresh Databricks skills for Codex and other supported coding agents. Use when Codex needs to bootstrap Databricks skills with the Databricks CLI or install a specific Databricks skill such as `databricks-apps` or `databricks-jobs`.
+description: Run `databricks aitools install --global` to install or refresh Databricks skills for Codex and other supported coding agents. Use when Codex needs to bootstrap Databricks skills with the Databricks CLI or install a specific Databricks skill such as `databricks-apps` or `databricks-jobs`.
 ---
 
 # Databricks Skill Installer
@@ -18,13 +18,13 @@ If the command is missing, follow the upstream Databricks CLI install guide and 
 Run:
 
 ```bash
-databricks experimental aitools install --global --agents codex
+databricks aitools install --global --agents codex
 ```
 
 Install one skill with:
 
 ```bash
-databricks experimental aitools install --global --agents codex --skills databricks-apps
+databricks aitools install --global --agents codex --skills databricks-apps
 ```
 
-After installation, open the installed Databricks skill under `${CODEX_HOME:-~/.codex}/skills` and follow its upstream `SKILL.md`.
+After installation, restart Codex so the newly installed skills are discovered. Until you restart, the current session can only inspect the installed files under `${CODEX_HOME:-~/.codex}/skills` — the new skills won't be invokable. Once Codex restarts, open the installed Databricks skill and follow its upstream `SKILL.md`.
