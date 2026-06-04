@@ -1,0 +1,4 @@
+interface:
+  display_name: "Katalon True Platform Testing"
+  short_description: "Plan, import, execute, and report Katalon tests"
+  default_prompt: "Use $katalon-trueplatform-testing to analyze requirements, create manual test cases, organize suites, run with AI, and report results."
