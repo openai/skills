@@ -285,12 +285,14 @@ When creating a new skill from scratch, always run the `init_skill.py` script. T
 Usage:
 
 ```bash
-scripts/init_skill.py <skill-name> --path <output-directory> [--resources scripts,references,assets] [--examples]
+scripts/init_skill.py <skill-name> [--path <output-directory>] [--resources scripts,references,assets] [--examples]
 ```
 
 Examples:
 
 ```bash
+scripts/init_skill.py my-skill
+scripts/init_skill.py my-skill --path ~/.agents/skills
 scripts/init_skill.py my-skill --path skills/public
 scripts/init_skill.py my-skill --path skills/public --resources scripts,references
 scripts/init_skill.py my-skill --path skills/public --resources scripts --examples
@@ -298,7 +300,8 @@ scripts/init_skill.py my-skill --path skills/public --resources scripts --exampl
 
 The script:
 
-- Creates the skill directory at the specified path
+- Creates the skill directory at the specified path, defaulting to `~/.agents/skills`
+  (or `$CODEX_HOME/skills` when `$CODEX_HOME` is set)
 - Generates a SKILL.md template with proper frontmatter and TODO placeholders
 - Creates `agents/openai.yaml` using agent-generated `display_name`, `short_description`, and `default_prompt` passed via `--interface key=value`
 - Optionally creates resource directories based on `--resources`

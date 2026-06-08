@@ -31,12 +31,21 @@ def _request(url: str) -> bytes:
     return github_request(url, "codex-skill-list")
 
 
-def _codex_home() -> str:
-    return os.environ.get("CODEX_HOME", os.path.expanduser("~/.codex"))
+def _default_skills_dir() -> str:
+    """Return the default user-skills directory.
+
+    Resolution order:
+      1. $CODEX_HOME/skills - explicit legacy override (backward-compatible).
+      2. ~/.agents/skills - new open-agent convention default.
+    """
+    codex_home = os.environ.get("CODEX_HOME")
+    if codex_home:
+        return os.path.join(codex_home, "skills")
+    return os.path.expanduser("~/.agents/skills")
 
 
 def _installed_skills() -> set[str]:
-    root = os.path.join(_codex_home(), "skills")
+    root = _default_skills_dir()
     if not os.path.isdir(root):
         return set()
     entries = set()
