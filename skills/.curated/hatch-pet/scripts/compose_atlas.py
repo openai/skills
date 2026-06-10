@@ -107,12 +107,31 @@ def compose_from_frames(root: Path) -> Image.Image:
     return atlas
 
 
+def clear_transparent_rgb(image: Image.Image) -> Image.Image:
+    rgba = image.convert("RGBA")
+    data = bytearray(rgba.tobytes())
+    for index in range(0, len(data), 4):
+        if data[index + 3] == 0:
+            data[index] = 0
+            data[index + 1] = 0
+            data[index + 2] = 0
+    return Image.frombytes("RGBA", rgba.size, bytes(data))
+
+
 def save_outputs(atlas: Image.Image, output: Path, webp_output: Path | None) -> None:
+    atlas = clear_transparent_rgb(atlas)
     output.parent.mkdir(parents=True, exist_ok=True)
     atlas.save(output)
     if webp_output is not None:
         webp_output.parent.mkdir(parents=True, exist_ok=True)
-        atlas.save(webp_output, format="WEBP", lossless=True, quality=100, method=6)
+        atlas.save(
+            webp_output,
+            format="WEBP",
+            lossless=True,
+            quality=100,
+            method=6,
+            exact=True,
+        )
 
 
 def main() -> None:

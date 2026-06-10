@@ -4,12 +4,13 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
 from PIL import Image, ImageOps
+
+RUNNING_FRAME_COUNT = 8
 
 
 def load_manifest(run_dir: Path) -> dict[str, object]:
@@ -33,14 +34,6 @@ def find_job(manifest: dict[str, object], job_id: str) -> dict[str, object]:
     raise SystemExit(f"unknown job id: {job_id}")
 
 
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as file:
-        for chunk in iter(lambda: file.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def image_metadata(path: Path) -> dict[str, object]:
     with Image.open(path) as image:
         image.verify()
@@ -55,6 +48,23 @@ def image_metadata(path: Path) -> dict[str, object]:
 
 def manifest_relative(path: Path, run_dir: Path) -> str:
     return str(path.resolve().relative_to(run_dir.resolve()))
+
+
+def mirror_strip_preserving_frame_order(
+    source: Image.Image,
+    frame_count: int = RUNNING_FRAME_COUNT,
+) -> Image.Image:
+    rgba = source.convert("RGBA")
+    mirrored = Image.new("RGBA", rgba.size, (0, 0, 0, 0))
+    slot_width = rgba.width / frame_count
+    for index in range(frame_count):
+        left = round(index * slot_width)
+        right = round((index + 1) * slot_width)
+        mirrored.alpha_composite(
+            ImageOps.mirror(rgba.crop((left, 0, right, rgba.height))),
+            (left, 0),
+        )
+    return mirrored
 
 
 def main() -> None:
@@ -99,26 +109,22 @@ def main() -> None:
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with Image.open(source) as image:
-        mirrored = ImageOps.mirror(image.convert("RGBA"))
+        mirrored = mirror_strip_preserving_frame_order(image)
         mirrored.save(output)
 
     left_job["status"] = "complete"
     left_job["source_path"] = manifest_relative(source, run_dir)
-    left_job["source_provenance"] = "deterministic-mirror"
     left_job["derived_from"] = "running-right"
-    left_job["source_sha256"] = file_sha256(source)
-    left_job["output_sha256"] = file_sha256(output)
     left_job["completed_at"] = datetime.now(timezone.utc).isoformat()
     left_job["metadata"] = image_metadata(output)
     left_job["mirror_decision"] = {
         "approved": True,
         "approved_at": left_job["completed_at"],
         "note": args.decision_note.strip(),
+        "transform": "framewise-horizontal-mirror-preserving-order",
     }
     for key in [
         "last_error",
-        "secondary_fallback",
-        "synthetic_test_source",
         "repair_reason",
         "queued_at",
     ]:
@@ -133,6 +139,7 @@ def main() -> None:
                 "derived_from": "running-right",
                 "output": str(output),
                 "decision_note": args.decision_note.strip(),
+                "transform": "framewise-horizontal-mirror-preserving-order",
             },
             indent=2,
         )

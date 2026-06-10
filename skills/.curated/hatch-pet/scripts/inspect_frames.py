@@ -127,9 +127,14 @@ def inspect_state(
         row_errors.append(f"expected {expected_count} frame files for {state}, found {len(files)}")
 
     if args.require_components and method and method != "components":
-        row_errors.append(
-            f"{state} used extraction method {method}; regenerate the row or inspect slot slicing"
-        )
+        if method == "stable-slots" and args.allow_stable_slots:
+            row_warnings.append(
+                f"{state} used extraction method stable-slots; confirm motion playback remains stable and unclipped"
+            )
+        else:
+            row_errors.append(
+                f"{state} used extraction method {method}; regenerate the row or inspect slot slicing"
+            )
     elif method and method != "components":
         row_warnings.append(
             f"{state} used extraction method {method}; component extraction is preferred"
@@ -215,6 +220,11 @@ def main() -> None:
         "--require-components",
         action="store_true",
         help="Fail rows that fell back to equal-slot extraction.",
+    )
+    parser.add_argument(
+        "--allow-stable-slots",
+        action="store_true",
+        help="Permit explicitly chosen stable-slots extraction while still warning for visual review.",
     )
     args = parser.parse_args()
 
