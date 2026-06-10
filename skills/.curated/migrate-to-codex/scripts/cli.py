@@ -54,6 +54,7 @@ from migrate.skills import (
     SKILL_SOURCE_ROOTS,
     convert_skills,
     iter_skill_files,
+    normalize_skill_names,
     validate_skill_files,
 )
 from utils.scan import (
@@ -206,15 +207,28 @@ class MigrationContext:
     deployment_target_root: Path
 
 
+def without_orphan_cleanup(deployment_plan: DeploymentPlan) -> DeploymentPlan:
+    return DeploymentPlan(
+        artifacts=deployment_plan.artifacts,
+        orphaned_skill_dirs=(),
+        orphaned_agent_files=(),
+        colliding_skill_dirs=deployment_plan.colliding_skill_dirs,
+        colliding_agent_files=deployment_plan.colliding_agent_files,
+        summary=MigrationSummary(),
+    )
+
+
 # Conversion orchestration
 
 
 def convert_tree(
     source_root: Path,
     components: frozenset[str] = DEFAULT_COMPONENTS,
+    selected_skill_names: frozenset[str] | None = None,
 ) -> ConversionResult:
     """Convert a fixture tree containing global/ and project/ Claude scopes."""
     result = ConversionResult()
+    selected_names = selected_skill_names or frozenset()
     scopes = [
         ScopePaths(source_root / "global", True),
         ScopePaths(source_root / "project", False),
@@ -222,9 +236,11 @@ def convert_tree(
 
     for scope_name, scope in zip(SCOPE_NAMES, scopes):
         if scope.source.exists():
-            result.add(convert_scope(scope, components).prefixed(Path(scope_name)))
+            result.add(
+                convert_scope(scope, components, selected_names).prefixed(Path(scope_name))
+            )
 
-    if "skills" in components:
+    if "skills" in components and not selected_names:
         result.artifacts.extend(migration_skill_artifacts(source_root))
     return result
 
@@ -232,6 +248,7 @@ def convert_tree(
 def convert_scope(
     scope: ScopePaths,
     components: frozenset[str] = DEFAULT_COMPONENTS,
+    selected_skill_names: frozenset[str] | None = None,
 ) -> ConversionResult:
     result = ConversionResult()
 
@@ -239,7 +256,7 @@ def convert_scope(
     result.add(report_plugins(scope))
     result.add(report_hooks(scope))
     if "skills" in components:
-        result.add(convert_skills(scope.source))
+        result.add(convert_skills(scope.source, selected_skill_names))
     if "mcp" in components:
         result.add(convert_settings(scope))
     if "subagents" in components:
@@ -580,6 +597,8 @@ def selected_components(args: argparse.Namespace) -> frozenset[str]:
         for component in ("mcp", "skills", "subagents")
         if getattr(args, component, False)
     }
+    if getattr(args, "skill_names", None):
+        components.add("skills")
     if not components:
         return DEFAULT_COMPONENTS
     return frozenset(components)
@@ -589,15 +608,19 @@ def build_migration_context(
     source_root: Path,
     target_root: Path,
     components: frozenset[str],
+    selected_skill_names: frozenset[str] | None = None,
 ) -> MigrationContext:
+    selected_names = selected_skill_names or frozenset()
     if (source_root / "global").exists() and (source_root / "project").exists():
-        conversion_result = convert_tree(source_root, components)
+        conversion_result = convert_tree(source_root, components, selected_names)
         deployment_target_root = target_root
         deployment_plan = deploy_tree(
             conversion_result,
             deployment_target_root,
             components,
         )
+        if selected_names:
+            deployment_plan = without_orphan_cleanup(deployment_plan)
         return MigrationContext(
             conversion_result,
             deployment_plan,
@@ -610,12 +633,14 @@ def build_migration_context(
         source_scope_root,
         source_scope_root == Path.home(),
     )
-    conversion_result = convert_scope(scope, components)
+    conversion_result = convert_scope(scope, components, selected_names)
     deployment_plan = ScopeDeployment(
         tuple(conversion_result.artifacts),
         deployment_target_root,
         components,
     ).plan()
+    if selected_names:
+        deployment_plan = without_orphan_cleanup(deployment_plan)
     return MigrationContext(conversion_result, deployment_plan, deployment_target_root)
 
 
@@ -750,6 +775,16 @@ def main() -> None:
         "--skills", action="store_true", help="Write skills under .agents/skills."
     )
     parser.add_argument(
+        "--skill",
+        dest="skill_names",
+        action="append",
+        metavar="NAME",
+        help=(
+            "Convert only the named Claude skill. Can be passed multiple times; "
+            "implies --skills and skips command-to-skill conversion."
+        ),
+    )
+    parser.add_argument(
         "--subagents", action="store_true", help="Write agents under .codex/agents."
     )
     parser.add_argument(
@@ -790,6 +825,15 @@ def main() -> None:
         "--dry-run", action="store_true", help="Print report; do not write files."
     )
     args = parser.parse_args()
+
+    selected_skill_names = normalize_skill_names(args.skill_names)
+    if selected_skill_names and args.validate_target:
+        parser.error("--skill is only used during migration, not --validate-target.")
+    if selected_skill_names and args.replace:
+        parser.error(
+            "--replace cannot be used with --skill; selected skill migration "
+            "already overwrites matching skills without orphan cleanup."
+        )
 
     if args.validate_target:
         target_root = normalize_scope_root(Path(args.validate_target), ".codex")
@@ -837,7 +881,12 @@ def main() -> None:
     components = selected_components(args)
     deploy_mode = DeployMode.REPLACE if args.replace else DeployMode.MERGE
 
-    context = build_migration_context(source_root, target_root, components)
+    context = build_migration_context(
+        source_root,
+        target_root,
+        components,
+        selected_skill_names,
+    )
     conversion_result = context.conversion_result
     deployment_plan = context.deployment_plan
     deployment_target_root = context.deployment_target_root

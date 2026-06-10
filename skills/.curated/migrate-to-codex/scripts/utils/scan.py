@@ -41,6 +41,12 @@ def render_named_inventory(
         lines.append(f"    - {value}")
 
 
+def skill_inventory_name(source_file: Path) -> str:
+    if source_file.name == "SKILL.md":
+        return source_file.parent.name
+    return source_file.stem
+
+
 def render_scope_inventory(
     source_root: Path,
     instruction_source_candidates: Sequence[Path],
@@ -60,7 +66,7 @@ def render_scope_inventory(
     skill_names = tuple(
         sorted(
             {
-                source_file.parent.name
+                skill_inventory_name(source_file)
                 for relative_root in skill_source_roots
                 for source_file in iter_skill_files(source_root / relative_root)
             }

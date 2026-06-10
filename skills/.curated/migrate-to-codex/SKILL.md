@@ -1,6 +1,6 @@
 ---
 name: migrate-to-codex
-description: Migrate supported instruction files, skills, agents, and MCP config into Codex project and global files.
+description: Migrate supported instruction files, selected or full skill sets, agents, and MCP config into Codex project and global files.
 ---
 
 # Migrate to Codex
@@ -29,6 +29,7 @@ Run the migration in this order for each selected global or project source:
    - `--scan-only` lists active and inactive source surfaces.
    - `--plan` prints staged Codex artifact paths and report rows.
    - `--doctor` summarizes readiness, manual-review work, and validation risks.
+   - `--skill <name>` limits skill migration to one named Claude skill; pass it multiple times for several skills.
 
 4. Convert surfaces in the same order the CLI uses:
    - instructions: `CLAUDE.md` / `AGENTS.md` to `AGENTS.md`
@@ -102,6 +103,15 @@ Dry-run, then run without `--dry-run`, for global and project.
    $MIGRATE_TO_CODEX --source ~/.claude/ --target ~/.codex/
    $MIGRATE_TO_CODEX --source ./.claude/ --target ./.codex/ --dry-run
    $MIGRATE_TO_CODEX --source ./.claude/ --target ./.codex/
+   ```
+
+Dry-run, then migrate selected Claude skills only. `--skill` implies `--skills`, skips slash-command conversion, and cannot be combined with `--replace` because selected migrations should not delete unrelated Codex skills.
+
+   ```bash
+   $MIGRATE_TO_CODEX --source ~/.claude/ --target ~/.codex/ --skill release-notes --plan
+   $MIGRATE_TO_CODEX --source ~/.claude/ --target ~/.codex/ --skill release-notes --dry-run
+   $MIGRATE_TO_CODEX --source ~/.claude/ --target ~/.codex/ --skill release-notes
+   $MIGRATE_TO_CODEX --source ~/.claude/ --target ~/.codex/ --skill release-notes --skill pr-review --dry-run
    ```
 
 Run the post-migration validator against each target after edits.

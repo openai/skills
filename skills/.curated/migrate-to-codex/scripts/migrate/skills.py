@@ -93,15 +93,53 @@ def command_caveats(
     return tuple(caveats)
 
 
-def convert_skills(source_root: Path) -> ConversionResult:
-    result = convert_skill_files(source_root / ".claude" / "skills")
-    result.add(convert_command_skills(source_root))
+def normalize_skill_names(skill_names: Sequence[str] | None) -> frozenset[str]:
+    if not skill_names:
+        return frozenset()
+    return frozenset(
+        slugify_name(skill_name)
+        for skill_name in skill_names
+        if skill_name and skill_name.strip()
+    )
+
+
+def selected_skill_matches(
+    source_file: Path,
+    selected_skill_names: frozenset[str],
+) -> bool:
+    if not selected_skill_names:
+        return True
+
+    if slugify_name(skill_target_name(source_file)) in selected_skill_names:
+        return True
+
+    document = ParsedDocument.from_file(source_file)
+    frontmatter_name = document.frontmatter.optional_string("name")
+    return bool(
+        frontmatter_name and slugify_name(frontmatter_name) in selected_skill_names
+    )
+
+
+def convert_skills(
+    source_root: Path,
+    selected_skill_names: frozenset[str] | None = None,
+) -> ConversionResult:
+    selected_names = selected_skill_names or frozenset()
+    result = convert_skill_files(source_root / ".claude" / "skills", selected_names)
+    if not selected_names:
+        result.add(convert_command_skills(source_root))
     return result
 
 
-def convert_skill_files(source_root: Path) -> ConversionResult:
+def convert_skill_files(
+    source_root: Path,
+    selected_skill_names: frozenset[str] | None = None,
+) -> ConversionResult:
     result = ConversionResult()
+    selected_names = selected_skill_names or frozenset()
     for source_file in iter_skill_files(source_root):
+        if not selected_skill_matches(source_file, selected_names):
+            continue
         artifacts, report_item = convert_skill_file(source_file)
         result.artifacts.extend(artifacts)
         result.summary.skills += 1
