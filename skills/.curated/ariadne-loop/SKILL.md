@@ -43,7 +43,16 @@ explicit.
    - rollback behavior,
    - human gates for external effects,
    - JSON-only report contract.
-4. If the Ariadne Loop CLI is installed, prefer:
+4. If the user wants a first-run demo and the Ariadne Loop CLI is installed:
+
+   ```bash
+   ariadne-loop quickstart --output .ariadne/quickstart
+   ```
+
+   This creates a snapshot, loop JSON, agent packet, sample reports, and a
+   supervision decision.
+
+5. For real work, prefer:
 
    ```bash
    ariadne-loop init --preset bugfix --output loop-snapshot.json
@@ -52,7 +61,7 @@ explicit.
    ariadne-loop check --input loop.json
    ```
 
-5. If work starts from an issue body, prefer:
+6. If work starts from an issue body, prefer:
 
    ```bash
    ariadne-loop from-issue \
@@ -61,7 +70,7 @@ explicit.
      --output issue-loop.json
    ```
 
-6. If the user has JSONL agent reports, supervise them:
+7. If the user has JSONL agent reports, supervise them:
 
    ```bash
    ariadne-loop supervise \
