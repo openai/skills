@@ -4,14 +4,14 @@ param(
   [string]$Format = "png",
   [string]$Region,
   [switch]$ActiveWindow,
-  [int]$WindowHandle
+  [Int64]$WindowHandle
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 function Get-Timestamp {
-  Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+  Get-Date -Format "yyyy-MM-dd_HH-mm-ss-fff"
 }
 
 function Get-DefaultDirectory {
@@ -110,6 +110,8 @@ Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public static class NativeMethods {
+  public const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+
   [StructLayout(LayoutKind.Sequential)]
   public struct RECT {
     public int Left;
@@ -122,9 +124,71 @@ public static class NativeMethods {
   public static extern IntPtr GetForegroundWindow();
 
   [DllImport("user32.dll")]
+  public static extern bool SetProcessDPIAware();
+
+  [DllImport("user32.dll")]
+  public static extern bool SetProcessDpiAwarenessContext(IntPtr dpiContext);
+
+  [DllImport("user32.dll")]
   public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+  [DllImport("dwmapi.dll")]
+  public static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out RECT pvAttribute, int cbAttribute);
 }
 "@
+
+function Enable-PerMonitorDpiAwareness {
+  try {
+    # DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4. This keeps window and screen
+    # rectangles in physical pixels for mixed-scale monitor layouts.
+    if ([NativeMethods]::SetProcessDpiAwarenessContext([IntPtr](-4))) {
+      return
+    }
+  } catch {
+  }
+
+  try {
+    [void][NativeMethods]::SetProcessDPIAware()
+  } catch {
+  }
+}
+
+function Convert-RectToRectangle {
+  param([NativeMethods+RECT]$Rect)
+  $width = $Rect.Right - $Rect.Left
+  $height = $Rect.Bottom - $Rect.Top
+  if ($width -le 0 -or $height -le 0) {
+    throw "Capture bounds must have positive width and height"
+  }
+  New-Object System.Drawing.Rectangle($Rect.Left, $Rect.Top, $width, $height)
+}
+
+function Get-WindowCaptureBounds {
+  param([IntPtr]$Handle)
+
+  $rect = New-Object NativeMethods+RECT
+  $rectSize = [Runtime.InteropServices.Marshal]::SizeOf([type][NativeMethods+RECT])
+  $hresult = [NativeMethods]::DwmGetWindowAttribute(
+    $Handle,
+    [NativeMethods]::DWMWA_EXTENDED_FRAME_BOUNDS,
+    [ref]$rect,
+    $rectSize
+  )
+  if ($hresult -eq 0) {
+    $width = $rect.Right - $rect.Left
+    $height = $rect.Bottom - $rect.Top
+    if ($width -gt 0 -and $height -gt 0) {
+      return Convert-RectToRectangle $rect
+    }
+  }
+
+  if (-not [NativeMethods]::GetWindowRect($Handle, [ref]$rect)) {
+    throw "Failed to get window bounds"
+  }
+  Convert-RectToRectangle $rect
+}
+
+Enable-PerMonitorDpiAwareness
 
 if ($regionValues) {
   $x = $regionValues[0]
@@ -134,13 +198,7 @@ if ($regionValues) {
   $bounds = New-Object System.Drawing.Rectangle($x, $y, $w, $h)
 } elseif ($ActiveWindow -or $WindowHandle) {
   $handle = if ($WindowHandle) { [IntPtr]$WindowHandle } else { [NativeMethods]::GetForegroundWindow() }
-  $rect = New-Object NativeMethods+RECT
-  if (-not [NativeMethods]::GetWindowRect($handle, [ref]$rect)) {
-    throw "Failed to get window bounds"
-  }
-  $width = $rect.Right - $rect.Left
-  $height = $rect.Bottom - $rect.Top
-  $bounds = New-Object System.Drawing.Rectangle($rect.Left, $rect.Top, $width, $height)
+  $bounds = Get-WindowCaptureBounds $handle
 } else {
   $vs = [System.Windows.Forms.SystemInformation]::VirtualScreen
   $bounds = New-Object System.Drawing.Rectangle($vs.Left, $vs.Top, $vs.Width, $vs.Height)
