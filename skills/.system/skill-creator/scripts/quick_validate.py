@@ -1,26 +1,35 @@
 #!/usr/bin/env python3
-"""
-Quick validation script for skills - minimal version
-"""
+"""Quick validation script for skills."""
 
+import argparse
+import json
 import re
 import sys
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:
+    yaml = None
 
 MAX_SKILL_NAME_LENGTH = 64
+EXIT_VALIDATION_FAILED = 1
+EXIT_RUNTIME_ERROR = 2
 
 
 def validate_skill(skill_path):
     """Basic validation of a skill"""
-    skill_path = Path(skill_path)
+    skill_path = Path(skill_path).expanduser()
 
     skill_md = skill_path / "SKILL.md"
     if not skill_md.exists():
         return False, "SKILL.md not found"
 
-    content = skill_md.read_text()
+    try:
+        content = skill_md.read_text(encoding="utf-8")
+    except OSError as e:
+        return False, f"Could not read SKILL.md: {e}"
+
     if not content.startswith("---"):
         return False, "No YAML frontmatter found"
 
@@ -91,11 +100,88 @@ def validate_skill(skill_path):
     return True, "Skill is valid!"
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python quick_validate.py <skill_directory>")
-        sys.exit(1)
+def parse_args(argv):
+    parser = argparse.ArgumentParser(description="Validate one or more Codex skill directories.")
+    parser.add_argument(
+        "skill_directories",
+        metavar="skill_directory",
+        nargs="+",
+        help="Path to a skill directory containing SKILL.md.",
+    )
+    parser.add_argument(
+        "--report",
+        metavar="path",
+        help="Write the complete validation result as JSON.",
+    )
+    return parser.parse_args(argv)
 
-    valid, message = validate_skill(sys.argv[1])
-    print(message)
-    sys.exit(0 if valid else 1)
+
+def build_result(raw_skill_path):
+    skill_path = Path(raw_skill_path).expanduser()
+    valid, message = validate_skill(skill_path)
+    return {
+        "path": str(skill_path),
+        "resolved_path": str(skill_path.resolve(strict=False)),
+        "valid": valid,
+        "message": message,
+    }
+
+
+def summarize(results):
+    total = len(results)
+    passed = sum(1 for result in results if result["valid"])
+    failed = total - passed
+    return {"total": total, "passed": passed, "failed": failed}
+
+
+def print_summary(results):
+    if len(results) == 1:
+        print(results[0]["message"])
+        return
+
+    for result in results:
+        status = "PASS" if result["valid"] else "FAIL"
+        print(f"{status}\t{result['path']}\t{result['message']}")
+
+    summary = summarize(results)
+    print(
+        "Summary: "
+        f"{summary['passed']}/{summary['total']} skills valid; "
+        f"{summary['failed']} failed."
+    )
+
+
+def write_report(report_path, results):
+    path = Path(report_path).expanduser()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {"summary": summarize(results), "results": results}
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def main(argv):
+    if yaml is None:
+        print(
+            "Missing dependency: PyYAML. Run with: "
+            f"uv run --isolated --with pyyaml python3 {sys.argv[0]} <skill_directory> [...]",
+            file=sys.stderr,
+        )
+        return EXIT_RUNTIME_ERROR
+
+    args = parse_args(argv)
+    results = [build_result(skill_path) for skill_path in args.skill_directories]
+    print_summary(results)
+
+    if args.report:
+        try:
+            write_report(args.report, results)
+        except OSError as e:
+            print(f"Failed to write report: {e}", file=sys.stderr)
+            return EXIT_RUNTIME_ERROR
+
+    if any(not result["valid"] for result in results):
+        return EXIT_VALIDATION_FAILED
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

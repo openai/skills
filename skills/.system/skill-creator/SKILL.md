@@ -351,10 +351,11 @@ Write instructions for using the skill and its bundled resources.
 Once development of the skill is complete, validate the skill folder to catch basic issues early:
 
 ```bash
-scripts/quick_validate.py <path/to/skill-folder>
+scripts/quick_validate.py <path/to/skill-folder> [<path/to/other-skill-folder> ...]
+scripts/quick_validate.py --report .codex-tmp/skill-validation/report.json <path/to/skill-folder> [...]
 ```
 
-The validation script checks YAML frontmatter format, required fields, and naming rules. If validation fails, fix the reported issues and run the command again.
+The validation script checks YAML frontmatter format, required fields, and naming rules. For one skill, stdout is the validation message. For multiple skills, stdout is a compact summary and the process exits `0` only when all skills pass; it exits `1` when at least one skill fails. Use `--report <path>` for the complete JSON result, especially when validating many skills. If a future validation mode produces noisy stdout, redirect stdout to a task-scoped file instead of pasting the full output into the conversation. If validation fails, fix the reported issues and run the command again.
 
 ### Step 6: Iterate
 
