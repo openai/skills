@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from typing import Any
@@ -120,16 +121,21 @@ def gh_pr_view_json(fields: str) -> dict[str, Any]:
     return _run_json(["gh", "pr", "view", "--json", fields])
 
 
+def parse_pr_url(url: str) -> tuple[str, str, int]:
+    match = re.match(r"^https://github\.com/([^/]+)/([^/]+)/pull/(\d+)(?:[/?#].*)?$", url)
+    if not match:
+        raise RuntimeError(f"Could not parse PR URL: {url}")
+    owner, repo, number = match.groups()
+    return owner, repo, int(number)
+
+
 def get_current_pr_ref() -> tuple[str, str, int]:
     """
     Resolve the PR for the current branch (whatever gh considers associated).
-    Works for cross-repo PRs too, by reading head repository owner/name.
+    Works for cross-repo PRs too, by reading the base repository from the PR URL.
     """
-    pr = gh_pr_view_json("number,headRepositoryOwner,headRepository")
-    owner = pr["headRepositoryOwner"]["login"]
-    repo = pr["headRepository"]["name"]
-    number = int(pr["number"])
-    return owner, repo, number
+    pr = gh_pr_view_json("url")
+    return parse_pr_url(pr["url"])
 
 
 def gh_api_graphql(
