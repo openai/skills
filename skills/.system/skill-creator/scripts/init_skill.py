@@ -18,14 +18,14 @@ import re
 import sys
 from pathlib import Path
 
-from generate_openai_yaml import write_openai_yaml
+from generate_openai_yaml import write_openai_yaml, yaml_quote
 
 MAX_SKILL_NAME_LENGTH = 64
 ALLOWED_RESOURCES = {"scripts", "references", "assets"}
 
 SKILL_TEMPLATE = """---
-name: {skill_name}
-description: [TODO: Complete and informative explanation of what the skill does and when to use it. Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]
+name: {skill_name_yaml}
+description: {description_yaml}
 ---
 
 # {skill_title}
@@ -286,7 +286,16 @@ def init_skill(skill_name, path, resources, include_examples, interface_override
 
     # Create SKILL.md from template
     skill_title = title_case_skill_name(skill_name)
-    skill_content = SKILL_TEMPLATE.format(skill_name=skill_name, skill_title=skill_title)
+    description = (
+        "[TODO: Complete and informative explanation of what the skill does and when to use it. "
+        "Include WHEN to use this skill - specific scenarios, file types, or tasks that trigger it.]"
+    )
+    skill_content = SKILL_TEMPLATE.format(
+        skill_name=skill_name,
+        skill_name_yaml=yaml_quote(skill_name),
+        skill_title=skill_title,
+        description_yaml=yaml_quote(description),
+    )
 
     skill_md_path = skill_dir / "SKILL.md"
     try:
