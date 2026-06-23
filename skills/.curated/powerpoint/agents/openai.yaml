@@ -1,0 +1,4 @@
+interface:
+  display_name: "PowerPoint"
+  short_description: "Create, edit, and review PowerPoint presentations"
+  default_prompt: "Create, edit, or review this PowerPoint presentation and summarize the key output or changes."
