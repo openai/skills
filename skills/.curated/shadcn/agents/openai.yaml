@@ -1,0 +1,6 @@
+interface:
+  display_name: "shadcn/ui"
+  short_description: "Build and maintain shadcn/ui projects"
+  icon_small: "./assets/shadcn-small.png"
+  icon_large: "./assets/shadcn.png"
+  default_prompt: "Use $shadcn to inspect this shadcn/ui project, choose the right components, and implement the UI using the project's existing aliases and conventions."
