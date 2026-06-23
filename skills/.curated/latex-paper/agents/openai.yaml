@@ -1,0 +1,7 @@
+interface:
+  display_name: "LaTeX Paper"
+  short_description: "Research-grade LaTeX paper authoring"
+  icon_small: "./assets/latex-paper-small.svg"
+  icon_large: "./assets/latex-paper.svg"
+  brand_color: "#178F98"
+  default_prompt: "Use $latex-paper to create or edit a structured LaTeX research paper and keep references, citations, and formatting consistent."
