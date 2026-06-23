@@ -10,6 +10,74 @@ from pathlib import Path
 import yaml
 
 MAX_SKILL_NAME_LENGTH = 64
+INTERFACE_STRING_FIELDS = {
+    "display_name",
+    "short_description",
+    "icon_small",
+    "icon_large",
+    "brand_color",
+    "default_prompt",
+}
+DEPENDENCY_TOOL_STRING_FIELDS = {
+    "type",
+    "value",
+    "description",
+    "transport",
+    "url",
+}
+
+
+def validate_openai_yaml(skill_path):
+    openai_yaml = skill_path / "agents" / "openai.yaml"
+    if not openai_yaml.exists():
+        return True, None
+
+    try:
+        data = yaml.safe_load(openai_yaml.read_text())
+    except yaml.YAMLError as e:
+        return False, f"Invalid YAML in agents/openai.yaml: {e}"
+
+    if data is None:
+        return False, "agents/openai.yaml is empty"
+    if not isinstance(data, dict):
+        return False, "agents/openai.yaml must be a YAML dictionary"
+
+    if "interface" in data:
+        interface = data["interface"]
+        if not isinstance(interface, dict):
+            return False, "agents/openai.yaml field 'interface' must be a YAML dictionary"
+        for key, value in interface.items():
+            if key in INTERFACE_STRING_FIELDS and not isinstance(value, str):
+                return (
+                    False,
+                    f"agents/openai.yaml field 'interface.{key}' must be a string, "
+                    f"got {type(value).__name__}",
+                )
+
+    if "dependencies" in data:
+        dependencies = data["dependencies"]
+        if not isinstance(dependencies, dict):
+            return False, "agents/openai.yaml field 'dependencies' must be a YAML dictionary"
+        tools = dependencies.get("tools")
+        if tools is not None:
+            if not isinstance(tools, list):
+                return False, "agents/openai.yaml field 'dependencies.tools' must be a YAML list"
+            for index, tool in enumerate(tools, start=1):
+                if not isinstance(tool, dict):
+                    return (
+                        False,
+                        "agents/openai.yaml field 'dependencies.tools' entries must be YAML "
+                        f"dictionaries (entry {index})",
+                    )
+                for key, value in tool.items():
+                    if key in DEPENDENCY_TOOL_STRING_FIELDS and not isinstance(value, str):
+                        return (
+                            False,
+                            f"agents/openai.yaml field 'dependencies.tools[{index}].{key}' "
+                            f"must be a string, got {type(value).__name__}",
+                        )
+
+    return True, None
 
 
 def validate_skill(skill_path):
@@ -87,6 +155,10 @@ def validate_skill(skill_path):
                 False,
                 f"Description is too long ({len(description)} characters). Maximum is 1024 characters.",
             )
+
+    openai_yaml_valid, openai_yaml_error = validate_openai_yaml(skill_path)
+    if not openai_yaml_valid:
+        return False, openai_yaml_error
 
     return True, "Skill is valid!"
 
