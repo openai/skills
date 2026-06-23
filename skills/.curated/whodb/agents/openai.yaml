@@ -1,0 +1,15 @@
+interface:
+  display_name: "WhoDB"
+  short_description: "Query and explore databases"
+  icon_small: "./assets/whodb-small.svg"
+  icon_large: "./assets/whodb.png"
+  default_prompt: "Use WhoDB to explore the database schema and help with the current task."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "whodb"
+      description: "WhoDB MCP server for database operations"
+      transport: "stdio"
+      command: "npx"
+      args: ["-y", "@clidey/whodb-cli", "mcp", "serve"]
