@@ -16,7 +16,7 @@ Learn more:
 
 Skills in [`.system`](skills/.system/) are automatically installed in the latest version of Codex.
 
-To install [curated](skills/.curated/) or [experimental](skills/.experimental/) skills, you can use the `$skill-installer` inside Codex.
+To install [curated](skills/.curated/) or [experimental](skills/.experimental/) skills, use `$skill-installer` in Codex.
 
 Curated skills can be installed by name (defaults to `skills/.curated`):
 
