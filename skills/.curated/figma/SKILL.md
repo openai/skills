@@ -37,6 +37,14 @@ These rules define how to translate Figma inputs into code for this project and 
 - The server is link-based: copy the Figma frame/layer link and give that URL to the MCP client when asking for implementation help.
 - The client cannot browse the URL but extracts the node ID from the link; always ensure the link points to the exact node/variant you want.
 
+### Common mistakes to avoid
+
+- **Skipping screenshots:** Do not implement from `get_design_context` alone. Always fetch `get_screenshot` to validate visual parity.
+- **Blindly copying generated code:** Treat MCP output as a behavioral reference, not final production code. Always adapt to project conventions.
+- **Introducing new icon libraries:** Do NOT add external icon packages. Use only assets provided by the Figma MCP payload.
+- **Using placeholders when assets exist:** If the MCP server provides a localhost image or SVG, use it directly instead of creating placeholders.
+- **Implementing the wrong node:** Ensure the Figma link points to the exact node or variant being implemented; avoid working from parent frames.
+
 ## References
 - `references/figma-mcp-config.md` — setup, verification, troubleshooting, and link-based usage reminders.
 - `references/figma-tools-and-prompts.md` — tool catalog and prompt patterns for selecting frameworks/components and fetching metadata.

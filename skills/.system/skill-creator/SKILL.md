@@ -91,6 +91,7 @@ Executable code (Python/Bash/etc.) for tasks that require deterministic reliabil
 - **Example**: `scripts/rotate_pdf.py` for PDF rotation tasks
 - **Benefits**: Token efficient, deterministic, may be executed without loading into context
 - **Note**: Scripts may still need to be read by Codex for patching or environment-specific adjustments
+- **Best practice**: Include a proper shebang (e.g., `#!/usr/bin/env python3`) and ensure scripts have executable permissions when applicable.
 
 ##### References (`references/`)
 
@@ -123,6 +124,14 @@ A skill should only contain essential files that directly support its functional
 - etc.
 
 The skill should only contain the information needed for an AI agent to do the job at hand. It should not contain auxiliary context about the process that went into creating it, setup and testing procedures, user-facing documentation, etc. Creating additional documentation files just adds clutter and confusion.
+
+### Common Pitfalls to Avoid
+
+- Over-explaining fundamentals
+- Misplacing trigger logic
+- Unnecessary resource directories
+- Duplicating information
+- Deep directory nesting
 
 ### Progressive Disclosure Design Principle
 
