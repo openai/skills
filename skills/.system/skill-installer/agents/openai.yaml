@@ -3,3 +3,4 @@ interface:
   short_description: "Install curated skills from openai/skills or other repos"
   icon_small: "./assets/skill-installer-small.svg"
   icon_large: "./assets/skill-installer.png"
+  default_prompt: "List available skills and install one from openai/skills or another GitHub repo."
