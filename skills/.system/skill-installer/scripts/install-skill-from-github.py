@@ -125,38 +125,45 @@ def _validate_skill_name(name: str) -> None:
         raise InstallError("Invalid skill name.")
 
 
+def _is_repo_root_path(path: str) -> bool:
+    return os.path.normpath(path) == "."
+
+
 def _git_sparse_checkout(repo_url: str, ref: str, paths: list[str], dest_dir: str) -> str:
     repo_dir = os.path.join(dest_dir, "repo")
+    use_sparse = not any(_is_repo_root_path(path) for path in paths)
     clone_cmd = [
         "git",
         "clone",
         "--filter=blob:none",
         "--depth",
         "1",
-        "--sparse",
         "--single-branch",
         "--branch",
         ref,
         repo_url,
         repo_dir,
     ]
+    if use_sparse:
+        clone_cmd.insert(6, "--sparse")
     try:
         _run_git(clone_cmd)
     except InstallError:
-        _run_git(
-            [
-                "git",
-                "clone",
-                "--filter=blob:none",
-                "--depth",
-                "1",
-                "--sparse",
-                "--single-branch",
-                repo_url,
-                repo_dir,
-            ]
-        )
-    _run_git(["git", "-C", repo_dir, "sparse-checkout", "set", *paths])
+        fallback_clone_cmd = [
+            "git",
+            "clone",
+            "--filter=blob:none",
+            "--depth",
+            "1",
+            "--single-branch",
+            repo_url,
+            repo_dir,
+        ]
+        if use_sparse:
+            fallback_clone_cmd.insert(6, "--sparse")
+        _run_git(fallback_clone_cmd)
+    if use_sparse:
+        _run_git(["git", "-C", repo_dir, "sparse-checkout", "set", *paths])
     _run_git(["git", "-C", repo_dir, "checkout", ref])
     return repo_dir
 
@@ -282,7 +289,11 @@ def main(argv: list[str]) -> int:
             installed = []
             for path in source.paths:
                 skill_name = args.name if len(source.paths) == 1 else None
-                skill_name = skill_name or os.path.basename(path.rstrip("/"))
+                skill_name = skill_name or (
+                    source.repo
+                    if _is_repo_root_path(path)
+                    else os.path.basename(path.rstrip("/"))
+                )
                 _validate_skill_name(skill_name)
                 if not skill_name:
                     raise InstallError("Unable to derive skill name.")
