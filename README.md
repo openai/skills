@@ -12,6 +12,10 @@ Learn more:
 - [Create custom skills in Codex](https://developers.openai.com/codex/skills/create-skill)
 - [Agent Skills open standard](https://agentskills.io)
 
+## Quick Start
+
+New contributors? Check out our [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed setup instructions, validation procedures, and contribution guidelines.
+
 ## Installing a skill
 
 Skills in [`.system`](skills/.system/) are automatically installed in the latest version of Codex.
