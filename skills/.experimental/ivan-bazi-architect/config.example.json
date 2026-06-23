@@ -1,0 +1,5 @@
+{
+  "source_dir": "/path/to/your/bazi-pdfs",
+  "output_format": "audit_memo",
+  "citation_mode": "book_file_snippet"
+}

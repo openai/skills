@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ivan Bazi Architect"
+  short_description: "Structured BaZi diagnosis with citations, uncertainty notes, and guardrails."
+  default_prompt: "Use Ivan Bazi Architect when the user explicitly asks for BaZi-style analysis. Build or reuse an index from configured PDFs, run SW-1/SW-2/SW-3 diagnosis, and produce a cited, bounded strategy brief."
