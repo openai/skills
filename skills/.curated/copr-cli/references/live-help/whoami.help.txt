@@ -1,0 +1,4 @@
+usage: copr whoami [-h]
+
+options:
+  -h, --help  show this help message and exit

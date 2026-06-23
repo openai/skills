@@ -1,0 +1,43 @@
+usage: copr add-package-distgit [-h] [--commit COMMITTISH]
+                                [--namespace NAMESPACE] [--distgit INSTANCE]
+                                --name PKGNAME [--webhook-rebuild {on,off}]
+                                [--max-builds MAX_BUILDS] [--timeout TIMEOUT]
+                                copr
+
+DistGit (Distribution Git) is Git with additional data storage (so called
+"lookaside cache"). It is designed to hold content of source RPMs. For more
+info, see the https://github.com/release-engineering/dist-git documentation.
+To build a package for a particular distribution, you need clone the correct
+git repository, and download corresponding sources files from the lookaside
+cache. Each distribution though uses a different hostname for DistGit server
+and may store the git repositories and source files on a little bit different
+URIs (or even in NAMESPACEs). That's why Copr has this build method pre-
+configured as "DistGit instances" (one instance per one distribution).
+
+positional arguments:
+  copr                  The copr repo for the package. Can be just name of
+                        project or even in format username/project or
+                        @groupname/project.
+
+options:
+  -h, --help            show this help message and exit
+  --commit COMMITTISH   Branch name, tag name, or git hash to built the
+                        package from
+  --namespace NAMESPACE
+                        Some DistGit instances (e.g. the Fedora Copr dist-git)
+                        use a namespaced clone/lookaside URLs. Typically it
+                        means that one package may be hosted in the same
+                        DistGit instance multiple times, in multiple
+                        namespaces. Specify the NAMESPACE here (e.g.
+                        @copr/copr for @copr/copr/copr-cli package).
+  --distgit INSTANCE    Dist-git instance to build the package from, for
+                        example 'fedora'.
+  --name PKGNAME        Name of the package to be edited or created
+  --webhook-rebuild {on,off}
+                        Enable auto-rebuilding.
+  --max-builds MAX_BUILDS
+                        Keep only the specified number of the newest-by-id
+                        builds (garbage collector is run daily), zero disables
+                        (default)
+  --timeout TIMEOUT     Number of seconds we allow the builds to run, default
+                        is 18000 (5h)

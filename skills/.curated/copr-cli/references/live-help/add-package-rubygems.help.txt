@@ -1,0 +1,22 @@
+usage: copr add-package-rubygems [-h] [--gem GEM] --name PKGNAME
+                                 [--webhook-rebuild {on,off}]
+                                 [--max-builds MAX_BUILDS] [--timeout TIMEOUT]
+                                 copr
+
+positional arguments:
+  copr                  The copr repo for the package. Can be just name of
+                        project or even in format username/project or
+                        @groupname/project.
+
+options:
+  -h, --help            show this help message and exit
+  --gem GEM             Specify gem name
+  --name PKGNAME        Name of the package to be edited or created
+  --webhook-rebuild {on,off}
+                        Enable auto-rebuilding.
+  --max-builds MAX_BUILDS
+                        Keep only the specified number of the newest-by-id
+                        builds (garbage collector is run daily), zero disables
+                        (default)
+  --timeout TIMEOUT     Number of seconds we allow the builds to run, default
+                        is 18000 (5h)

@@ -1,0 +1,9 @@
+usage: copr delete-package [-h] --name PKGNAME copr
+
+positional arguments:
+  copr            The copr repo to list the packages of. Can be just name of
+                  project or even in format owner/project.
+
+options:
+  -h, --help      show this help message and exit
+  --name PKGNAME  Name of a package to be deleted

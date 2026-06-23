@@ -1,0 +1,4 @@
+interface:
+  display_name: "COPR CLI"
+  short_description: "Run COPR CLI and API operations reliably"
+  default_prompt: "Use this skill to map user goals to correct copr-cli commands and use curl with COPR API v3 when needed."

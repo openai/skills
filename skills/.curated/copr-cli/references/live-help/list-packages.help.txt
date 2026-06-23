@@ -1,0 +1,25 @@
+usage: copr list-packages [-h] [--with-latest-build]
+                          [--with-latest-succeeded-build] [--with-all-builds]
+                          [--output-format {text,json,text-row}]
+                          copr
+
+positional arguments:
+  copr                  The copr repo to list the packages of. Can be just
+                        name of project or even in format owner/project.
+
+options:
+  -h, --help            show this help message and exit
+  --with-latest-build   Also display data related to the latest build for the
+                        package.
+  --with-latest-succeeded-build
+                        Also display data related to the latest succeeded
+                        build for the package.
+  --with-all-builds     Also display data related to the builds for the
+                        package.
+  --output-format {text,json,text-row}
+                        Set the formatting style. We recommend using json,
+                        which prints the required data in json format. The
+                        text format prints the required data in a column, one
+                        piece of information per line. The text-row format
+                        prints all information separated by a space on a
+                        single line.

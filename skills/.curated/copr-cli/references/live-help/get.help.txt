@@ -1,0 +1,8 @@
+usage: copr get [-h] project
+
+positional arguments:
+  project     Which project you want to get. Can be in format
+              `username/project` or in case of group `@groupname/project`
+
+options:
+  -h, --help  show this help message and exit

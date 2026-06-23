@@ -1,0 +1,4221 @@
+{
+  "swagger": "2.0",
+  "basePath": "/api_3",
+  "paths": {
+    "/api-token": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Generate a new API token",
+        "operationId": "post_api_token",
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/auth-check": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Check if the user is authenticated",
+        "operationId": "get_auth_check",
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/build-chroot/": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Build chroot exist"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BuildChroot"
+            }
+          }
+        },
+        "summary": "Get build chroot",
+        "description": "Get information about specific build chroot by build id and mock chroot name.",
+        "operationId": "get_build_chroot",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123,
+            "required": true,
+            "name": "build_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64",
+            "required": true,
+            "name": "chrootname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/build-config": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Build chroot exist"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BuildChrootConfig"
+            }
+          }
+        },
+        "summary": "Get Build chroot config",
+        "description": "Get Build chroot by build id and its mock chroot name.",
+        "operationId": "get_build_chroot_config",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123,
+            "required": true,
+            "name": "build_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64",
+            "required": true,
+            "name": "chrootname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/build-config/{build_id}/{chrootname}": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Build chroot exist"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BuildChrootConfig"
+            }
+          }
+        },
+        "summary": "Get Build chroot config",
+        "description": "Use query parameters instead\nGet Build chroot by build id and its mock chroot name.",
+        "operationId": "get_build_chroot_config_/build-chroot/build-config/<int:build_id>/<chrootname>",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123
+          },
+          {
+            "name": "chrootname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/built-packages": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Build chroot exist"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/NevraPackages"
+            }
+          }
+        },
+        "summary": "Get built packages",
+        "description": "(NEVRA dicts) for a given mock chroot name.",
+        "operationId": "get_build_chroot_packages",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123,
+            "required": true,
+            "name": "build_id",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64",
+            "required": true,
+            "name": "chrootname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/list": {
+      "get": {
+        "responses": {
+          "206": {
+            "description": "Partial content follows"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pagination"
+              }
+            }
+          }
+        },
+        "summary": "List Build chroots",
+        "description": "List build chroots by build id and pagination query.",
+        "operationId": "get_build_chroot_list",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123,
+            "required": true,
+            "name": "build_id",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Limit",
+            "example": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Offset",
+            "example": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order by",
+            "example": "id",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order type",
+            "example": "DESC",
+            "name": "order_type",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/list/{build_id}": {
+      "get": {
+        "responses": {
+          "206": {
+            "description": "Partial content follows"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pagination"
+              }
+            }
+          }
+        },
+        "summary": "List Build chroots",
+        "description": "Use query parameters instead\nList build chroots by build id and pagination query.",
+        "operationId": "get_build_chroot_list_/build-chroot/list/<int:build_id>",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123
+          },
+          {
+            "type": "integer",
+            "description": "Limit",
+            "example": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Offset",
+            "example": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order by",
+            "example": "id",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order type",
+            "example": "DESC",
+            "name": "order_type",
+            "in": "query"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build-chroot/{build_id}/{chrootname}": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Build chroot exist"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BuildChroot"
+            }
+          }
+        },
+        "summary": "Get build chroot",
+        "description": "Use query parameters instead\nGet information about specific build chroot by build id and mock chroot name.",
+        "operationId": "get_build_chroot_/build-chroot/<int:build_id>/<chrootname>",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID",
+            "example": 123
+          },
+          {
+            "name": "chrootname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build-chroot"
+        ]
+      }
+    },
+    "/build/built-packages/{build_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "{\"chroot_name\": any_result_dict_or_value}"
+          }
+        },
+        "summary": "Get built packages",
+        "description": "(NEVRA dicts) for a given build",
+        "operationId": "get_build_packages",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/cancel/{build_id}": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Cancel a build",
+        "description": "by its id.",
+        "operationId": "put_cancel_build",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Cancel a build",
+        "description": "by its id.",
+        "operationId": "post_cancel_build",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/custom": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build using custom method",
+        "description": "Create a build using a custom method.",
+        "operationId": "post_create_custom",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildCustom"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/distgit": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build from DistGit",
+        "description": "Create a build from a DistGit repository.",
+        "operationId": "post_create_from_dist_git",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildDistGit"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/pypi": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build from PyPi",
+        "description": "Create a build from a PyPi package.",
+        "operationId": "post_create_from_py_pi",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildPyPI"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/rubygems": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build from RubyGems",
+        "description": "Create a build from a RubyGems package.",
+        "operationId": "post_create_from_ruby_gems",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildRubyGems"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/scm": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build from SCM",
+        "description": "Create a build from a source code management system.",
+        "operationId": "post_create_from_scm",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildSCM"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/upload": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Create a build from upload",
+        "description": "Create a build from an uploaded file.",
+        "operationId": "post_create_from_upload",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildUpload"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/create/url": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Pagination"
+            }
+          }
+        },
+        "summary": "Create a build from URL",
+        "description": "Create a build from a URL.",
+        "operationId": "post_create_from_url",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateBuildUrl"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/delete/list": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/DeleteBuilds"
+            }
+          }
+        },
+        "summary": "Delete builds",
+        "description": "specified by a list of IDs.",
+        "operationId": "delete_delete_builds",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteBuilds"
+            }
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/DeleteBuilds"
+            }
+          }
+        },
+        "summary": "Delete builds",
+        "description": "specified by a list of IDs.",
+        "operationId": "post_delete_builds",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/DeleteBuilds"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/delete/{build_id}": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Delete a build",
+        "description": "by its id.",
+        "operationId": "delete_delete_build",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Delete a build",
+        "description": "by its id.",
+        "operationId": "post_delete_build",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/list": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Pagination"
+            }
+          }
+        },
+        "summary": "List builds",
+        "description": "List all builds in a Copr project.",
+        "operationId": "get_list_build",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the package",
+            "example": "copr-cli",
+            "name": "packagename",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Status of the build",
+            "example": "succeeded",
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/source-build-config/{build_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SourceBuildConfig"
+            }
+          }
+        },
+        "summary": "Get source build config",
+        "description": "for a build.",
+        "operationId": "get_source_build_config",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/source-chroot/{build_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/SourceChroot"
+            }
+          }
+        },
+        "summary": "Get source chroot",
+        "description": "for a build.",
+        "operationId": "get_source_chroot",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/build/{build_id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Get a build",
+        "description": "Get details for a single Copr build.",
+        "operationId": "get_get_build",
+        "parameters": [
+          {
+            "name": "build_id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Numeric ID"
+          }
+        ],
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/gssapi_login": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Log-in using the GSSAPI/Kerberos credentials",
+        "description": "Note that if we are able to get here, either the user is authenticated\ncorrectly, or apache is mis-configured and it does not perform KRB\nauthentication at all (REMOTE_USER wouldn't be set, see below).",
+        "operationId": "get_gssapi_login",
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/gssapi_login/web-ui": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Log-in using the GSSAPI/Kerberos credentials",
+        "description": "Note that if we are able to get here, either the user is authenticated\ncorrectly, or apache is mis-configured and it does not perform KRB\nauthentication at all (REMOTE_USER wouldn't be set, see below).",
+        "operationId": "get_gssapi_login",
+        "tags": [
+          "general"
+        ]
+      }
+    },
+    "/mock-chroots/list": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK, Mock chroot data follows..."
+          }
+        },
+        "summary": "Get list of mock chroots",
+        "description": "Get list of all currently active mock chroots with additional comment in format\n`mock_chroot_name: additional_comment`.",
+        "operationId": "get_mock_chroot",
+        "tags": [
+          "mock-chroots"
+        ]
+      }
+    },
+    "/monitor": {
+      "get": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "206": {
+            "description": "Partial content follows",
+            "schema": {
+              "$ref": "#/definitions/Monitor"
+            }
+          }
+        },
+        "summary": "Get info about builds",
+        "description": "For list of the project packages return list of JSON dictionaries informing\nabout status of the last chroot builds (status, build log, etc.).",
+        "operationId": "get_monitor",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "monitor"
+        ]
+      }
+    },
+    "/package/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Get a package",
+        "description": "Get a single package from a Copr project.",
+        "operationId": "get_get_package",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the package",
+            "example": "copr-cli",
+            "required": true,
+            "name": "packagename",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "The result will contain 'builds' dictionary with the latest submitted build of this particular package within the project",
+            "default": false,
+            "name": "with_latest_build",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "The result will contain 'builds' dictionary with the latest successful build of this particular package within the project.",
+            "default": false,
+            "name": "with_latest_succeeded_build",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/add/{ownername}/{projectname}/{package_name}/{source_type_text}": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Create a package",
+        "description": "Create a new package inside a specified Copr project.\n\nSee what fields are required for which source types:\nhttps://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+        "operationId": "post_package_add",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project"
+          },
+          {
+            "name": "package_name",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the package"
+          },
+          {
+            "name": "source_type_text",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "See https://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PackageAdd"
+            }
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/build": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Build"
+            }
+          }
+        },
+        "summary": "Build a package",
+        "description": "in a Copr project.",
+        "operationId": "post_package_build",
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/delete": {
+      "delete": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Delete a package",
+        "description": "from a Copr project.",
+        "operationId": "delete_package_delete",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/BasePackage"
+            }
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Delete a package",
+        "description": "from a Copr project.",
+        "operationId": "post_package_delete",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/BasePackage"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/edit/{ownername}/{projectname}/{package_name}/": {
+      "parameters": [
+        {
+          "name": "package_name",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Edit a package",
+        "description": "Edit an existing package within a Copr project.\n\nSee what fields are required for which source types:\nhttps://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+        "operationId": "post_package_edit",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PackageAdd"
+            }
+          },
+          {
+            "description": "See https://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+            "name": "source_type_text",
+            "type": "string",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/edit/{ownername}/{projectname}/{package_name}/{source_type_text}": {
+      "parameters": [
+        {
+          "name": "package_name",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Edit a package",
+        "description": "Edit an existing package within a Copr project.\n\nSee what fields are required for which source types:\nhttps://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+        "operationId": "post_package_edit",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project"
+          },
+          {
+            "name": "source_type_text",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "See https://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/PackageAdd"
+            }
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/list": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Pagination"
+            }
+          }
+        },
+        "summary": "Get a list of packages",
+        "description": "from a Copr project",
+        "operationId": "get_package_get_list",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "The result will contain 'builds' dictionary with the latest submitted build of this particular package within the project",
+            "default": false,
+            "name": "with_latest_build",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "The result will contain 'builds' dictionary with the latest successful build of this particular package within the project.",
+            "default": false,
+            "name": "with_latest_succeeded_build",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/package/reset": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Reset a package",
+        "description": "to its initial state.",
+        "operationId": "put_package_reset",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/BasePackage"
+            }
+          }
+        ],
+        "tags": [
+          "package"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Package"
+            }
+          }
+        },
+        "summary": "Reset a package",
+        "description": "to its initial state.",
+        "operationId": "post_package_reset",
+        "parameters": [
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/BasePackage"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "package"
+        ]
+      }
+    },
+    "/project-chroot/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ProjectChroot"
+            }
+          }
+        },
+        "summary": "Get a project chroot",
+        "description": "Get settings for a single project chroot.",
+        "operationId": "get_project_chroot",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64",
+            "required": true,
+            "name": "chrootname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project-chroot"
+        ]
+      }
+    },
+    "/project-chroot/build-config": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ProjectChrootBuildConfig"
+            }
+          }
+        },
+        "summary": "Get a build config",
+        "description": "Generate a build config based on a project chroot settings.",
+        "operationId": "get_build_config",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64",
+            "required": true,
+            "name": "chrootname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project-chroot"
+        ]
+      }
+    },
+    "/project-chroot/edit/{ownername}/{projectname}/{chrootname}": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ProjectChroot"
+            }
+          }
+        },
+        "summary": "Edit a project chroot",
+        "description": "Edit settings for a single project chroot.",
+        "operationId": "put_edit_chroot",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "chrootname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64"
+          }
+        ],
+        "tags": [
+          "project-chroot"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ProjectChroot"
+            }
+          }
+        },
+        "summary": "Edit a project chroot",
+        "description": "Edit settings for a single project chroot.",
+        "operationId": "post_edit_chroot",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "chrootname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Mock chroot",
+            "example": "fedora-rawhide-x86_64"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "project-chroot"
+        ]
+      }
+    },
+    "/project/": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "No such Copr project found in database"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Get a project",
+        "description": "Get details for a single Copr project according to ownername and projectname.",
+        "operationId": "get_project",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "required": true,
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev",
+            "required": true,
+            "name": "projectname",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/add/{ownername}": {
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Create new Copr project",
+        "description": "for ownername with specified data inserted in form.",
+        "operationId": "post_project_add",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectAdd"
+            }
+          },
+          {
+            "type": "boolean",
+            "description": "Don't fail if a project with this owner and name already exist, return the existing instance instead. Please be aware that the project attributes are not updated in such case.",
+            "name": "exist_ok",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/delete/{ownername}/{projectname}": {
+      "delete": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Delete Copr project",
+        "description": "Delete specified ownername/projectname Copr project forever.",
+        "operationId": "delete_project_delete",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectDelete"
+            }
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      },
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Delete Copr project",
+        "description": "Delete specified ownername/projectname Copr project forever.",
+        "operationId": "post_project_delete",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectDelete"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/edit/{ownername}/{projectname}": {
+      "put": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Edit Copr project",
+        "description": "Edit existing Copr project for ownername/projectname in form.",
+        "operationId": "put_project_edit",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectEdit"
+            }
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      },
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Edit Copr project",
+        "description": "Edit existing Copr project for ownername/projectname in form.",
+        "operationId": "post_project_edit",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectEdit"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/fork/{ownername}/{projectname}": {
+      "put": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Fork Copr project",
+        "description": "for specified ownername/projectname insto your namespace.",
+        "operationId": "put_project_fork",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectFork"
+            }
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "project"
+        ]
+      },
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Fork Copr project",
+        "description": "for specified ownername/projectname insto your namespace.",
+        "operationId": "post_project_fork",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          },
+          {
+            "name": "payload",
+            "required": true,
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/ProjectFork"
+            }
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/list": {
+      "get": {
+        "responses": {
+          "206": {
+            "description": "Partial content follows"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pagination"
+              }
+            }
+          }
+        },
+        "summary": "Get list of projects",
+        "description": "Get details for multiple Copr projects according to ownername",
+        "operationId": "get_project_list",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr",
+            "name": "ownername",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "Don't fail if a project with this owner and name already exist, return the existing instance instead. Please be aware that the project attributes are not updated in such case.",
+            "name": "exist_ok",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Limit",
+            "example": 20,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "type": "integer",
+            "description": "Offset",
+            "example": 0,
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order by",
+            "example": "id",
+            "name": "order",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "description": "Order type",
+            "example": "DESC",
+            "name": "order_type",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/permissions/can_build_in/{who}/{ownername}/{projectname}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/CanBuildSchema"
+            }
+          }
+        },
+        "summary": "Can user submit builds in the project?",
+        "description": "Can a user `who` submit builds in the `ownername/projectname` project?",
+        "operationId": "get_can_build",
+        "parameters": [
+          {
+            "name": "who",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "example": "user123"
+          },
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/project/permissions/get/{ownername}/{projectname}": {
+      "get": {
+        "responses": {
+          "404": {
+            "description": "Nothing matches the given URI"
+          },
+          "200": {
+            "description": "Request fulfilled, document follows"
+          }
+        },
+        "summary": "Get permissions for the project",
+        "description": "Get permission for the `ownername/projectname` project.",
+        "operationId": "get_get_permissions",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/project/permissions/request/{ownername}/{projectname}": {
+      "put": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Request fulfilled, document follows"
+          }
+        },
+        "summary": "Request permissions for the project",
+        "description": "Request permissions (admin, builder, ...) for the `ownername/projectname` project.",
+        "operationId": "put_request_permission",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "permissions"
+        ]
+      },
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Request fulfilled, document follows"
+          }
+        },
+        "summary": "Request permissions for the project",
+        "description": "Request permissions (admin, builder, ...) for the `ownername/projectname` project.",
+        "operationId": "post_request_permission",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/project/permissions/set/{ownername}/{projectname}": {
+      "put": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Request fulfilled, document follows"
+          }
+        },
+        "summary": "Change permissions for the project",
+        "description": "Change permission for the `ownername/projectname` project.",
+        "operationId": "put_set_permissions",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "permissions"
+        ]
+      },
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Request fulfilled, document follows"
+          }
+        },
+        "summary": "Create permissions for the project",
+        "description": "Create permission for the `ownername/projectname` project.",
+        "operationId": "post_set_permissions",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/project/regenerate-repos/{ownername}/{projectname}": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Regenerate all repository metadata for a Copr project",
+        "operationId": "put_regenerate_repos",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          }
+        },
+        "summary": "Regenerate all repository metadata for a Copr project",
+        "operationId": "post_regenerate_repos",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "deprecated": true,
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/project/search": {
+      "get": {
+        "responses": {
+          "206": {
+            "description": "Partial content follows"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pagination"
+              }
+            }
+          }
+        },
+        "summary": "Get list of projects",
+        "description": "Get details for multiple Copr projects according to search query.",
+        "operationId": "get_project_search",
+        "parameters": [
+          {
+            "description": "Search projects according query keyword.",
+            "example": "copr-cli",
+            "name": "query",
+            "type": "string",
+            "in": "query"
+          }
+        ],
+        "tags": [
+          "project"
+        ]
+      }
+    },
+    "/rpmrepo/{ownername}/{dirname}/{name_release}": {
+      "parameters": [
+        {
+          "name": "ownername",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "dirname",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "name_release",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "summary": "Wrap get_project_rpmrepo_metadata() JSON provider, and gather some",
+        "description": "statistics.",
+        "operationId": "get_rpm_repo",
+        "tags": [
+          "rpmrepo"
+        ]
+      }
+    },
+    "/webhook/generate/{ownername}/{projectname}": {
+      "post": {
+        "responses": {
+          "400": {
+            "description": "Bad request syntax or unsupported method"
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/WebhookSecret"
+            }
+          }
+        },
+        "summary": "Generate a new webhook secret for a given project",
+        "description": "Not an additional secret, though. The previous secret gets lost.",
+        "operationId": "post_webhook_secret",
+        "parameters": [
+          {
+            "name": "ownername",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "User or group name",
+            "example": "@copr"
+          },
+          {
+            "name": "projectname",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Name of the project",
+            "example": "copr-dev"
+          }
+        ],
+        "tags": [
+          "webhook"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Copr API",
+    "version": "v3",
+    "description": "See python client - <https://python-copr.readthedocs.io>"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "general",
+      "description": "APIv3 general endpoints"
+    },
+    {
+      "name": "build",
+      "description": "Builds"
+    },
+    {
+      "name": "package",
+      "description": "Packages"
+    },
+    {
+      "name": "project",
+      "description": "Projects"
+    },
+    {
+      "name": "project-chroot",
+      "description": "Project chroots"
+    },
+    {
+      "name": "build-chroot",
+      "description": "Build Chroots"
+    },
+    {
+      "name": "mock-chroots",
+      "description": "Mock chroots"
+    },
+    {
+      "name": "permissions",
+      "description": "Permissions"
+    },
+    {
+      "name": "webhook",
+      "description": "Webhooks"
+    },
+    {
+      "name": "monitor",
+      "description": "Monitor"
+    },
+    {
+      "name": "rpmrepo",
+      "description": "RPM Repo"
+    }
+  ],
+  "definitions": {
+    "Build": {
+      "properties": {
+        "chroots": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "ended_on": {
+          "type": "integer",
+          "description": "Timestamp when the build ended",
+          "example": 1677695963
+        },
+        "id": {
+          "type": "integer",
+          "description": "Numeric ID",
+          "example": 123
+        },
+        "is_background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "repo_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "See REPO OPTIONS in `man 5 dnf.conf`",
+          "example": "https://download.copr.fedorainfracloud.org/results/@copr/copr-dev/fedora-$releasever-$basearch/"
+        },
+        "started_on": {
+          "type": "integer",
+          "description": "Timestamp when the build started",
+          "example": 1677695545
+        },
+        "state": {
+          "type": "string",
+          "description": "",
+          "example": "succeeded"
+        },
+        "submitted_on": {
+          "type": "integer",
+          "description": "Timestamp when the build was submitted",
+          "example": 1677695304
+        },
+        "submitter": {
+          "type": "string",
+          "description": "Username of the person who submitted this build",
+          "example": "frostyx"
+        },
+        "source_package": {
+          "$ref": "#/definitions/SourcePackage"
+        }
+      },
+      "type": "object"
+    },
+    "SourcePackage": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "version": {
+          "type": "string",
+          "example": "1.0"
+        }
+      },
+      "type": "object"
+    },
+    "Pagination": {
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Build"
+          }
+        },
+        "meta": {
+          "$ref": "#/definitions/PaginationMeta"
+        }
+      },
+      "type": "object"
+    },
+    "PaginationMeta": {
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Limit",
+          "example": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset",
+          "example": 0
+        },
+        "order": {
+          "type": "string",
+          "description": "Order by",
+          "example": "id"
+        },
+        "order_type": {
+          "type": "string",
+          "description": "Order type",
+          "example": "DESC"
+        }
+      },
+      "type": "object"
+    },
+    "SourceChroot": {
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "",
+          "example": "succeeded"
+        },
+        "result_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "type": "object"
+    },
+    "SourceBuildConfig": {
+      "properties": {
+        "source_type": {
+          "type": "string",
+          "description": "See https://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+          "example": "scm"
+        },
+        "source_dict": {
+          "type": "object",
+          "description": "http://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html"
+        },
+        "memory_limit": {
+          "type": "integer"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "is_background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildUrl": {
+      "properties": {
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "pkgs": {
+          "type": "array",
+          "description": "List of urls to build from",
+          "example": [
+            "https://example.com/some.src.rpm"
+          ],
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildUpload": {
+      "properties": {
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "pkgs": {
+          "type": "array",
+          "description": "application/x-rpm files to build from",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildSCM": {
+      "properties": {
+        "clone_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to your Git or SVN repository",
+          "example": "https://github.com/fedora-copr/copr.git"
+        },
+        "committish": {
+          "type": "string",
+          "description": "Specific branch, tag, or commit that you want to build",
+          "example": "main"
+        },
+        "spec": {
+          "type": "string",
+          "description": "Path to your .spec file under the specified subdirectory",
+          "example": "copr-cli.spec"
+        },
+        "subdirectory": {
+          "type": "string",
+          "description": "Subdirectory where source files and .spec are located",
+          "example": "cli"
+        },
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "scm_type": {
+          "type": "string",
+          "default": "Possible values are 'git', 'svn'",
+          "example": "git"
+        },
+        "source_build_method": {
+          "type": "string",
+          "description": "https://docs.pagure.org/copr.copr/user_documentation.html#scm",
+          "example": "tito"
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildDistGit": {
+      "properties": {
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "distgit": {
+          "type": "string",
+          "description": "Dist-git URL we build against",
+          "example": "fedora"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "DistGit namescape",
+          "example": "@copr/copr"
+        },
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package",
+          "example": "copr-cli"
+        },
+        "committish": {
+          "type": "string",
+          "description": "Specific branch, tag, or commit that you want to build",
+          "example": "main"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildPyPI": {
+      "properties": {
+        "pypi_package_name": {
+          "type": "string",
+          "description": "Package name in the Python Package Index.",
+          "example": "copr"
+        },
+        "pypi_package_version": {
+          "type": "string",
+          "description": "PyPI package version",
+          "example": "1.128pre"
+        },
+        "spec_generator": {
+          "type": "string",
+          "description": "Tool for generating specfile from a PyPI package. The options are full-featured pyp2rpm with cross distribution support, and pyp2spec that is being actively developed and considered to be the future.",
+          "example": "pyp2spec"
+        },
+        "spec_template": {
+          "type": "string",
+          "description": "Name of the spec template. This option is limited to pyp2rpm spec generator.",
+          "example": "default"
+        },
+        "python_versions": {
+          "type": "array",
+          "description": "For what python versions to build. This option is limited to pyp2rpm spec generator.",
+          "example": [
+            "3",
+            "2"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildRubyGems": {
+      "properties": {
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "gem_name": {
+          "type": "string",
+          "description": "Gem name from RubyGems.org",
+          "example": "hello"
+        }
+      },
+      "type": "object"
+    },
+    "CreateBuildCustom": {
+      "properties": {
+        "chroot_names": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "after_build_id": {
+          "type": "integer",
+          "description": "Build after the batch containing the Build ID build",
+          "example": 123
+        },
+        "with_build_id": {
+          "type": "integer",
+          "description": "Build in the same batch with the Build ID build",
+          "example": 123
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "script": {
+          "type": "string",
+          "description": "Script code to produce a SRPM package",
+          "example": "#! /bin/sh -x"
+        },
+        "chroot": {
+          "type": "string",
+          "description": "What chroot to run the script in",
+          "example": "fedora-latest-x86_64"
+        },
+        "builddeps": {
+          "type": "string",
+          "description": "URL to additional yum repos, which can be used during build.",
+          "example": "copr://@copr/copr"
+        },
+        "resultdir": {
+          "type": "string",
+          "description": "Directory where SCRIPT generates sources",
+          "example": "./_build"
+        },
+        "project_dirname": {
+          "type": "string",
+          "description": "",
+          "example": "copr-dev:pr:123"
+        },
+        "repos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Repo"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "Repo": {
+      "properties": {
+        "baseurl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "module_hotfixes": {
+          "type": "boolean",
+          "description": "Allow non-module packages to override module packages"
+        },
+        "priority": {
+          "type": "integer",
+          "description": "The priority value of this repository. Defaults to 99",
+          "example": 42
+        },
+        "id": {
+          "type": "string",
+          "example": "copr_base"
+        },
+        "name": {
+          "type": "string",
+          "example": "Copr repository"
+        }
+      },
+      "type": "object"
+    },
+    "DeleteBuilds": {
+      "properties": {
+        "builds": {
+          "type": "array",
+          "description": "List of build ids to delete",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "Package": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Numeric ID",
+          "example": 123
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the package",
+          "example": "copr-cli"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "source_type": {
+          "type": "string",
+          "description": "See https://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html",
+          "example": "scm"
+        },
+        "source_dict": {
+          "type": "object",
+          "description": "http://python-copr.readthedocs.io/en/latest/client_v3/package_source_types.html"
+        },
+        "auto_rebuild": {
+          "type": "boolean",
+          "description": "Auto-rebuild the package? (i.e. every commit or new tag)"
+        },
+        "builds": {
+          "$ref": "#/definitions/PackageBuilds"
+        }
+      },
+      "type": "object"
+    },
+    "PackageBuilds": {
+      "properties": {
+        "latest": {
+          "$ref": "#/definitions/Build"
+        },
+        "latest_succeeded": {
+          "$ref": "#/definitions/Build"
+        }
+      },
+      "type": "object"
+    },
+    "PackageAdd": {
+      "properties": {
+        "max_builds": {
+          "type": "integer",
+          "description": "Keep only the specified number of the newest-by-id builds (garbage collector is run daily)",
+          "example": 10
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "webhook_rebuild": {
+          "type": "boolean"
+        },
+        "packagename": {
+          "type": "string",
+          "description": "Name of the package",
+          "example": "copr-cli"
+        },
+        "pypi_package_name": {
+          "type": "string",
+          "description": "Package name in the Python Package Index.",
+          "example": "copr"
+        },
+        "pypi_package_version": {
+          "type": "string",
+          "description": "PyPI package version",
+          "example": "1.128pre"
+        },
+        "spec_generator": {
+          "type": "string",
+          "description": "Tool for generating specfile from a PyPI package. The options are full-featured pyp2rpm with cross distribution support, and pyp2spec that is being actively developed and considered to be the future.",
+          "example": "pyp2spec"
+        },
+        "spec_template": {
+          "type": "string",
+          "description": "Name of the spec template. This option is limited to pyp2rpm spec generator.",
+          "example": "default"
+        },
+        "python_versions": {
+          "type": "array",
+          "description": "For what python versions to build. This option is limited to pyp2rpm spec generator.",
+          "example": [
+            "3",
+            "2"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "clone_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to your Git or SVN repository",
+          "example": "https://github.com/fedora-copr/copr.git"
+        },
+        "committish": {
+          "type": "string",
+          "description": "Specific branch, tag, or commit that you want to build",
+          "example": "main"
+        },
+        "spec": {
+          "type": "string",
+          "description": "Path to your .spec file under the specified subdirectory",
+          "example": "copr-cli.spec"
+        },
+        "subdirectory": {
+          "type": "string",
+          "description": "Subdirectory where source files and .spec are located",
+          "example": "cli"
+        },
+        "scm_type": {
+          "type": "string",
+          "default": "Possible values are 'git', 'svn'",
+          "example": "git"
+        },
+        "gem_name": {
+          "type": "string",
+          "description": "Gem name from RubyGems.org",
+          "example": "hello"
+        },
+        "script": {
+          "type": "string",
+          "description": "Script code to produce a SRPM package",
+          "example": "#! /bin/sh -x"
+        },
+        "builddeps": {
+          "type": "string",
+          "description": "URL to additional yum repos, which can be used during build.",
+          "example": "copr://@copr/copr"
+        },
+        "resultdir": {
+          "type": "string",
+          "description": "Directory where SCRIPT generates sources",
+          "example": "./_build"
+        },
+        "chroot": {
+          "type": "string",
+          "description": "What chroot to run the script in",
+          "example": "fedora-latest-x86_64"
+        },
+        "source_build_method": {
+          "type": "string",
+          "description": "https://docs.pagure.org/copr.copr/user_documentation.html#scm",
+          "example": "tito"
+        }
+      },
+      "type": "object"
+    },
+    "BasePackage": {
+      "properties": {
+        "max_builds": {
+          "type": "integer",
+          "description": "Keep only the specified number of the newest-by-id builds (garbage collector is run daily)",
+          "example": 10
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "webhook_rebuild": {
+          "type": "boolean"
+        },
+        "packagename": {
+          "type": "string",
+          "description": "Name of the package",
+          "example": "copr-cli"
+        }
+      },
+      "type": "object"
+    },
+    "Project": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "persistent": {
+          "type": "boolean",
+          "description": "Build and project is immune against deletion"
+        },
+        "additional_repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "storage": {
+          "type": "string",
+          "description": "Admin only - what storage should be used for this project. Possible values are 'backend' or 'pulp'."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri",
+          "description": "Homepage URL of Copr project",
+          "example": "https://github.com/fedora-copr"
+        },
+        "contact": {
+          "type": "string",
+          "description": "Contact email",
+          "example": "pretty_user@fancydomain.uwu"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of Copr project"
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Instructions how to install and use Copr project"
+        },
+        "devel_mode": {
+          "type": "boolean",
+          "description": "If createrepo should run automatically"
+        },
+        "unlisted_on_hp": {
+          "type": "boolean",
+          "description": "Don't list Copr project on home page"
+        },
+        "auto_prune": {
+          "type": "boolean",
+          "description": "Automatically delete builds in this project"
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "module_hotfixes": {
+          "type": "boolean",
+          "description": "Allow non-module packages to override module packages"
+        },
+        "appstream": {
+          "type": "boolean",
+          "description": "Enable Appstream for this project"
+        },
+        "packit_forge_projects_allowed": {
+          "type": "string",
+          "description": "Whitespace separated list of forge projects that will be allowed to build in the project via Packit. Supports wildcard patterns (e.g., github.com/theproject/* will allow all repositories in the theproject organization).",
+          "example": "github.com/fedora-copr/copr github.com/another/project github.com/theproject/*"
+        },
+        "follow_fedora_branching": {
+          "type": "boolean",
+          "description": "If chroots for the new branch should be auto-enabled and populated from rawhide ones"
+        },
+        "repo_priority": {
+          "type": "integer",
+          "description": "The priority value of this repository. Defaults to 99",
+          "example": 42
+        },
+        "id": {
+          "type": "integer",
+          "description": "Numeric ID",
+          "example": 123
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "full_name": {
+          "type": "string",
+          "description": "Full name of the project",
+          "example": "@copr/pull-requests"
+        },
+        "chroot_repos": {
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "ProjectAdd": {
+      "properties": {
+        "chroots": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "bootstrap_image": {
+          "type": "string",
+          "description": "Name of the container image to initializethe bootstrap chroot from.  This also implies bootstrap=image.This is a noop parameter and its value is ignored."
+        },
+        "multilib": {
+          "type": "boolean"
+        },
+        "fedora_review": {
+          "type": "boolean",
+          "description": "Run fedora-review tool for packages in this project"
+        },
+        "runtime_dependencies": {
+          "type": "string",
+          "description": "List of external repositories (== dependencies, specified as baseurls) that will be automatically enabled together with this project repository."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "persistent": {
+          "type": "boolean",
+          "description": "Build and project is immune against deletion"
+        },
+        "additional_repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "storage": {
+          "type": "string",
+          "description": "Admin only - what storage should be used for this project. Possible values are 'backend' or 'pulp'."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri",
+          "description": "Homepage URL of Copr project",
+          "example": "https://github.com/fedora-copr"
+        },
+        "contact": {
+          "type": "string",
+          "description": "Contact email",
+          "example": "pretty_user@fancydomain.uwu"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of Copr project"
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Instructions how to install and use Copr project"
+        },
+        "devel_mode": {
+          "type": "boolean",
+          "description": "If createrepo should run automatically"
+        },
+        "unlisted_on_hp": {
+          "type": "boolean",
+          "description": "Don't list Copr project on home page"
+        },
+        "auto_prune": {
+          "type": "boolean",
+          "description": "Automatically delete builds in this project"
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "module_hotfixes": {
+          "type": "boolean",
+          "description": "Allow non-module packages to override module packages"
+        },
+        "appstream": {
+          "type": "boolean",
+          "description": "Enable Appstream for this project"
+        },
+        "packit_forge_projects_allowed": {
+          "type": "string",
+          "description": "Whitespace separated list of forge projects that will be allowed to build in the project via Packit. Supports wildcard patterns (e.g., github.com/theproject/* will allow all repositories in the theproject organization).",
+          "example": "github.com/fedora-copr/copr github.com/another/project github.com/theproject/*"
+        },
+        "follow_fedora_branching": {
+          "type": "boolean",
+          "description": "If chroots for the new branch should be auto-enabled and populated from rawhide ones"
+        },
+        "repo_priority": {
+          "type": "integer",
+          "description": "The priority value of this repository. Defaults to 99",
+          "example": 42
+        }
+      },
+      "type": "object"
+    },
+    "ProjectEdit": {
+      "properties": {
+        "chroots": {
+          "type": "array",
+          "description": "List of chroot names",
+          "example": [
+            "fedora-37-x86_64",
+            "fedora-rawhide-x86_64"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "bootstrap_image": {
+          "type": "string",
+          "description": "Name of the container image to initializethe bootstrap chroot from.  This also implies bootstrap=image.This is a noop parameter and its value is ignored."
+        },
+        "multilib": {
+          "type": "boolean"
+        },
+        "fedora_review": {
+          "type": "boolean",
+          "description": "Run fedora-review tool for packages in this project"
+        },
+        "runtime_dependencies": {
+          "type": "string",
+          "description": "List of external repositories (== dependencies, specified as baseurls) that will be automatically enabled together with this project repository."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri",
+          "description": "Homepage URL of Copr project",
+          "example": "https://github.com/fedora-copr"
+        },
+        "contact": {
+          "type": "string",
+          "description": "Contact email",
+          "example": "pretty_user@fancydomain.uwu"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of Copr project"
+        },
+        "instructions": {
+          "type": "string",
+          "description": "Instructions how to install and use Copr project"
+        },
+        "devel_mode": {
+          "type": "boolean",
+          "description": "If createrepo should run automatically"
+        },
+        "unlisted_on_hp": {
+          "type": "boolean",
+          "description": "Don't list Copr project on home page"
+        },
+        "auto_prune": {
+          "type": "boolean",
+          "description": "Automatically delete builds in this project"
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "module_hotfixes": {
+          "type": "boolean",
+          "description": "Allow non-module packages to override module packages"
+        },
+        "appstream": {
+          "type": "boolean",
+          "description": "Enable Appstream for this project"
+        },
+        "packit_forge_projects_allowed": {
+          "type": "string",
+          "description": "Whitespace separated list of forge projects that will be allowed to build in the project via Packit. Supports wildcard patterns (e.g., github.com/theproject/* will allow all repositories in the theproject organization).",
+          "example": "github.com/fedora-copr/copr github.com/another/project github.com/theproject/*"
+        },
+        "follow_fedora_branching": {
+          "type": "boolean",
+          "description": "If chroots for the new branch should be auto-enabled and populated from rawhide ones"
+        },
+        "repo_priority": {
+          "type": "integer",
+          "description": "The priority value of this repository. Defaults to 99",
+          "example": 42
+        },
+        "repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "ProjectFork": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "confirm": {
+          "type": "boolean",
+          "description": "If forking into a existing project, this needs to be set to True,to confirm that user is aware of that."
+        }
+      },
+      "type": "object"
+    },
+    "ProjectDelete": {
+      "properties": {
+        "verify": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "ProjectChroot": {
+      "properties": {
+        "additional_repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_packages": {
+          "type": "array",
+          "description": "Additional packages to be always present in minimal buildroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_modules": {
+          "type": "array",
+          "description": "List of modules that will be enabled or disabled in the given chroot",
+          "example": [
+            "module1:stream",
+            "!module2:stream"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "with_opts": {
+          "type": "array",
+          "description": "Mock --with option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "without_opts": {
+          "type": "array",
+          "description": "Mock --without option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "mock_chroot": {
+          "type": "string",
+          "description": "Mock chroot",
+          "example": "fedora-rawhide-x86_64"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "comps_name": {
+          "type": "string",
+          "description": "Name of the comps.xml file"
+        },
+        "delete_after_days": {
+          "type": "integer",
+          "description": "The project will be automatically deleted after this many days",
+          "example": 30
+        }
+      },
+      "type": "object"
+    },
+    "ProjectChrootBuildConfig": {
+      "properties": {
+        "additional_repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_packages": {
+          "type": "array",
+          "description": "Additional packages to be always present in minimal buildroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_modules": {
+          "type": "array",
+          "description": "List of modules that will be enabled or disabled in the given chroot",
+          "example": [
+            "module1:stream",
+            "!module2:stream"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "with_opts": {
+          "type": "array",
+          "description": "Mock --with option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "without_opts": {
+          "type": "array",
+          "description": "Mock --without option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isolation": {
+          "type": "string",
+          "description": "Mock isolation feature setup. Possible values are 'default', 'simple', 'nspawn'.",
+          "example": "nspawn"
+        },
+        "chroot": {
+          "type": "string",
+          "description": "What chroot to run the script in",
+          "example": "fedora-latest-x86_64"
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "repos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Repo"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "BuildChroot": {
+      "properties": {
+        "started_on": {
+          "type": "integer",
+          "description": "Timestamp when the build started",
+          "example": 1677695545
+        },
+        "ended_on": {
+          "type": "integer",
+          "description": "Timestamp when the build ended",
+          "example": 1677695963
+        },
+        "state": {
+          "type": "string",
+          "description": "",
+          "example": "succeeded"
+        },
+        "name": {
+          "type": "string",
+          "description": "Mock chroot",
+          "example": "fedora-rawhide-x86_64"
+        },
+        "result_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "type": "object"
+    },
+    "BuildChrootConfig": {
+      "properties": {
+        "additional_repos": {
+          "type": "array",
+          "description": "Additional repos to be used for builds in this chroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_packages": {
+          "type": "array",
+          "description": "Additional packages to be always present in minimal buildroot",
+          "items": {
+            "type": "string"
+          }
+        },
+        "with_opts": {
+          "type": "array",
+          "description": "Mock --with option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "without_opts": {
+          "type": "array",
+          "description": "Mock --without option",
+          "items": {
+            "type": "string"
+          }
+        },
+        "enable_net": {
+          "type": "boolean",
+          "description": "Enable internet access during builds"
+        },
+        "is_background": {
+          "type": "boolean",
+          "description": "The build is marked as a background job"
+        },
+        "memory_limit": {
+          "type": "integer"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Number of seconds we allow the builds to run.",
+          "default": 18000,
+          "example": 123123
+        },
+        "bootstrap": {
+          "type": "string",
+          "description": "Mock bootstrap feature setup. Possible values are 'default', 'on', 'off', 'image'."
+        },
+        "bootstrap_image": {
+          "type": "string",
+          "description": "Name of the container image to initializethe bootstrap chroot from.  This also implies bootstrap=image.This is a noop parameter and its value is ignored."
+        },
+        "repos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Repo"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "NevraPackages": {
+      "properties": {
+        "packages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Nevra"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "Nevra": {
+      "properties": {
+        "arch": {
+          "type": "string",
+          "example": "x86_64"
+        },
+        "epoch": {
+          "type": "integer",
+          "example": 3
+        },
+        "release": {
+          "type": "string",
+          "example": "1.fc39"
+        },
+        "version": {
+          "type": "string",
+          "example": "1.0"
+        },
+        "name": {
+          "type": "string",
+          "description": "Package name"
+        }
+      },
+      "type": "object"
+    },
+    "CanBuildSchema": {
+      "properties": {
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "projectname": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "copr-dev"
+        },
+        "who": {
+          "type": "string",
+          "example": "user123"
+        },
+        "can_build_in": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "type": "object"
+    },
+    "WebhookSecret": {
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Numeric ID",
+          "example": 123
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "ownername": {
+          "type": "string",
+          "description": "User or group name",
+          "example": "@copr"
+        },
+        "full_name": {
+          "type": "string",
+          "description": "Full name of the project",
+          "example": "@copr/pull-requests"
+        },
+        "webhook_secret": {
+          "type": "string",
+          "example": "really-secret-string-do-not-share"
+        }
+      },
+      "type": "object"
+    },
+    "Monitor": {
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Project monitor request successful"
+        },
+        "output": {
+          "type": "string",
+          "example": "ok"
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/_ModulePackage"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "_ModulePackage": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the project",
+          "example": "Copr repository"
+        },
+        "chroots": {
+          "type": "object",
+          "description": "Chroots and their states",
+          "example": {
+            "fedora-rawhide-i386": {
+              "state": "waiting",
+              "status": 1,
+              "build_id": 1
+            }
+          }
+        }
+      },
+      "type": "object"
+    },
+    "SourceDictScm": {
+      "properties": {
+        "clone_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to your Git or SVN repository",
+          "example": "https://github.com/fedora-copr/copr.git"
+        },
+        "committish": {
+          "type": "string",
+          "description": "Specific branch, tag, or commit that you want to build",
+          "example": "main"
+        },
+        "spec": {
+          "type": "string",
+          "description": "Path to your .spec file under the specified subdirectory",
+          "example": "copr-cli.spec"
+        },
+        "subdirectory": {
+          "type": "string",
+          "description": "Subdirectory where source files and .spec are located",
+          "example": "cli"
+        },
+        "source_build_method": {
+          "type": "string",
+          "description": "https://docs.pagure.org/copr.copr/user_documentation.html#scm",
+          "example": "tito"
+        },
+        "type": {
+          "type": "string",
+          "default": "Possible values are 'git', 'svn'",
+          "example": "git"
+        }
+      },
+      "type": "object"
+    },
+    "SourceDictPyPI": {
+      "properties": {
+        "pypi_package_name": {
+          "type": "string",
+          "description": "Package name in the Python Package Index.",
+          "example": "copr"
+        },
+        "pypi_package_version": {
+          "type": "string",
+          "description": "PyPI package version",
+          "example": "1.128pre"
+        },
+        "spec_generator": {
+          "type": "string",
+          "description": "Tool for generating specfile from a PyPI package. The options are full-featured pyp2rpm with cross distribution support, and pyp2spec that is being actively developed and considered to be the future.",
+          "example": "pyp2spec"
+        },
+        "spec_template": {
+          "type": "string",
+          "description": "Name of the spec template. This option is limited to pyp2rpm spec generator.",
+          "example": "default"
+        },
+        "python_versions": {
+          "type": "array",
+          "description": "For what python versions to build. This option is limited to pyp2rpm spec generator.",
+          "example": [
+            "3",
+            "2"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "type": "object"
+    },
+    "ModuleBuild": {
+      "properties": {
+        "nsv": {
+          "type": "string",
+          "description": "NSV of the module build in format name-stream-version.",
+          "example": "name-stream-version"
+        }
+      },
+      "type": "object"
+    },
+    "ModuleAdd": {
+      "properties": {
+        "modulemd": {
+          "type": "object",
+          "description": "Modulemd YAML file",
+          "example": "YAML file"
+        },
+        "distgit": {
+          "type": "string",
+          "description": "Dist-git URL we build against",
+          "example": "fedora"
+        },
+        "scmurl": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "responses": {
+    "ParseError": {
+      "description": "When a mask can't be parsed"
+    },
+    "MaskError": {
+      "description": "When any error occurs on mask"
+    },
+    "Exception": {
+      "description": "Whenever an exception is raised within an API endpoint which is managed by"
+    }
+  },
+  "host": "copr.fedorainfracloud.org"
+}

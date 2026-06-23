@@ -1,0 +1,35 @@
+usage: copr edit-package-scm [-h] --clone-url CLONE_URL [--commit COMMITTISH]
+                             [--subdir SUBDIRECTORY] [--spec SPEC]
+                             [--type {git,svn}]
+                             [--method {rpkg,tito,tito_test,make_srpm}]
+                             --name PKGNAME [--webhook-rebuild {on,off}]
+                             [--max-builds MAX_BUILDS] [--timeout TIMEOUT]
+                             copr
+
+positional arguments:
+  copr                  The copr repo for the package. Can be just name of
+                        project or even in format username/project or
+                        @groupname/project.
+
+options:
+  -h, --help            show this help message and exit
+  --clone-url CLONE_URL
+                        clone url to a project versioned by Git or SVN,
+                        required
+  --commit COMMITTISH   branch name, tag name, or git hash to be built
+  --subdir SUBDIRECTORY
+                        relative path from the repo root to the package
+                        content
+  --spec SPEC           relative path from the subdirectory to the .spec file
+  --type {git,svn}      Specify versioning tool. Default is 'git'.
+  --method {rpkg,tito,tito_test,make_srpm}
+                        Srpm build method. Default is 'rpkg'.
+  --name PKGNAME        Name of the package to be edited or created
+  --webhook-rebuild {on,off}
+                        Enable auto-rebuilding.
+  --max-builds MAX_BUILDS
+                        Keep only the specified number of the newest-by-id
+                        builds (garbage collector is run daily), zero disables
+                        (default)
+  --timeout TIMEOUT     Number of seconds we allow the builds to run, default
+                        is 18000 (5h)

@@ -1,0 +1,8 @@
+usage: copr list [-h] [username|@groupname]
+
+positional arguments:
+  username|@groupname  The username or @groupname that you would like to list
+                       the coprs of (defaults to current user)
+
+options:
+  -h, --help           show this help message and exit

@@ -1,0 +1,7 @@
+usage: copr list-permissions [-h] PROJECT
+
+positional arguments:
+  PROJECT     An existing copr project
+
+options:
+  -h, --help  show this help message and exit

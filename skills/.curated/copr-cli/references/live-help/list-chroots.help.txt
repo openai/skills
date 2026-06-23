@@ -1,0 +1,4 @@
+usage: copr list-chroots [-h]
+
+options:
+  -h, --help  show this help message and exit

@@ -1,0 +1,15 @@
+usage: copr download-build [-h] [-r CHROOT] [--dest DEST] [--rpms] [--spec]
+                           [--review] [--logs]
+                           build_id
+
+positional arguments:
+  build_id             Build ID
+
+options:
+  -h, --help           show this help message and exit
+  -r, --chroot CHROOT  Select chroots to fetch
+  --dest, -d DEST      Base directory to store packages
+  --rpms               Download only built RPM packages
+  --spec               Download only the .spec file
+  --review             Download only the fedora-review files
+  --logs               Download only the .log files

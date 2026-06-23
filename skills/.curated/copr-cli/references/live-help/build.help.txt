@@ -1,0 +1,50 @@
+usage: copr build [-h] [--timeout TIMEOUT] [--nowait] [-r CHROOT]
+                  [--exclude-chroot CHROOT] [--background]
+                  [--isolation {simple,nspawn,default}]
+                  [--enable-net {on,off}]
+                  [--bootstrap {unchanged,default,on,off,image}]
+                  [--after-build-id BUILD_ID | --with-build-id BUILD_ID]
+                  copr_repo pkgs [pkgs ...]
+
+positional arguments:
+  copr_repo             The copr repo to build the package in. Can be just
+                        name of project or even in format username/project or
+                        @groupname/project. It can also be in the form
+                        project:<tag>, which will put the build into a side
+                        repository with the user-chosen tag in its name.
+  pkgs                  List of filenames or URLs for SRPMs or SPEC files to
+                        build packages
+
+options:
+  -h, --help            show this help message and exit
+  --timeout TIMEOUT     Specify build timeout (seconds), if the build takes
+                        longer than that, it is terminated and fails. The
+                        default is usually set to 5 hours on Copr Frontend.
+  --nowait              Don't wait for build
+  -r, --chroot CHROOT   If you don't need this build for all the project's
+                        chroots. You can use it several times for each chroot
+                        you need.
+  --exclude-chroot CHROOT
+                        If you don't need this build for all the project's
+                        chroots.You can use it several times for each chroot
+                        you don't need.
+  --background          Mark the build as a background job. It will have
+                        lesser priority than regular builds.
+  --isolation {simple,nspawn,default}
+                        Choose the isolation method for running commands in
+                        buildroot.
+  --enable-net {on,off}
+                        If net should be enabled for this build (by default
+                        the project configuration is used, see 'modify'
+                        command).
+  --bootstrap {unchanged,default,on,off,image}
+                        Configure Mock's bootstrap feature, default is
+                        'unchanged' so the configuration from Copr project and
+                        Copr chroot is used for this build. The 'default'
+                        variant resets the project/chroot configuration to the
+                        pre-configured setup from mock-core-configs. See
+                        'create --help' for more info.
+  --after-build-id BUILD_ID
+                        Build after the batch containing the BUILD_ID build.
+  --with-build-id BUILD_ID
+                        Build in the same batch with the BUILD_ID build.

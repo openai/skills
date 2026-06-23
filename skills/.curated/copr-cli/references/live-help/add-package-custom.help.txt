@@ -1,0 +1,37 @@
+usage: copr add-package-custom [-h] --script SCRIPT
+                               [--script-chroot SCRIPT_CHROOT]
+                               [--script-builddeps SCRIPT_BUILDDEPS]
+                               [--script-resultdir SCRIPT_RESULTDIR]
+                               [--script-repos SCRIPT_REPOS] --name PKGNAME
+                               [--webhook-rebuild {on,off}]
+                               [--max-builds MAX_BUILDS] [--timeout TIMEOUT]
+                               copr
+
+positional arguments:
+  copr                  The copr repo for the package. Can be just name of
+                        project or even in format username/project or
+                        @groupname/project.
+
+options:
+  -h, --help            show this help message and exit
+  --script SCRIPT       text file (script) to be used to prepare the sources
+  --script-chroot SCRIPT_CHROOT
+                        mock chroot to build sources for the SRPM in
+  --script-builddeps SCRIPT_BUILDDEPS
+                        space separated list of packages needed to build the
+                        sources
+  --script-resultdir SCRIPT_RESULTDIR
+                        where SCRIPT generates the result, relatively to
+                        script's $PWD (defaults to '.')
+  --script-repos SCRIPT_REPOS
+                        space separated string of additional repo urls for
+                        script dependencies
+  --name PKGNAME        Name of the package to be edited or created
+  --webhook-rebuild {on,off}
+                        Enable auto-rebuilding.
+  --max-builds MAX_BUILDS
+                        Keep only the specified number of the newest-by-id
+                        builds (garbage collector is run daily), zero disables
+                        (default)
+  --timeout TIMEOUT     Number of seconds we allow the builds to run, default
+                        is 18000 (5h)

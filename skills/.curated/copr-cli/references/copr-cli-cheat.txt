@@ -1,0 +1,32 @@
+# to create a new project called test-project
+copr-cli create --chroot fedora-28-i386 --chroot fedora-28-x86_64 test-project
+
+# to build from url
+copr-cli build test-project http://www.example.com/package-1.6-1.fc28.src.rpm
+
+# to build directly using saved srpm
+copr-cli build test-project ~/packages/package-1.6-1.fc28.src.rpm
+
+# to enable your repository
+sudo dnf copr enable your_name/test-project
+
+# to disable your repository
+sudo dnf copr disable your_name/test-project
+
+# to see status of build
+copr-cli status <build_id>
+
+# to delete a build
+copr delete-build <build_id> [<build_id> ...]
+
+# to list packages in test-project
+copr list-packages test-project
+
+# to cancel a build
+copr-cli cancel <build_id>
+
+# to build rpm(s) from GIT
+copr-cli buildscm test-project --clone-url https://github.com/fedora-copr/copr.git --subdir cli
+
+# to regenerate repository metadata for a project
+copr-cli regenerate-repos test-project

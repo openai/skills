@@ -1,0 +1,744 @@
+copr-cli(1)
+==========
+:man source:  copr
+:man manual:  COPR
+
+NAME
+----
+copr-cli - command line interface for the Copr service
+
+
+SYNOPSIS
+--------
+copr-cli [-h] [--version] [--config CONFIG] {list,create,build} ...
+
+DESCRIPTION
+-----------
+
+This command allows you to interact with the Copr service from the command line.
+
+You need to to configure authentication first (see the AUTHENTICATION section below).
+
+OPTIONS
+-------
+
+-h, --help::
+show this help message and exit
+
+--version::
+show the program's version number and exit
+
+--config::
+path to an alternative configuration file (default is ~/.config/copr).
+
+
+ACTION LIST
+-----------
+
+list [username|@groupname]::
+List all the projects of the provided username. If no username is provided,
+then your projects are listed.
+
+create::
+Create a new project.
+
+delete::
+Delete an entire project.
+
+build::
+Build packages for a specified project.
+
+status::
+Get the status of the build.
+
+cancel::
+Cancel a build of given id.
+
+download-build::
+Download a build to local directory.
+
+modify::
+Modify existing copr
+
+regenerate-repos::
+Regenerate repository metadata for a project
+
+add-package-*::
+Add a new package of the specified source type (e.g. add-package-tito)
+
+edit-package-*::
+Edit source definition and type of an existing package (e.g. edit-package-tito)
+
+list-packages::
+List all packages from a copr in json format
+
+list-package-names::
+Output just the package names from the given copr
+
+get-package::
+Display details of a single package in json format
+
+delete-package::
+Remove package from a copr and all its builds as well
+
+reset-package::
+Clear source definition of a package and its source type
+
+build-package::
+Build package from its source definition
+
+mock-config::
+Get the mock profile (similar to koji mock-config)
+
+
+PROJECT ACTIONS
+---------------
+
+`copr-cli create [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr-cli create [-h] --chroot CHROOTS [--repo REPOS]
+                       [--initial-pkgs PKGS]
+                       [--description DESCRIPTION]
+                       [--instructions INSTRUCTIONS]
+                       [--disable_createrepo DISABLE_CREATEREPO]
+                       [--enable-net {on,off}]
+                       [--unlisted-on-hp {on,off}]
+                       [--persistent]
+                       [--auto-prune {on,off}]
+                       [--isolation {default, nspawn, simple}]
+                       name
+
+--chroot::
+Chroot to use for this project. Can be specified multiple times, but at least one must be present.
+
+--repo::
+Repository to add to this project. Can be specified multiple times.
+
+--initial-pkgs::
+List of packages to build in this new project. Can be specified multiple times.
+
+--description::
+Description of the project.
+
+--instructions::
+Instructions for the project.
+
+--disable_createrepo::
+Disables automatic repository metadata generation. Accepted values for DISABLE_CREATEREPO: true/false.
+
+--enable-net::
+If net should be enabled for builds in this project.
+
+--unlisted-on-hp::
+This project will not be listed on COPR home page.
+
+--persistent::
+Project and its builds will be undeletable. This option can only be specified by a COPR admin.
+
+--auto-prune::
+If backend auto-prunning script should be run for this project. This option can only be specified by a COPR admin.
+
+--isolation ISOLATION::
+Choose the isolation method for running commands in buildroot
+
+name::
+Can be just name of the project or in form username/projectname or @groupname/projectname.
+
+`copr-cli modify [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr-cli modify [-h] [--repo REPOS]
+                       [--chroot CHROOTS]
+                       [--description DESCRIPTION]
+                       [--instructions INSTRUCTIONS]
+                       [--disable_createrepo DISABLE_CREATEREPO]
+                       [--enable-net {on,off}]
+                       [--unlisted-on-hp {on,off}]
+                       [--auto-prune {on,off}]
+                       [--isolation {default, nspawn, simple}]
+                       name
+
+Alters only specified project property.
+
+--repo::
+Repository to add to this project. Can be specified multiple times.
+
+--chroot::
+Chroot to use for this project. Can be specified multiple times.
+When this option is not used, chroots in the project remain unchanged.
+Once you specify a chroot, it is going to be enabled in the project, but
+current chroots will not be preserved if they are not specified.
+
+--description::
+Description of the project.
+
+--instructions::
+Instructions for the project.
+
+--disable_createrepo::
+Disables automatic repository metadata generation. Accepted values for DISABLE_CREATEREPO: true/false.
+
+--enable-net::
+If networking should be enabled for builds in this project.
+
+--unlisted-on-hp::
+This project will not be listed on COPR home page.
+
+--auto-prune::
+If backend auto-prunning script should be run for this project. This option can only be specified by a COPR admin.
+
+--isolation ISOLATION::
+Choose the isolation method for running commands in buildroot
+
+name::
+Can be just name of the project or in form username/projectname or @groupname/projectname.
+
+`copr-cli regenerate-repos [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr-cli regenerate-repos [-h] copr
+
+copr::
+Can be just name of the project or in form username/projectname or @groupname/projectname.
+
+BUILD ACTIONS
+-------------
+
+`copr-cli build [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr-cli build [-h] [-r, --chroot CHROOTS] [--memory MEMORY] [--timeout TIMEOUT] [--nowait]
+                      [--background] [--isolation {default, nspawn, simple}] [--enable-net {on,off}]
+                      copr_repo PKG [PKG ...]
+
+-r, --chroot::
+If you don't need this build for all the project's chroots. You can use it several times for each chroot you need.
+
+--exclude-chroot::
+If you don't need this build for all the project's chroots. You can use it
+several times for each chroot you don't need.
+
+--memory::
+Override memory for this build. This is actually not used and it have no effect.
+
+--timeout::
+Specify build timeout (seconds), if the build takes longer than that, it is
+terminated and fails. The default is usually set to 5 hours on Copr Frontend.
+
+--nowait::
+Don't wait for build completion.
+
+--background::
+Run the build at a lower priority.
+
+--isolation ISOLATION::
+Choose the isolation method for running commands in buildroot.
+
+--enable-net::
+If networking should be enabled for this build.
+
+copr_repo::
+The copr repository to build the package in. This can be a simple name of some of
+your projects or it can be specified fully as username/project or @groupname/project.
+This way you can build into the project of another user or group, provided you have
+permissions to do so. Finally, instead of just project name, you can also pass
+project:tag. In that case, the build will land into the project side repository
+instead of the main repository. The side repository of the name project:tag will
+be automatically created if it doesn't exist yet. You can e.g. use this feature
+to launch test builds while the main user-facing repository stays intact. You
+can specify any tag that is appropriate for the given build(s).
+
+PKG::
+This can be either file on your local workstation or URL of the package to build. When URL is used, then the package must be placed on a public web or
+ftp server. Note that you cannot combine local file paths and URLs in one command line and local-file builds are limited to the first specified PKG.
+This limitation comes from the COPR API.
+
+
+`copr-cli buildpypi [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr buildpypi [-h] [-r, --chroot CHROOTS] [--memory MEMORY] [--timeout TIMEOUT] [--nowait]
+                      [--background]
+                      [--pythonversions [VERSION [VERSION ...]]] [--packageversion PYPIVERSION]
+                      --packagename PYPINAME
+                      project
+
+--pythonversions [VERSION [VERSION ...]]::
+For what Python versions to build (by default: 3 2)
+
+--packageversion PYPIVERSION::
+Version of the PyPI package to be built (by default latest)
+
+--packagename PYPINAME::
+Name of the PyPI package to be built, required.
+
+
+For the rest of the arguments, see `copr-cli build` command above.
+
+
+`copr-cli buildscm [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr buildscm [-h] --clone-url CLONE_URL [--commit COMMITTISH]
+                     [--subdir SUBDIRECTORY] [--spec SPEC] [--type {git,svn}]
+                     [--method {rpkg,tito,tito_test,make_srpm}]
+                     [--memory MEMORY] [--timeout TIMEOUT] [--nowait]
+                     [-r CHROOTS] [--background]
+                     copr_repo
+
+Build package from a Git/DistGit/SVN repository.
+
+--clone-url CLONE_URL::
+clone url to a project versioned by Git or SVN, required
+
+--commit COMMITISH::
+branch name, tag name, or git hash to be built
+
+--subdir SUBDIRECTORY::
+relative path from the repo root to the package content
+
+--spec SPEC::
+relative path from the subdirectory to the .spec file
+
+--type TYPE::
+Specify versioning tool. Default is 'git'.
+
+--method METHOD::
+Srpm build method. Default is 'rpkg'.
+
+
+For the rest of the arguments, see `copr-cli build` command above.
+
+
+`copr-cli download-build [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr-cli download-build [-h] [-d, --dest DESTINATION]
+                               [-r, --chroot CHROOT]
+                               build_id
+
+build_id::
+Download built packages for build identified by build_id.
+
+-d, --dest::
+Base directory to store packages
+
+-r, --chroot::
+Fetch only selected chroots. Can be specified multiple times.
+
+
+`copr-cli delete-build [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr delete-build [-h] build_id [build_id ...]
+
+build_id::
+ID of the build to be deleted. Can be specified multiple times.
+Note that specifying multiple build_id is much faster than calling
+`copr delete-build` multiple times, because in the first case
+`createrepo` is called only once.
+
+
+EXAMPLES
+--------
+
+ copr-cli build myproject some.src.rpm
+ copr-cli build someone_else/project some.src.rpm
+ copr-cli build -r fedora-24-x86_64 -r fedora-24-i386 "@somegroup/project" some.src.rpm
+
+
+CHROOT ACTIONS
+--------------
+
+`copr-cli edit-chroot [options] coprchroot`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr edit-chroot [-h] [--upload-comps FILEPATH | --delete-comps]
+                        [--packages PACKAGES] [--repos REPOS] [--isolation {default, nspawn, simple}]
+                        coprchroot
+
+Edit the specified coprchroot.
+
+coprchroot::            
+Path to a project chroot as owner/project/chroot or project/chroot
+
+--upload-comps FILEPATH::
+Filepath to the comps.xml file to be uploaded
+
+--delete-comps::
+Deletes already existing comps.xml for the chroot
+
+--packages PACKAGES::   
+space separated string of package names to be added to buildroot (e.g. "gcc ghc")
+
+--repos REPOS::
+space separated string of additional repo urls for chroot (e.g. "http://foo http://bar")
+
+--isolation ISOLATION::
+Choose the isolation method for running commands in buildroot
+
+
+`copr-cli get-chroot coprchroot`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr get-chroot [-h] coprchroot [--output-format {json, text, text-row}]
+
+Print info of the given chroot.
+
+coprchroot::  
+Path to a project chroot as owner/project/chroot or project/chroot
+
+--output-format FORMAT::
+Set the formatting style. We recommend using json, which prints the required data in json format.
+The text format prints the required data in a column, one piece of information per line.
+The text-row format prints all information separated by a space on a single line.
+
+PACKAGE ACTIONS
+---------------
+
+
+`copr-cli add-package-pypi [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr add-package-pypi [-h] [--pythonversions [VERSION [VERSION ...]]]
+                             [--packageversion PYPIVERSION] --packagename
+                             PYPINAME --name PKGNAME
+                             [--webhook-rebuild {on,off}]
+                             project
+
+Add package of 'PyPI' source type.
+
+--pythonversions [VERSION [VERSION ...]]::
+For what Python versions to build (by default: 3 2)
+
+--packageversion PYPIVERSION::
+Version of the PyPI package to be built (by default latest)
+
+--packagename PYPINAME::
+Name of the PyPI package to be built, required
+
+--name PKGNAME::
+Name of the package to be edited or created
+
+--webhook-rebuild {on,off}::
+Enable auto-rebuilding
+
+
+`copr-cli edit-package-pypi [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: copr edit-package-pypi [-h] [--pythonversions [VERSION [VERSION ...]]]
+                             [--packageversion PYPIVERSION] --packagename
+                             PYPINAME --name PKGNAME
+                             [--webhook-rebuild {on,off}]
+                             project
+
+Edit source definition and type of an existing package. Options are shared with add-package-pypi.
+
+
+`copr-cli add-package-scm [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr add-package-scm [-h] --clone-url CLONE_URL [--commit COMMITTISH]
+                            [--subdir SUBDIRECTORY] [--spec SPEC]
+                            [--type {git,svn}]
+                            [--method {rpkg,tito,tito_test,make_srpm}] --name
+                            PKGNAME [--webhook-rebuild {on,off}]
+                            copr
+
+Add package of SCM source type.
+
+--clone-url CLONE_URL::
+clone url to a project versioned by Git or SVN, required
+
+--commit COMMITISH::
+branch name, tag name, or git hash to be built
+
+--subdir SUBDIRECTORY::
+relative path from the repo root to the package content
+
+--spec SPEC::
+relative path from the subdirectory to the .spec file
+
+--type TYPE::
+Specify versioning tool. Default is 'git'.
+
+--method METHOD::
+Srpm build method. Default is 'rpkg'.
+
+--name PKGNAME::
+Name of the package to be edited or created
+
+--webhook-rebuild {on,off}::
+Enable auto-rebuilding
+
+
+`copr-cli edit-package-scm [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr edit-package-scm [-h] --clone-url CLONE_URL [--commit COMMITTISH]
+                             [--subdir SUBDIRECTORY] [--spec SPEC]
+                             [--type {git,svn}]
+                             [--method {rpkg,tito,tito_test,make_srpm}] --name
+                             PKGNAME [--webhook-rebuild {on,off}]
+                             copr
+
+Edit package of SCM source type.
+
+
+`copr-cli add-package-rubygems [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr add-package-rubygems [-h] [--gem GEM] --name PKGNAME
+                                 [--webhook-rebuild {on,off}]
+                                 project
+
+Add package of 'RubyGems' source type.
+
+--gem GEM::
+Specify gem name
+
+--name PKGNAME::
+Name of the package to be edited or created
+
+--webhook-rebuild {on,off}::
+Enable auto-rebuilding
+
+
+`copr-cli edit-package-rubygems [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr edit-package-rubygems [-h] [--gem GEM] --name PKGNAME
+                                 [--webhook-rebuild {on,off}]
+                                 project
+
+Edit source definition and type of an existing package. Options are shared with add-package-rubygems.
+
+
+`copr-cli add-package-custom [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr add-package-custom [-h] --script SCRIPT
+                               [--script-chroot SCRIPT_CHROOT]
+                               [--script-builddeps SCRIPT_BUILDDEPS]
+                               [--script-resultdir SCRIPT_RESULTDIR]
+                               [--script-repos SCRIPT_REPOS]
+                               --name PKGNAME
+                               [--webhook-rebuild {on,off}]
+                               [--max-builds MAX_BUILDS]
+                               [--timeout TIMEOUT]
+                               project
+
+Add package of 'Custom' source type.
+
+--script SCRIPT::
+Text file (script) to be used to prepare the sources
+
+--script-chroot SCRIPT_CHROOT::
+Mock chroot to build sources for the SRPM in
+
+--script-builddeps SCRIPT_BUILDDEPS::
+Space separated list of packages needed to build the sources
+
+--script-resultdir SCRIPT_RESULTDIR::
+Where SCRIPT generates the result, relatively to script's $PWD (defaults to '.')
+
+--script-repos SCRIPT_REPOS::
+Space separated string of additional repo urls for script dependencies
+
+--name PKGNAME::
+Name of the package to be edited or created
+
+--webhook-rebuild {on,off}::
+Enable auto-rebuilding.
+
+--max-builds MAX_BUILDS::
+Keep only the specified number of the newest-by-id builds
+(garbage collector is run daily), zero disables (default)
+
+--timeout TIMEOUT::
+Number of seconds we allow the builds to run, default is
+18000 (5h)
+
+
+`copr-cli edit-package-custom [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr edit-package-custom [-h]
+                                --script SCRIPT [--script-chroot SCRIPT_CHROOT]
+                                [--script-builddeps SCRIPT_BUILDDEPS]
+                                [--script-resultdir SCRIPT_RESULTDIR]
+                                [--script-repos SCRIPT_REPOS]
+                                --name PKGNAME [--webhook-rebuild {on,off}]
+                                [--max-builds MAX_BUILDS]
+                                [--timeout TIMEOUT]
+                                project
+
+Edit source definition and type of an existing package.
+Options are shared with add-package-custom.
+
+
+`copr-cli list-packages [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr list-packages [-h] [--with-latest-build]
+                          [--with-latest-succeeded-build] [--with-all-builds] [--output-format {json, text, text-row}]
+                          project
+
+Lists all packages in the given project in json format.
+
+--with-latest-build::   
+Also display data related to the latest build for each package.
+
+--with-latest-succeeded-build::
+Also display data related to the latest succeeded build for each package.
+
+--with-all-builds::     
+Also display data related to the builds for each package.
+
+--output-format FORMAT::
+Set the formatting style. We recommend using json, which prints the required data in json format.
+The text format prints the required data in a column, one piece of information per line.
+The text-row format prints all information separated by a space on a single line.
+
+`copr-cli list-package-names [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr list-package-names [-h] project
+
+Only list package names in the given project line by line.
+
+
+`copr-cli get-package [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr get-package [-h] --name PKGNAME [--with-latest-build]
+                        [--with-latest-succeeded-build] [--with-all-builds] [--output-format {json, text, text-row}]
+                        project
+
+Similar to list-packages but returns just a single package directly as json structure (not wrapped in a list).
+
+--output-format FORMAT::
+Set the formatting style. We recommend using json, which prints the required data in json format.
+The text format prints the required data in a column, one piece of information per line.
+The text-row format prints all information separated by a space on a single line.
+
+
+`copr-cli delete-package [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr delete-package [-h] --name PKGNAME project
+
+Deletes package and all its builds from the given project.
+
+
+`copr-cli reset-package [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr reset-package [-h] --name PKGNAME project
+
+Clears default source of a package and its source type (all the package settings are lost after invoking this!). 
+
+
+`copr-cli build-package [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr build-package [-h] [--memory MEMORY] [--timeout TIMEOUT]
+                          [--nowait] [-r CHROOTS] --name PKGNAME
+                          project
+
+Creates a new build of the given package from its source definition.
+
+--name PKGNAME::
+Name of a package to be built
+
+
+For the rest of the arguments, see `copr-cli build` command above.
+
+`copr-cli mock-config [options]`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+usage: copr mock-config [-h] project chroot
+
+Get the mock profile (similar to koji mock-config), print it to standard
+output.  The configuration can be slightly different from the real mock
+configuration used by Copr Builders, but should be similar enough for basic
+debugging (e.g. by mock --shell).
+
+
+EXAMPLES
+--------
+  copr-cli add-package-tito myproject --name pkgname --git-url http://github.com/clime/example.git --test on
+
+  copr-cli get-package myproject --name pkgname
+
+  copr-cli build-package myproject --name pkgname --nowait --timeout 10000 -r fedora-23-x86_64
+
+  copr-cli delete-package myproject --name pkgname
+
+  copr-cli mock-config myproject fedora-rawhide-x86_64
+
+
+EXIT STATUS
+-----------
+Normally, the exit code is 0 when everything goes well. But if not, we could get:
+
+1 - Bad request like wrong project name, insufficient rights etc.
+    Also might happen when user interrupts the operation when they shouldn't.
+
+2 - Wrong arguments given.
+
+3 - Bad or no configuration.
+
+4 - Build failed or was canceled.
+
+5 - Communication error between Cli and server.
+    This issue probably means bug and should be reported.
+
+6 - Configuration error.
+
+7 - Authentication with Copr server failed.
+
+
+AUTHENTICATION
+--------------
+
+Copr client supports token-based and GSSAPI authentication.
+
+Visit the page https://copr.fedorainfracloud.org/api/ to obtain an API token.
+This token must be saved in the configuration file `~/.config/copr` in the
+following format:
+
+ [copr-cli]
+ username = msuchy
+ login = Y57wcg==##fkfaxbkjhuoiebfafadl
+ token = vbfseelqdebzedukgombekmuvbkqwo
+ copr_url = https://copr.fedorainfracloud.org
+ # expiration date: 2023-01-01
+
+Be aware that API tokens have an expiration date!
+
+To enable GSSAPI you need to obtain a Kerberos ticket.  If you want to work with
+Fedora Copr, you can just do:
+
+    $ fkinit
+    Enter your password and OTP concatenated. (Ignore that the prompt is for only the token)
+    Enter OTP Token Value: <your password + OTP token>
+
+To work with a different (non-Fedora Copr) instance, you will obtain the
+ticket differently and you still need to have a configuration file referring
+appropriate `copr_url`:
+
+    $ kinit username@EXAMPLE.COM
+    $ cat ~/.config/copr
+    [copr-cli]
+    copr_url = https://copr.example.com/
+
+Copr client uses the python API internally, for more info take a look at the
+page https://python-copr.readthedocs.io/en/latest/ClientV3.html#example-usage
+
+
+USING DIFFERENT COPR INSTANCE
+-----------------------------
+
+If you plan to run `copr` client against non-default Copr instance, the API
+token is available on the http://YOUR.COPR.URL/api/ page.  You can either
+replace your default `~/.config/copr` configuration file, or rather use
+alternative file with a shell alias
+
+    alias your_copr='copr --config ~/.config/your-copr'
+
+inserted into your profile.
+
+
+AUTHORS
+-------
+Miroslav Suchý <msuchy@redhat.com>, clime <clime@redhat.com>

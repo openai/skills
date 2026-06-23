@@ -1,0 +1,9 @@
+usage: copr fork [-h] [--confirm] src dst
+
+positional arguments:
+  src         Which project should be forked
+  dst         Name of the new project
+
+options:
+  -h, --help  show this help message and exit
+  --confirm   Confirm forking into existing project

@@ -1,0 +1,36 @@
+usage: copr edit-package-pypi [-h] [--pythonversions [VERSION ...]]
+                              [--packageversion PYPIVERSION]
+                              [--spec-generator {pyp2rpm,pyp2spec}]
+                              [--template SPEC_TEMPLATE] --name PKGNAME
+                              [--webhook-rebuild {on,off}]
+                              [--max-builds MAX_BUILDS] [--timeout TIMEOUT]
+                              [--packagename PYPINAME]
+                              copr
+
+positional arguments:
+  copr                  The copr repo for the package. Can be just name of
+                        project or even in format username/project or
+                        @groupname/project.
+
+options:
+  -h, --help            show this help message and exit
+  --pythonversions [VERSION ...]
+                        For what Python versions to build (by default: 3 2)
+  --packageversion PYPIVERSION
+                        Version of the PyPI package to be built (by default
+                        latest)
+  --spec-generator {pyp2rpm,pyp2spec}
+                        Tool for generating specfile from a PyPI package
+  --template, -t SPEC_TEMPLATE
+                        Spec template to be used to build srpm with pyp2rpm
+  --name PKGNAME        Name of the package to be edited or created
+  --webhook-rebuild {on,off}
+                        Enable auto-rebuilding.
+  --max-builds MAX_BUILDS
+                        Keep only the specified number of the newest-by-id
+                        builds (garbage collector is run daily), zero disables
+                        (default)
+  --timeout TIMEOUT     Number of seconds we allow the builds to run, default
+                        is 18000 (5h)
+  --packagename PYPINAME
+                        Name of the PyPI package to be built, required.

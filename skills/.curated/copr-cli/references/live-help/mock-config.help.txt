@@ -1,0 +1,9 @@
+usage: copr mock-config [-h] project chroot
+
+positional arguments:
+  project     Expected format is <user>/<project>, <group>/<project>
+              (including '@') or <project> (name of project you own).
+  chroot      chroot id, e.g. 'fedora-rawhide-x86_64'
+
+options:
+  -h, --help  show this help message and exit

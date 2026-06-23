@@ -1,0 +1,17 @@
+usage: copr request-permissions [-h] [--admin [PERMISSIONS]]
+                                [--builder [PERMISSIONS]]
+                                PROJECT
+
+positional arguments:
+  PROJECT               An existing copr project
+
+options:
+  -h, --help            show this help message and exit
+  --admin [PERMISSIONS]
+                        Request/cancel request/remove your 'admin' permissions
+                        in PROJECT. VALUE can be one of 'request|nothing',
+                        default=request
+  --builder [PERMISSIONS]
+                        Request/cancel request/remove your 'builder'
+                        permissions in PROJECT. VALUE can be one of
+                        'request|nothing', default=request

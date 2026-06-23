@@ -1,0 +1,7 @@
+usage: copr delete [-h] copr
+
+positional arguments:
+  copr        Name of your project to be deleted.
+
+options:
+  -h, --help  show this help message and exit

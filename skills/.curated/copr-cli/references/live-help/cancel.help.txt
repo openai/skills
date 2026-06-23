@@ -1,0 +1,7 @@
+usage: copr cancel [-h] build_id
+
+positional arguments:
+  build_id    Build ID
+
+options:
+  -h, --help  show this help message and exit

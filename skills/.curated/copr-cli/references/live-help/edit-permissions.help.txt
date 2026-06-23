@@ -1,0 +1,17 @@
+usage: copr edit-permissions [-h] [--admin USERNAME[=VALUE]]
+                             [--builder USERNAME[=VALUE]]
+                             PROJECT
+
+positional arguments:
+  PROJECT               An existing copr project
+
+options:
+  -h, --help            show this help message and exit
+  --admin USERNAME[=VALUE]
+                        Set the 'admin' role for USERNAME in PROJECT, VALUE
+                        can be one of 'approved|request|nothing'
+                        (default=approved)
+  --builder USERNAME[=VALUE]
+                        Set the 'builder' role for USERNAME in PROJECT, VALUE
+                        can be one of 'approved|request|nothing'
+                        (default=approved)

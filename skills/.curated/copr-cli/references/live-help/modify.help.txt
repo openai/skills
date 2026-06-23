@@ -1,0 +1,81 @@
+usage: copr modify [-h] [--chroot CHROOT] [--description DESCRIPTION]
+                   [--instructions INSTRUCTIONS]
+                   [--disable_createrepo DISABLE_CREATEREPO]
+                   [--enable-net {on,off}] [--unlisted-on-hp {on,off}]
+                   [--auto-prune {on,off}]
+                   [--isolation {simple,nspawn,default}]
+                   [--bootstrap {default,on,off,image}]
+                   [--delete-after-days DAYS] [--module-hotfixes {on,off}]
+                   [--multilib {on,off}] [--fedora-review {on,off}]
+                   [--appstream {on,off}] [--follow-fedora-branching {on,off}]
+                   [--repo-priority REPO_PRIORITY] [--repo REPO_BASEURL]
+                   [--runtime-repo-dependency REPO_BASEURL]
+                   [--packit-forge-project-allowed FORGE_PROJECT]
+                   name
+
+positional arguments:
+  name                  The name of the copr to modify
+
+options:
+  -h, --help            show this help message and exit
+  --chroot CHROOT       Chroot to use for this copr
+  --description DESCRIPTION
+                        Description of the copr
+  --instructions INSTRUCTIONS
+                        Instructions for the copr
+  --disable_createrepo DISABLE_CREATEREPO
+                        Disable metadata auto generation
+  --enable-net {on,off}
+                        If net should be enabled for builds in this project
+                        (default is "don't change")
+  --unlisted-on-hp {on,off}
+                        The project will not be shown on COPR home page
+  --auto-prune {on,off}
+                        If auto-deletion of project's obsoleted builds should
+                        be enabled. This option can only be specified by a
+                        COPR admin.
+  --isolation {simple,nspawn,default}
+                        Choose the isolation method for running commands in
+                        buildroot.
+  --bootstrap {default,on,off,image}
+                        Configure Mock's bootstrap feature, See 'create
+                        --help' for more info.
+  --delete-after-days DAYS
+                        Delete the project after the specfied period of time,
+                        empty or -1 disables, (default is "don't change")
+  --module-hotfixes {on,off}
+                        Allow packages from this project to override packages
+                        from active module streams.
+  --multilib {on,off}   When users enable this copr repository on 64bit
+                        variant of multilib capable architecture (e.g.
+                        x86_64), they will also be able to install 32bit
+                        variants of the packages (e.g. i386 for x86_64 arch),
+                        default is "don't change"
+  --fedora-review {on,off}
+                        When submitting new package to Fedora, it needs to
+                        comply with Fedora Packaging Guidelines. Use fedora-
+                        review tool to help you discover packaging errors.
+                        Failing fedora-review will not fail the build itself.
+  --appstream {on,off}  Generate AppStream metadata for this project.
+                        Generating metadata slows down the builds in large
+                        Copr projects.
+  --follow-fedora-branching {on,off}
+                        When Fedora is branched from rawhide, the respective
+                        chroots for the new branch are automatically created
+                        for you (as soon as they are available) as rawhide
+                        chroot forks.
+  --repo-priority REPO_PRIORITY
+                        Set the priority value of this repository
+  --repo REPO_BASEURL   Repository that will be enabled at package build time,
+                        can be specified multiple times.
+  --runtime-repo-dependency REPO_BASEURL
+                        Repository that will be automatically enabled together
+                        with repository from this copr, e.g. by `dnf copr
+                        enable`. This can be specified multiple times.
+  --packit-forge-project-allowed FORGE_PROJECT
+                        Forge project that will be allowed to build in this
+                        project via Packit in format github.com/packit/ogr.
+                        Supports wildcard patterns (e.g.,
+                        github.com/theproject/* will allow all repositories in
+                        the theproject organization). Can be specified
+                        multiple times.
