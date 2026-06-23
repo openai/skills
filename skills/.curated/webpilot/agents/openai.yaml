@@ -1,0 +1,13 @@
+interface:
+  display_name: "Webpilot"
+  short_description: "CDP-free browser automation — drive a real browser via Chrome extension + WebSocket. No Playwright, no Puppeteer, no detectable debugging port."
+  default_prompt: "CDP-free browser automation — drive a real browser via Chrome extension + WebSocket. No Playwright, no Puppeteer, no detectable debugging port."
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "webpilot"
+      description: "Webpilot MCP server for CDP-free browser automation over WebSocket."
+      transport: "websocket"
+      url: "ws://localhost:7331"
