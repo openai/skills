@@ -1,0 +1,7 @@
+interface:
+  display_name: "X/Twitter Skills"
+  short_description: "Search and synthesize live X/Twitter discourse"
+  icon_small: "./assets/x-twitter-skills-small.svg"
+  icon_large: "./assets/x-twitter-skills.svg"
+  brand_color: "#17C964"
+  default_prompt: "Use $x-twitter-skills to investigate what people on X are saying about a topic and return sourced findings."

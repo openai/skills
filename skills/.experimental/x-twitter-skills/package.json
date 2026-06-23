@@ -1,0 +1,12 @@
+{
+  "name": "x-twitter-skills",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "x": "node --import tsx scripts/x-search.ts",
+    "test": "node --import tsx --test scripts/tests/**/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.5"
+  }
+}
