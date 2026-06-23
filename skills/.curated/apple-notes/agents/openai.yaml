@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apple Notes"
+  short_description: "Help with Apple Notes tasks"
+  default_prompt: "Use $apple-notes to create, find, read, update, delete, and count Apple Notes on macOS."
