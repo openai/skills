@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram Safe"
+  short_description: "Inspect and operate Telegram safely"
+  default_prompt: "Use $telegram-safe to inspect dialogs, read history, or perform ordinary Telegram actions without destructive changes."
