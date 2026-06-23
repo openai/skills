@@ -1,0 +1,6 @@
+interface:
+  display_name: "Railway"
+  short_description: "Deploy and manage infrastructure on Railway"
+  icon_small: "./assets/railway-small.svg"
+  icon_large: "./assets/railway.png"
+  default_prompt: "Deploy this project to Railway and provide the deployment URL."
