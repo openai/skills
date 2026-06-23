@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Perfetto"
+  short_description: "Analyze Android Perfetto traces"
+  default_prompt: "Capture or analyze an Android Perfetto trace for startup, UI jank, freezes, ANR, memory, CPU scheduling, or binder IPC, then produce a structured report with conservative confidence handling."
