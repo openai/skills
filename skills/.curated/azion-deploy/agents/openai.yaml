@@ -1,0 +1,6 @@
+interface:
+  display_name: "Azion Deploy"
+  short_description: "Deploy apps and edge functions to Azion via azion CLI"
+  icon_small: "./assets/azion-favicon.png"
+  icon_large: "./assets/azion-favicon.png"
+  default_prompt: "Deploy this project to Azion using azion CLI and return URL, app IDs, and required env vars."
