@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "api_style": "codex_exec",
+  "model": "gpt-5.3-codex-spark",
+  "codex_service_tier": "fast",
+  "codex_reasoning_effort": "medium",
+  "timeout_seconds": 120,
+  "system_prompt_file": "./easy-memory/custom-memory-agent-prompt.md"
+}

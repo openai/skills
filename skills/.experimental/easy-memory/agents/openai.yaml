@@ -1,0 +1,7 @@
+interface:
+  display_name: "Easy Memory"
+  short_description: "Project-local memory logs with optional agent preprocessing"
+  default_prompt: "Use $easy-memory to read, search, and maintain project-local memory logs for the current project."
+
+policy:
+  allow_implicit_invocation: true

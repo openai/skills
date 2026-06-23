@@ -1,0 +1,6 @@
+2026-03-13.log: [ID:entry-001] [REF:high] [FACT:true] Added stable plain-text filtering output for memory-agent responses. [PATHS:[{"id":"path-001","path":"skills/.experimental/easy-memory/scripts/memory_agent_client.py","directory":"skills/.experimental/easy-memory/scripts","resource_type":"local_path","path_format":"project_relative"},{"id":"path-002","path":"/opt/shared/docs/memory-agent.md","directory":"/opt/shared/docs","resource_type":"local_path","path_format":"absolute","system_hint":"Darwin arm64 @example-host"},{"id":"path-003","path":"https://example.com/docs/memory-agent","directory":"https://example.com/docs","resource_type":"url"}]] [TIME:2026-03-13:16:40]
+  Related resource ID path-001 [local_path, project_relative]: skills/.experimental/easy-memory/scripts/memory_agent_client.py (container: skills/.experimental/easy-memory/scripts)
+  Related resource ID path-002 [local_path, absolute]: /opt/shared/docs/memory-agent.md (container: /opt/shared/docs; system: Darwin arm64 @example-host)
+  Related resource ID path-003 [url]: https://example.com/docs/memory-agent (container: https://example.com/docs)
+
+[SUMMARY] 已移除无关内容，仅保留与当前记忆 agent 输出行为有关的完整记忆。

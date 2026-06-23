@@ -1,0 +1,6 @@
+2026-03-13.log: [ID:entry-001] [REF:high] [FACT:true] Added project-local related-resource metadata support and required task-context for read/search flows. [PATHS:[{"id":"path-001","path":"src/memory_agent_config.py","directory":"src","resource_type":"local_path","path_format":"project_relative"},{"id":"path-002","path":"/opt/shared/docs/memory-agent.md","directory":"/opt/shared/docs","resource_type":"local_path","path_format":"absolute","system_hint":"Darwin arm64 @example-host"},{"id":"path-003","path":"https://example.com/docs/easy-memory","directory":"https://example.com/docs","resource_type":"url"}]] [TIME:2026-03-13:16:00]
+  Related resource ID path-001 [local_path, project_relative]: src/memory_agent_config.py (container: src)
+  Related resource ID path-002 [local_path, absolute]: /opt/shared/docs/memory-agent.md (container: /opt/shared/docs; system: Darwin arm64 @example-host)
+  Related resource ID path-003 [url]: https://example.com/docs/easy-memory (container: https://example.com/docs)
+
+[SUMMARY] 过滤无关记忆后，仅保留与 memory-agent 配置和相关资源返回有关的结果。

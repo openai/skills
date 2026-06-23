@@ -4,3 +4,9 @@
 # Python bytecode files
 __pycache__/
 *.pyc
+
+# Project-local easy-memory logs
+/easy-memory/
+
+# Runtime-generated logs inside the experimental easy-memory skill
+skills/.experimental/easy-memory/logs/

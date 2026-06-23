@@ -1,0 +1,57 @@
+{
+  "schema_version": "easy_memory_agent_request_v2",
+  "mode": "search_memory",
+  "task_context": "用户正在排查当前项目中的记忆管理 agent 配置问题，需要找出与配置加载和路径返回相关的历史记忆。",
+  "cwd": "/Users/example/workspace/project-a",
+  "log_dir": "/Users/example/workspace/project-a/easy-memory",
+  "keywords": [
+    "memory-agent",
+    "config",
+    "path"
+  ],
+  "max_results": 5,
+  "entries": [
+    {
+      "entry_id": "entry-001",
+      "log_file": "2026-03-13.log",
+      "ref_level": "high",
+      "factual": true,
+      "content": "Added project-local related-resource metadata support and required task-context for read/search flows.",
+      "timestamp": "2026-03-13:16:00",
+      "paths": [
+        {
+          "path_id": "path-001",
+          "resource_type": "local_path",
+          "path": "src/memory_agent_config.py",
+          "directory": "src",
+          "path_format": "project_relative"
+        },
+        {
+          "path_id": "path-002",
+          "resource_type": "local_path",
+          "path": "/opt/shared/docs/memory-agent.md",
+          "directory": "/opt/shared/docs",
+          "path_format": "absolute",
+          "system_hint": "Darwin arm64 @example-host"
+        },
+        {
+          "path_id": "path-003",
+          "resource_type": "url",
+          "path": "https://example.com/docs/easy-memory",
+          "directory": "https://example.com/docs"
+        }
+      ],
+      "rendered_block": "2026-03-13.log: [ID:entry-001] [REF:high] [FACT:true] Added project-local related-resource metadata support and required task-context for read/search flows. [PATHS:[{\"id\":\"path-001\",\"path\":\"src/memory_agent_config.py\",\"directory\":\"src\",\"resource_type\":\"local_path\",\"path_format\":\"project_relative\"},{\"id\":\"path-002\",\"path\":\"/opt/shared/docs/memory-agent.md\",\"directory\":\"/opt/shared/docs\",\"resource_type\":\"local_path\",\"path_format\":\"absolute\",\"system_hint\":\"Darwin arm64 @example-host\"},{\"id\":\"path-003\",\"path\":\"https://example.com/docs/easy-memory\",\"directory\":\"https://example.com/docs\",\"resource_type\":\"url\"}]] [TIME:2026-03-13:16:00]\n  Related resource ID path-001 [local_path, project_relative]: src/memory_agent_config.py (container: src)\n  Related resource ID path-002 [local_path, absolute]: /opt/shared/docs/memory-agent.md (container: /opt/shared/docs; system: Darwin arm64 @example-host)\n  Related resource ID path-003 [url]: https://example.com/docs/easy-memory (container: https://example.com/docs)"
+    },
+    {
+      "entry_id": "entry-002",
+      "log_file": "2026-03-12.log",
+      "ref_level": "medium",
+      "factual": true,
+      "content": "Legacy entry without stored related-resource metadata remains compatible with read/search output.",
+      "timestamp": "2026-03-12:11:20",
+      "paths": [],
+      "rendered_block": "2026-03-12.log: [ID:entry-002] [REF:medium] [FACT:true] Legacy entry without stored related-resource metadata remains compatible with read/search output. [TIME:2026-03-12:11:20]"
+    }
+  ]
+}
