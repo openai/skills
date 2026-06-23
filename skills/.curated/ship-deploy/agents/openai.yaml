@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship Deploy"
+  short_description: "Deploy static sites to ShipStatic"
+  default_prompt: "Use $ship-deploy to deploy this project to ShipStatic and return the deployment URL."
