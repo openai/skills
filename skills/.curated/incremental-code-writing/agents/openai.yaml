@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incremental Code Writing"
+  short_description: "Write code step by step with checkpoints"
+  default_prompt: "When the user asks for step-by-step coding, implement one clear logical unit at a time and pause for confirmation before proceeding."
