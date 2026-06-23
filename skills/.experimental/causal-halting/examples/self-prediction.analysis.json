@@ -1,0 +1,39 @@
+{
+  "classification": "causal_paradox",
+  "explanation": "The design lets a prediction about the current execution control that same execution.",
+  "inferred_graph": [
+    "E(AgentRun,input) -> R(AgentRun,input)",
+    "R(AgentRun,input) -> E(AgentRun,input)"
+  ],
+  "repair": [
+    "Move the prediction result to an external orchestrator."
+  ],
+  "proof_obligations": [
+    {
+      "obligation": "prediction_result_not_consumed_by_observed_execution",
+      "result_id": "r-1",
+      "forbidden_consumer_exec_id": "run-1",
+      "valid_if": [
+        "consumer is external_orchestrator",
+        "consumer exec starts after observed exec ends",
+        "result is audit_only",
+        "consumer is a future execution"
+      ]
+    }
+  ],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(input)"
+    ],
+    "H": [
+      "SupervisorPrediction"
+    ],
+    "HaltResult": [
+      "PredictionResult(AgentRun,input)"
+    ]
+  },
+  "uncertain_edges": []
+}

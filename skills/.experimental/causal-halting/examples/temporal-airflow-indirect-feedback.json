@@ -1,0 +1,39 @@
+{
+  "workflow_id": "agent-orchestration",
+  "runs": [
+    {
+      "id": "run-1",
+      "workflow": "AgentRun",
+      "input": "task-a",
+      "timestamp": "2026-04-30T12:00:00Z"
+    },
+    {
+      "id": "controller-1",
+      "workflow": "SupervisorController",
+      "input": "watch-run-1",
+      "timestamp": "2026-04-30T12:00:01Z"
+    }
+  ],
+  "observations": [
+    {
+      "observer": "Supervisor",
+      "target_run": "run-1",
+      "result": "r-1",
+      "timestamp": "2026-04-30T12:00:02Z"
+    }
+  ],
+  "controls": [
+    {
+      "result": "r-1",
+      "target_run": "controller-1",
+      "purpose": "decide_intervention",
+      "timestamp": "2026-04-30T12:00:03Z"
+    },
+    {
+      "controller_run": "controller-1",
+      "controlled_run": "run-1",
+      "action": "change_strategy",
+      "timestamp": "2026-04-30T12:00:04Z"
+    }
+  ]
+}

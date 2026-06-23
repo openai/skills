@@ -1,0 +1,3 @@
+Cb(x) = halt
+Apply(cb!Clean,x) = cb(x)
+run Apply(Cb,Task)

@@ -1,0 +1,39 @@
+{
+  "controls": [
+    {
+      "action": "change_strategy",
+      "id": "ctrl-85",
+      "result": "r-85",
+      "target_exec": "run-85",
+      "timing": "unknown"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-85",
+      "input": "task-85",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-85",
+      "observer": "Supervisor",
+      "result": "r-85",
+      "target_exec": "run-85"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured fixture; prose is context only.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": [
+    {
+      "field": "controls[0].timing",
+      "reason": "Consumer timing is not specified."
+    }
+  ]
+}

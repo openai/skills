@@ -1,0 +1,27 @@
+{
+  "design_ir_version": "1.0",
+  "controls": [
+    {
+      "id": "ctrl-1",
+      "purpose": "strategy_change",
+      "result": "r-1",
+      "target_exec": "run-1",
+      "timing": "during_observed_execution"
+    }
+  ],
+  "executions": [
+    {
+      "id": "run-1",
+      "input": "task-a",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Supervisor",
+      "result": "r-1",
+      "target_exec": "run-1"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "controls": [
+    {
+      "action": "audit",
+      "id": "ctrl-46",
+      "result": "r-46",
+      "target_exec": "run-46",
+      "timing": "after_observed_execution"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-46",
+      "input": "task-46",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-46",
+      "observer": "Supervisor",
+      "result": "r-46",
+      "target_exec": "run-46"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured fixture; prose is context only.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": []
+}

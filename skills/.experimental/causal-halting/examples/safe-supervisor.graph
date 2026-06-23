@@ -1,0 +1,2 @@
+E(TaskA,input) -> R(TaskA,input)
+R(TaskA,input) -> E(Supervisor,input)

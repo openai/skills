@@ -1,0 +1,36 @@
+{
+  "classification": "causal_paradox",
+  "explanation": "The repair moves control from the observed execution to a separate boundary.",
+  "problem": {
+    "graph": [
+      "E(AgentRun,task) -> R(AgentRun,task)",
+      "R(AgentRun,task) -> E(AgentRun,task)"
+    ],
+    "why_unsafe": "The current execution consumes a prediction or observation result about itself."
+  },
+  "proof_obligations": [
+    {
+      "forbidden_consumer_exec_id": "run-1",
+      "obligation": "prediction_result_not_consumed_by_observed_execution",
+      "result_id": "r-1",
+      "valid_if": [
+        "consumer is external_orchestrator",
+        "consumer exec starts after observed exec ends",
+        "result is audit_only",
+        "consumer is a future execution"
+      ]
+    }
+  ],
+  "recommendations": [
+    "Route the prediction result to an external orchestrator.",
+    "Let the orchestrator stop, restart, or schedule a future run.",
+    "Do not let the observed execution consume its own halting prediction before it ends.",
+    "Use bounded progress metrics inside the run instead of self-halting prediction."
+  ],
+  "repair_graph": [
+    "E(AgentRun,task) -> R(AgentRun,task)",
+    "R(AgentRun,task) -> E(Orchestrator,input)",
+    "E(Orchestrator,input) -> E(NextAgentRun,input)"
+  ],
+  "repair_status": "repair_recommended"
+}

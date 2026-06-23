@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CHC EffectSummary",
+  "type": "object",
+  "required": ["summary_id", "function", "edges", "status", "iteration_count", "max_iterations", "widening_applied"],
+  "properties": {
+    "summary_id": {"type": "string"},
+    "function": {"type": "string"},
+    "edges": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["not_needed", "converged_exact", "converged_conservative", "not_converged"]},
+    "iteration_count": {"type": "integer"},
+    "max_iterations": {"type": "integer"},
+    "widening_applied": {"type": "boolean"},
+    "conservative_reason": {"type": ["string", "null"]}
+  }
+}

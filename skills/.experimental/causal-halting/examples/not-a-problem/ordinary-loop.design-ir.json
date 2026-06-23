@@ -1,0 +1,19 @@
+{
+  "controls": [],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-loop",
+      "input": "bounded-progress-loop",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [],
+  "semantic_evidence": [
+    {
+      "claim": "Ordinary loop with no modeled prediction result.",
+      "source": "example"
+    }
+  ],
+  "uncertain": []
+}

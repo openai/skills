@@ -1,0 +1,4 @@
+{"type":"exec_start","exec_id":"run-1","program":"AgentRun","input":"task","timestamp":"2026-04-30T10:00:00Z","span_id":"s1","trace_id":"t1"}
+{"type":"observe","observer":"Supervisor","target_exec_id":"run-1","result_id":"r-1","timestamp":"2026-04-30T10:00:01Z","span_id":"s2","parent_id":"s1","trace_id":"t1","happens_before":["s3"]}
+{"type":"consume","result_id":"r-1","consumer_exec_id":"run-1","purpose":"change_strategy","timestamp":"2026-04-30T10:00:02Z","span_id":"s3","parent_id":"s2","trace_id":"t1","execution_identity_relation":"same"}
+{"type":"exec_end","exec_id":"run-1","status":"halted","timestamp":"2026-04-30T10:00:03Z","span_id":"s4","trace_id":"t1"}

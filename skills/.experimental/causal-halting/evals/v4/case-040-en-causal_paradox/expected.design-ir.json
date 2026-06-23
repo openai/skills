@@ -1,0 +1,34 @@
+{
+  "controls": [
+    {
+      "action": "change_strategy",
+      "id": "ctrl-40",
+      "result": "r-40",
+      "target_exec": "run-40",
+      "timing": "during_observed_execution"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-40",
+      "input": "task-40",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-40",
+      "observer": "Supervisor",
+      "result": "r-40",
+      "target_exec": "run-40"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Structured fixture; prose is context only.",
+      "source": "v4-corpus"
+    }
+  ],
+  "uncertain": []
+}

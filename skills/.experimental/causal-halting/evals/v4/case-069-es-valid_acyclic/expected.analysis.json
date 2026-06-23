@@ -1,0 +1,93 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "valid_acyclic",
+  "design_ir": {
+    "controls": [
+      {
+        "action": "decide_next",
+        "consumer": "Orchestrator",
+        "id": "ctrl-69",
+        "result": "r-69",
+        "timing": "external_controller"
+      }
+    ],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-69",
+        "input": "task-69",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [
+      {
+        "id": "obs-69",
+        "observer": "Supervisor",
+        "result": "r-69",
+        "target_exec": "run-69"
+      }
+    ],
+    "semantic_evidence": [
+      {
+        "claim": "Structured fixture; prose is context only.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": []
+  },
+  "explanation": "No DesignIR control edge routes an observation result back into its observed execution.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": [
+      {
+        "kind": "observation_target",
+        "observation_id": "obs-69",
+        "result": "r-69",
+        "target_exec": "run-69"
+      },
+      {
+        "consumer": "Orchestrator",
+        "control_id": "ctrl-69",
+        "kind": "external_control_boundary",
+        "result": "r-69"
+      }
+    ]
+  },
+  "inferred_graph": [
+    "E(AgentRun,task_69) -> R(AgentRun,task_69)",
+    "R(AgentRun,task_69) -> External(Orchestrator)"
+  ],
+  "proof_obligations": [],
+  "repair": [],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_69)"
+    ],
+    "H": [
+      "Supervisor"
+    ],
+    "HaltResult": [
+      "r-69"
+    ]
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

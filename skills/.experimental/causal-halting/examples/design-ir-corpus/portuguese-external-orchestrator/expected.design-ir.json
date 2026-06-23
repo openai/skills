@@ -1,0 +1,46 @@
+{
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "program": "Worker",
+      "input": "task"
+    },
+    {
+      "id": "run-2",
+      "program": "Worker",
+      "input": "retry"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "ExternalEvaluator",
+      "target_exec": "run-1",
+      "result": "r-1"
+    }
+  ],
+  "controls": [
+    {
+      "id": "ctrl-1",
+      "result": "r-1",
+      "consumer": "Orchestrator",
+      "timing": "external_controller",
+      "action": "schedule_retry"
+    },
+    {
+      "id": "ctrl-2",
+      "result": "r-1",
+      "target_exec": "run-2",
+      "timing": "future_execution",
+      "action": "start_retry"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "source": "description",
+      "claim": "The external orchestrator, not the active worker, consumes the result."
+    }
+  ],
+  "uncertain": []
+}

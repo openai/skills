@@ -1,0 +1,2 @@
+Rec(y) = let r = H(Rec,y) in if r then Rec(y) else halt
+run Rec(Task)

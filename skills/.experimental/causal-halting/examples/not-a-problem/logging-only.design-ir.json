@@ -1,0 +1,26 @@
+{
+  "controls": [],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "input": "task",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Logger",
+      "result": "r-1",
+      "target_exec": "run-1"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "Observation result is logged only and does not control execution.",
+      "source": "example"
+    }
+  ],
+  "uncertain": []
+}

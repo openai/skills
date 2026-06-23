@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CHC-3 ProcessIR",
+  "type": "object",
+  "required": ["processes", "sessions", "channels", "executions", "observations", "controls"],
+  "additionalProperties": false,
+  "properties": {
+    "processes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role"],
+        "properties": {
+          "id": {"type": "string"},
+          "role": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {"id": {"type": "string"}},
+        "additionalProperties": true
+      }
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {"id": {"type": "string"}},
+        "additionalProperties": true
+      }
+    },
+    "executions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "process_id", "session_id", "program", "input"],
+        "properties": {
+          "id": {"type": "string"},
+          "process_id": {"type": "string"},
+          "session_id": {"type": "string"},
+          "program": {"type": "string"},
+          "input": {}
+        },
+        "additionalProperties": true
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "observer_process_id", "target_exec", "result"],
+        "properties": {
+          "id": {"type": "string"},
+          "observer_process_id": {"type": "string"},
+          "target_exec": {"type": "string"},
+          "result": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "result", "timing", "action"],
+        "properties": {
+          "id": {"type": "string"},
+          "result": {"type": "string"},
+          "target_exec": {"type": "string"},
+          "timing": {"enum": ["during_observed_execution", "after_observed_execution", "future_execution", "external_controller", "unknown"]},
+          "channel_id": {"type": "string"},
+          "controller_process_id": {"type": "string"},
+          "consumer": {"type": "string"},
+          "route": {"type": "array", "items": {"type": "string"}},
+          "action": {"type": "string"},
+          "role_collapse": {"type": "boolean"}
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

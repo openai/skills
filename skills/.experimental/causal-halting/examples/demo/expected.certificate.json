@@ -1,0 +1,61 @@
+{
+  "after_classification": "valid_acyclic",
+  "before_classification": "causal_paradox",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "certificate_version": "1.0",
+  "claim": "prediction_feedback_removed",
+  "evidence_paths": {
+    "after_feedback_paths": [],
+    "before_feedback_paths": [
+      {
+        "before_observed_exec_end": true,
+        "consumer_exec_id": "run-1",
+        "execution_identity_relation": "same",
+        "path": [
+          "E(AgentRun,task_a)",
+          "R(AgentRun,task_a)",
+          "E(AgentRun,task_a)"
+        ],
+        "purpose": "strategy_change",
+        "relation": "same_execution",
+        "result_id": "r-1",
+        "target_exec_id": "run-1"
+      }
+    ]
+  },
+  "obligations_checked": [
+    {
+      "forbidden_consumer_exec_id": "run-1",
+      "matching_paths": [
+        {
+          "before_observed_exec_end": false,
+          "consumer_exec_id": "run-2",
+          "execution_identity_relation": "future",
+          "path": [
+            "E(AgentRun,task_a)",
+            "R(AgentRun,task_a)",
+            "E(AgentRun,task_a_retry)"
+          ],
+          "purpose": "schedule_retry",
+          "relation": "future_execution",
+          "result_id": "r-1",
+          "target_exec_id": "run-1"
+        }
+      ],
+      "obligation": "prediction_result_not_consumed_by_observed_execution",
+      "result_id": "r-1",
+      "status": "passed",
+      "valid_if": [
+        "consumer is external_orchestrator",
+        "consumer exec starts after observed exec ends",
+        "result is audit_only",
+        "consumer is a future execution"
+      ],
+      "violating_paths": []
+    }
+  ],
+  "result": "passed"
+}

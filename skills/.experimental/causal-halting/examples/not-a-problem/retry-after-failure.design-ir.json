@@ -1,0 +1,39 @@
+{
+  "controls": [
+    {
+      "action": "retry",
+      "id": "ctrl-1",
+      "result": "r-1",
+      "target_exec": "run-2",
+      "timing": "future_execution"
+    }
+  ],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "input": "task",
+      "program": "AgentRun"
+    },
+    {
+      "id": "run-2",
+      "input": "task-retry",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [
+    {
+      "id": "obs-1",
+      "observer": "Supervisor",
+      "result": "r-1",
+      "target_exec": "run-1"
+    }
+  ],
+  "semantic_evidence": [
+    {
+      "claim": "The result controls a future retry, not the observed run.",
+      "source": "example"
+    }
+  ],
+  "uncertain": []
+}

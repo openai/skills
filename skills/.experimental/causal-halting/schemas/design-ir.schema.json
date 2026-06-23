@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Causal Halting DesignIR",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["design_ir_version", "executions", "observations", "controls", "semantic_evidence"],
+  "properties": {
+    "design_ir_version": {"const": "1.0"},
+    "classification": {"not": {}},
+    "executions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "program", "input"],
+        "properties": {
+          "id": {"type": "string"},
+          "program": {"type": "string"},
+          "input": {}
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "observer", "target_exec", "result"],
+        "properties": {
+          "id": {"type": "string"},
+          "observer": {"type": "string"},
+          "target_exec": {"type": "string"},
+          "result": {"type": "string"}
+        }
+      }
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "result", "timing"],
+        "properties": {
+          "id": {"type": "string"},
+          "result": {"type": "string"},
+          "target_exec": {"type": "string"},
+          "consumer": {"type": "string"},
+          "timing": {
+            "enum": [
+              "during_observed_execution",
+              "after_observed_execution",
+              "future_execution",
+              "external_controller",
+              "unknown"
+            ]
+          }
+        }
+      }
+    },
+    "semantic_evidence": {"type": "array"},
+    "uncertain": {"type": "array"}
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Causal Halting"
+  short_description: "Analyze prediction-feedback loops and causal halting"
+  default_prompt: "Use the Causal Halting skill to analyze halting, self-reference, prediction feedback, and AI agent loop designs with CHC-0."

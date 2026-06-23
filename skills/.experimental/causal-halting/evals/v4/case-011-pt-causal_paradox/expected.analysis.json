@@ -1,0 +1,112 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "causal_paradox",
+  "design_ir": {
+    "controls": [
+      {
+        "action": "change_strategy",
+        "id": "ctrl-11",
+        "result": "r-11",
+        "target_exec": "run-11",
+        "timing": "during_observed_execution"
+      }
+    ],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-11",
+        "input": "task-11",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [
+      {
+        "id": "obs-11",
+        "observer": "Supervisor",
+        "result": "r-11",
+        "target_exec": "run-11"
+      }
+    ],
+    "semantic_evidence": [
+      {
+        "claim": "Structured fixture; prose is context only.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": []
+  },
+  "explanation": "A prediction or observation result controls the same execution it observes.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": [
+      {
+        "kind": "observation_target",
+        "observation_id": "obs-11",
+        "result": "r-11",
+        "target_exec": "run-11"
+      },
+      {
+        "control_id": "ctrl-11",
+        "kind": "control_target",
+        "result": "r-11",
+        "target_exec": "run-11",
+        "timing": "during_observed_execution"
+      }
+    ]
+  },
+  "inferred_graph": [
+    "E(AgentRun,task_11) -> R(AgentRun,task_11)",
+    "R(AgentRun,task_11) -> E(AgentRun,task_11)"
+  ],
+  "proof_obligations": [
+    {
+      "forbidden_consumer_exec_id": "run-11",
+      "obligation": "prediction_result_not_consumed_by_observed_execution",
+      "result_id": "r-11",
+      "valid_if": [
+        "consumer is external_orchestrator",
+        "consumer exec starts after observed exec ends",
+        "result is audit_only",
+        "consumer is a future execution"
+      ]
+    }
+  ],
+  "repair": [
+    "Move the prediction result to an external orchestrator or controller.",
+    "Make the result affect a future execution, not the execution being observed.",
+    "Convert current-run self-prediction into post-run audit when possible.",
+    "Replace self-halting prediction with bounded local progress metrics.",
+    "Keep monitor and controller roles separate."
+  ],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_11)"
+    ],
+    "H": [
+      "Supervisor"
+    ],
+    "HaltResult": [
+      "r-11"
+    ]
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

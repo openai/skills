@@ -1,0 +1,22 @@
+{
+  "processes": [{"id": "agent", "role": "worker"}, {"id": "orchestrator", "role": "controller"}],
+  "sessions": [{"id": "s-1"}, {"id": "s-2"}],
+  "channels": [{"id": "schedule-next"}],
+  "executions": [
+    {"id": "run-1", "process_id": "agent", "session_id": "s-1", "program": "AgentRun", "input": "task"},
+    {"id": "run-2", "process_id": "agent", "session_id": "s-2", "program": "AgentRun", "input": "retry"}
+  ],
+  "observations": [
+    {"id": "obs-1", "observer_process_id": "orchestrator", "target_exec": "run-1", "result": "r-1"}
+  ],
+  "controls": [
+    {
+      "id": "ctrl-1",
+      "result": "r-1",
+      "target_exec": "run-2",
+      "timing": "future_execution",
+      "channel_id": "schedule-next",
+      "action": "schedule_retry"
+    }
+  ]
+}

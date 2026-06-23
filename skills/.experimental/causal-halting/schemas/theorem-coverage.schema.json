@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Causal Halting Theorem Coverage",
+  "type": "object",
+  "required": ["chc_level", "mechanized_core", "claims"],
+  "properties": {
+    "chc_level": {"type": "string"},
+    "mechanized_core": {"type": "string"},
+    "claims": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

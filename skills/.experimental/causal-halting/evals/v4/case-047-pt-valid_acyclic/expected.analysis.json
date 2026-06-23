@@ -1,0 +1,58 @@
+{
+  "analysis_profile": "complete_for_chc0",
+  "capability_boundary": {
+    "does_not_prove_arbitrary_termination": true,
+    "does_not_solve_classical_halting": true
+  },
+  "classification": "valid_acyclic",
+  "design_ir": {
+    "controls": [],
+    "design_ir_version": "1.0",
+    "executions": [
+      {
+        "id": "run-47",
+        "input": "task-47",
+        "program": "AgentRun"
+      }
+    ],
+    "observations": [],
+    "semantic_evidence": [
+      {
+        "claim": "Ordinary local loop or progress counter; no halting prediction result is modeled.",
+        "source": "v4-corpus"
+      }
+    ],
+    "uncertain": []
+  },
+  "explanation": "No DesignIR control edge routes an observation result back into its observed execution.",
+  "formal_status": "specified",
+  "identity_resolution": {
+    "ambiguous": [],
+    "assumptions": [],
+    "conflicts": [],
+    "missing": [],
+    "resolved": []
+  },
+  "inferred_graph": [],
+  "proof_obligations": [],
+  "repair": [],
+  "roles": {
+    "Code": [
+      "AgentRun"
+    ],
+    "Exec": [
+      "AgentRun(task_47)"
+    ],
+    "H": [],
+    "HaltResult": []
+  },
+  "theorem_coverage": {
+    "chc_level": "DesignIR",
+    "claims": [
+      "structured DesignIR feedback classification"
+    ],
+    "mechanized_core": "not_mechanized"
+  },
+  "uncertain_edges": [],
+  "validity_scope": "no_modeled_prediction_feedback_only"
+}

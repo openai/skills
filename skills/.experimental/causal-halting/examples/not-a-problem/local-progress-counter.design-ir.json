@@ -1,0 +1,19 @@
+{
+  "controls": [],
+  "design_ir_version": "1.0",
+  "executions": [
+    {
+      "id": "run-1",
+      "input": "task-with-budget",
+      "program": "AgentRun"
+    }
+  ],
+  "observations": [],
+  "semantic_evidence": [
+    {
+      "claim": "A bounded progress counter is local state, not a prediction about whole-run halting.",
+      "source": "example"
+    }
+  ],
+  "uncertain": []
+}
