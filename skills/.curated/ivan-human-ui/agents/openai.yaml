@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ivan Human UI"
+  short_description: "UI-only playbook to remove AI vibe and polish product pages."
+  default_prompt: "Use Ivan Human UI to remove AI-looking patterns and refactor the page into a clear, intentional, human-crafted product experience with explicit constraints and verification."

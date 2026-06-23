@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Case B After</title>
+    <style>
+      :root {
+        --bg: #fafaf9;
+        --ink: #0a0a0a;
+        --muted: #57534e;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Inter", Arial, sans-serif;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 8px;
+        padding: 48px 32px;
+      }
+      .hero h1 {
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .hero p {
+        margin: 0;
+        color: var(--muted);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 0 32px 32px;
+      }
+      .card {
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 10px 24px rgb(0 0 0 / 8%);
+        overflow: hidden;
+      }
+      .shot-wrap {
+        position: relative;
+      }
+      .shot-wrap::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 0 1px rgb(10 10 10 / 10%);
+        pointer-events: none;
+      }
+      .shot {
+        width: 100%;
+        display: block;
+      }
+      .copy {
+        padding: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <header
+      class="hero"
+      data-layout="split"
+      data-ratio="3-5:2-5"
+      data-gap="8"
+      data-palette="neutral"
+    >
+      <h1 data-heading-align="left">Track every stream with a calmer, clearer rhythm.</h1>
+      <p>Aligned support copy, neutral palette, and explicit spacing scale.</p>
+    </header>
+    <main class="cards" data-gap="8">
+      <section class="card">
+        <div class="shot-wrap" data-ring="outer-10">
+          <img
+            class="shot"
+            src="./images/dashboard-shot.svg"
+            data-screenshot="./images/dashboard-shot.svg"
+            alt="dashboard screenshot"
+          />
+        </div>
+        <div class="copy">
+          <h2>Forecasting</h2>
+          <p>Neutral, legible hierarchy with no template color drift.</p>
+        </div>
+      </section>
+      <section class="card">
+        <div class="copy">
+          <h2>Expenses</h2>
+          <p>Matching spacing system and consistent component polish.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

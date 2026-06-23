@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Case C Before</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Inter, Arial, sans-serif;
+        background: #fff;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 24px;
+      }
+      .testimonial-card {
+        min-height: 220px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 16px;
+        color: #111827;
+        background-position: center;
+        background-size: cover;
+      }
+      .quote {
+        margin-top: 140px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="grid">
+      <article class="testimonial-card" data-track="animal" data-bg="./images/animal.svg">
+        <p class="quote">Animal track exists</p>
+      </article>
+      <article class="testimonial-card" data-track="abstract" data-bg="./images/abstract.svg">
+        <p class="quote">Abstract track missing asset</p>
+      </article>
+      <article
+        class="testimonial-card"
+        data-track="business"
+        data-bg="./images/business.svg"
+        style="display:none"
+      >
+        <p class="quote">Business track hidden and asset missing</p>
+      </article>
+    </main>
+  </body>
+</html>
