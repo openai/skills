@@ -1,0 +1,5 @@
+interface:
+  display_name: "ScoutQA Testing"
+  short_description: "AI-powered exploratory web testing"
+  icon_large: "./assets/scoutqa.png"
+  default_prompt: "Run exploratory tests on this web application using $scoutqa-test to find bugs, accessibility issues, and usability problems."
