@@ -1,0 +1,4 @@
+interface:
+  display_name: "寒武纪鳄鱼投资法"
+  short_description: "提炼寒武纪的鳄鱼的周期价值投资框架、偏好与分析流程"
+  default_prompt: "Use $cambrian-crocodile-investing to analyze this company with a commodity-cycle, low-price, patient-holding framework."
