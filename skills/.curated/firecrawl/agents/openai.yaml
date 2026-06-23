@@ -1,0 +1,6 @@
+interface:
+  display_name: "Firecrawl"
+  short_description: "Web search, scraping, and crawling with Firecrawl"
+  icon_small: "./assets/firecrawl-small.svg"
+  icon_large: "./assets/firecrawl.png"
+  default_prompt: "Use $firecrawl to search the web, scrape pages, and map site URLs."
