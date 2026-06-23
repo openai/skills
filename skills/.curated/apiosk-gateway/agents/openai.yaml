@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apiosk Gateway"
+  short_description: "USDC pay-per-call API access via x402"
+  default_prompt: "Use $apiosk-gateway to call a pay-per-call API endpoint and handle x402 payment flow."
