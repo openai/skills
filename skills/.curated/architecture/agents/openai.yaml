@@ -1,0 +1,6 @@
+interface:
+  display_name: "architecture"
+  short_description: "Generate docs/architecture.md from evidence"
+  default_prompt: "Use $architecture to inspect this repository and refresh docs/architecture.md."
+policy:
+  allow_implicit_invocation: false

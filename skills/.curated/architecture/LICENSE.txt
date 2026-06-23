@@ -1,0 +1,5 @@
+Copyright (c) 2026 Tharindu
+
+Permission is granted to use, copy, modify, and distribute this skill and its associated files for any purpose, with or without modification, provided that this notice is included in all copies or substantial portions of the skill.
+
+This skill is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of fitness for a particular purpose and noninfringement. In no event shall the author be liable for any claim, damages, or other liability arising from the use of this skill.

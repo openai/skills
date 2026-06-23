@@ -1,0 +1,6 @@
+interface:
+  display_name: "api"
+  short_description: "Generate docs/api.md by service"
+  default_prompt: "Use $api to inspect this repository and refresh docs/api.md."
+policy:
+  allow_implicit_invocation: false

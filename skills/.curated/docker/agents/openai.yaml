@@ -1,0 +1,6 @@
+interface:
+  display_name: "docker"
+  short_description: "Create Docker assets from repo evidence"
+  default_prompt: "Use $docker to inspect this repository and refresh the Docker assets and docs/docker.md."
+policy:
+  allow_implicit_invocation: false
