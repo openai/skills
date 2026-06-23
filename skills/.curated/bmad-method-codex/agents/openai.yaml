@@ -1,0 +1,6 @@
+interface:
+  display_name: "BMAD Method (Codex 5.3)"
+  short_description: "Neutralnie prowadzi workflowy BMAD i śledzi ich zmiany"
+  default_prompt: "Use $bmad-method-codex as a neutral BMAD orchestration skill for Codex 5.3."
+policy:
+  allow_implicit_invocation: true
