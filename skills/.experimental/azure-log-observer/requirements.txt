@@ -1,0 +1,8 @@
+# Azure Log Observer - Requirements
+# This skill uses only Python standard library (subprocess, threading, etc.)
+# No external dependencies required.
+# 
+# Prerequisites:
+# - Azure CLI (az) must be installed and authenticated
+# - Run 'az login' before using this skill
+
