@@ -1,0 +1,14 @@
+interface:
+  display_name: "Postman Readiness"
+  short_description: "Assess whether an API is agent-ready"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.png"
+  default_prompt: "Use Postman Readiness to score an API or spec for agent usability and prioritize the highest-impact fixes."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "postman"
+      description: "Postman MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.postman.com/mcp"

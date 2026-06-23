@@ -1,0 +1,14 @@
+interface:
+  display_name: "Postman Docs"
+  short_description: "Generate and publish Postman docs"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.png"
+  default_prompt: "Use Postman Docs to assess documentation coverage, improve missing docs, and publish when needed."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "postman"
+      description: "Postman MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.postman.com/mcp"

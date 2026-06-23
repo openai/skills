@@ -1,0 +1,14 @@
+interface:
+  display_name: "Postman Build"
+  short_description: "Search, sync, and generate from Postman"
+  icon_small: "./assets/postman-small.svg"
+  icon_large: "./assets/postman.png"
+  default_prompt: "Use Postman Build to find an API in Postman, sync a spec or collection, or generate typed client code from a collection."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "postman"
+      description: "Postman MCP server"
+      transport: "streamable_http"
+      url: "https://mcp.postman.com/mcp"
