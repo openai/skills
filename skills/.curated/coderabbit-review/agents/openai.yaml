@@ -1,0 +1,6 @@
+interface:
+  display_name: "CodeRabbit"
+  short_description: "Run focused CodeRabbit review workflows"
+  icon_small: "./assets/coderabbit-small.png"
+  icon_large: "./assets/coderabbit.png"
+  default_prompt: "Use $coderabbit-review to review the current changes with CodeRabbit and summarize the findings."
