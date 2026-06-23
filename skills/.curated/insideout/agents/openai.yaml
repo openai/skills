@@ -1,0 +1,14 @@
+interface:
+  display_name: "InsideOut"
+  short_description: "Design, deploy & manage cloud infrastructure in Codex"
+  icon_small: "./assets/insideout-small.svg"
+  icon_large: "./assets/insideout.png"
+  default_prompt: "Use InsideOut to design, deploy, or manage cloud infrastructure for this project."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "insideout"
+      description: "InsideOut MCP server -- agentic cloud infrastructure builder & manager"
+      transport: "streamable_http"
+      url: "https://app.luthersystems.com/v1/insideout-mcp"
