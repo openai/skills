@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram Admin"
+  short_description: "Delete or remove Telegram entities safely"
+  default_prompt: "Use $telegram-admin to preview and execute a destructive Telegram workflow with explicit confirmation."
