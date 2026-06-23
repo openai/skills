@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Rounded square background with accent color -->
+  <rect width="32" height="32" rx="6" ry="6" fill="#0284c7"/>
+  <!-- Stacked layers icon (white) -->
+  <g transform="translate(6, 6) scale(0.833)">
+    <path d="M12 2L2 7l10 5 10-5-10-5z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M2 12l10 5 10-5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M2 17l10 5 10-5" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
+

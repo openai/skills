@@ -1,0 +1,6 @@
+interface:
+  display_name: "AppDeploy"
+  short_description: "Deploy full-stack apps to public URLs from AI chat."
+  icon_small: "./assets/appdeploy-small.svg"
+  icon_large: "./assets/appdeploy.png"
+  default_prompt: "Use $appdeploy to deploy this project and share the URL."
