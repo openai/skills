@@ -1,0 +1,17 @@
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "anima"
+      description: "Anima MCP server for design-aware code generation, app creation, website cloning, and Figma implementation"
+      transport: "streamable_http"
+      url: "https://public-api.animaapp.com/v1/mcp"
+
+interface:
+  display_name: "Anima"
+  short_description: "Design agent for building apps from prompts, websites, and Figma"
+  icon_small: "./assets/anima-icon.svg"
+  icon_large: "./assets/anima-logo.png"
+  brand_color: "#FF6250"
+
+policy:
+  allow_implicit_invocation: true
