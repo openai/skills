@@ -1,0 +1,7 @@
+interface:
+  display_name: "Databricks Skills"
+  short_description: "Install Databricks skills for Codex"
+  icon_small: "./assets/databricks.svg"
+  icon_large: "./assets/databricks.png"
+  brand_color: "#FF3621"
+  default_prompt: "Use $databricks-skill-installer to install or update Databricks skills from the official Databricks repository."
