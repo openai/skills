@@ -1,0 +1,4 @@
+interface:
+  display_name: "Supabase Security Audit"
+  short_description: "Audit Supabase security, RLS, and auth boundaries"
+  default_prompt: "Use $supabase-security-audit to review database RLS, auth boundaries, and security risks in this project."
