@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sitemd": {
+      "type": "stdio",
+      "command": "./sitemd/sitemd",
+      "args": ["mcp"],
+      "env": {},
+      "startup_timeout_sec": 20
+    }
+  }
+}
