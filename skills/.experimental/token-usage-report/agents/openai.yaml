@@ -1,0 +1,4 @@
+interface:
+  display_name: "Token Usage Report"
+  short_description: "Summarize Codex token usage by date and project"
+  default_prompt: "统计今天在所有项目和所有 session 的 token 使用总量，并给我项目拆分。"
