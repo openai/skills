@@ -1,0 +1,6 @@
+interface:
+  display_name: "Hugging Face CLI"
+  short_description: "Use the `hf` CLI to interact with the Hugging Face Hub"
+  icon_small: "./assets/hf-small.svg"
+  icon_large: "./assets/hf.png"
+  default_prompt: "Use $hf-cli as the entry point for anything related to the Hugging Face Hub, including downloading, uploading, and managing repos, models, datasets, Spaces, and jobs."
