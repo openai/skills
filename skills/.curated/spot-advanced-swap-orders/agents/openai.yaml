@@ -1,0 +1,3 @@
+interface:
+  display_name: "Spot"
+  short_description: "Create gasless market, limit, TWAP, stop-loss, take-profit, and delayed-start swap orders"
