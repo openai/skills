@@ -1,0 +1,16 @@
+{
+  "name": "solana-wallet-skill-scripts",
+  "private": true,
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Solana wallet scripts for a Codex skill",
+  "scripts": {
+    "install:deps": "npm install"
+  },
+  "dependencies": {
+    "@solana/spl-token": "^0.4.12",
+    "@solana/web3.js": "^1.98.0",
+    "bs58": "^6.0.0"
+  }
+}
+
