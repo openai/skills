@@ -1,0 +1,7 @@
+interface:
+  display_name: Telegram Triage
+  short_description: "Read-only Telegram triage by urgency, mentions, and keyword matches."
+  icon_small: "./assets/telegram-triage-small.svg"
+  icon_large: "./assets/telegram-triage.svg"
+  brand_color: "#2AABEE"
+  default_prompt: "Use $telegram-triage to triage Telegram chats for unread/high-priority items and deliver prioritized action summaries."
