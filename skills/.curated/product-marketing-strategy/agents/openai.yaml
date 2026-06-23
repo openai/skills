@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Marketing Strategy"
+  short_description: "Shape positioning, messaging, and launches"
+  default_prompt: "Use $product-marketing-strategy to define positioning, ICP, messaging, a battlecard, or a launch plan for this product."
