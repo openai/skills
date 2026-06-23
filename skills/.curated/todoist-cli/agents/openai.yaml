@@ -1,0 +1,4 @@
+interface:
+  display_name: "Todoist CLI (td)"
+  short_description: "Manage Todoist tasks with the td CLI"
+  default_prompt: "Help me manage my Todoist tasks using the td CLI. List tasks due today, add new tasks with natural language, and update projects or labels as needed."
