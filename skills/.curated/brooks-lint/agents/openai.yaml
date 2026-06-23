@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brooks-Lint"
+  short_description: "Code reviews grounded in six classic engineering books"
+  default_prompt: "Review this code for decay risks using Brooks-Lint."
