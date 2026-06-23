@@ -1,0 +1,33 @@
+{
+  "id": "workflow-memory-maintenance",
+  "type": "WORKFLOW",
+  "title": "Memory maintenance workflow",
+  "summary": "Run stats weekly and vacuum deprecated entries after replacement rollout.",
+  "content": {
+    "steps": [
+      "Run scripts/memory_cli.py stats",
+      "Review top tags and growth",
+      "Run scripts/memory_cli.py vacuum --dry-run",
+      "Run scripts/memory_cli.py vacuum if deprecated entries should be purged"
+    ],
+    "cadence": "weekly"
+  },
+  "tags": [
+    "project:example",
+    "area:memory"
+  ],
+  "retrieval_hints": [
+    "maintenance",
+    "vacuum",
+    "growth"
+  ],
+  "provenance": {
+    "source": "team-doc",
+    "ref": "mem-ops-001",
+    "note": "baseline workflow"
+  },
+  "validity": {
+    "status": "active",
+    "replaced_by": null
+  }
+}
