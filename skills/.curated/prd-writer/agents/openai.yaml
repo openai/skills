@@ -1,0 +1,7 @@
+interface:
+  display_name: "PRD Writer"
+  short_description: "Draft structured product requirements documents"
+  default_prompt: "Use $prd-writer to create a detailed PRD for this product or feature."
+
+policy:
+  allow_implicit_invocation: true
