@@ -9,7 +9,7 @@ This file is for the fallback CLI mode only. Read it only after the user explici
 - `edit`: edit one or more existing images
 - `generate-batch`: run many generation jobs from a JSONL file
 
-Real API calls require **network access** + `OPENAI_API_KEY`. `--dry-run` does not.
+Real API calls require **network access** plus `OPENAI_API_KEY` or a Codex config image provider. `--dry-run` does not make an API call.
 
 ## Quick start (works from any repo)
 Set a stable path to the skill CLI (default `CODEX_HOME` is `~/.codex`):
@@ -36,7 +36,7 @@ Notes:
 - One-off dry-runs print the API payload and the computed output path(s).
 - Repo-local finals should live under `output/imagegen/`.
 
-Generate (requires `OPENAI_API_KEY` + network):
+Generate (requires network plus `OPENAI_API_KEY` or a Codex config image provider):
 
 ```bash
 python "$IMAGE_GEN" generate \
@@ -44,6 +44,32 @@ python "$IMAGE_GEN" generate \
   --size 1024x1024 \
   --out output/imagegen/alpine-cabin.png
 ```
+
+## Authentication
+The CLI keeps the existing `OPENAI_API_KEY` behavior first. If `OPENAI_API_KEY` is unset, it reads a Codex image provider from config.
+
+Default provider:
+```toml
+[model_providers.azure_image]
+name = "Azure OpenAI Images"
+base_url = "https://<resource>.openai.azure.com/openai/v1"
+env_key = "AZURE_OPENAI_IMAGES_TOKEN"
+```
+
+`experimental_bearer_token` is also supported, but prefer `env_key` so the token value remains in an environment variable. Never include real token values in PRs, logs, tests, or docs.
+
+Provider and config overrides:
+```bash
+python "$IMAGE_GEN" generate \
+  --prompt "A test image" \
+  --codex-provider azure_image \
+  --codex-config "$HOME/.codex/config.toml" \
+  --dry-run
+```
+
+Resolution order:
+- Provider name: `--codex-provider`, then `CODEX_IMAGE_PROVIDER`, then `azure_image`
+- Config path: `--codex-config`, then `CODEX_CONFIG_PATH`, then `CODEX_HOME/config.toml`, then the platform default user config path
 
 Edit:
 
@@ -151,7 +177,7 @@ Notes:
 ## CLI notes
 - Supported sizes: `1024x1024`, `1536x1024`, `1024x1536`, or `auto`.
 - Transparent backgrounds require `output_format` to be `png` or `webp`.
-- `--prompt-file`, `--output-compression`, `--moderation`, `--max-attempts`, `--fail-fast`, `--force`, and `--no-augment` are supported.
+- `--prompt-file`, `--output-compression`, `--moderation`, `--max-attempts`, `--fail-fast`, `--force`, `--no-augment`, `--codex-provider`, and `--codex-config` are supported.
 - This CLI is intended for GPT Image models. Do not assume older non-GPT image-model behavior applies here.
 
 ## See also

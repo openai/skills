@@ -28,6 +28,7 @@ DEFAULT_OUTPUT_FORMAT = "png"
 DEFAULT_CONCURRENCY = 5
 DEFAULT_DOWNSCALE_SUFFIX = "-web"
 DEFAULT_OUTPUT_PATH = "output/imagegen/output.png"
+DEFAULT_CODEX_IMAGE_PROVIDER = "azure_image"
 GPT_IMAGE_MODEL_PREFIX = "gpt-image-"
 
 ALLOWED_SIZES = {"1024x1024", "1536x1024", "1024x1536", "auto"}
@@ -59,14 +60,215 @@ def _dependency_hint(package: str, *, upgrade: bool = False) -> str:
     )
 
 
-def _ensure_api_key(dry_run: bool) -> None:
+def _default_codex_config_path(config_path: Optional[str] = None) -> Path:
+    if config_path:
+        return Path(config_path).expanduser()
+
+    env_path = os.getenv("CODEX_CONFIG_PATH")
+    if env_path:
+        return Path(env_path).expanduser()
+
+    codex_home = os.getenv("CODEX_HOME")
+    if codex_home:
+        codex_home_config = Path(codex_home).expanduser() / "config.toml"
+        if codex_home_config.exists():
+            return codex_home_config
+
+    user_profile = os.getenv("USERPROFILE")
+    if os.name == "nt" and user_profile:
+        return Path(user_profile) / ".codex" / "config.toml"
+
+    return Path.home() / ".codex" / "config.toml"
+
+
+def _load_toml(path: Path) -> dict:
+    try:
+        import tomllib
+    except ModuleNotFoundError:
+        try:
+            import tomli as tomllib  # type: ignore[no-redef]
+        except ModuleNotFoundError:
+            _die("Reading Codex config.toml requires Python 3.11+ or the `tomli` package.")
+
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8-sig"))
+    except Exception as exc:
+        _die(f"Failed to read Codex config.toml at {path}: {exc}")
+
+    if not isinstance(data, dict):
+        _die(f"Codex config.toml at {path} did not parse to a TOML table.")
+    return data
+
+
+def _resolve_codex_provider(
+    provider_name: str,
+    config_path: Optional[str] = None,
+) -> Tuple[Optional[dict], Path]:
+    resolved_path = _default_codex_config_path(config_path)
+    if not resolved_path.exists():
+        return None, resolved_path
+
+    data = _load_toml(resolved_path)
+    providers = data.get("model_providers")
+    if not isinstance(providers, dict):
+        return None, resolved_path
+
+    provider = providers.get(provider_name)
+    if not isinstance(provider, dict):
+        return None, resolved_path
+    return provider, resolved_path
+
+
+def _resolve_codex_provider_auth(provider: dict) -> Optional[Tuple[str, str]]:
+    env_key = provider.get("env_key")
+    if isinstance(env_key, str) and env_key.strip():
+        env_value = os.getenv(env_key.strip())
+        if env_value:
+            return env_value, f"env_key:{env_key.strip()}"
+
+    bearer_token = provider.get("experimental_bearer_token")
+    if isinstance(bearer_token, str) and bearer_token.strip():
+        return bearer_token, "experimental_bearer_token"
+
+    return None
+
+
+def _codex_provider_name(args: Optional[argparse.Namespace]) -> str:
+    arg_value = getattr(args, "codex_provider", None) if args is not None else None
+    if arg_value:
+        return str(arg_value)
+    env_value = os.getenv("CODEX_IMAGE_PROVIDER")
+    if env_value:
+        return env_value
+    return DEFAULT_CODEX_IMAGE_PROVIDER
+
+
+def _codex_config_arg(args: Optional[argparse.Namespace]) -> Optional[str]:
+    if args is None:
+        return None
+    value = getattr(args, "codex_config", None)
+    return str(value) if value else None
+
+
+def _codex_provider_error(reason: str, provider_name: str, config_path: Path) -> str:
+    return (
+        f"{reason}\n"
+        "Set OPENAI_API_KEY, or define a Codex image provider in ~/.codex/config.toml.\n"
+        f"Required table: [model_providers.{provider_name}]\n"
+        "Required keys: base_url and either env_key or experimental_bearer_token.\n"
+        f"Resolved Codex config path: {config_path}\n"
+        "Do not paste token values into chat, logs, tests, or documentation."
+    )
+
+
+def _resolve_client_config(
+    args: Optional[argparse.Namespace],
+    *,
+    require_auth: bool,
+) -> Tuple[Dict[str, str], Dict[str, Optional[str]]]:
     if os.getenv("OPENAI_API_KEY"):
+        return {}, {"auth": "OPENAI_API_KEY"}
+
+    provider_name = _codex_provider_name(args)
+    provider, config_path = _resolve_codex_provider(provider_name, _codex_config_arg(args))
+
+    if provider is None:
+        if require_auth:
+            _die(
+                _codex_provider_error(
+                    f"OPENAI_API_KEY is not set and Codex provider '{provider_name}' was not found.",
+                    provider_name,
+                    config_path,
+                )
+            )
+        return {}, {
+            "auth": "missing",
+            "provider_name": provider_name,
+            "config_path": str(config_path),
+        }
+
+    base_url = provider.get("base_url")
+    if not isinstance(base_url, str) or not base_url.strip():
+        if require_auth:
+            _die(
+                _codex_provider_error(
+                    f"Codex provider '{provider_name}' is missing base_url.",
+                    provider_name,
+                    config_path,
+                )
+            )
+        return {}, {
+            "auth": "incomplete",
+            "provider_name": provider_name,
+            "config_path": str(config_path),
+        }
+
+    auth = _resolve_codex_provider_auth(provider)
+    if auth is None:
+        if require_auth:
+            _die(
+                _codex_provider_error(
+                    f"Codex provider '{provider_name}' has no usable env_key or experimental_bearer_token.",
+                    provider_name,
+                    config_path,
+                )
+            )
+        return {}, {
+            "auth": "incomplete",
+            "provider_name": provider_name,
+            "config_path": str(config_path),
+            "base_url": base_url.strip(),
+        }
+
+    token, source_label = auth
+    return {"base_url": base_url.strip(), "api_key": token}, {
+        "auth": "codex_provider",
+        "provider_name": provider_name,
+        "config_path": str(config_path),
+        "base_url": base_url.strip(),
+        "token_source": source_label,
+    }
+
+
+def _create_client_config(args: Optional[argparse.Namespace] = None) -> Dict[str, str]:
+    cached = getattr(args, "_client_config", None) if args is not None else None
+    if isinstance(cached, dict):
+        return cached
+    config, _ = _resolve_client_config(args, require_auth=True)
+    return config
+
+
+def _ensure_api_key(args: argparse.Namespace) -> None:
+    dry_run = bool(getattr(args, "dry_run", False))
+    config, info = _resolve_client_config(args, require_auth=not dry_run)
+    setattr(args, "_client_config", config)
+
+    if info.get("auth") == "OPENAI_API_KEY":
         print("OPENAI_API_KEY is set.", file=sys.stderr)
         return
-    if dry_run:
-        _warn("OPENAI_API_KEY is not set; dry-run only.")
+
+    if info.get("auth") == "codex_provider":
+        print(
+            "Using Codex image provider "
+            f"'{info.get('provider_name')}' with base_url={info.get('base_url')} "
+            f"and token_source={info.get('token_source')}.",
+            file=sys.stderr,
+        )
         return
-    _die("OPENAI_API_KEY is not set. Export it before running.")
+
+    if dry_run:
+        provider_name = _codex_provider_name(args)
+        config_path = _default_codex_config_path(_codex_config_arg(args))
+        _warn(
+            _codex_provider_error(
+                "OPENAI_API_KEY is not set and Codex image provider was not fully resolved; dry-run only.",
+                provider_name,
+                config_path,
+            )
+        )
+        return
+
+    _die("Internal error: image generation auth was not resolved.")
 
 
 def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
@@ -330,15 +532,15 @@ def _decode_write_and_downscale(
         print(f"Wrote {derived}")
 
 
-def _create_client():
+def _create_client(args: Optional[argparse.Namespace] = None):
     try:
         from openai import OpenAI
     except ImportError:
         _die(f"openai SDK not installed in the active environment. {_dependency_hint('openai')}")
-    return OpenAI()
+    return OpenAI(**_create_client_config(args))
 
 
-def _create_async_client():
+def _create_async_client(args: Optional[argparse.Namespace] = None):
     try:
         from openai import AsyncOpenAI
     except ImportError:
@@ -352,7 +554,7 @@ def _create_async_client():
             "AsyncOpenAI not available in this openai SDK version. "
             f"{_dependency_hint('openai', upgrade=True)}"
         )
-    return AsyncOpenAI()
+    return AsyncOpenAI(**_create_client_config(args))
 
 
 def _slugify(value: str) -> str:
@@ -563,7 +765,7 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
             )
         return 0
 
-    client = _create_async_client()
+    client = _create_async_client(args)
     sem = asyncio.Semaphore(args.concurrency)
 
     any_failed = False
@@ -684,7 +886,7 @@ def _generate(args: argparse.Namespace) -> None:
         file=sys.stderr,
     )
     started = time.time()
-    client = _create_client()
+    client = _create_client(args)
     result = client.images.generate(**payload)
     elapsed = time.time() - started
     print(f"Generation completed in {elapsed:.1f}s.", file=sys.stderr)
@@ -757,7 +959,7 @@ def _edit(args: argparse.Namespace) -> None:
         file=sys.stderr,
     )
     started = time.time()
-    client = _create_client()
+    client = _create_client(args)
 
     with _open_files(image_paths) as image_files, _open_mask(mask_path) as mask_file:
         request = dict(payload)
@@ -848,6 +1050,17 @@ def _add_shared_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--out-dir")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--codex-provider",
+        help=(
+            "Codex model_providers entry to use when OPENAI_API_KEY is unset "
+            f"(default: {DEFAULT_CODEX_IMAGE_PROVIDER}, or CODEX_IMAGE_PROVIDER)."
+        ),
+    )
+    parser.add_argument(
+        "--codex-config",
+        help="Path to Codex config.toml when OPENAI_API_KEY is unset.",
+    )
     parser.add_argument("--augment", dest="augment", action="store_true")
     parser.add_argument("--no-augment", dest="augment", action="store_false")
     parser.set_defaults(augment=True)
@@ -916,7 +1129,7 @@ def main() -> int:
     _validate_quality(args.quality)
     _validate_background(args.background)
     _validate_model(args.model)
-    _ensure_api_key(args.dry_run)
+    _ensure_api_key(args)
 
     args.func(args)
     return 0

@@ -12,7 +12,7 @@ Generates or edits images for the current project (for example website assets, g
 This skill has exactly two top-level modes:
 
 - **Default built-in tool mode (preferred):** built-in `image_gen` tool for normal image generation and editing. Does not require `OPENAI_API_KEY`.
-- **Fallback CLI mode (explicit-only):** `scripts/image_gen.py` CLI. Use only when the user explicitly asks for the CLI path. Requires `OPENAI_API_KEY`.
+- **Fallback CLI mode (explicit-only):** `scripts/image_gen.py` CLI. Use only when the user explicitly asks for the CLI path. Requires `OPENAI_API_KEY` or a Codex config image provider.
 
 Within the explicit CLI fallback only, the CLI exposes three subcommands:
 
@@ -23,7 +23,7 @@ Within the explicit CLI fallback only, the CLI exposes three subcommands:
 Rules:
 - Use the built-in `image_gen` tool by default for all normal image generation and editing requests.
 - Never switch to CLI fallback automatically.
-- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY`. Proceed only if the user explicitly asks for that fallback.
+- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY` or a configured Codex image provider. Proceed only if the user explicitly asks for that fallback.
 - If the user explicitly asks for CLI mode, use the bundled `scripts/image_gen.py` workflow. Do not create one-off SDK runners.
 - Never modify `scripts/image_gen.py`. If something is missing, ask the user before doing anything else.
 
@@ -254,14 +254,20 @@ Portability note:
 - In uv-managed environments, `uv pip install ...` remains the preferred path.
 
 ### Environment
-- `OPENAI_API_KEY` must be set for live API calls.
+- Live CLI API calls require one credential source:
+  - `OPENAI_API_KEY`
+  - or Codex `~/.codex/config.toml` with `[model_providers.azure_image]`, `base_url`, and either `env_key` or `experimental_bearer_token`
+- Prefer `env_key` when possible so the token value stays in an environment variable instead of the config file.
+- The CLI uses provider `azure_image` by default when `OPENAI_API_KEY` is unset. Override with `CODEX_IMAGE_PROVIDER` or `--codex-provider`.
+- The CLI resolves config from `--codex-config`, then `CODEX_CONFIG_PATH`, then `CODEX_HOME/config.toml`, then the platform default user config path.
 - Do not ask the user for `OPENAI_API_KEY` when using the built-in `image_gen` tool.
-- Never ask the user to paste the full key in chat. Ask them to set it locally and confirm when ready.
+- Never ask the user to paste a full API key or bearer token in chat. Ask them to set it locally and confirm when ready.
 
-If the key is missing, give the user these steps:
+If CLI credentials are missing, give the user these options:
 1. Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys
 2. Set `OPENAI_API_KEY` as an environment variable in their system.
-3. Offer to guide them through setting the environment variable for their OS/shell if needed.
+3. Or define `[model_providers.azure_image]` in Codex `~/.codex/config.toml` with `base_url` and `env_key` or `experimental_bearer_token`.
+4. Offer to guide them through setting the environment variable or Codex config for their OS/shell if needed.
 
 If installation is not possible in this environment, tell the user which dependency is missing and how to install it into their active environment.
 
