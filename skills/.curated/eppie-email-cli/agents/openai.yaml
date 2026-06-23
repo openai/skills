@@ -1,0 +1,6 @@
+interface:
+  display_name: "Eppie Email CLI"
+  short_description: "Read, send, and manage email via eppie-console"
+  icon_small: "./assets/eppie-email-cli-small.svg"
+  icon_large: "./assets/eppie-email-cli.png"
+  default_prompt: "Use $eppie-email-cli to read, send, or manage email through the eppie-console CLI."
