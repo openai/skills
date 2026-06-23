@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dotenvx"
+  short_description: "Help with dotenvx CLI, encryption, and env workflows"
+  default_prompt: "Guide dotenvx setup, usage, multi-env loading, encryption, and ops workflows."
