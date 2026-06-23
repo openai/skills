@@ -1,0 +1,6 @@
+interface:
+  display_name: "Conductor OSS Workflows"
+  short_description: "Create, run, and manage Conductor workflows"
+  icon_small: "./assets/conductor.png"
+  icon_large: "./assets/conductor.png"
+  default_prompt: "Help me create and manage Conductor workflows for orchestrating my services."

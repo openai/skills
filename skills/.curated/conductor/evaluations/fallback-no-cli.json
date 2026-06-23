@@ -1,0 +1,24 @@
+{
+  "name": "Fallback Script When CLI Unavailable",
+  "skills": ["conductor"],
+  "query": "List my workflows. I can't install npm or node on this machine.",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available — it's not",
+    "Step 2: Attempt to install via npm — npm is not available",
+    "Step 3: Recognize this is a restricted environment and switch to fallback script",
+    "Step 4: Set CONDUCTOR_API path to the bundled scripts/conductor_api.py",
+    "Step 5: Verify CONDUCTOR_SERVER_URL is set",
+    "Step 6: List workflows using `python3 \"$CONDUCTOR_API\" list-workflows`",
+    "Step 7: Present the workflow list to the user",
+    "Step 8: Inform user that all subsequent operations will use the fallback script"
+  ],
+  "success_criteria": [
+    "CLI installation is attempted first before falling back",
+    "Fallback is only used after confirming CLI cannot be installed",
+    "Plan uses the bundled scripts/conductor_api.py fallback, not raw curl/wget commands",
+    "CONDUCTOR_SERVER_URL is verified before making API calls",
+    "Script output is parsed and presented clearly to the user",
+    "User is informed they're using the fallback and why",
+    "Auth tokens are never echoed in output"
+  ]
+}

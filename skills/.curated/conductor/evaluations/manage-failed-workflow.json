@@ -1,0 +1,25 @@
+{
+  "name": "Debug and Retry a Failed Workflow",
+  "skills": ["conductor"],
+  "query": "Find my failed workflows from today and retry them",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available",
+    "Step 2: Search for failed workflows using `conductor workflow search -s FAILED --start-time-after <today> -c 20`",
+    "Step 3: Present a summary table of failed workflows with workflowId, name, and failure reason",
+    "Step 4: For each failed workflow, get execution details to identify the failed task",
+    "Step 5: Show the failed task name, error message, and retry count",
+    "Step 6: Ask user which workflows to retry (or retry all if instructed)",
+    "Step 7: Retry each workflow using `conductor workflow retry <workflowId>`",
+    "Step 8: Verify each retried workflow status changed from FAILED to RUNNING",
+    "Step 9: Report results: how many retried successfully, any that failed to retry"
+  ],
+  "success_criteria": [
+    "Search command includes a time filter (e.g., --start-time-after with today's date or similar), not an unfiltered all-time search",
+    "Failed workflows are listed with relevant diagnostic info before retrying",
+    "Failed task details (task name, error, retry count) are extracted from execution",
+    "User is informed about failures before bulk retry (not blindly retried)",
+    "Retry command is used (not restart) to resume from the failed task",
+    "Post-retry status check confirms workflows are running again",
+    "Summary clearly shows success/failure count of retry operations"
+  ]
+}

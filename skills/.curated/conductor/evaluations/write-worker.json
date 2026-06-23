@@ -1,0 +1,26 @@
+{
+  "name": "Write a Worker for a Workflow Task",
+  "skills": ["conductor"],
+  "query": "I have a workflow with a SIMPLE task called 'send_email'. Write me a Python worker for it.",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available",
+    "Step 2: Consult references/workers.md for the Python worker pattern",
+    "Step 3: Install the Python SDK: `pip install conductor-python`",
+    "Step 4: Create a worker file with @worker_task decorator matching task type 'send_email'",
+    "Step 5: Map function parameters to the task's inputParameters (e.g. recipient, subject, body)",
+    "Step 6: Return a result dict that becomes the task's outputData",
+    "Step 7: Add TaskHandler startup code that auto-discovers the worker",
+    "Step 8: Explain that CONDUCTOR_SERVER_URL must be set for the worker to connect",
+    "Step 9: Show how to run the worker file"
+  ],
+  "success_criteria": [
+    "Worker task type matches the SIMPLE task name in the workflow ('send_email')",
+    "Uses @worker_task decorator pattern from references/workers.md",
+    "Function parameters map to expected inputParameters",
+    "Return value provides meaningful outputData",
+    "TaskHandler is configured with scan_for_annotated_workers=True",
+    "Worker implementation or comments acknowledge idempotency (safe to retry)",
+    "Server connection uses env vars, not hardcoded credentials",
+    "Auth tokens are never echoed in output"
+  ]
+}

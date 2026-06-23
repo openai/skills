@@ -1,0 +1,25 @@
+{
+  "name": "Connect to Remote Server with Auth",
+  "skills": ["conductor"],
+  "query": "Connect me to my Conductor server at https://conductor.mycompany.com/api",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is installed, install if missing",
+    "Step 2: Set CONDUCTOR_SERVER_URL to the provided URL",
+    "Step 3: Test connectivity with `conductor workflow list`",
+    "Step 4: If 401/403 error, inform user the server requires authentication",
+    "Step 5: Ask user for auth key and secret (or token)",
+    "Step 6: Set CONDUCTOR_AUTH_KEY and CONDUCTOR_AUTH_SECRET (or CONDUCTOR_AUTH_TOKEN)",
+    "Step 7: Retry `conductor workflow list` to verify auth works",
+    "Step 8: Offer to save as a profile: `conductor config save --server <url> --auth-key <key> --auth-secret <secret> --profile <name>`",
+    "Step 9: Confirm connection is working and report workflow count"
+  ],
+  "success_criteria": [
+    "Server URL is set exactly as provided by user",
+    "Auth is not assumed — connectivity is tested first",
+    "Auth credentials are only requested after receiving 401/403",
+    "Credentials are set via env vars or --auth-key/--auth-secret flags",
+    "Connection is verified with a real API call after auth setup",
+    "User is offered to save the config as a profile for future use",
+    "Plan does not include commands that would print auth keys, secrets, or tokens to stdout"
+  ]
+}

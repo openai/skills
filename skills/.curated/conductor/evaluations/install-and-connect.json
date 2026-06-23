@@ -1,0 +1,25 @@
+{
+  "name": "Install CLI and Connect to Server",
+  "skills": ["conductor"],
+  "query": "I want to start using Conductor but I don't have anything set up yet",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is installed by running `conductor --version`",
+    "Step 2: If missing, install via `npm install -g @conductor-oss/conductor-cli`",
+    "Step 3: If npm is missing, install Node.js first (brew install node or nodesource)",
+    "Step 4: Verify CLI installed successfully with `conductor --version`",
+    "Step 5: Ask user whether to start a local server or connect to an existing one",
+    "Step 6a: If local — run `conductor server start` and verify with `conductor server status` (CLI auto-detects the server)",
+    "Step 6b: If existing — set CONDUCTOR_SERVER_URL and test with `conductor workflow list`",
+    "Step 7: If 401/403 error, ask user for auth credentials (key+secret or token)",
+    "Step 8: Confirm connectivity by listing workflows successfully"
+  ],
+  "success_criteria": [
+    "Plan includes running the CLI install command (npm install -g @conductor-oss/conductor-cli), not just telling the user to do it",
+    "Node.js installation is attempted if npm is unavailable",
+    "User is given a choice between local server and existing server",
+    "Auth credentials are requested only when the server returns 401/403",
+    "For local server, CLI auto-detects without needing CONDUCTOR_SERVER_URL or a profile",
+    "Plan does not include commands that would print auth tokens, keys, or secrets to stdout",
+    "Final verification confirms the CLI can communicate with the server"
+  ]
+}

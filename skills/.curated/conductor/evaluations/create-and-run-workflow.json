@@ -1,0 +1,32 @@
+{
+  "name": "Create and Run a Workflow",
+  "skills": ["conductor"],
+  "query": "Create a workflow that fetches data from an API and processes it, then run it",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available by running `conductor --version`",
+    "Step 2: Verify server is reachable (CLI auto-detects local server, or uses CONDUCTOR_SERVER_URL for remote)",
+    "Step 3: Consult references/workflow-definition.md for JSON schema and task types",
+    "Step 4: Construct a workflow definition JSON with HTTP task for API fetch and SIMPLE task for processing",
+    "Step 5: Include proper inputParameters with ${...} expressions to pass data between tasks",
+    "Step 6: Write the workflow JSON to a file",
+    "Step 7: Register the workflow using `conductor workflow create workflow.json`",
+    "Step 8: List task definitions with `conductor taskDef list` to check if SIMPLE tasks have registered workers",
+    "Step 9: If any SIMPLE task has no task definition, offer to create the task definition and scaffold a worker",
+    "Step 10: Start the workflow using `conductor workflow start -w <name> -i '{...}'`",
+    "Step 11: Check execution status using `conductor workflow get-execution <workflowId>`",
+    "Step 12: Report the execution status, workflowId, and any task failures to the user"
+  ],
+  "success_criteria": [
+    "Workflow definition follows the schema from references/workflow-definition.md",
+    "Workflow includes at least two tasks with correct types (HTTP, SIMPLE)",
+    "Tasks use ${...} expressions to wire inputs/outputs between them",
+    "Any $.varName referenced in JavaScript scripts (INLINE expression, DO_WHILE loopCondition, SWITCH javascript expression) is declared as an inputParameters key on that task",
+    "Workflow is registered before being started (create before start)",
+    "SIMPLE tasks are checked against task definitions before starting the workflow",
+    "Missing workers are flagged and user is offered to scaffold one",
+    "CLI commands are preferred; fallback script used if CLI unavailable",
+    "Execution ID is captured from the start command and used for status check",
+    "Final output includes workflowId, status, and task details",
+    "Auth tokens are never echoed in output"
+  ]
+}

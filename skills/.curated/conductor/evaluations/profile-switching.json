@@ -1,0 +1,22 @@
+{
+  "name": "Multi-Environment Profile Switching",
+  "skills": ["conductor"],
+  "query": "How many workflows do I have in dev vs prod?",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available",
+    "Step 2: Read ~/.conductor-cli/config.yaml to discover available profiles",
+    "Step 3: Identify profiles matching 'dev' and 'prod' (or ask user to confirm)",
+    "Step 4: List workflows in dev using `conductor workflow list --profile dev`",
+    "Step 5: List workflows in prod using `conductor workflow list --profile prod`",
+    "Step 6: Count workflows in each environment",
+    "Step 7: Present a comparison summary: dev count vs prod count with workflow names"
+  ],
+  "success_criteria": [
+    "Profile names are inferred from context ('dev' and 'prod')",
+    "If profiles don't exist, user is asked to set them up or provide server URLs",
+    "Both environments are queried using --profile flag, not by changing env vars",
+    "Results from both environments are presented side-by-side for comparison",
+    "Workflow counts are clearly reported for each environment",
+    "Auth tokens are never echoed in output"
+  ]
+}

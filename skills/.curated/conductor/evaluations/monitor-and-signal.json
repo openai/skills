@@ -1,0 +1,24 @@
+{
+  "name": "Monitor Workflow and Signal a Task",
+  "skills": ["conductor"],
+  "query": "Check the status of my running workflows and complete the approval task in workflow abc-123",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available",
+    "Step 2: Search for running workflows using `conductor workflow search -s RUNNING -c 10`",
+    "Step 3: Present a summary of running workflows with workflowId, name, and startTime",
+    "Step 4: Get detailed execution of workflow abc-123 using `conductor workflow get-execution abc-123 -c`",
+    "Step 5: Identify the pending WAIT or HUMAN task (the approval task) from the task list",
+    "Step 6: Signal the task using `conductor task signal --workflow-id abc-123 --task-ref <taskRefName> --status COMPLETED --output '{\"approved\": true}'`",
+    "Step 7: Verify the workflow progressed by checking status again",
+    "Step 8: Report the updated workflow status to the user"
+  ],
+  "success_criteria": [
+    "Running workflows are searched and listed before acting on a specific one",
+    "Workflow execution is fetched with task details to identify the pending task",
+    "Plan describes fetching execution details first and extracting the task reference name from them, rather than assuming a task name",
+    "Signal command uses the correct workflowId, taskRefName, and status",
+    "Output JSON is provided with the signal to advance the workflow",
+    "Workflow status is verified after signaling to confirm it progressed",
+    "Summary includes before/after status of the workflow"
+  ]
+}

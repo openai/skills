@@ -1,0 +1,25 @@
+{
+  "name": "Visualize a Workflow Definition",
+  "skills": ["conductor"],
+  "query": "Show me a visual diagram of my order-processing workflow",
+  "expected_behavior": [
+    "Step 1: Check if `conductor` CLI is available",
+    "Step 2: Fetch the workflow definition using `conductor workflow get order-processing`",
+    "Step 3: Parse the workflow tasks to understand the flow structure",
+    "Step 4: Identify constructs: sequential tasks, SWITCH branches, FORK_JOIN parallel paths, DO_WHILE loops, WAIT/HUMAN tasks",
+    "Step 5: Generate a Mermaid flowchart using `flowchart TD` or `flowchart LR`",
+    "Step 6: Map each task to the correct Mermaid node shape (diamond for SWITCH, parallelogram for WAIT, etc.)",
+    "Step 7: Present the Mermaid diagram in a fenced code block",
+    "Step 8: Provide a brief text summary of the workflow flow alongside the diagram"
+  ],
+  "success_criteria": [
+    "Plan includes a command to fetch the workflow definition from the server (e.g., conductor workflow get order-processing) before generating the diagram",
+    "Mermaid diagram uses only safe syntax: flowchart TD/LR, --> arrows, no style/title/classDef",
+    "SWITCH tasks render as diamond nodes with labeled case edges",
+    "FORK_JOIN tasks show parallel branches converging at a join",
+    "WAIT/HUMAN tasks use parallelogram shape to indicate external input",
+    "Node labels include task type and reference name",
+    "Diagram is wrapped in a ```mermaid fenced code block",
+    "Text summary accompanies the diagram for accessibility"
+  ]
+}
