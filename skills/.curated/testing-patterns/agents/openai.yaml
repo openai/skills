@@ -1,0 +1,4 @@
+interface:
+  display_name: "Testing Patterns"
+  short_description: "Plan and write effective tests"
+  default_prompt: "Use $testing-patterns to choose the right test layer and add reliable tests for this change without over-testing internals."
