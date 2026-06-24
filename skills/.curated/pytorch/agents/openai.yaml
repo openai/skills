@@ -1,0 +1,4 @@
+interface:
+  display_name: "PyTorch"
+  short_description: "Build and debug PyTorch models"
+  default_prompt: "Use $pytorch to build, train, or debug this PyTorch model."
