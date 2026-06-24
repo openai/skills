@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "agent_handle": "",
+  "entries": [
+    {
+      "recorded_at": "2026-02-28T00:00:00+00:00",
+      "service_id": "00000000-0000-0000-0000-000000000000",
+      "service_name": "Example Service",
+      "primary_category": "business_services",
+      "task_fingerprint": "example-task-v1",
+      "review_id": "11111111-1111-1111-1111-111111111111",
+      "overall_score": 8,
+      "metrics": {
+        "api_completeness": 8,
+        "response_speed": 7,
+        "reliability": 9,
+        "expected_vs_actual": 8
+      },
+      "publish_consent": "approved",
+      "note": "Short reminder about why this service got this score.",
+      "recorded_from": "submit-review"
+    }
+  ]
+}
