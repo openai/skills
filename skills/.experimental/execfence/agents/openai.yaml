@@ -1,0 +1,4 @@
+interface:
+  display_name: "ExecFence"
+  short_description: "Guard project commands before execution"
+  default_prompt: "Use $execfence to add guardrails before running build, test, dev, CI, package, or agent workflows."
