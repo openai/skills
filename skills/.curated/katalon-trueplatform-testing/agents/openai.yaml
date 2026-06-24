@@ -1,0 +1,6 @@
+interface:
+  display_name: "Katalon True Platform Testing"
+  short_description: "Plan, import, execute, and report Katalon tests"
+  icon_small: "./assets/katalon-logo.svg"
+  icon_large: "./assets/katalon-logo.svg"
+  default_prompt: "Use $katalon-trueplatform-testing to analyze requirements, create manual test cases, organize suites, run with AI, and report results."
