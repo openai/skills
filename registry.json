@@ -1,0 +1,777 @@
+{
+  "version": "1",
+  "updated": "2026-06-05T10:24:29Z",
+  "description": "Codex Skill Store Registry — community-curated skills index",
+  "skills": [
+    {
+      "name": "aspnet-core",
+      "description": "Build, review, refactor, or architect ASP.NET Core web applications using current official guidance for .NET web development. Use when working on Blazor Web Apps, Razor Pages, MVC, Minimal APIs, controller-based Web APIs, SignalR, gRPC, middleware, dependency injection, configuration, authentication, authorization, testing, performance, deployment, or ASP.NET Core upgrades.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/aspnet-core",
+      "ref": "main",
+      "tags": [
+        "dotnet",
+        "aspnet",
+        "web",
+        "backend",
+        "csharp"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/aspnet-core",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "chatgpt-apps",
+      "description": "Build, scaffold, refactor, and troubleshoot ChatGPT Apps SDK applications that combine an MCP server and widget UI. Use when Codex needs to design tools, register UI resources, wire the MCP Apps bridge or ChatGPT compatibility APIs, apply Apps SDK metadata or CSP or domain settings, or produce a docs-aligned project scaffold. Prefer a docs-first workflow by invoking the openai-docs skill or OpenAI developer docs MCP tools before generating code.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/chatgpt-apps",
+      "ref": "main",
+      "tags": [
+        "chatgpt",
+        "apps-sdk",
+        "mcp",
+        "widgets"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/chatgpt-apps",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "cli-creator",
+      "description": "Build a composable CLI for Codex from API docs, an OpenAPI spec, existing curl examples, an SDK, a web app, an admin tool, or a local script. Use when the user wants Codex to create a command-line tool that can run from any repo, expose composable read/write commands, return stable JSON, manage auth, and pair with a companion skill.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/cli-creator",
+      "ref": "main",
+      "tags": [
+        "cli",
+        "tooling",
+        "code-generation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/cli-creator",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "cloudflare-deploy",
+      "description": "Deploy applications and infrastructure to Cloudflare using Workers, Pages, and related platform services. Use when the user asks to deploy, host, publish, or set up a project on Cloudflare.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/cloudflare-deploy",
+      "ref": "main",
+      "tags": [
+        "cloudflare",
+        "deployment",
+        "workers",
+        "hosting"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/cloudflare-deploy",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "define-goal",
+      "description": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/define-goal",
+      "ref": "main",
+      "tags": [
+        "meta",
+        "planning",
+        "goals"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/define-goal",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "figma",
+      "description": "Use the Figma MCP server to fetch design context, screenshots, variables, and assets from Figma, and to translate Figma nodes into production code. Trigger when a task involves Figma URLs, node IDs, design-to-code implementation, or Figma MCP setup and troubleshooting.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "ui"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-code-connect-components",
+      "description": "Connects Figma design components to code components using Code Connect mapping tools. Use when user says \"code connect\", \"connect this component to code\", \"map this component\", \"link component to code\", \"create code connect mapping\", or wants to establish mappings between Figma designs and code implementations. For canvas writes via `use_figma`, use `figma-use`.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-code-connect-components",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "components",
+        "code-connect"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-code-connect-components",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-create-design-system-rules",
+      "description": "Generates custom design system rules for the user's codebase. Use when user says \"create design system rules\", \"generate rules for my project\", \"set up design rules\", \"customize design system guidelines\", or wants to establish project-specific conventions for Figma-to-code workflows. Requires Figma MCP server connection.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-create-design-system-rules",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design-system",
+        "rules"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-create-design-system-rules",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-create-new-file",
+      "description": "Create a new blank Figma file. Use when the user wants to create a new Figma design or FigJam file, or when you need a new file before calling use_figma. Handles plan resolution via whoami if needed. Usage — /figma-create-new-file [editorType] [fileName] (e.g. /figma-create-new-file figjam My Whiteboard)",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-create-new-file",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "creation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-create-new-file",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-generate-design",
+      "description": "Use this skill alongside figma-use when the task involves translating an application page, view, or multi-section layout into Figma. Triggers: 'write to Figma', 'create in Figma from code', 'push page to Figma', 'take this app/page and build it in Figma', 'create a screen', 'build a landing page in Figma', 'update the Figma screen to match code'. This is the preferred workflow skill whenever the user wants to build or update a full page, screen, or view in Figma from code or a description. Discovers design system components, variables, and styles via search_design_system, imports them, and assembles screens incrementally section-by-section using design system tokens instead of hardcoded values.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-generate-design",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "generation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-generate-design",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-generate-library",
+      "description": "Build or update a professional-grade design system in Figma from a codebase. Use when the user wants to create variables/tokens, build component libraries, set up theming (light/dark modes), document foundations, or reconcile gaps between code and Figma. This skill teaches WHAT to build and in WHAT ORDER — it complements the `figma-use` skill which teaches HOW to call the Plugin API. Both skills should be loaded together.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-generate-library",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "library"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-generate-library",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "figma-implement-design",
+      "description": "Translates Figma designs into production-ready application code with 1:1 visual fidelity. Use when implementing UI code from Figma files, when user mentions \"implement design\", \"generate code\", \"implement component\", provides Figma URLs, or asks to build components matching Figma specs. For Figma canvas writes via `use_figma`, use `figma-use`.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-implement-design",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "implementation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-implement-design",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "figma-use",
+      "description": "**MANDATORY prerequisite** — you MUST invoke this skill BEFORE every `use_figma` tool call. NEVER call `use_figma` directly without loading this skill first. Skipping it causes common, hard-to-debug failures. Trigger whenever the user wants to perform a write action or a unique read action that requires JavaScript execution in the Figma file context — e.g. create/edit/delete nodes, set up variables or tokens, build components and variants, modify auto-layout or fills, bind variables to properties, or inspect file structure programmatically.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/figma-use",
+      "ref": "main",
+      "tags": [
+        "figma",
+        "design",
+        "integration"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/figma-use",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "gh-address-comments",
+      "description": "Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/gh-address-comments",
+      "ref": "main",
+      "tags": [
+        "github",
+        "pr",
+        "code-review"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/gh-address-comments",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "gh-fix-ci",
+      "description": "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions; use `gh` to inspect checks and logs, summarize failure context, draft a fix plan, and implement only after explicit approval. Treat external providers (for example Buildkite) as out of scope and report only the details URL.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/gh-fix-ci",
+      "ref": "main",
+      "tags": [
+        "github",
+        "ci",
+        "debugging"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/gh-fix-ci",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "hatch-pet",
+      "description": "Create, repair, validate, visually QA, and package Codex-compatible animated pets and pet spritesheets from character art, generated images, company or prospect brand cues, or visual references. Use when a user wants a lightweight-worker Codex pet workflow, a non-pixel custom pet style, a prospect or company mascot pet, or a full 8x9 animated pet atlas with transparent unused cells, QA contact sheets, and pet.json packaging. This skill composes the installed $imagegen system skill for visual generation and uses bundled scripts for deterministic spritesheet assembly.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/hatch-pet",
+      "ref": "main",
+      "tags": [
+        "fun",
+        "hatch",
+        "pets"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/hatch-pet",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "jupyter-notebook",
+      "description": "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tutorials; prefer the bundled templates and run the helper script `new_notebook.py` to generate a clean starting notebook.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/jupyter-notebook",
+      "ref": "main",
+      "tags": [
+        "jupyter",
+        "notebooks",
+        "data-science"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/jupyter-notebook",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "linear",
+      "description": "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/linear",
+      "ref": "main",
+      "tags": [
+        "linear",
+        "project-management",
+        "ticketing"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/linear",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "migrate-to-codex",
+      "description": "Migrate supported instruction files, skills, agents, and MCP config into Codex project and global files.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/migrate-to-codex",
+      "ref": "main",
+      "tags": [
+        "migration",
+        "codex",
+        "setup"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/migrate-to-codex",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "netlify-deploy",
+      "description": "Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use when the user asks to deploy, host, publish, or link a site/repo on Netlify, including preview and production deploys.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/netlify-deploy",
+      "ref": "main",
+      "tags": [
+        "netlify",
+        "deployment",
+        "hosting"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/netlify-deploy",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "notion-knowledge-capture",
+      "description": "Capture conversations and decisions into structured Notion pages; use when turning chats/notes into wiki entries, how-tos, decisions, or FAQs with proper linking.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/notion-knowledge-capture",
+      "ref": "main",
+      "tags": [
+        "notion",
+        "knowledge",
+        "documentation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/notion-knowledge-capture",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "notion-meeting-intelligence",
+      "description": "Prepare meeting materials with Notion context and Codex research; use when gathering context, drafting agendas/pre-reads, and tailoring materials to attendees.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/notion-meeting-intelligence",
+      "ref": "main",
+      "tags": [
+        "notion",
+        "meetings",
+        "productivity"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/notion-meeting-intelligence",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "notion-research-documentation",
+      "description": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sources to produce briefs, comparisons, or reports with citations.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/notion-research-documentation",
+      "ref": "main",
+      "tags": [
+        "notion",
+        "research",
+        "documentation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/notion-research-documentation",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "notion-spec-to-implementation",
+      "description": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and creating Notion plans + tasks from them.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/notion-spec-to-implementation",
+      "ref": "main",
+      "tags": [
+        "notion",
+        "spec",
+        "implementation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/notion-spec-to-implementation",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "openai-docs",
+      "description": "Use when the user asks how to build with OpenAI products or APIs, asks about Codex itself or choosing Codex surfaces, needs up-to-date official documentation with citations, help choosing the latest model for a use case, or model upgrade and prompt-upgrade guidance; use OpenAI docs MCP tools for non-Codex docs questions, use the Codex manual helper first for broad Codex self-knowledge, and restrict fallback browsing to official OpenAI domains.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/openai-docs",
+      "ref": "main",
+      "tags": [
+        "openai",
+        "docs",
+        "api",
+        "reference"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/openai-docs",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "pdf",
+      "description": "Use when tasks involve reading, creating, or reviewing PDF files where rendering and layout matter; prefer visual checks by rendering pages (Poppler) and use Python tools such as `reportlab`, `pdfplumber`, and `pypdf` for generation and extraction.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/pdf",
+      "ref": "main",
+      "tags": [
+        "documents",
+        "pdf",
+        "rendering"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/pdf",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "playwright",
+      "description": "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/playwright",
+      "ref": "main",
+      "tags": [
+        "testing",
+        "browser",
+        "automation",
+        "e2e"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/playwright",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "playwright-interactive",
+      "description": "Persistent browser and Electron interaction through `js_repl` for fast iterative UI debugging.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/playwright-interactive",
+      "ref": "main",
+      "tags": [
+        "testing",
+        "browser",
+        "interactive",
+        "debugging"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/playwright-interactive",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "render-deploy",
+      "description": "Deploy applications to Render by analyzing codebases, generating render.yaml Blueprints, and providing Dashboard deeplinks. Use when the user wants to deploy, host, publish, or set up their application on Render's cloud platform.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/render-deploy",
+      "ref": "main",
+      "tags": [
+        "render",
+        "deployment",
+        "hosting"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/render-deploy",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "screenshot",
+      "description": "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel region), or when tool-specific capture capabilities are unavailable and an OS-level capture is needed.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/screenshot",
+      "ref": "main",
+      "tags": [
+        "screenshot",
+        "images",
+        "capture"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/screenshot",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "security-best-practices",
+      "description": "Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report, or secure-by-default coding help. Trigger only for supported languages (python, javascript/typescript, go). Do not trigger for general code review, debugging, or non-security tasks.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/security-best-practices",
+      "ref": "main",
+      "tags": [
+        "security",
+        "best-practices",
+        "audit"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/security-best-practices",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "security-ownership-map",
+      "description": "Analyze git repositories to build a security ownership topology (people-to-file), compute bus factor and sensitive-code ownership, and export CSV/JSON for graph databases and visualization. Trigger only when the user explicitly wants a security-oriented ownership or bus-factor analysis grounded in git history (for example: orphaned sensitive code, security maintainers, CODEOWNERS reality checks for risk, sensitive hotspots, or ownership clusters). Do not trigger for general maintainer lists or non-security ownership questions.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/security-ownership-map",
+      "ref": "main",
+      "tags": [
+        "security",
+        "ownership",
+        "audit"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/security-ownership-map",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "security-threat-model",
+      "description": "Repository-grounded threat modeling that enumerates trust boundaries, assets, attacker capabilities, abuse paths, and mitigations, and writes a concise Markdown threat model. Trigger only when the user explicitly asks to threat model a codebase or path, enumerate threats/abuse paths, or perform AppSec threat modeling. Do not trigger for general architecture summaries, code review, or non-security design work.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/security-threat-model",
+      "ref": "main",
+      "tags": [
+        "security",
+        "threat-modeling",
+        "audit"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/security-threat-model",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "sentry",
+      "description": "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry CLI; perform read-only queries using the `sentry` command.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/sentry",
+      "ref": "main",
+      "tags": [
+        "sentry",
+        "monitoring",
+        "error-tracking"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/sentry",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01",
+      "featured": true
+    },
+    {
+      "name": "speech",
+      "description": "Use when the user asks for text-to-speech narration or voiceover, accessibility reads, audio prompts, or batch speech generation via the OpenAI Audio API; run the bundled CLI (`scripts/text_to_speech.py`) with built-in voices and require `OPENAI_API_KEY` for live calls. Custom voice creation is out of scope.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/speech",
+      "ref": "main",
+      "tags": [
+        "speech",
+        "audio",
+        "tts",
+        "stt"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/speech",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "transcribe",
+      "description": "Transcribe audio files to text with optional diarization and known-speaker hints. Use when a user asks to transcribe speech from audio/video, extract text from recordings, or label speakers in interviews or meetings.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/transcribe",
+      "ref": "main",
+      "tags": [
+        "transcription",
+        "audio",
+        "speech-to-text"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/transcribe",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "vercel-deploy",
+      "description": "Deploy applications and websites to Vercel. Use when the user requests deployment actions like \"deploy my app\", \"deploy and give me the link\", \"push this live\", or \"create a preview deployment\".",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/vercel-deploy",
+      "ref": "main",
+      "tags": [
+        "vercel",
+        "deployment",
+        "hosting"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/vercel-deploy",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "winui-app",
+      "description": "Bootstrap, develop, and design modern WinUI 3 desktop applications with C# and the Windows App SDK using official Microsoft guidance, WinUI Gallery patterns, Windows App SDK samples, and CommunityToolkit components. Use when creating a brand new app, preparing a machine for WinUI, reviewing, refactoring, planning, troubleshooting, environment-checking, or setting up WinUI 3 XAML, controls, navigation, windowing, theming, accessibility, responsiveness, performance, deployment, or related Windows app design and development work.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/winui-app",
+      "ref": "main",
+      "tags": [
+        "windows",
+        "winui",
+        "desktop",
+        "csharp"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/winui-app",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "yeet",
+      "description": "Use only when the user explicitly asks to stage, commit, push, and open a GitHub pull request in one flow using the GitHub CLI (`gh`).",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.curated/yeet",
+      "ref": "main",
+      "tags": [
+        "fun",
+        "humor"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.curated/yeet",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "imagegen",
+      "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.system/imagegen",
+      "ref": "main",
+      "tags": [
+        "images",
+        "generation",
+        "creative",
+        "design"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.system/imagegen",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "openai-docs",
+      "description": "Use when the user asks how to build with OpenAI products or APIs, asks about Codex itself or choosing Codex surfaces, needs up-to-date official documentation with citations, help choosing the latest model for a use case, or model upgrade and prompt-upgrade guidance; use OpenAI docs MCP tools for non-Codex docs questions, use the Codex manual helper first for broad Codex self-knowledge, and restrict fallback browsing to official OpenAI domains.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.system/openai-docs",
+      "ref": "main",
+      "tags": [
+        "openai",
+        "docs",
+        "api",
+        "reference"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.system/openai-docs",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "plugin-creator",
+      "description": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/files, and baseline placeholders you can edit before publishing or testing. Use when Codex needs to create a new local plugin, add optional plugin structure, or generate or update repo-root `.agents/plugins/marketplace.json` entries for plugin ordering and availability metadata.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.system/plugin-creator",
+      "ref": "main",
+      "tags": [
+        "plugins",
+        "development",
+        "codex"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.system/plugin-creator",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "skill-creator",
+      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Codex's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.system/skill-creator",
+      "ref": "main",
+      "tags": [
+        "meta",
+        "development",
+        "tutorial"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.system/skill-creator",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    },
+    {
+      "name": "skill-installer",
+      "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+      "author": "openai",
+      "repo": "openai/skills",
+      "path": "skills/.system/skill-installer",
+      "ref": "main",
+      "tags": [
+        "meta",
+        "tools",
+        "installation"
+      ],
+      "license": "MIT",
+      "homepage": "https://github.com/openai/skills/tree/main/skills/.system/skill-installer",
+      "added": "2025-01-01",
+      "last_updated": "2026-06-01"
+    }
+  ]
+}
