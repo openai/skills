@@ -1,0 +1,35 @@
+{
+  "name": "linear",
+  "version": "0.1.0",
+  "description": "Manage Linear issues, projects, and team workflows.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://linear.app/",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "linear",
+    "issues",
+    "projects"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Linear",
+    "shortDescription": "Manage Linear issues and project workflows",
+    "longDescription": "Linear workflows for reading, creating, and updating issues, projects, and team work items.",
+    "developerName": "OpenAI",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://linear.app/",
+    "defaultPrompt": [
+      "Create Linear tasks from this plan"
+    ],
+    "brandColor": "#5E6AD2"
+  }
+}

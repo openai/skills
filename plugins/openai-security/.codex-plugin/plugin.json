@@ -1,0 +1,37 @@
+{
+  "name": "openai-security",
+  "version": "0.1.0",
+  "description": "Security best-practice, ownership, and threat-modeling skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "security",
+    "threat-modeling",
+    "ownership",
+    "appsec"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Security",
+    "shortDescription": "Review security practices, ownership, and threats",
+    "longDescription": "Security workflows for framework-specific best practices, git-history ownership analysis, bus-factor risk, and repository-grounded threat modeling.",
+    "developerName": "OpenAI",
+    "category": "Security",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Threat model this codebase",
+      "Review security best practices for this service"
+    ],
+    "brandColor": "#DC2626"
+  }
+}

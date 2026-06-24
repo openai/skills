@@ -1,0 +1,37 @@
+{
+  "name": "github",
+  "version": "0.1.0",
+  "description": "GitHub PR, CI, review-comment, and publish workflows.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "github",
+    "pull-request",
+    "ci",
+    "review"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GitHub",
+    "shortDescription": "Address PR comments, fix CI, and publish changes",
+    "longDescription": "GitHub workflows for addressing review comments, diagnosing failing GitHub Actions checks, and staging, committing, pushing, and opening pull requests.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/",
+    "defaultPrompt": [
+      "Fix the failing checks on this PR",
+      "Address unresolved review comments"
+    ],
+    "brandColor": "#24292F"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "notion",
+  "version": "0.1.0",
+  "description": "Notion knowledge capture, meeting, research, and implementation workflows.",
+  "author": {
+    "name": "Notion Labs, Inc.",
+    "url": "https://www.notion.com/"
+  },
+  "homepage": "https://www.notion.com/",
+  "repository": "https://github.com/openai/skills",
+  "license": "MIT",
+  "keywords": [
+    "notion",
+    "knowledge",
+    "meetings",
+    "research",
+    "planning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Notion",
+    "shortDescription": "Turn Notion context into docs, plans, and tasks",
+    "longDescription": "Notion workflows for capturing knowledge, preparing meetings, researching across Notion sources, and turning specs into implementation plans.",
+    "developerName": "Notion",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.notion.com/",
+    "defaultPrompt": [
+      "Turn these notes into a Notion decision record",
+      "Prepare a Notion-backed meeting brief"
+    ],
+    "brandColor": "#000000"
+  }
+}

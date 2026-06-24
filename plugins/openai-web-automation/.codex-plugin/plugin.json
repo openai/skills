@@ -1,0 +1,37 @@
+{
+  "name": "openai-web-automation",
+  "version": "0.1.0",
+  "description": "Browser automation, interactive Playwright, and screenshot capture skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "playwright",
+    "browser",
+    "automation",
+    "screenshot"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Web Automation",
+    "shortDescription": "Automate browsers and capture screenshots",
+    "longDescription": "Browser automation workflows using Playwright, persistent interactive browser debugging, and operating-system screenshot capture.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Test this UI flow with Playwright",
+      "Capture a screenshot of this app"
+    ],
+    "brandColor": "#2EAD33"
+  }
+}

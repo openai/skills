@@ -1,0 +1,34 @@
+{
+  "name": "vercel",
+  "version": "0.1.0",
+  "description": "Deploy applications and websites to Vercel.",
+  "author": {
+    "name": "Vercel",
+    "url": "https://vercel.com/"
+  },
+  "homepage": "https://vercel.com/",
+  "repository": "https://github.com/openai/skills",
+  "license": "MIT",
+  "keywords": [
+    "vercel",
+    "deploy",
+    "hosting"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vercel",
+    "shortDescription": "Deploy apps and websites to Vercel",
+    "longDescription": "Vercel deployment workflows for preview and production deployments of applications and websites.",
+    "developerName": "Vercel",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://vercel.com/",
+    "defaultPrompt": [
+      "Deploy this site to Vercel"
+    ],
+    "brandColor": "#000000"
+  }
+}

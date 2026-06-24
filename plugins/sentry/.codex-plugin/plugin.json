@@ -1,0 +1,35 @@
+{
+  "name": "sentry",
+  "version": "0.1.0",
+  "description": "Read-only Sentry issue and event inspection skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://sentry.io/",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "sentry",
+    "errors",
+    "production",
+    "observability"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Sentry",
+    "shortDescription": "Inspect Sentry issues and production errors",
+    "longDescription": "Read-only Sentry workflows for inspecting issues and events, summarizing recent production errors, and pulling basic Sentry health data through the Sentry CLI.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "websiteURL": "https://sentry.io/",
+    "defaultPrompt": [
+      "Summarize recent Sentry issues"
+    ],
+    "brandColor": "#362D59"
+  }
+}

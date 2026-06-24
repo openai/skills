@@ -1,0 +1,39 @@
+{
+  "name": "figma",
+  "version": "0.1.0",
+  "description": "Figma workflows for design implementation and design-system work.",
+  "author": {
+    "name": "Figma",
+    "url": "https://www.figma.com/"
+  },
+  "homepage": "https://www.figma.com/",
+  "repository": "https://github.com/openai/skills",
+  "license": "LicenseRef-Figma-Developer-Terms",
+  "keywords": [
+    "figma",
+    "design-to-code",
+    "design-system",
+    "code-connect"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Figma",
+    "shortDescription": "Design-to-code and Figma authoring workflows",
+    "longDescription": "Figma workflows for inspecting designs, using the Figma tool safely, generating designs and libraries, and connecting Figma components to code.",
+    "developerName": "Figma",
+    "category": "Design",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.figma.com/",
+    "privacyPolicyURL": "https://www.figma.com/legal/privacy/",
+    "termsOfServiceURL": "https://www.figma.com/legal/developer-terms/",
+    "defaultPrompt": [
+      "Inspect a Figma design and implement it",
+      "Build this screen in Figma"
+    ],
+    "brandColor": "#1ABCFE"
+  }
+}

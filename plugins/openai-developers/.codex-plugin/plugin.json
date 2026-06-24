@@ -1,0 +1,37 @@
+{
+  "name": "openai-developers",
+  "version": "0.1.0",
+  "description": "OpenAI API and ChatGPT Apps development skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "openai",
+    "api",
+    "chatgpt",
+    "apps-sdk"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Developers",
+    "shortDescription": "Build with OpenAI APIs and ChatGPT Apps",
+    "longDescription": "Docs-first workflows for OpenAI APIs, Codex product guidance, model migration, prompting upgrades, and ChatGPT Apps SDK projects.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Build a ChatGPT app from this idea",
+      "Find current OpenAI API guidance"
+    ],
+    "brandColor": "#10A37F"
+  }
+}

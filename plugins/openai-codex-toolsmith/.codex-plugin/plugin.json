@@ -1,0 +1,36 @@
+{
+  "name": "openai-codex-toolsmith",
+  "version": "0.1.0",
+  "description": "Codex setup, migration, and plugin-authoring skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "codex",
+    "plugins",
+    "skills",
+    "migration"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Codex Toolsmith",
+    "shortDescription": "Create, install, and migrate Codex skills and plugins",
+    "longDescription": "Codex setup, migration, and authoring workflows for creating skills, scaffolding plugins, installing skills, and turning fuzzy goals into concrete objectives.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Create a Codex plugin structure for this repo",
+      "Help migrate this project to Codex"
+    ],
+    "brandColor": "#111827"
+  }
+}

@@ -38,6 +38,12 @@ $skill-installer install https://github.com/openai/skills/tree/main/skills/.expe
 
 After installing a skill, restart Codex to pick up new skills.
 
+## Plugin organization proposal
+
+This repository also includes a proposed [plugin organization](plugins/) and a
+Codex-compatible [`.agents/plugins/marketplace.json`](.agents/plugins/marketplace.json)
+that groups related skills into installable plugin bundles.
+
 ## License
 
 The license of an individual skill can be found directly inside the skill's directory inside the `LICENSE.txt` file.

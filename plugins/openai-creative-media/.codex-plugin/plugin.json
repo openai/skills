@@ -1,0 +1,37 @@
+{
+  "name": "openai-creative-media",
+  "version": "0.1.0",
+  "description": "Image generation, speech, transcription, and Codex pet creation skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "images",
+    "speech",
+    "transcription",
+    "media"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Creative Media",
+    "shortDescription": "Generate images, speech, transcripts, and sprites",
+    "longDescription": "Creative media workflows for raster image generation, text-to-speech, transcription, and Codex-compatible animated pet sprite packages.",
+    "developerName": "OpenAI",
+    "category": "Creative",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Generate a product mockup image",
+      "Transcribe this recording"
+    ],
+    "brandColor": "#7C3AED"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "openai-documents-lab",
+  "version": "0.1.0",
+  "description": "PDF and Jupyter notebook creation, review, and editing skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "pdf",
+    "jupyter",
+    "notebooks",
+    "documents"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Documents Lab",
+    "shortDescription": "Work with PDFs and Jupyter notebooks",
+    "longDescription": "Document-oriented workflows for visual PDF review and generation plus clean Jupyter notebook scaffolding and editing.",
+    "developerName": "OpenAI",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Create a Jupyter notebook for this experiment",
+      "Review this PDF layout"
+    ],
+    "brandColor": "#F97316"
+  }
+}

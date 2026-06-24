@@ -1,0 +1,36 @@
+{
+  "name": "openai-deploy",
+  "version": "0.1.0",
+  "description": "Deployment skills for Cloudflare, Netlify, and Render.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "deploy",
+    "cloudflare",
+    "netlify",
+    "render"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI Deploy",
+    "shortDescription": "Deploy apps to Cloudflare, Netlify, and Render",
+    "longDescription": "Deployment workflows for analyzing projects, creating platform configuration, and publishing applications to Cloudflare, Netlify, and Render.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Deploy this app and give me the URL",
+      "Prepare this project for deployment"
+    ],
+    "brandColor": "#2563EB"
+  }
+}

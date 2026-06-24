@@ -1,0 +1,37 @@
+{
+  "name": "openai-app-frameworks",
+  "version": "0.1.0",
+  "description": "Application framework and CLI creation skills.",
+  "author": {
+    "name": "OpenAI",
+    "url": "https://openai.com/"
+  },
+  "homepage": "https://github.com/openai/skills",
+  "repository": "https://github.com/openai/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "aspnet-core",
+    "winui",
+    "cli",
+    "application-frameworks"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "OpenAI App Frameworks",
+    "shortDescription": "Build ASP.NET Core, WinUI, and CLI apps",
+    "longDescription": "Framework-specific workflows for ASP.NET Core web applications, WinUI desktop applications, and composable CLI creation.",
+    "developerName": "OpenAI",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/openai/skills",
+    "defaultPrompt": [
+      "Build an ASP.NET Core app",
+      "Create a CLI for this API"
+    ],
+    "brandColor": "#0F766E"
+  }
+}
