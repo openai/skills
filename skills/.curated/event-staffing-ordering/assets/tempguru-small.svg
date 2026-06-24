@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="TempGuru">
+  <title>TempGuru</title>
+  <!-- Top horizontal pill (TempGuru cyan) -->
+  <rect x="14" y="26" width="172" height="54" rx="27" ry="27"
+        fill="none" stroke="#24BBEA" stroke-width="8" />
+  <!-- Vertical stem pill (TempGuru navy), drawn over the horizontal to form the T -->
+  <rect x="82" y="40" width="36" height="148" rx="18" ry="18"
+        fill="none" stroke="#0050C7" stroke-width="8" />
+</svg>
