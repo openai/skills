@@ -1,0 +1,5 @@
+interface:
+  display_name: "Vibe UI"
+  short_description: "DESIGN.md workflow for web UI generation"
+  brand_color: "#2563EB"
+  default_prompt: "Use $vibe-ui to choose a visual direction and create a Vibe Gate workflow for a landing page."
