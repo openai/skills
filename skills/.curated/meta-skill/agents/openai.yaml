@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meta Skill"
+  short_description: "Design, create, and refine Agent Skills"
+  default_prompt: "Use $meta-skill to evaluate, differentiate, and design a concise Agent Skill for my workflow."
