@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Software Engineering"
+  short_description: "Route work through the AI-native lifecycle"
+  default_prompt: "Use $ai-native-software-engineering to guide this project through the right AI-native engineering phase."

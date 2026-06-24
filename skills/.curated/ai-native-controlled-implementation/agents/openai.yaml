@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Native Controlled Implementation"
+  short_description: "Build in bounded validated batches"
+  default_prompt: "Use $ai-native-controlled-implementation to implement the MVP in small validated batches."
