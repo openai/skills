@@ -339,6 +339,7 @@ Write the YAML frontmatter with `name` and `description`:
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Codex.
   - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Codex needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks"
+- When generating or editing frontmatter, keep values YAML-safe. Quote any description that contains `:`, `#`, `"`, `'`, or other special characters, or emit the frontmatter through a serializer instead of hand-writing bare text.
 
 Do not include any other fields in YAML frontmatter.
 
