@@ -9,5 +9,5 @@ Licensed under the Apache License, Version 2.0.
 See LICENSE.txt in this directory.
 
 Modifications:
-- Repackaged the existing repository Playwright assets for this `js_repl`-focused skill.
+- Repackaged the existing repository Playwright assets for this `node_repl`-focused skill.
 - Wrote new skill instructions for persistent browser debugging.
