@@ -1,0 +1,4 @@
+interface:
+  display_name: "File Expenses"
+  short_description: "Prepare and file expense reports"
+  default_prompt: "Use $file-expenses to prepare an expense report from my receipts and review it with me before submission."
