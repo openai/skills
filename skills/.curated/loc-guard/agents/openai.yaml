@@ -1,0 +1,8 @@
+interface:
+  display_name: "LOC Guard"
+  short_description: "Enforce deterministic file length policy"
+  brand_color: "#2563EB"
+  default_prompt: "Use $loc-guard to check changed source files and report any LOC policy warnings."
+
+policy:
+  allow_implicit_invocation: true
