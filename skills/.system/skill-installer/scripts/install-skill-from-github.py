@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install a skill from a GitHub repo path into $CODEX_HOME/skills."""
+"""Install a skill from a GitHub repo path into the default skills directory."""
 
 from __future__ import annotations
 
@@ -40,10 +40,6 @@ class Source:
 
 class InstallError(Exception):
     pass
-
-
-def _codex_home() -> str:
-    return os.environ.get("CODEX_HOME", os.path.expanduser("~/.codex"))
 
 
 def _tmp_root() -> str:
@@ -241,7 +237,16 @@ def _resolve_source(args: Args) -> Source:
 
 
 def _default_dest() -> str:
-    return os.path.join(_codex_home(), "skills")
+    """Return the default skill installation directory.
+
+    Resolution order:
+      1. $CODEX_HOME/skills - explicit legacy override (backward-compatible).
+      2. ~/.agents/skills - new open-agent convention default.
+    """
+    codex_home = os.environ.get("CODEX_HOME")
+    if codex_home:
+        return os.path.join(codex_home, "skills")
+    return os.path.expanduser("~/.agents/skills")
 
 
 def _parse_args(argv: list[str]) -> Args:
@@ -254,7 +259,14 @@ def _parse_args(argv: list[str]) -> Args:
         help="Path(s) to skill(s) inside repo",
     )
     parser.add_argument("--ref", default=DEFAULT_REF)
-    parser.add_argument("--dest", help="Destination skills directory")
+    parser.add_argument(
+        "--dest",
+        default=_default_dest(),
+        help=(
+            "Destination skills directory "
+            "(default: ~/.agents/skills, or $CODEX_HOME/skills when set)"
+        ),
+    )
     parser.add_argument(
         "--name", help="Destination skill name (defaults to basename of path)"
     )
@@ -275,7 +287,7 @@ def main(argv: list[str]) -> int:
             raise InstallError("No skill paths provided.")
         for path in source.paths:
             _validate_relative_path(path)
-        dest_root = args.dest or _default_dest()
+        dest_root = args.dest
         tmp_dir = tempfile.mkdtemp(prefix="skill-install-", dir=_tmp_root())
         try:
             repo_root = _prepare_repo(source, args.method, tmp_dir)

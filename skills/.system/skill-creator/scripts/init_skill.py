@@ -3,9 +3,11 @@
 Skill Initializer - Creates a new skill from template
 
 Usage:
-    init_skill.py <skill-name> --path <path> [--resources scripts,references,assets] [--examples] [--interface key=value]
+    init_skill.py <skill-name> [--path <path>] [--resources scripts,references,assets] [--examples] [--interface key=value]
 
 Examples:
+    init_skill.py my-new-skill
+    init_skill.py my-new-skill --path ~/.agents/skills
     init_skill.py my-new-skill --path skills/public
     init_skill.py my-new-skill --path skills/public --resources scripts,references
     init_skill.py my-api-helper --path skills/private --resources scripts --examples
@@ -14,6 +16,7 @@ Examples:
 """
 
 import argparse
+import os
 import re
 import sys
 from pathlib import Path
@@ -227,6 +230,19 @@ def parse_resources(raw_resources):
     return deduped
 
 
+def _default_skills_dir() -> str:
+    """Return the default user-skills directory.
+
+    Resolution order:
+      1. $CODEX_HOME/skills - explicit legacy override (backward-compatible).
+      2. ~/.agents/skills - new open-agent convention default.
+    """
+    codex_home = os.environ.get("CODEX_HOME")
+    if codex_home:
+        return os.path.join(codex_home, "skills")
+    return os.path.expanduser("~/.agents/skills")
+
+
 def create_resource_dirs(skill_dir, skill_name, skill_title, resources, include_examples):
     for resource in resources:
         resource_dir = skill_dir / resource
@@ -335,7 +351,14 @@ def main():
         description="Create a new skill directory with a SKILL.md template.",
     )
     parser.add_argument("skill_name", help="Skill name (normalized to hyphen-case)")
-    parser.add_argument("--path", required=True, help="Output directory for the skill")
+    parser.add_argument(
+        "--path",
+        default=_default_skills_dir(),
+        help=(
+            "Output directory for the new skill "
+            "(default: ~/.agents/skills or $CODEX_HOME/skills)"
+        ),
+    )
     parser.add_argument(
         "--resources",
         default="",
