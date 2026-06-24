@@ -12,7 +12,7 @@ metadata:
 This skill provides a structured workflow for managing issues, projects & team workflows in Linear. It ensures consistent integration with the Linear MCP server, which offers natural-language project management for issues, projects, documentation, and team collaboration.
 
 ## Prerequisites
-- Linear MCP server must be connected and accessible via OAuth
+- Linear MCP server must be connected to `https://mcp.linear.app/mcp` and accessible via OAuth or a configured `LINEAR_API_KEY`
 - Confirm access to the relevant Linear workspace, teams, and projects
 
 ## Required Workflow
@@ -21,10 +21,11 @@ This skill provides a structured workflow for managing issues, projects & team w
 
 ### Step 0: Set up Linear MCP (if not already configured)
 
-If any MCP call fails because Linear MCP is not connected, pause and set it up:
+If any MCP call fails because Linear MCP is not connected, uses the deprecated `/sse` endpoint, or returns a "pre-removal deprecation signal", pause and set it up:
 
 1. Add the Linear MCP:
    - `codex mcp add linear --url https://mcp.linear.app/mcp`
+   - If a stale `linear` server already exists, remove or edit it so it uses `https://mcp.linear.app/mcp`, not `https://mcp.linear.app/sse`.
 2. Enable remote MCP client:
    - Set `[features] rmcp_client = true` in `config.toml` **or** run `codex --enable rmcp_client`
 3. Log in with OAuth:
@@ -34,7 +35,7 @@ After successful login, the user will have to restart codex. You should finish y
 
 **Windows/WSL note:** If you see connection errors on Windows, try configuring the Linear MCP to run via WSL:
 ```json
-{"mcpServers": {"linear": {"command": "wsl", "args": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/sse", "--transport", "sse-only"]}}}
+{"mcpServers": {"linear": {"command": "wsl", "args": ["npx", "-y", "mcp-remote", "https://mcp.linear.app/mcp"]}}}
 ```
 
 ### Step 1
@@ -54,11 +55,13 @@ Summarize results, call out remaining gaps or blockers, and propose next actions
 
 ## Available Tools
 
-Issue Management: `list_issues`, `get_issue`, `create_issue`, `update_issue`, `list_my_issues`, `list_issue_statuses`, `list_issue_labels`, `create_issue_label`
+Tool names vary by MCP server version; discover tools at runtime. Current Linear MCP commonly exposes `save_*` upsert-style tools instead of separate `create_*` and `update_*` tools.
 
-Project & Team: `list_projects`, `get_project`, `create_project`, `update_project`, `list_teams`, `get_team`, `list_users`
+Issue Management: `list_issues`, `get_issue`, `save_issue`, `list_issue_statuses`, `list_issue_labels`, `create_issue_label`
 
-Documentation & Collaboration: `list_documents`, `get_document`, `search_documentation`, `list_comments`, `create_comment`, `list_cycles`
+Project & Team: `save_project`, `save_initiative`, `save_milestone`, `list_teams`, `list_users`, plus project/team list or get tools when exposed
+
+Documentation & Collaboration: `save_document`, `list_comments`, `save_comment`, `list_cycles`, plus documentation search tools when exposed
 
 ## Practical Workflows
 
