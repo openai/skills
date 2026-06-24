@@ -191,6 +191,11 @@ powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot
 powershell -ExecutionPolicy Bypass -File <path-to-skill>/scripts/take_screenshot.ps1 -WindowHandle 123456
 ```
 
+Windows helper notes:
+
+- The helper sets per-monitor DPI awareness before reading display and window rectangles, so captures use physical pixels on mixed-scale monitor layouts.
+- Window captures prefer the DWM extended visible frame bounds and fall back to `GetWindowRect` if DWM bounds are unavailable.
+
 ## Direct OS commands (fallbacks)
 
 Use these when you cannot run the helpers.
