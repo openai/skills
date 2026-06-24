@@ -1,0 +1,6 @@
+interface:
+  display_name: "React Doctor"
+  short_description: "Score and audit a React codebase"
+  icon_small: "./assets/react-doctor-small.svg"
+  icon_large: "./assets/react-doctor.svg"
+  default_prompt: "Run react-doctor on this project, summarize the score and top diagnostics, then fix any new issues introduced on the current branch."
