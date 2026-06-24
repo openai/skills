@@ -34,7 +34,7 @@ STATE_PROMPTS = {
     "idle": "Calm low-distraction resting loop: subtle breathing, tiny blink, slight head/body bob, and only quiet persona-preserving motion.",
     "running-right": "Dragging-right loop: show directional movement to the right through body and limb poses only.",
     "running-left": "Dragging-left loop: show directional movement to the left through body and limb poses only.",
-    "waving": "Greeting loop: paw or limb down, raised, tilted, and returning in a friendly attention gesture.",
+    "waving": "Greeting loop: keep the same paw, hand, wing, or limb waving; start at the first wave pose and end on a loopable return pose.",
     "jumping": "Hover jump loop: anticipation, lift, airborne peak, descent, and settle through body height.",
     "failed": "Blocked/failed loop: slumped or deflated reaction with sad or closed eyes.",
     "waiting": "Needs-input loop: expectant asking pose for approval, help, or user input.",
@@ -54,6 +54,9 @@ STATE_REQUIREMENTS = {
     ],
     "waving": [
         "Show the greeting through paw, hand, wing, or limb pose only.",
+        "Keep the waving side consistent across all frames; do not switch limbs mid-loop.",
+        "Do not use fully idle poses as the first or last frame.",
+        "Start at the first wave pose and end on a return pose that loops back into it without duplicating the first frame.",
         "Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.",
     ],
     "jumping": [

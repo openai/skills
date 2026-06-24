@@ -138,7 +138,7 @@ Avoid these by default because they usually break transparent-background cleanup
 State-specific guidance:
 
 - `idle`: keep this calm and low-distraction. Use only subtle breathing, a tiny blink, a slight head or body bob, a very small material sway, or another quiet persona-preserving motion. The loop must still contain visible micro-variation; do not accept six effectively identical copies. Do not show waving, walking, running, jumping, talking, working, reviewing, emotional reactions, large gestures, item interactions, or new props.
-- `waving`: show the wave through paw, hand, wing, or limb pose only. Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.
+- `waving`: show the wave through paw, hand, wing, or limb pose only. Keep the waving side consistent across frames; do not use idle poses as the first or last frame. Start at the first wave pose and end on a return pose that loops back into it. Do not draw wave marks, motion arcs, lines, sparkles, symbols, or floating effects around the gesture.
 - `jumping`: show vertical motion through body position only. Do not draw shadows, dust, landing marks, impact bursts, bounce pads, or floor cues.
 - `failed`: tears, attached smoke puffs, or attached stars are allowed if they obey the allowed-effects rules; do not use red X marks, floating symbols, detached smoke, detached stars, or separate tear droplets.
 - `waiting`: show that Codex needs approval, help, or user input through an expectant asking pose. Keep it distinct from ordinary idle and review.
