@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fax Machine"
+  short_description: "Render PDFs and send outbound faxes via Phaxio"
+  default_prompt: "Render text into a PDF, stamp an existing PDF, or send and track an outbound fax."
