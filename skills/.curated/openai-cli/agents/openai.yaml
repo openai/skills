@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenAI CLI"
+  short_description: "Script batch API workflows with openai"
+  default_prompt: "Use $openai-cli for shell workflows that batch-process files, extract structured data, create or edit images, generate speech, transcribe audio, and provision project API keys."
