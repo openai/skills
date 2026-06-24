@@ -1,0 +1,13 @@
+interface:
+  display_name: "Higgsfield Generate"
+  short_description: "Generate images, videos, and ads"
+  brand_color: "#D1FE17"
+  default_prompt: "Use $higgsfield-generate to generate an image or video with Higgsfield AI."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "higgsfield"
+      description: "Higgsfield AI MCP server for image/video generation, Marketing Studio, media, jobs, and Soul Characters"
+      transport: "streamable_http"
+      url: "https://mcp.higgsfield.ai/mcp"

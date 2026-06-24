@@ -1,0 +1,5 @@
+interface:
+  display_name: "Higgsfield Product Photoshoot"
+  short_description: "Generate brand-quality product images"
+  brand_color: "#D1FE17"
+  default_prompt: "Use $higgsfield-product-photoshoot to create brand-quality product images from this product photo."

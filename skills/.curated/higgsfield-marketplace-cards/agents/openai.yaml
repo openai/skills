@@ -1,0 +1,5 @@
+interface:
+  display_name: "Higgsfield Marketplace Cards"
+  short_description: "Create marketplace-ready image sets"
+  brand_color: "#D1FE17"
+  default_prompt: "Use $higgsfield-marketplace-cards to create marketplace-ready product image cards."
