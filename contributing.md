@@ -8,4 +8,4 @@
 
 ### Security & responsible AI
 
-Have you discovered a vulnerability or have concerns about model output? Please e-mail **security@openai.com** and we will respond promptly.
+Have you discovered a vulnerability or have concerns about model output? Please email **security@openai.com** and we will respond promptly.
