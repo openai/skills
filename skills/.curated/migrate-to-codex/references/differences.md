@@ -27,6 +27,7 @@ Docs last checked: 2026-04-20. If today's date is later, re-open the official Co
 | --- | --- | --- | --- |
 | `.claude/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md` | Converted; selected support directories are copied | Skill-local `scripts/`, `references/`, and `assets/` are copied when they are real files under the source skill root. |
 | `.claude/skills/<name>.md` | `.agents/skills/<name>/SKILL.md` | Converted as a single-file skill | No sibling support directories are copied for this legacy shape. |
+| `--skill <name>` | Selected `.agents/skills/<name>/SKILL.md` | Converts only matching Claude skill folders or single-file skills | `--skill` may be passed multiple times, implies `--skills`, skips slash-command conversion, and cannot be combined with `--replace`. |
 | `allowed-tools` | No strict skill allowlist | Preserved as prompt guidance in `SKILL.md` | `agents/openai.yaml` can declare tool dependencies, but that is not a permission boundary. |
 | `user-invocable` | `policy.allow_implicit_invocation` | Manual review only | Similar intent, not equivalent semantics. |
 | `model` / `effort` | No skill-level model pin | Unsupported | Codex model selection is session/agent scoped in this converter. |
