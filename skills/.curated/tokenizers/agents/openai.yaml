@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tokenizers"
+  short_description: "Build and debug model tokenizers"
+  default_prompt: "Use $tokenizers to train, inspect, or debug this tokenizer."
