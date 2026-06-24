@@ -1,0 +1,7 @@
+interface:
+  display_name: "Frontend Polish"
+  short_description: "Refine UI, responsiveness, interaction quality, and implementation"
+  default_prompt: "Use $frontend-polish to refine this frontend so it feels hand-crafted, high-end, and production-ready instead of AI-generated."
+
+policy:
+  allow_implicit_invocation: true
