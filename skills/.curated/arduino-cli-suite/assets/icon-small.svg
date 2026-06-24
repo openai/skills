@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Arduino CLI Suite logo Uno style with CLI overlay">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F2D3D"/>
+      <stop offset="100%" stop-color="#134E5E"/>
+    </linearGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E88A8"/>
+      <stop offset="100%" stop-color="#0E6E8A"/>
+    </linearGradient>
+    <linearGradient id="cli" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD166"/>
+      <stop offset="100%" stop-color="#F77F00"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#001018" flood-opacity="0.45"/>
+    </filter>
+    <radialGradient id="sparkFill" cx="0.38" cy="0.3" r="0.9">
+      <stop offset="0%" stop-color="#FFF7B2"/>
+      <stop offset="62%" stop-color="#FFD35A"/>
+      <stop offset="100%" stop-color="#F4A528"/>
+    </radialGradient>
+    <filter id="sparkGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#FFE38A" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="210" fill="url(#bg)"/>
+
+  <g transform="translate(512 532) rotate(-7) translate(-512 -532)" filter="url(#shadow)">
+    <path d="M220 286H744C786 286 820 320 820 362V694C820 736 786 770 744 770H220C178 770 144 736 144 694V362C144 320 178 286 220 286Z" fill="url(#board)" stroke="#9AE0E8" stroke-width="12"/>
+
+    <path d="M144 410H92C78 410 66 422 66 436V620C66 634 78 646 92 646H144" fill="#D5DDE3" stroke="#6A7880" stroke-width="8"/>
+
+    <rect x="176" y="338" width="590" height="72" rx="16" fill="#0B4E62" opacity="0.55"/>
+
+    <g fill="#132530" stroke="#A5E5EC" stroke-width="4">
+      <rect x="188" y="300" width="20" height="62" rx="4"/>
+      <rect x="214" y="300" width="20" height="62" rx="4"/>
+      <rect x="240" y="300" width="20" height="62" rx="4"/>
+      <rect x="266" y="300" width="20" height="62" rx="4"/>
+      <rect x="292" y="300" width="20" height="62" rx="4"/>
+      <rect x="318" y="300" width="20" height="62" rx="4"/>
+      <rect x="344" y="300" width="20" height="62" rx="4"/>
+      <rect x="370" y="300" width="20" height="62" rx="4"/>
+      <rect x="396" y="300" width="20" height="62" rx="4"/>
+      <rect x="422" y="300" width="20" height="62" rx="4"/>
+      <rect x="448" y="300" width="20" height="62" rx="4"/>
+      <rect x="474" y="300" width="20" height="62" rx="4"/>
+      <rect x="500" y="300" width="20" height="62" rx="4"/>
+      <rect x="526" y="300" width="20" height="62" rx="4"/>
+      <rect x="552" y="300" width="20" height="62" rx="4"/>
+      <rect x="578" y="300" width="20" height="62" rx="4"/>
+      <rect x="604" y="300" width="20" height="62" rx="4"/>
+      <rect x="630" y="300" width="20" height="62" rx="4"/>
+      <rect x="656" y="300" width="20" height="62" rx="4"/>
+      <rect x="682" y="300" width="20" height="62" rx="4"/>
+      <rect x="708" y="300" width="20" height="62" rx="4"/>
+      <rect x="734" y="300" width="20" height="62" rx="4"/>
+    </g>
+
+    <g fill="#132530" stroke="#A5E5EC" stroke-width="4">
+      <rect x="188" y="694" width="20" height="62" rx="4"/>
+      <rect x="214" y="694" width="20" height="62" rx="4"/>
+      <rect x="240" y="694" width="20" height="62" rx="4"/>
+      <rect x="266" y="694" width="20" height="62" rx="4"/>
+      <rect x="292" y="694" width="20" height="62" rx="4"/>
+      <rect x="318" y="694" width="20" height="62" rx="4"/>
+      <rect x="344" y="694" width="20" height="62" rx="4"/>
+      <rect x="370" y="694" width="20" height="62" rx="4"/>
+      <rect x="396" y="694" width="20" height="62" rx="4"/>
+      <rect x="422" y="694" width="20" height="62" rx="4"/>
+      <rect x="448" y="694" width="20" height="62" rx="4"/>
+      <rect x="474" y="694" width="20" height="62" rx="4"/>
+      <rect x="500" y="694" width="20" height="62" rx="4"/>
+      <rect x="526" y="694" width="20" height="62" rx="4"/>
+      <rect x="552" y="694" width="20" height="62" rx="4"/>
+      <rect x="578" y="694" width="20" height="62" rx="4"/>
+      <rect x="604" y="694" width="20" height="62" rx="4"/>
+      <rect x="630" y="694" width="20" height="62" rx="4"/>
+      <rect x="656" y="694" width="20" height="62" rx="4"/>
+      <rect x="682" y="694" width="20" height="62" rx="4"/>
+      <rect x="708" y="694" width="20" height="62" rx="4"/>
+      <rect x="734" y="694" width="20" height="62" rx="4"/>
+    </g>
+
+    <g filter="url(#sparkGlow)" stroke="#FFF6D6" stroke-width="8" stroke-linejoin="round">
+      <path d="M510 414L534 500L620 524L534 548L510 634L486 548L400 524L486 500Z" fill="url(#sparkFill)"/>
+      <path d="M372 500L384 542L426 554L384 566L372 608L360 566L318 554L360 542Z" fill="url(#sparkFill)"/>
+      <path d="M648 458L658 492L692 502L658 512L648 546L638 512L604 502L638 492Z" fill="url(#sparkFill)"/>
+    </g>
+
+  </g>
+</svg>

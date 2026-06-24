@@ -1,0 +1,10 @@
+interface:
+  display_name: "Arduino CLI Suite"
+  short_description: "Unified end-to-end Arduino CLI workflows."
+  icon_small: "./assets/icon-small.svg"
+  icon_large: "./assets/icon-large.svg"
+  brand_color: "#1E88A8"
+  default_prompt: "Use $arduino-cli-suite to run this Arduino workflow end to end, including setup, build, upload, and diagnostics."
+
+policy:
+  allow_implicit_invocation: true
