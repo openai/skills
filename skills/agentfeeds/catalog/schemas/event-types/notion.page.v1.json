@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/notion.page.v1.json",
+  "title": "Notion Page",
+  "type": "object",
+  "required": ["id", "title", "url", "last_edited_at"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "url": { "type": "string" },
+    "last_edited_at": { "type": "string" },
+    "created_at": { "type": ["string", "null"] },
+    "parent_type": { "type": ["string", "null"] }
+  }
+}

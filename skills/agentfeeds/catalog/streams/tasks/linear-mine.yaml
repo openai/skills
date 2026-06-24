@@ -1,0 +1,58 @@
+id: tasks/linear-mine
+title: My Linear issues
+description: Linear issues assigned to the authenticated user.
+type: linear.issue
+mode: event
+schema_url: https://agentfeeds.dev/schemas/linear.issue.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://api.linear.app/graphql/issues/mine"
+adapter:
+  kind: json_http
+  url: "https://api.linear.app/graphql"
+  method: POST
+  auth_service: linear
+  headers:
+    Content-Type: application/json
+  body:
+    query: |
+      query AgentFeedsMyIssues {
+        viewer {
+          assignedIssues(first: 50) {
+            nodes {
+              id
+              identifier
+              title
+              priority
+              url
+              updatedAt
+              dueDate
+              state { name }
+              team { name }
+            }
+          }
+        }
+      }
+  transform:
+    language: jmespath
+    expression: |
+      data.viewer.assignedIssues.nodes[].{
+        id: id,
+        identifier: identifier,
+        title: title,
+        state: state.name,
+        priority: priority,
+        team: team.name,
+        url: url,
+        updated_at: updatedAt,
+        due_at: dueDate
+      }
+  id_from: id
+recommended_poll_interval_seconds: 600
+auth: bearer_token
+tags: [tasks, linear, issues, assigned, keychain, auth]
+quality_tier: experimental
+catalog_tier: 3
+catalog_order: 30
+requires: [keychain_bearer_token]
+contributed_by: agentfeeds

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/local.directory-entry.v1.json",
+  "title": "Local Directory Entry",
+  "type": "object",
+  "required": ["path", "name", "kind", "modified_at"],
+  "properties": {
+    "path": { "type": "string" },
+    "name": { "type": "string" },
+    "kind": { "enum": ["file", "directory", "symlink", "other"] },
+    "extension": { "type": ["string", "null"] },
+    "size_bytes": { "type": ["integer", "null"] },
+    "modified_at": { "type": "string" }
+  }
+}

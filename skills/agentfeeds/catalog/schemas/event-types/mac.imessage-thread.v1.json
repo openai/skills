@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/mac.imessage-thread.v1.json",
+  "title": "iMessage Conversation",
+  "type": "object",
+  "required": ["thread_id", "display_name", "unread_count", "last_message_at", "snippet"],
+  "properties": {
+    "thread_id": { "type": "string" },
+    "display_name": { "type": "string" },
+    "participants": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unread_count": { "type": "integer" },
+    "last_message_at": { "type": "string" },
+    "snippet": { "type": "string" }
+  }
+}

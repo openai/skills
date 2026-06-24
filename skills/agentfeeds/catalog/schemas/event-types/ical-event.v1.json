@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/ical-event.v1.json",
+  "title": "iCalendar Event",
+  "type": "object",
+  "required": ["uid", "summary"],
+  "properties": {
+    "uid": { "type": "string" },
+    "summary": { "type": "string" },
+    "starts_at": { "type": ["string", "null"] },
+    "ends_at": { "type": ["string", "null"] },
+    "location": { "type": ["string", "null"] }
+  }
+}

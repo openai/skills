@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/rss-item.v1.json",
+  "title": "RSS Item",
+  "type": "object",
+  "required": ["title"],
+  "properties": {
+    "title": { "type": "string" },
+    "link": { "type": ["string", "null"] },
+    "summary": { "type": ["string", "null"] },
+    "published": { "type": ["string", "null"] },
+    "id": { "type": ["string", "null"] }
+  }
+}

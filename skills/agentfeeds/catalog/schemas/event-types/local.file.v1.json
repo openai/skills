@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/local.file.v1.json",
+  "title": "Local File Snapshot",
+  "type": "object",
+  "required": ["path", "name", "content", "size_bytes", "sha256", "modified_at"],
+  "properties": {
+    "path": { "type": "string" },
+    "name": { "type": "string" },
+    "extension": { "type": "string" },
+    "content": { "type": "string" },
+    "size_bytes": { "type": "integer" },
+    "sha256": { "type": "string" },
+    "modified_at": { "type": "string" }
+  }
+}

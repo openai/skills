@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/github.notification.v1.json",
+  "title": "GitHub Notification",
+  "type": "object",
+  "required": ["id", "reason", "unread", "updated_at", "repository", "subject_title"],
+  "properties": {
+    "id": { "type": "string" },
+    "reason": { "type": "string" },
+    "unread": { "type": "boolean" },
+    "updated_at": { "type": "string" },
+    "repository": { "type": "string" },
+    "subject_title": { "type": "string" },
+    "subject_type": { "type": ["string", "null"] },
+    "url": { "type": ["string", "null"] }
+  }
+}

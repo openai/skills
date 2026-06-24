@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/weather.forecast.v1.json",
+  "title": "Weather Forecast",
+  "type": "object",
+  "required": ["generated_at", "daily"],
+  "properties": {
+    "generated_at": { "type": "string" },
+    "daily": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

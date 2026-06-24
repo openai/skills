@@ -1,0 +1,47 @@
+id: mac/mail-unread
+title: Unread Mail.app messages
+description: Unread Mail.app subjects, senders, and snippets without message bodies.
+type: mac.mail-message
+mode: event
+schema_url: https://agentfeeds.dev/schemas/mac.mail-message.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.mail/unread?limit=50"
+adapter:
+  kind: apple_automation
+  tcc_permission: Automation
+  script: |
+    set rows to {}
+    tell application "Mail"
+      set matches to messages of inbox whose read status is false
+      set maxItems to count of matches
+      if maxItems > 50 then set maxItems to 50
+      repeat with i from 1 to maxItems
+        set msg to item i of matches
+        set previewText to ""
+        try
+          set previewText to content of msg
+          if length of previewText > 300 then set previewText to text 1 thru 300 of previewText
+        end try
+        set end of rows to (message id of msg) & tab & (subject of msg) & tab & (sender of msg) & tab & ((date received of msg) as string) & tab & previewText
+      end repeat
+    end tell
+    set AppleScript's text item delimiters to linefeed
+    return rows as text
+  columns: [id, subject, sender, received_at, snippet]
+  static:
+    unread: true
+    mailbox: Inbox
+    from_email: null
+    account: null
+  id_column: id
+  time_column: received_at
+recommended_poll_interval_seconds: 900
+auth: none
+tags: [mac, mail, inbox, unread, automation, tcc, no-auth]
+quality_tier: experimental
+catalog_tier: 1
+catalog_order: 50
+platforms: [macos]
+requires: [mail_automation_tcc]
+contributed_by: agentfeeds

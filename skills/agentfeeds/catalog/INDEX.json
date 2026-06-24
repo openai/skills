@@ -1,0 +1,609 @@
+{
+  "generated_at": "2026-05-03T22:31:45Z",
+  "spec_version": "0.3",
+  "stream_count": 25,
+  "streams": [
+    {
+      "auth": "none",
+      "catalog_order": 10,
+      "catalog_tier": 1,
+      "description": "Today's agenda from every calendar configured in Calendar.app.",
+      "id": "mac/calendar-today",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/calendar-today.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "calendar_tcc"
+      ],
+      "tags": [
+        "mac",
+        "calendar",
+        "agenda",
+        "eventkit",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Today's Calendar.app agenda",
+      "type": "ical.event"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 20,
+      "catalog_tier": 1,
+      "description": "Next 7 days from every calendar configured in Calendar.app.",
+      "id": "mac/calendar-upcoming",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/calendar-upcoming.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "calendar_tcc"
+      ],
+      "tags": [
+        "mac",
+        "calendar",
+        "upcoming",
+        "eventkit",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Upcoming Calendar.app events",
+      "type": "ical.event"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 30,
+      "catalog_tier": 1,
+      "description": "Open reminders with due dates and list grouping from Reminders.app.",
+      "id": "mac/reminders-pending",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/reminders-pending.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "reminders_tcc"
+      ],
+      "tags": [
+        "mac",
+        "reminders",
+        "tasks",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Pending Reminders.app items",
+      "type": "mac.reminder"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 40,
+      "catalog_tier": 1,
+      "description": "Recently modified Notes.app notes with titles and snippets.",
+      "id": "mac/notes-recent",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/notes-recent.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "notes_automation_tcc"
+      ],
+      "tags": [
+        "mac",
+        "notes",
+        "recent",
+        "automation",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Recent Notes.app notes",
+      "type": "mac.note"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 50,
+      "catalog_tier": 1,
+      "description": "Unread Mail.app subjects, senders, and snippets without message bodies.",
+      "id": "mac/mail-unread",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/mail-unread.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "mail_automation_tcc"
+      ],
+      "tags": [
+        "mac",
+        "mail",
+        "inbox",
+        "unread",
+        "automation",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Unread Mail.app messages",
+      "type": "mac.mail-message"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 60,
+      "catalog_tier": 1,
+      "description": "Recent iMessage conversations with unread counts and last-message snippets.",
+      "id": "mac/imessage-unread",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/imessage-unread.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "requires": [
+        "full_disk_access"
+      ],
+      "tags": [
+        "mac",
+        "imessage",
+        "messages",
+        "unread",
+        "sqlite",
+        "tcc",
+        "no-auth"
+      ],
+      "title": "Unread iMessage conversations",
+      "type": "mac.imessage-thread"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 10,
+      "catalog_tier": 2,
+      "description": "Read-only snapshot of one local text, Markdown, or JSON file.",
+      "id": "local/file",
+      "mode": "snapshot",
+      "parameters": [
+        "path"
+      ],
+      "path": "catalog/streams/local/file.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "local",
+        "file",
+        "markdown",
+        "text",
+        "json",
+        "no-auth"
+      ],
+      "title": "Local file",
+      "type": "local.file"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 20,
+      "catalog_tier": 2,
+      "description": "Last modified files in a watched directory.",
+      "id": "local/directory-recent",
+      "mode": "event",
+      "parameters": [
+        "path"
+      ],
+      "path": "catalog/streams/local/directory-recent.yaml",
+      "quality_tier": "experimental",
+      "tags": [
+        "local",
+        "files",
+        "directory",
+        "recent",
+        "no-auth"
+      ],
+      "title": "Recent files in a directory",
+      "type": "local.directory-entry"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 30,
+      "catalog_tier": 2,
+      "description": "Recently modified Markdown notes from a local vault directory.",
+      "id": "local/markdown-vault",
+      "mode": "event",
+      "parameters": [
+        "path"
+      ],
+      "path": "catalog/streams/local/markdown-vault.yaml",
+      "quality_tier": "experimental",
+      "tags": [
+        "local",
+        "markdown",
+        "obsidian",
+        "notes",
+        "vault",
+        "no-auth"
+      ],
+      "title": "Markdown vault",
+      "type": "local.markdown-document"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 40,
+      "catalog_tier": 2,
+      "description": "Current branch, dirty files, and ahead or behind counts for a watched repo.",
+      "id": "local/git-status",
+      "mode": "snapshot",
+      "parameters": [
+        "path"
+      ],
+      "path": "catalog/streams/local/git-status.yaml",
+      "quality_tier": "experimental",
+      "tags": [
+        "local",
+        "git",
+        "dev",
+        "repo",
+        "status",
+        "no-auth"
+      ],
+      "title": "Local Git status",
+      "type": "local.git-status"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 50,
+      "catalog_tier": 2,
+      "description": "Items saved to Safari Reading List from the local bookmarks file.",
+      "id": "mac/safari-reading-list",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/safari-reading-list.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "tags": [
+        "mac",
+        "safari",
+        "reading-list",
+        "bookmarks",
+        "no-auth"
+      ],
+      "title": "Safari Reading List",
+      "type": "mac.reading-list-item"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 60,
+      "catalog_tier": 2,
+      "description": "Last modified items in the local Downloads folder.",
+      "id": "mac/finder-recent-downloads",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/mac/finder-recent-downloads.yaml",
+      "platforms": [
+        "macos"
+      ],
+      "quality_tier": "experimental",
+      "tags": [
+        "mac",
+        "finder",
+        "downloads",
+        "files",
+        "recent",
+        "no-auth"
+      ],
+      "title": "Recent Downloads",
+      "type": "local.directory-entry"
+    },
+    {
+      "auth": "bearer_token",
+      "catalog_order": 10,
+      "catalog_tier": 3,
+      "description": "Authenticated GitHub notifications for the current user.",
+      "id": "dev/github-notifications",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/dev/github-notifications.yaml",
+      "quality_tier": "experimental",
+      "requires": [
+        "keychain_bearer_token"
+      ],
+      "tags": [
+        "dev",
+        "github",
+        "notifications",
+        "keychain",
+        "auth"
+      ],
+      "title": "My GitHub notifications",
+      "type": "github.notification"
+    },
+    {
+      "auth": "bearer_token",
+      "catalog_order": 20,
+      "catalog_tier": 3,
+      "description": "Pull requests authored by or assigned for review to the current GitHub user.",
+      "id": "dev/github-prs-mine",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/dev/github-prs-mine.yaml",
+      "quality_tier": "experimental",
+      "requires": [
+        "keychain_bearer_token"
+      ],
+      "tags": [
+        "dev",
+        "github",
+        "pull-request",
+        "review",
+        "keychain",
+        "auth"
+      ],
+      "title": "My GitHub pull requests",
+      "type": "github.pull-request"
+    },
+    {
+      "auth": "bearer_token",
+      "catalog_order": 30,
+      "catalog_tier": 3,
+      "description": "Linear issues assigned to the authenticated user.",
+      "id": "tasks/linear-mine",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/tasks/linear-mine.yaml",
+      "quality_tier": "experimental",
+      "requires": [
+        "keychain_bearer_token"
+      ],
+      "tags": [
+        "tasks",
+        "linear",
+        "issues",
+        "assigned",
+        "keychain",
+        "auth"
+      ],
+      "title": "My Linear issues",
+      "type": "linear.issue"
+    },
+    {
+      "auth": "bearer_token",
+      "catalog_order": 40,
+      "catalog_tier": 3,
+      "description": "Todoist tasks due today for the authenticated user.",
+      "id": "tasks/todoist-today",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/tasks/todoist-today.yaml",
+      "quality_tier": "experimental",
+      "requires": [
+        "keychain_bearer_token"
+      ],
+      "tags": [
+        "tasks",
+        "todoist",
+        "today",
+        "keychain",
+        "auth"
+      ],
+      "title": "Today's Todoist tasks",
+      "type": "todoist.task"
+    },
+    {
+      "auth": "bearer_token",
+      "catalog_order": 50,
+      "catalog_tier": 3,
+      "description": "Recently edited Notion pages visible to the authenticated integration.",
+      "id": "notes/notion-recent",
+      "mode": "event",
+      "parameters": [],
+      "path": "catalog/streams/notes/notion-recent.yaml",
+      "quality_tier": "experimental",
+      "requires": [
+        "keychain_bearer_token"
+      ],
+      "tags": [
+        "notes",
+        "notion",
+        "recent",
+        "keychain",
+        "auth"
+      ],
+      "title": "Recent Notion pages",
+      "type": "notion.page"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 10,
+      "catalog_tier": 4,
+      "description": "Subscribe to any public RSS or Atom URL.",
+      "id": "news/rss-generic",
+      "mode": "event",
+      "parameters": [
+        "url"
+      ],
+      "path": "catalog/streams/news/rss-generic.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "news",
+        "rss",
+        "atom",
+        "free",
+        "no-auth"
+      ],
+      "title": "Generic RSS feed",
+      "type": "rss.item"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 20,
+      "catalog_tier": 4,
+      "description": "Events from a public iCalendar URL.",
+      "id": "calendar/ics",
+      "mode": "event",
+      "parameters": [
+        "url"
+      ],
+      "path": "catalog/streams/calendar/ics.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "calendar",
+        "ics",
+        "ical",
+        "events",
+        "free",
+        "no-auth"
+      ],
+      "title": "iCalendar feed",
+      "type": "ical.event"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 30,
+      "catalog_tier": 4,
+      "description": "Free, no-API-key weather observations for any latitude and longitude.",
+      "id": "weather/openmeteo-current",
+      "mode": "snapshot",
+      "parameters": [
+        "lat",
+        "lon"
+      ],
+      "path": "catalog/streams/weather/openmeteo-current.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "weather",
+        "free",
+        "no-auth",
+        "global"
+      ],
+      "title": "Current weather conditions (Open-Meteo)",
+      "type": "weather.observation"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 40,
+      "catalog_tier": 4,
+      "description": "Free, no-API-key 7-day forecast for any latitude and longitude.",
+      "id": "weather/openmeteo-forecast",
+      "mode": "snapshot",
+      "parameters": [
+        "lat",
+        "lon"
+      ],
+      "path": "catalog/streams/weather/openmeteo-forecast.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "weather",
+        "forecast",
+        "free",
+        "no-auth",
+        "global"
+      ],
+      "title": "7-day weather forecast (Open-Meteo)",
+      "type": "weather.forecast"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 50,
+      "catalog_tier": 4,
+      "description": "Current currency exchange rates for a base currency via a no-auth public API.",
+      "id": "finance/exchangerate",
+      "mode": "snapshot",
+      "parameters": [
+        "base"
+      ],
+      "path": "catalog/streams/finance/exchangerate.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "finance",
+        "currency",
+        "exchange-rate",
+        "free",
+        "no-auth"
+      ],
+      "title": "Current exchange rates",
+      "type": "finance.exchange-rate"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 60,
+      "catalog_tier": 4,
+      "description": "Recent pull requests for a public GitHub repository.",
+      "id": "dev/github-prs",
+      "mode": "event",
+      "parameters": [
+        "owner",
+        "repo",
+        "state"
+      ],
+      "path": "catalog/streams/dev/github-prs.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "dev",
+        "github",
+        "pull-request",
+        "prs",
+        "free",
+        "no-auth"
+      ],
+      "title": "GitHub repository pull requests",
+      "type": "github.pull-request"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 70,
+      "catalog_tier": 4,
+      "description": "Recent issues for a public GitHub repository.",
+      "id": "dev/github-issues",
+      "mode": "event",
+      "parameters": [
+        "owner",
+        "repo",
+        "state"
+      ],
+      "path": "catalog/streams/dev/github-issues.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "dev",
+        "github",
+        "issues",
+        "free",
+        "no-auth"
+      ],
+      "title": "GitHub repository issues",
+      "type": "github.issue"
+    },
+    {
+      "auth": "none",
+      "catalog_order": 80,
+      "catalog_tier": 4,
+      "description": "Latest release events for a public GitHub repository.",
+      "id": "dev/github-releases",
+      "mode": "event",
+      "parameters": [
+        "owner",
+        "repo"
+      ],
+      "path": "catalog/streams/dev/github-releases.yaml",
+      "quality_tier": "verified",
+      "tags": [
+        "dev",
+        "github",
+        "releases",
+        "free",
+        "no-auth"
+      ],
+      "title": "GitHub repository releases",
+      "type": "github.release"
+    }
+  ]
+}

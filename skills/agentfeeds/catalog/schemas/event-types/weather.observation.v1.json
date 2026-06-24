@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/weather.observation.v1.json",
+  "title": "Weather Observation",
+  "type": "object",
+  "required": ["observed_at"],
+  "properties": {
+    "temperature_c": { "type": "number" },
+    "humidity_pct": { "type": "number" },
+    "wind_kph": { "type": "number" },
+    "conditions_code": { "type": ["integer", "string"] },
+    "observed_at": { "type": "string" }
+  }
+}

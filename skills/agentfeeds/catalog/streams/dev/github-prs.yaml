@@ -1,0 +1,53 @@
+id: dev/github-prs
+title: GitHub repository pull requests
+description: Recent pull requests for a public GitHub repository.
+type: github.pull-request
+mode: event
+schema_url: https://agentfeeds.dev/schemas/github.pull-request.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: owner
+    type: string
+    description: GitHub repository owner
+    required: true
+  - name: repo
+    type: string
+    description: GitHub repository name
+    required: true
+  - name: state
+    type: string
+    description: Pull request state, such as open, closed, or all
+    required: true
+source_uri_template: "feed://api.github.com/repos/{owner}/{repo}/pulls?state={state}"
+adapter:
+  kind: paginated_json_http
+  url: "https://api.github.com/repos/{owner}/{repo}/pulls?state={state}&per_page=30"
+  method: GET
+  headers:
+    Accept: application/vnd.github+json
+  transform:
+    language: jmespath
+    expression: |
+      [].{
+        number: number,
+        title: title,
+        state: state,
+        html_url: html_url,
+        user: user.login,
+        draft: draft,
+        head_ref: head.ref,
+        base_ref: base.ref,
+        created_at: created_at,
+        updated_at: updated_at,
+        closed_at: closed_at,
+        merged_at: merged_at,
+        body: body
+      }
+  id_from: number
+recommended_poll_interval_seconds: 900
+auth: none
+tags: [dev, github, pull-request, prs, free, no-auth]
+quality_tier: verified
+catalog_tier: 4
+catalog_order: 60
+contributed_by: agentfeeds

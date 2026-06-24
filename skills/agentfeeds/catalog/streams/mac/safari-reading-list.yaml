@@ -1,0 +1,21 @@
+id: mac/safari-reading-list
+title: Safari Reading List
+description: Items saved to Safari Reading List from the local bookmarks file.
+type: mac.reading-list-item
+mode: event
+schema_url: https://agentfeeds.dev/schemas/mac.reading-list-item.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://mac.safari/reading-list"
+adapter:
+  kind: plist_reading_list
+  path: "~/Library/Safari/Bookmarks.plist"
+  limit: 50
+recommended_poll_interval_seconds: 3600
+auth: none
+tags: [mac, safari, reading-list, bookmarks, no-auth]
+quality_tier: experimental
+catalog_tier: 2
+catalog_order: 50
+platforms: [macos]
+contributed_by: agentfeeds

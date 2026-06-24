@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/finance.exchange-rate.v1.json",
+  "title": "Exchange Rates",
+  "type": "object",
+  "required": ["base", "rates"],
+  "properties": {
+    "base": { "type": "string" },
+    "date": { "type": "string" },
+    "rates": {
+      "type": "object",
+      "additionalProperties": { "type": "number" }
+    }
+  }
+}

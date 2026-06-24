@@ -1,0 +1,25 @@
+id: local/directory-recent
+title: Recent files in a directory
+description: Last modified files in a watched directory.
+type: local.directory-entry
+mode: event
+schema_url: https://agentfeeds.dev/schemas/local.directory-entry.v1.json
+schema_version: 1.0.0
+parameters:
+  - name: path
+    type: string
+    description: Absolute or home-relative directory path
+    required: true
+source_uri_template: "feed://local.directory/recent?path={path}"
+adapter:
+  kind: filesystem_scan
+  path: "{path}"
+  order_by: modified_at
+  limit: 25
+recommended_poll_interval_seconds: 300
+auth: none
+tags: [local, files, directory, recent, no-auth]
+quality_tier: experimental
+catalog_tier: 2
+catalog_order: 20
+contributed_by: agentfeeds

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/linear.issue.v1.json",
+  "title": "Linear Issue",
+  "type": "object",
+  "required": ["id", "identifier", "title", "state", "url", "updated_at"],
+  "properties": {
+    "id": { "type": "string" },
+    "identifier": { "type": "string" },
+    "title": { "type": "string" },
+    "state": { "type": "string" },
+    "priority": { "type": ["integer", "null"] },
+    "team": { "type": ["string", "null"] },
+    "url": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "due_at": { "type": ["string", "null"] }
+  }
+}

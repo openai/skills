@@ -1,0 +1,43 @@
+id: dev/github-prs-mine
+title: My GitHub pull requests
+description: Pull requests authored by or assigned for review to the current GitHub user.
+type: github.pull-request
+mode: event
+schema_url: https://agentfeeds.dev/schemas/github.pull-request.v1.json
+schema_version: 1.0.0
+parameters: []
+source_uri_template: "feed://api.github.com/search/issues?q=type:pr+involves:@me"
+adapter:
+  kind: paginated_json_http
+  url: "https://api.github.com/search/issues?q=type:pr+involves:@me+state:open&per_page=50"
+  method: GET
+  auth_service: github
+  headers:
+    Accept: application/vnd.github+json
+  transform:
+    language: jmespath
+    expression: |
+      items[].{
+        number: number,
+        title: title,
+        state: state,
+        html_url: html_url,
+        user: user.login,
+        draft: false,
+        head_ref: null,
+        base_ref: null,
+        created_at: created_at,
+        updated_at: updated_at,
+        closed_at: closed_at,
+        merged_at: null,
+        body: body
+      }
+  id_from: html_url
+recommended_poll_interval_seconds: 600
+auth: bearer_token
+tags: [dev, github, pull-request, review, keychain, auth]
+quality_tier: experimental
+catalog_tier: 3
+catalog_order: 20
+requires: [keychain_bearer_token]
+contributed_by: agentfeeds

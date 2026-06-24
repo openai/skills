@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/local.markdown-document.v1.json",
+  "title": "Local Markdown Document",
+  "type": "object",
+  "required": ["path", "title", "snippet", "modified_at", "frontmatter"],
+  "properties": {
+    "path": { "type": "string" },
+    "title": { "type": "string" },
+    "snippet": { "type": "string" },
+    "modified_at": { "type": "string" },
+    "frontmatter": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

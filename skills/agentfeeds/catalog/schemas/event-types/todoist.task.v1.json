@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentfeeds.dev/schemas/todoist.task.v1.json",
+  "title": "Todoist Task",
+  "type": "object",
+  "required": ["id", "content", "url", "priority", "due"],
+  "properties": {
+    "id": { "type": "string" },
+    "content": { "type": "string" },
+    "description": { "type": ["string", "null"] },
+    "url": { "type": "string" },
+    "priority": { "type": "integer" },
+    "project_id": { "type": ["string", "null"] },
+    "due": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
