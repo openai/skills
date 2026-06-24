@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hugging Face Transformers"
+  short_description: "Build and debug Transformers model workflows"
+  default_prompt: "Use $huggingface-transformers to implement or debug this Transformers workflow."
