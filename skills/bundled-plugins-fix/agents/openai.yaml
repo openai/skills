@@ -1,0 +1,10 @@
+display_name: Bundled Plugins Fix
+short_description: Diagnose and repair broken chrome and computer-use plugins in Codex desktop for Windows
+default_prompt:
+  - Diagnose why chrome@openai-bundled isn't working
+  - Fix computer-use@openai-bundled plugin
+  - Check and repair all openai-bundled plugins
+categories:
+  - Windows
+  - Diagnostics
+  - Productivity
