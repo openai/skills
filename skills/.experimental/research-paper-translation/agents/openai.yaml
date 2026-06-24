@@ -1,0 +1,7 @@
+interface:
+  display_name: "Research Paper Translation"
+  short_description: "Translate paper PDFs into aligned Chinese."
+  default_prompt: "Use $research-paper-translation to read this paper PDF, lock the exact version, extract clean text, and produce a paragraph-aligned Chinese translation."
+
+policy:
+  allow_implicit_invocation: true
