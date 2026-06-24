@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Base Research"
+  short_description: "Find high-quality base repos for app/tool builds"
+  default_prompt: "Use $github-base-research to run parallel GitHub repo research and recommend a single base project or composable multi-repo foundation."
