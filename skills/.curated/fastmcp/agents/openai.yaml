@@ -1,0 +1,4 @@
+interface:
+  display_name: "FastMCP"
+  short_description: "Build and debug Python MCP servers"
+  default_prompt: "Use $fastmcp to create or update a FastMCP server for this project."
