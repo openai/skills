@@ -1,0 +1,4 @@
+interface:
+  display_name: "PowerPoint and Excel"
+  short_description: "Create and edit decks and workbooks"
+  default_prompt: "Use $powerpoint-excel-authoring to create, edit, or validate this deck or workbook."
