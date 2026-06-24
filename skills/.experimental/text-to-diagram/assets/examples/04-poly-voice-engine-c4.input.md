@@ -1,0 +1,1 @@
+I'm building an app called Poly-Voice-Engine. It consists of a Web Frontend where users upload PDFs. There's a Worker Service that uses an LLM to 'decode' and summarize the text, and a TTS (Text-to-Speech) Engine that generates the audio. All files are stored in an S3 bucket, and user data is in PostgreSQL.

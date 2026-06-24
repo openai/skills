@@ -1,0 +1,1 @@
+When a user hits the /checkout endpoint, the API first checks stock in the InventoryDB. If items are available, it calls the Stripe API to process payment. Once Stripe returns a success, the API records the order in the MainDB and sends a 'Payment Confirmed' message to the user.

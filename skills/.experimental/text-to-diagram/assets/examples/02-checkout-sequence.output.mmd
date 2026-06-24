@@ -1,0 +1,21 @@
+```mermaid
+sequenceDiagram
+  participant U as "User"
+  participant API as "API"
+  participant INV as "InventoryDB"
+  participant Stripe as "Stripe API"
+  participant DB as "MainDB"
+
+  U->>API: "POST /checkout"
+  API->>INV: "Check stock"
+  alt "Items available"
+    API->>Stripe: "Process payment"
+    Stripe-->>API: "Payment success"
+    API->>DB: "Record order"
+    API-->>U: "Payment Confirmed"
+  else "Out of stock"
+    API-->>U: "Out of stock"
+  end
+```
+
+Chosen diagram: sequenceDiagram (time-ordered interactions across systems).
